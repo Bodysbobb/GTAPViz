@@ -10,7 +10,7 @@
 #     Purdue University & Research Assistant at GTAP  
 #     (Contact: ppuangch@purdue.edu)  
 #
-# (2) Dr. Erwin Corong, Principal Research Economist and Associate Director  
+# (2) Dr. Erwin Corong, Principal Research Economist and Associate Director at GTAP  
 #
 # ==============================================================================
 # DESCRIPTION:  
