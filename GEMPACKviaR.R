@@ -1,61 +1,60 @@
-# ==============================================================================
-# PROJECT: Importing GTAP Results from .SL4 and .HAR to CSV/STATA/R/TXT Using R  
-# ==============================================================================
-#
-# DATE: February 2025  
-# VERSION: 1.0  
-#
-# AUTHORS:  
-# (1) Pattawee Puangchit, Ph.D. Candidate in Agricultural Economics  
-#     Purdue University & Research Assistant at GTAP  
-#     (Contact: ppuangch@purdue.edu)  
-#
-# (2) Dr. Erwin Corong, Principal Research Economist and Associate Director at GTAP  
-#
-# ==============================================================================
-# DESCRIPTION:  
-# This script facilitates the conversion of GTAP results from .SL4 and .HAR formats  
-# into CSV, STATA, R, and TXT formats for further analysis.  
-#
-# A fully detailed manuscript, including an R Notebook version of this script,  
-# is available at: <waiting for publication link>.  
-#
-# A Python implementation of this script is also available. For more details, please see:  
-# <waiting for publication link>.  
-#
-# ==============================================================================
-# ACKNOWLEDGMENTS:  
-# This project utilizes the R package developed by Maros Ivanic (2023)  
-# for processing GTAP-related data.  
-#
-# We acknowledge the contributions of the developers in making GTAP  
-# data handling more accessible in R.  
-#
-# ==============================================================================
-# LICENSE:  
-# This script is licensed under the MIT License.  
-# A copy of the full license is available in the LICENSE file in this repository.  
-#
-# ==============================================================================
-# ACADEMIC USE REQUIREMENT:  
-# If this software is used in academic work (e.g., journal articles, theses, 
-# conference papers, or reports), proper citation is **required**:  
-#
-#  Pattawee Puangchit (2025). "Importing GTAP Results from .SL4 and .HAR using R".  
-#  GitHub Repository. Available at: [GitHub Repository Link]  
-#
-# Proper citation helps acknowledge the work and supports continued development.  
-#
-# ==============================================================================
-# IMPORTANT NOTICE:  
-# The GTAP Model and database require a separate license, which can be obtained at:  
-# https://www.gtap.agecon.purdue.edu/databases/pricing.asp  
-# ==============================================================================
+cat("
+==============================================================================
+PROJECT: Importing GTAP Results from .SL4 and .HAR to CSV/STATA/R/TXT Using R  
+==============================================================================
+  
+DATE: February 2025  
+VERSION: 1.0  
+  
+AUTHORS:  
+(1) Pattawee Puangchit, Ph.D. Candidate in Agricultural Economics  
+    Purdue University & Research Assistant at GTAP  
+    (Contact: ppuangch@purdue.edu)  
 
+(2) Dr. Erwin Corong, Principal Research Economist and Associate Director at GTAP  
 
-# ==============================================================================
-# INSTALLING AND LOADING REQUIRED PACKAGES
-# ==============================================================================
+==============================================================================
+DESCRIPTION:  
+This script facilitates the conversion of GTAP results from .SL4 and .HAR formats  
+into CSV, STATA, R, and TXT formats for further analysis.  
+
+A fully detailed manuscript, including an R Notebook version of this script,  
+is available at: <waiting for publication link>.  
+
+A Python implementation of this script is also available. For more details, please see:  
+<waiting for publication link>.  
+
+==============================================================================
+ACKNOWLEDGMENTS:  
+This project utilizes the R package developed by Maros Ivanic (2023)  
+for processing GTAP-related data.  
+
+We acknowledge the contributions of the developers in making GTAP  
+data handling more accessible in R.  
+
+==============================================================================
+LICENSE:  
+This script is licensed under the MIT License.  
+A copy of the full license is available in the LICENSE file in this repository.  
+
+==============================================================================
+ACADEMIC USE REQUIREMENT:  
+If this software is used in academic work (e.g., journal articles, theses, 
+conference papers, or reports), proper citation is **required**:  
+
+Pattawee Puangchit (2025). 'Importing GTAP Results from .SL4 and .HAR using R'.  
+GitHub Repository. Available at: [GitHub Repository Link]  
+
+Proper citation helps acknowledge the work and supports continued development.  
+
+==============================================================================
+IMPORTANT NOTICE:  
+The GTAP Model and database require a separate license, which can be obtained at:  
+https://www.gtap.agecon.purdue.edu/databases/pricing.asp  
+==============================================================================
+", sep = "\n")
+
+# INSTALLING AND LOADING REQUIRED PACKAGES ====================================
 rm(list=ls())
 packages <- c("tidyverse", "writexl", "dplyr", "devtools", 
               "openxlsx", "readxl", "knitr", "rmarkdown", "data.table", 
@@ -69,35 +68,32 @@ if (!require("HARr")) {
 }
 library("HARr")
 
-# ==============================================================================
-# (EDIT THIS SECTION) SETTING UP THE DIRECTORY AND OUTPUT OPTIONS 
-# ==============================================================================
-# Project Directory
+# ============================ EDIT THIS SECTION =============================== 
+# SETTING UP THE DIRECTORY AND OUTPUT OPTIONS
+
+## Project Directory
 project.folder <- "D:/R Directory/GEMPACK"
 
-# Sub Directories (Optional)
+## Sub Directories (Optional)
 input.folder <- paste0(project.folder,"/in")
 output.folder <- paste0(project.folder,"/out")
 map.folder <- paste0(project.folder,"/map")
 
-# Define experiment name / output name 
+## Define experiment name / output name 
 case.name <- c("US_All", "US_All_RetalTar")
 
-# Set output format preferences (YES/NO)
+## Set output format preferences (YES/NO)
 csv.output <- "YES"       # Output CSV files
 stata.output <- "Yes"     # Output Stata files
 r.output <- "Yes"         # Output R files   
 txt.output <- "Yes"       # Output TXT files
 
 
-# ==============================================================================
-# DO NOT EDIT BELOW THIS LINE
-# ==============================================================================
+# ===================== DO NOT EDIT BELOW THIS LINE ============================ 
 
-# ==============================================================================
-# PREPARING INPUT FILES AND OUTPUT FOLDERS 
-# ==============================================================================
-# Load Input Data from Excel Mapping File
+# CHECKING, PREPARING INPUT FILES AND OUTPUT FOLDERS =====================================
+
+## Load Input Data from Excel Mapping File
 mapping.output <- paste0(map.folder, "/OutputMapping.xlsx")
 keysolmap <- read_xlsx(mapping.output, sheet = "KeyVariable")
 sl4var <- read_xlsx(mapping.output, sheet = "SL4Variables")
@@ -113,7 +109,7 @@ if (nrow(keysolmap %>% filter_all(any_vars(!is.na(.)))) > 0) {
     rename(Dimension = Size) %>%
     mutate(DimSize = str_count(Dimension, "\\*") + 1)
   
-  # Function to replace values in a string separated by *
+  ## Function to replace values in a string separated by "x"
   mapped.set <- function(str, mapping_df) {
     if (is.na(str)) return(str)
     parts <- strsplit(str, "\\*")[[1]]
@@ -124,65 +120,51 @@ if (nrow(keysolmap %>% filter_all(any_vars(!is.na(.)))) > 0) {
     paste(replaced_parts, collapse = "*")
   }
   
-  # Apply the replacement
+  ## Apply the replacement to the dataset
   keysolmap <- keysolmap %>%
     mutate(Dimension = unlist(lapply(Dimension, function(x) mapped.set(x, setmap))))
 }
 
-# Check for missing values in "Dimension" column
+## Check for missing values in the 'Dimension' column
 keysol.missing_vars <- tryCatch(
   keysolmap %>% filter(is.na(Dimension)), 
   error = function(e) data.frame(Ori.Var.Name = character(0))
 )
 
-# Create list and remove rows with NA in Ori.Var.Name within each subset
+## Organizing variables by dimension size
 unique_sizes <- unique(keysolmap$DimSize[!is.na(keysolmap$DimSize)])
 keyvar.list <- lapply(unique_sizes, function(size) {
   subset_data <- keysolmap[keysolmap$DimSize == size, ]
-  # Remove rows where Ori.Var.Name is NA
+  
+  ### Remove rows where Ori.Var.Name is NA
   subset_data <- subset_data[!is.na(subset_data$Ori.Var.Name), ]
   return(subset_data)
 })
 names(keyvar.list) <- unique_sizes
 
-# Remove any empty datasets that might result from removing NA rows
-keyvar.list <- keyvar.list[sapply(keyvar.list, nrow) > 0]
+## Displaying Warnings -------------------------------
 
-# Define Welfare Decomposition Variables
-ev.var.original.name <- c("alloc_A1", "ENDWB1", "tech_C1", "pop_D1", 
-                          "tot_E1", "IS_F1", "pref_G1")  # Don't change
-ev.var.new.name <- c("AllocEff", "Endwb", "TechChg", "Pop", 
-                     "ToT", "I-S", "Pref") # New name
-ev_name_mapping <- setNames(ev.var.new.name, ev.var.original.name)  
-
-# -----------------------------------------------------
-# Checking Input Files and Displaying Warnings
-# -----------------------------------------------------
+## Retrieve file names from the directory
 dir_path <- input.folder
-# Get list of all files in the directory
 files <- list.files(dir_path, full.names = FALSE, ignore.case = TRUE)
 
-# Get specific file lists
+## Get specific file lists
 sl4_list <- files[grepl("\\.sl4$", files, ignore.case = TRUE)]
 wel_list <- files[grepl("-wel\\.har$", files, ignore.case = TRUE)]
 
-# Extract base names (removing extensions), trimming spaces, and normalizing case
-sl4_bases <- tolower(trimws(sub("\\.sl4$", "", sl4_list, ignore.case = TRUE)))
-wel_bases <- tolower(trimws(sub("-wel\\.har$", "", wel_list, ignore.case = TRUE)))
-
-# Match each SL4 file with a corresponding WEL file
+## Match each SL4 file with a corresponding WEL file
 matched_pairs <- intersect(sl4_bases, wel_bases)
 unmatched_sl4 <- setdiff(sl4_bases, wel_bases)
 unmatched_wel <- setdiff(wel_bases, sl4_bases)
 
-# Count files and matches
+## Count files and matches
 total_sl4_files <- length(sl4_list)  # Total .sl4 files
 total_wel_files <- length(wel_list)  # Total -WEL.har files
 total_matched_files <- length(matched_pairs)  # Total matched pairs
 total_unmatched_sl4 <- length(unmatched_sl4)  # Unmatched .sl4 files
 total_unmatched_wel <- length(unmatched_wel)  # Unmatched -WEL.har files
 
-# Check for unmatched files
+## Check for unmatched files
 if (total_unmatched_sl4 > 0 || total_unmatched_wel > 0) {
   stop(sprintf(
     "⚠️ There are unmatched files:\nUnmatched SL4 Files: %d\nUnmatched WEL Files: %d\nEnsure all file names follow the naming convention (e.g., ABC.sl4 and ABC-WEL.har).",
@@ -190,21 +172,23 @@ if (total_unmatched_sl4 > 0 || total_unmatched_wel > 0) {
   ))
 }
 
-# Check for missing case files
+## Check for missing case files
 case_names_lower <- tolower(trimws(case.name))
 missing_cases <- setdiff(case_names_lower, matched_pairs)
+
+### Stop execution if missing case files are found
 if (length(missing_cases) > 0) {
   stop("⚠️ Please verify that all experiments defined in `case.name` have solution files (`.sl4`) and decomposition files (`-WEL.har`).")
 }
 
-# Base success message
+## Print final report
 report <- sprintf(
   "All files are correctly matched. There are %d total solution files and %d total decomposition files.\nProcessing experiments: %s",
   total_sl4_files, total_wel_files,
   paste(case.name, collapse = ", ")
 )
 
-# If there are missing values, add the warning to the success message
+### Add warning for missing values in `Dimension`
 if (nrow(keysol.missing_vars) > 0) {
   report <- paste0(report, "\n\n⚠️ WARNING: The following variables do not exist or are not defined in the `SL4Variable` sheet:\n",
                    paste(keysol.missing_vars$`Ori.Var.Name`, collapse = ", "))
@@ -215,14 +199,11 @@ if (nrow(keysol.missing_vars) > 0) {
 # Print final report
 cat(report)
 
-# ==============================================================================
-# FUNCTION DEFINITIONS 
-# ==============================================================================
 
-# -------------------------------
-# Key variable functions
-# -------------------------------
-# One Dimension
+# ========================== FUNCTION DEFINITIONS ============================== 
+
+## Key variable functions ----------------------------------------
+### One Dimension ------------------
 keyvar.one.dimens <- function(case, variables, dimen = NULL) {
   case.file <- paste0(input.folder, "/", case, ".sl4")
   case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
@@ -351,7 +332,7 @@ execute.one.dimens <- function(case, keyvar.list) {
   ) %>% purrr::compact())
 }
 
-# Two Dimensions
+### Two Dimensions -----------------
 keyvar.two.dimens <- function(case, variables, dimen = NULL) {
   case.file <- paste0(input.folder, "/", case, ".sl4")
   case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
@@ -452,7 +433,7 @@ execute.two.dimens <- function(case, keyvar.list) {
   return(combined_results)
 }
 
-# Three Dimensions
+### Three Dimensions ---------------
 keyvar.three.dimens <- function(case, variables, dimen = NULL) {
   case.file <- paste0(input.folder, "/", case, ".sl4")
   case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
@@ -608,10 +589,8 @@ execute.three.dimens <- function(case, keyvar.list) {
   return(combined_results)
 }
 
-# -------------------------------
-# Decomposition functions
-# -------------------------------
-# Welfare Decomposition
+## Decomposition functions --------------------------------------
+### Welfare Decomposition ---------------------
 ev.decomp.dat <- function(case, variables) {
   case.file <- paste0(input.folder, "/", case, welfare.har)
   case.dta <- HARr::read_har(case.file, toLowerCase = FALSE)
@@ -619,7 +598,6 @@ ev.decomp.dat <- function(case, variables) {
   # Process all variables at once
   result <- lapply(variables, function(var) {
     df <- as.data.frame(case.dta[[var]])
-    # Now safely rename columns using the mapping
     colnames(df) <- ev_name_mapping[colnames(df)]
     return(df)
   })
@@ -627,7 +605,7 @@ ev.decomp.dat <- function(case, variables) {
   return(result)
 }
 
-# Terms of Trade Decomposition
+### Terms of Trade Decomposition --------------
 tot.decom.dat <- function(case, variables) {
   case.file <- paste0(input.folder, "/", case, welfare.har)
   case.dta <- HARr::read_har(case.file, toLowerCase = FALSE)
@@ -660,13 +638,10 @@ tot.decom.dat <- function(case, variables) {
 }
 
 
-# ==============================================================================
-# MAIN EXECUTION
-# ==============================================================================
 
-#--------------------------
-# Process One Dimension
-#--------------------------
+# ============================= MAIN EXECUTION ================================= 
+
+## Process One Dimension -------------------------------------
 if (!is.null(keyvar.list[["1"]])) {
   one.dim.result <- lapply(case.name, function(case) {
     execute.one.dimens(case, keyvar.list)
@@ -722,9 +697,7 @@ if (!is.null(keyvar.list[["1"]])) {
   message("There is no 1-dimensional data")
 }
 
-#--------------------------
-# Process Two Dimensions
-#--------------------------
+## Process Two Dimensions -------------------------------------
 if (!is.null(keyvar.list[["2"]])) {
   two.dim.result <- lapply(case.name, function(case) {
     execute.two.dimens(case, keyvar.list)
@@ -761,9 +734,7 @@ if (!is.null(keyvar.list[["2"]])) {
   message("There is no 2-dimensional data")
 }
 
-#--------------------------
-# Process Three Dimensions
-#--------------------------
+## Process Three Dimensions -------------------------------------
 if (!is.null(keyvar.list[["3"]])) {
   three.dim.result <- lapply(case.name, function(case) {
     execute.three.dimens(case, keyvar.list)
@@ -821,9 +792,8 @@ if (!is.null(keyvar.list[["3"]])) {
   message("There is no 3-dimensional data")
 }
 
-#--------------------------------------------
-# Process Welfare Decomposition
-#--------------------------------------------
+
+## Process Welfare Decomposition -------------------------------------
 ev.var <- if(any(decompmap$Ori.Var.Name == "A" & decompmap$`Option (1=yes, 0=no)` == 1)) {
   decompmap$Ori.Var.Name[decompmap$Ori.Var.Name == "A" & decompmap$`Option (1=yes, 0=no)` == 1]
 } else {
@@ -856,9 +826,7 @@ if(length(ev.var) > 0) {
   rm(list=c("ev.dat.list"))
 }
 
-#--------------------------------------------
-# Process Terms of Trade Decomposition
-#--------------------------------------------
+## Process Terms of Trade Decomposition -------------------------------------
 tot.var <- if(any(decompmap$Ori.Var.Name == "E1" & 
                   decompmap$`Option (1=yes, 0=no)` == 1)) {
   decompmap$Ori.Var.Name[decompmap$Ori.Var.Name == "E1" &
@@ -889,12 +857,10 @@ if(length(tot.var) > 0) {
 }
 
 
-# ==============================================================================
-# EXPORT
-# ==============================================================================
-#--------------------------------------------
-# README File
-#--------------------------------------------
+
+# ================================ EXPORT OUTPUT =============================== 
+
+## README File ------------------------------------
 get_output_location <- function(var_name, dimension, dimsize) {
   # Base prefix based on dimension size
   prefix <- paste0(dimsize, "D")
@@ -915,9 +881,7 @@ get_output_location <- function(var_name, dimension, dimsize) {
   paste0(prefix, "_", suffix)
 }
 
-#--------------------------------------------
-# Create Output Folders
-#--------------------------------------------
+## Create Output Folders ------------------------------------
 output.report <- if(nrow(keysolmap) > 0 && "DimSize" %in% names(keysolmap)) {
   # Process main variables
   main_report <- keysolmap %>%
@@ -986,9 +950,7 @@ output.report <- if(nrow(keysolmap) > 0 && "DimSize" %in% names(keysolmap)) {
   decomp_report
 }
 
-#--------------------------------------------
-# Export Functions
-#--------------------------------------------
+## Export Functions and Displaying Results ------------------------------------
 # Validate output format settings first
 is_yes <- function(value) {
   tolower(trimws(value)) == "yes"
