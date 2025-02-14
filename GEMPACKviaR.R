@@ -72,7 +72,7 @@ library("HARr")
 # SETTING UP THE DIRECTORY AND OUTPUT OPTIONS
 
 ## Project Directory
-project.folder <- "D:/R Directory/GEMPACK"
+project.folder <- "D:/GitHub/GTAP-Results-using-R/TestData"
 
 ## Sub Directories (Optional)
 input.folder <- paste0(project.folder,"/in")
@@ -80,7 +80,7 @@ output.folder <- paste0(project.folder,"/out")
 map.folder <- paste0(project.folder,"/map")
 
 ## Define experiment name / output name 
-case.name <- c("US_All", "US_All_RetalTar")
+case.name <- c("ExB14", "ExB15")
 
 ## Set output format preferences (YES/NO)
 csv.output <- "YES"       # Output CSV files
@@ -91,7 +91,7 @@ txt.output <- "Yes"       # Output TXT files
 
 # ===================== DO NOT EDIT BELOW THIS LINE ============================ 
 
-# CHECKING, PREPARING INPUT FILES AND OUTPUT FOLDERS =====================================
+# CHECKING, PREPARING INPUT FILES AND OUTPUT FOLDERS ===========================
 
 ## Load Input Data from Excel Mapping File
 mapping.output <- paste0(map.folder, "/OutputMapping.xlsx")
@@ -104,9 +104,9 @@ welfare.har <- "-WEL.har"
 if (nrow(keysolmap %>% filter_all(any_vars(!is.na(.)))) > 0) {
   
   keysolmap <- keysolmap %>%
-    left_join(sl4var %>% select(Variable, Size), 
+    left_join(sl4var %>% select(Variable, Dimension), 
               by = c("Ori.Var.Name" = "Variable")) %>%
-    rename(Dimension = Size) %>%
+    rename(Dimension = Dimension) %>%
     mutate(DimSize = str_count(Dimension, "\\*") + 1)
   
   ## Function to replace values in a string separated by "x"
@@ -151,6 +151,8 @@ files <- list.files(dir_path, full.names = FALSE, ignore.case = TRUE)
 ## Get specific file lists
 sl4_list <- files[grepl("\\.sl4$", files, ignore.case = TRUE)]
 wel_list <- files[grepl("-wel\\.har$", files, ignore.case = TRUE)]
+sl4_bases <- tolower(trimws(sub("\\.sl4$", "", sl4_list, ignore.case = TRUE)))
+wel_bases <- tolower(trimws(sub("-wel\\.har$", "", wel_list, ignore.case = TRUE)))
 
 ## Match each SL4 file with a corresponding WEL file
 matched_pairs <- intersect(sl4_bases, wel_bases)
@@ -204,389 +206,386 @@ cat(report)
 
 ## Key variable functions ----------------------------------------
 ### One Dimension ------------------
-keyvar.one.dimens <- function(case, variables, dimen = NULL) {
-  case.file <- paste0(input.folder, "/", case, ".sl4")
-  case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
-  
-  # Process variables based on dimension specification
-  result <- lapply(variables, function(var) {
-    df <- as.data.frame(case.dta[[var]])
-    names(df) <- var
-    
-    # Handle different dimension cases if dimen is specified
-    if (!is.null(dimen)) {
-      # Convert rownames based on dimension type
-      if (dimen == "REG") {
-        df$Region <- rownames(df)
-        df$DimensionType <- "Region"  # Add dimension type marker
-      } else if (dimen %in% c("ACTS", "COMM")) {
-        df$Sector <- rownames(df)
-        df$DimensionType <- "Sector"  # Add dimension type marker
-      } else {
-        # Handle other dimensions
-        df$Other <- "Other"  # Convert all rownames to "Other"
-        df$OriginalName <- rownames(df)  # Store original name if needed
-        df$DimensionType <- "Other"  # Add dimension type marker
-      }
-      
-      # Reset rownames after converting to column
-      rownames(df) <- NULL
-    }
-    
-    return(df)
-  })
-  
-  names(result) <- variables
-  return(result)
-}
-
 execute.one.dimens <- function(case, keyvar.list) {
-  # Process only sublist "1"
   current_data <- keyvar.list[["1"]]
   
-  # Initialize empty lists for each dimension type
-  region_dfs <- list()
-  sector_dfs <- list()
-  other_dfs <- list()
+  if (!all(c("Ori.Var.Name", "Dimension") %in% names(current_data))) return(NULL)
   
-  if (all(c("Ori.Var.Name", "Dimension") %in% names(current_data))) {
-    var_names <- as.character(current_data$Ori.Var.Name)
-    dimensions <- as.character(current_data$Dimension)
+  unique_pairs <- unique(current_data[c("Ori.Var.Name", "Dimension")])
+  
+  # Initialize lists for categorized storage
+  region_dfs <- list()  # Stores variables mapped to Region
+  sector_dfs <- list()  # Stores variables mapped to Sector
+  other_dfs <- list()   # Stores variables mapped to Other (non-Region, non-Sector)
+  
+  for (i in seq_len(nrow(unique_pairs))) {
+    var_name <- unique_pairs$Ori.Var.Name[i]
+    dimension <- unique_pairs$Dimension[i]
     
-    unique_pairs <- unique(data.frame(
-      var_name = var_names,
-      dimension = dimensions,
-      stringsAsFactors = FALSE
-    ))
-    
-    for (i in 1:nrow(unique_pairs)) {
-      var_name <- unique_pairs$var_name[i]
-      dimension <- unique_pairs$dimension[i]
+    tryCatch({
+      # Step 1: Read data file
+      case.file <- paste0(input.folder, "/", case, ".sl4")
+      case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
+      df <- as.data.frame(case.dta[[var_name]])
       
-      tryCatch({
-        result <- keyvar.one.dimens(
-          case = case,
-          variables = var_name,
-          dimen = dimension
-        )
+      # Step 2: Convert to Long Format based on Dimension Mapping
+      if (dimension == "REG") {
+        # Region-based Mapping: Convert row names to "Region", pivot to long format
+        df <- df %>%
+          rownames_to_column(var = "Region") %>%
+          pivot_longer(cols = -Region, names_to = "Type", values_to = "Value") %>%
+          mutate(Variable = var_name, Experiment = case)
         
-        df <- result[[var_name]]
+        region_dfs[[var_name]] <- df  # Store in Region list
         
-        # Route data to appropriate list based on DimensionType
-        if (df$DimensionType[1] == "Region") {
-          long_df <- df %>%
-            select(-DimensionType) %>%
-            pivot_longer(
-              cols = -Region,
-              names_to = "Variable",
-              values_to = "Value"
-            ) %>%
-            mutate(Variable = var_name)
-          region_dfs[[var_name]] <- long_df
-          
-        } else if (df$DimensionType[1] == "Sector") {
-          long_df <- df %>%
-            select(-DimensionType) %>%
-            pivot_longer(
-              cols = -Sector,
-              names_to = "Variable",
-              values_to = "Value"
-            ) %>%
-            mutate(Variable = var_name)
-          sector_dfs[[var_name]] <- long_df
-          
-        } else if (df$DimensionType[1] == "Other") {
-          long_df <- df %>%
-            select(-DimensionType, -OriginalName) %>%
-            pivot_longer(
-              cols = -Other,
-              names_to = "Variable",
-              values_to = "Value"
-            ) %>%
-            mutate(Variable = var_name)
-          other_dfs[[var_name]] <- long_df
-        }
+      } else if (dimension %in% c("ACTS", "COMM")) {
+        # Sector-based Mapping: Convert row names to "Sector", pivot to long format
+        df <- df %>%
+          rownames_to_column(var = "Sector") %>%
+          pivot_longer(cols = -Sector, names_to = "Type", values_to = "Value") %>%
+          mutate(Variable = var_name, Experiment = case)
         
-      }, error = function(e) {
-        warning(sprintf("Error processing %s with dimension %s: %s", 
-                        var_name, dimension, e$message))
-      })
-    }
+        sector_dfs[[var_name]] <- df  # Store in Sector list
+        
+      } else {
+        # Other Mappings: Convert row names to "Dim1", pivot to long format
+        df <- df %>%
+          rownames_to_column(var = "Dim1") %>%
+          pivot_longer(cols = -Dim1, names_to = "Type", values_to = "Value") %>%
+          mutate(Variable = var_name, Experiment = case)
+        
+        other_dfs[[var_name]] <- df  # Store in Other list
+      }
+      
+    }, error = function(e) {
+      warning(sprintf("Error processing %s with dimension %s: %s", var_name, dimension, e$message))
+    })
   }
   
-  # Combine datasets for each dimension type
-  region_combined <- bind_rows(region_dfs) %>% 
-    mutate(Experiment = case)
-  
-  sector_combined <- bind_rows(sector_dfs) %>% 
-    mutate(Experiment = case)
-  
-  other_combined <- bind_rows(other_dfs) %>% 
-    mutate(Experiment = case)
-  
-  # Return non-empty datasets
+  # Step 3: Combine datasets into separate lists
   return(list(
-    Region = if (nrow(region_combined) > 0) region_combined else NULL,
-    Sector = if (nrow(sector_combined) > 0) sector_combined else NULL,
-    Other = if (nrow(other_combined) > 0) other_combined else NULL
-  ) %>% purrr::compact())
+    ByRegion = if (length(region_dfs) > 0) bind_rows(region_dfs) else NULL,
+    BySector = if (length(sector_dfs) > 0) bind_rows(sector_dfs) else NULL,
+    ByOther = if (length(other_dfs) > 0) bind_rows(other_dfs) else NULL
+  ) %>% purrr::compact())  # Remove NULL elements
 }
 
 ### Two Dimensions -----------------
-keyvar.two.dimens <- function(case, variables, dimen = NULL) {
-  case.file <- paste0(input.folder, "/", case, ".sl4")
-  case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
-  
-  result <- lapply(variables, function(var) {
-    df <- as.data.frame(case.dta[[var]])
-    
-    if (!is.null(dimen)) {
-      colnames(df) <- gsub("\\.TOTAL$", "", colnames(df))
-      
-      # Parse dimension pattern
-      dim_parts <- strsplit(dimen, "\\*")[[1]]
-      
-      if (dimen %in% c("ACTS*REG", "COMM*REG")) {
-        df <- df %>%
-          rownames_to_column("Sector") %>%
-          pivot_longer(
-            cols = -Sector,
-            names_to = "Region",
-            values_to = "Value"
-          ) %>%
-          mutate(Variable = var)
-        
-      } else if (dim_parts[2] == "REG") {  # Any *REG pattern
-        df <- df %>%
-          rownames_to_column("Type") %>%
-          pivot_longer(
-            cols = -Type,
-            names_to = "Region",
-            values_to = "Value"
-          ) %>%
-          mutate(Variable = var)
-        
-      } else if (dim_parts[1] == "REG") {  # Any REG* pattern
-        df <- df %>%
-          rownames_to_column("Region") %>%
-          pivot_longer(
-            cols = -Region,
-            names_to = "Type",
-            values_to = "Value"
-          ) %>%
-          mutate(Variable = var)
-      }
-    }
-    return(df)
-  })
-  
-  names(result) <- variables
-  return(result)
-}
-
 execute.two.dimens <- function(case, keyvar.list) {
   current_data <- keyvar.list[["2"]]
-  sector_data <- list()
-  other_data <- list()
+  
+  if (!all(c("Ori.Var.Name", "Dimension") %in% names(current_data))) return(NULL)
+  
+  unique_pairs <- unique(current_data[c("Ori.Var.Name", "Dimension")])
+  
+  processed_dfs <- list()
   error_vars <- character()
   
-  if (all(c("Ori.Var.Name", "Dimension") %in% names(current_data))) {
-    unique_pairs <- unique(data.frame(
-      var_name = as.character(current_data$Ori.Var.Name),
-      dimension = as.character(current_data$Dimension),
-      stringsAsFactors = FALSE
-    ))
+  for (i in seq_len(nrow(unique_pairs))) {
+    var_name <- unique_pairs$Ori.Var.Name[i]
+    dimension <- unique_pairs$Dimension[i]
     
-    for (i in 1:nrow(unique_pairs)) {
-      var_name <- unique_pairs$var_name[i]
-      dimension <- unique_pairs$dimension[i]
+    tryCatch({
+      # Read data
+      case.file <- paste0(input.folder, "/", case, ".sl4")
+      case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
+      df <- as.data.frame(case.dta[[var_name]])
       
-      result <- tryCatch({
-        res <- keyvar.two.dimens(case = case, variables = var_name, dimen = dimension)
-        df <- res[[var_name]]
+      # Extract dimension parts
+      dim_parts <- strsplit(dimension, "\\*")[[1]]
+      first_dim <- dim_parts[1]
+      second_dim <- dim_parts[2]
+      
+      # Process based on dimensions
+      if (first_dim %in% c("ACTS", "COMM")) {
+        # ACTS/COMM in first position
+        df_long <- df %>%
+          rownames_to_column(var = "Sector") %>%
+          pivot_longer(-Sector, names_to = "col_name", values_to = "Value") %>%
+          separate(col_name, into = c("Region", "Type"), sep = "\\.") %>%
+          mutate(
+            Type = ifelse(is.na(Type), "TOTAL", Type),
+            Variable = var_name,
+            Experiment = case
+          )
+        processed_dfs$BySector[[var_name]] <- df_long
         
-        if (dimension %in% c("ACTS*REG", "COMM*REG")) {
-          sector_data[[var_name]] <- df
-        } else {
-          other_data[[var_name]] <- df
-        }
-        NULL
-      }, error = function(e) {
-        var_name
-      })
+      } else if (second_dim %in% c("ACTS", "COMM")) {
+        # ACTS/COMM in second position
+        df_long <- df %>%
+          rownames_to_column(var = "Region") %>%
+          pivot_longer(-Region, names_to = "col_name", values_to = "Value") %>%
+          separate(col_name, into = c("Sector", "Type"), sep = "\\.") %>%
+          mutate(
+            Type = ifelse(is.na(Type), "TOTAL", Type),
+            Variable = var_name,
+            Experiment = case
+          )
+        processed_dfs$BySector[[var_name]] <- df_long
+        
+      } else if (first_dim == "REG") {
+        # REG in first position
+        df_long <- df %>%
+          rownames_to_column(var = "Region") %>%
+          pivot_longer(-Region, names_to = "col_name", values_to = "Value") %>%
+          separate(col_name, into = c("Dim1", "Type"), sep = "\\.") %>%
+          mutate(
+            Type = ifelse(is.na(Type), "TOTAL", Type),
+            Variable = var_name,
+            Experiment = case
+          )
+        processed_dfs$ByRegion[[var_name]] <- df_long
+        
+      } else if (second_dim == "REG") {
+        # REG in second position
+        df_long <- df %>%
+          rownames_to_column(var = "Dim1") %>%
+          pivot_longer(-Dim1, names_to = "col_name", values_to = "Value") %>%
+          separate(col_name, into = c("Region", "Type"), sep = "\\.") %>%
+          mutate(
+            Type = ifelse(is.na(Type), "TOTAL", Type),
+            Variable = var_name,
+            Experiment = case
+          )
+        processed_dfs$ByRegion[[var_name]] <- df_long
+        
+      } else {
+        # Everything else goes to ByOther
+        df_long <- df %>%
+          rownames_to_column(var = "Dim1") %>%
+          pivot_longer(-Dim1, names_to = "col_name", values_to = "Value") %>%
+          separate(col_name, into = c("Dim2", "Type"), sep = "\\.") %>%
+          mutate(
+            Type = ifelse(is.na(Type), "TOTAL", Type),
+            Variable = var_name,
+            Experiment = case
+          )
+        processed_dfs$ByOther[[var_name]] <- df_long
+      }
       
-      if (!is.null(result)) error_vars <- c(error_vars, result)
-    }
+    }, error = function(e) {
+      error_vars <- c(error_vars, var_name)
+      warning(sprintf("Error processing %s with dimension %s: %s", 
+                      var_name, dimension, e$message))
+    })
   }
   
-  combined_results <- list(
-    BySector = if (length(sector_data) > 0) bind_rows(sector_data) else NULL,
-    Other = if (length(other_data) > 0) bind_rows(other_data) else NULL,
-    errors = error_vars
-  )
+  # Combine results
+  result_list <- list()
   
-  combined_results <- combined_results[!sapply(combined_results, is.null)]
+  if (!is.null(processed_dfs$BySector)) {
+    result_list$BySector <- bind_rows(processed_dfs$BySector)
+  }
+  if (!is.null(processed_dfs$ByRegion)) {
+    result_list$ByRegion <- bind_rows(processed_dfs$ByRegion)
+  }
+  if (!is.null(processed_dfs$ByOther)) {
+    result_list$ByOther <- bind_rows(processed_dfs$ByOther)
+  }
   if (length(error_vars) > 0) {
-    message("Variables that couldn't be processed: ", paste(error_vars, collapse = ", "))
+    result_list$Errors <- error_vars
   }
   
-  return(combined_results)
+  return(result_list)
 }
+
 
 ### Three Dimensions ---------------
-keyvar.three.dimens <- function(case, variables, dimen = NULL) {
-  case.file <- paste0(input.folder, "/", case, ".sl4")
-  case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
-  
-  # Process variables based on dimension specification
-  result <- lapply(variables, function(var) {
-    df <- as.data.frame(case.dta[[var]])
-    
-    if (!is.null(dimen)) {
-      # Process based on dimension type
-      if (dimen == "COMM*REG*REG") {
-        df <- df %>%
-          rownames_to_column("Sector") %>%
-          pivot_longer(
-            cols = -Sector,
-            names_to = "original_name",
-            values_to = "Value"
-          ) %>%
-          separate(
-            original_name,
-            into = c("Source", "Destination", "Type"),
-            sep = "\\.",
-            remove = TRUE,
-            fill = "right"  # Handle cases where Type (.TOTAL) might not exist
-          ) %>%
-          mutate(Variable = var)
-        
-      } else if (dimen == "ENDW*ACTS*REG") {
-        df <- df %>%
-          rownames_to_column("Endowment") %>%
-          pivot_longer(
-            cols = -Endowment,
-            names_to = "original_name",
-            values_to = "Value"
-          ) %>%
-          separate(
-            original_name,
-            into = c("Activity", "Region", "Type"),
-            sep = "\\.",
-            remove = TRUE,
-            fill = "right"
-          ) %>%
-          mutate(Variable = var)
-        
-      } else if (dimen == "COMM*ACTS*REG") {
-        df <- df %>%
-          rownames_to_column("Sector") %>%
-          pivot_longer(
-            cols = -Sector,
-            names_to = "original_name",
-            values_to = "Value"
-          ) %>%
-          separate(
-            original_name,
-            into = c("Activity", "Region", "Type"),
-            sep = "\\.",
-            remove = TRUE,
-            fill = "right"
-          ) %>%
-          mutate(Variable = var)
-        
-      } else if (dimen == "ENDWF*ACTS*REG") {
-        df <- df %>%
-          rownames_to_column("Variable") %>%
-          pivot_longer(
-            cols = -Variable,
-            names_to = "original_name",
-            values_to = "Value"
-          ) %>%
-          separate(
-            original_name,
-            into = c("Sector", "Region", "Type"),
-            sep = "\\.",
-            remove = TRUE,
-            fill = "right"
-          ) %>%
-          mutate(Variable = var)
-      }
-    }
-    
-    return(df)
-  })
-  
-  names(result) <- variables
-  return(result)
-}
-
 execute.three.dimens <- function(case, keyvar.list) {
   current_data <- keyvar.list[["3"]]
   
-  # Initialize lists for different types
-  comm_reg_reg_data <- list()
-  endw_acts_reg_data <- list()
-  comm_acts_reg_data <- list()
-  endwf_acts_reg_data <- list()
+  if (!all(c("Ori.Var.Name", "Dimension") %in% names(current_data))) return(NULL)
   
-  if (all(c("Ori.Var.Name", "Dimension") %in% names(current_data))) {
-    var_names <- as.character(current_data$Ori.Var.Name)
-    dimensions <- as.character(current_data$Dimension)
+  unique_pairs <- unique(current_data[c("Ori.Var.Name", "Dimension")])
+  
+  three_dfs <- list()
+  bilateral_trade <- list()
+  error_vars <- character()
+  
+  for (i in seq_len(nrow(unique_pairs))) {
+    var_name <- unique_pairs$Ori.Var.Name[i]
+    dimension <- unique_pairs$Dimension[i]
     
-    unique_pairs <- unique(data.frame(
-      var_name = var_names,
-      dimension = dimensions,
-      stringsAsFactors = FALSE
-    ))
-    
-    for (i in 1:nrow(unique_pairs)) {
-      var_name <- unique_pairs$var_name[i]
-      dimension <- unique_pairs$dimension[i]
+    tryCatch({
+      # Read data
+      case.file <- paste0(input.folder, "/", case, ".sl4")
+      case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
+      df <- as.data.frame(case.dta[[var_name]])
       
-      tryCatch({
-        result <- keyvar.three.dimens(
-          case = case,
-          variables = var_name,
-          dimen = dimension
-        )
-        
-        df <- result[[var_name]]
-        
-        # Sort into appropriate list based on dimension type
-        if (dimension == "COMM*REG*REG") {
-          comm_reg_reg_data[[var_name]] <- df
-        } else if (dimension == "ENDW*ACTS*REG") {
-          endw_acts_reg_data[[var_name]] <- df
-        } else if (dimension == "COMM*ACTS*REG") {
-          comm_acts_reg_data[[var_name]] <- df
-        } else if (dimension == "ENDWF*ACTS*REG") {
-          endwf_acts_reg_data[[var_name]] <- df
-        }
-        
-      }, error = function(e) {
-        warning(sprintf("Error processing %s with dimension %s: %s", 
-                        var_name, dimension, e$message))
-      })
-    }
+      # Step 1: Clean Column Names
+      colnames(df) <- gsub("\\.TOTAL$", "", colnames(df))
+      colnames(df) <- make.unique(colnames(df))
+      
+      # Step 2: Define Mapping Based on Dimension
+      dim_parts <- strsplit(dimension, "\\*")[[1]]
+      
+      row_type <- ifelse(dim_parts[1] == "REG", "Region",
+                         ifelse(dim_parts[1] %in% c("ACTS", "COMM"), "Sector", "Dim1"))
+      
+      col_type1 <- ifelse(dim_parts[2] == "REG", "Source",
+                          ifelse(dim_parts[2] %in% c("ACTS", "COMM"), "Sector", "Dim2"))
+      
+      col_type2 <- ifelse(length(dim_parts) > 2,
+                          ifelse(dim_parts[3] == "REG", "Destination",
+                                 ifelse(dim_parts[3] %in% c("ACTS", "COMM"), "Sector", "Dim3")),
+                          NA)
+      
+      # Convert row names to appropriate column
+      df <- df %>% rownames_to_column(var = row_type)
+      
+      # Step 3: Convert to Long Format (3D)
+      df <- df %>%
+        pivot_longer(cols = -!!sym(row_type), names_to = "Variable", values_to = "Value") %>%
+        separate(Variable, into = c(col_type1, col_type2, "Type"), sep = "\\.", extra = "merge", fill = "right") %>%
+        mutate(Type = ifelse(is.na(Type), "Total", Type),  # Replacing "Base" with "Total"
+               Variable = var_name,
+               Experiment = case)
+      
+      # Step 4: Ensure No Duplicate Column Names (Issue with Region)
+      col_order <- c("Experiment", row_type, col_type1, col_type2, "Type", "Variable", "Value")
+      col_order <- unique(col_order)  # Remove duplicates if any
+      
+      df <- df %>%
+        select(any_of(col_order)) %>%
+        mutate(across(all_of(col_order), as.character))
+      
+      # **Fix: Use Original Dimension Name for List Naming**
+      dim_list_name <- paste0(
+        toupper(substr(dim_parts[1], 1, 1)), tolower(substr(dim_parts[1], 2, nchar(dim_parts[1]))),
+        toupper(substr(dim_parts[2], 1, 1)), tolower(substr(dim_parts[2], 2, nchar(dim_parts[2]))),
+        ifelse(length(dim_parts) > 2,
+               paste0(toupper(substr(dim_parts[3], 1, 1)), tolower(substr(dim_parts[3], 2, nchar(dim_parts[3])))),
+               "")
+      )
+      
+      # Step 5: Separate `qxs` for BilateralTrade
+      if (var_name == "qxs") {
+        bilateral_trade[[dim_list_name]] <- df  
+      } else {
+        three_dfs[[dim_list_name]] <- df  
+      }
+      
+    }, error = function(e) {
+      error_vars <- c(error_vars, var_name)
+      warning(sprintf("Error processing %s with dimension %s: %s", var_name, dimension, e$message))
+    })
   }
   
-  # Combine data within each category
-  combined_results <- list(
-    CommRegReg = if (length(comm_reg_reg_data) > 0) 
-      bind_rows(comm_reg_reg_data) else NULL,
-    EndwActsReg = if (length(endw_acts_reg_data) > 0) 
-      bind_rows(endw_acts_reg_data) else NULL,
-    CommActsReg = if (length(comm_acts_reg_data) > 0) 
-      bind_rows(comm_acts_reg_data) else NULL,
-    EndwfActsReg = if (length(endwf_acts_reg_data) > 0) 
-      bind_rows(endwf_acts_reg_data) else NULL
-  )
+  return(list(
+    Errors = error_vars,
+    BilateralTrade = if (length(bilateral_trade) > 0) bilateral_trade else NULL,
+    ThreeD = if (length(three_dfs) > 0) three_dfs else NULL
+  ) %>% purrr::compact())
+}
+
+### Dynamic Dimensions ---------------
+execute.dynamic.dimens <- function(case, keyvar.list) {
+  # Combine all dimensions and filter only those > 3D
+  all_data <- do.call(rbind, keyvar.list[as.numeric(names(keyvar.list)) > 3])
   
-  # Filter out NULL elements
-  combined_results <- combined_results[!sapply(combined_results, is.null)]
+  if (nrow(all_data) == 0) return(NULL)
+  if (!all(c("Ori.Var.Name", "Dimension") %in% names(all_data))) return(NULL)
   
-  return(combined_results)
+  unique_pairs <- unique(all_data[c("Ori.Var.Name", "Dimension")])
+  
+  processed_dfs <- list()
+  error_vars <- character()
+  
+  for (i in seq_len(nrow(unique_pairs))) {
+    var_name <- unique_pairs$Ori.Var.Name[i]
+    dimension <- unique_pairs$Dimension[i]
+    dim_size <- length(strsplit(dimension, "\\*")[[1]])
+    
+    tryCatch({
+      # Read data
+      case.file <- paste0(input.folder, "/", case, ".sl4")
+      case.dta <- HARr::read_SL4(case.file, toLowerCase = FALSE)
+      df <- as.data.frame(case.dta[[var_name]])
+      
+      # Extract dimension parts
+      dim_parts <- strsplit(dimension, "\\*")[[1]]
+      
+      # Step 1: Handle row names based on first dimension
+      first_dim <- dim_parts[1]
+      row_col_name <- case_when(
+        first_dim == "COMM" ~ "Sector",
+        first_dim == "ACTS" ~ "Activity",
+        first_dim == "REG" ~ if(sum(dim_parts == "REG") > 1) "Source" else "Region",
+        !first_dim %in% c("COMM", "ACTS", "REG") ~ paste0("Dim", 1),
+        TRUE ~ first_dim
+      )
+      
+      # Step 2: Convert row names and reshape
+      df_long <- df %>%
+        rownames_to_column(var = row_col_name) %>%
+        pivot_longer(
+          cols = -1,
+          names_to = "col_name",
+          values_to = "Value"
+        )
+      
+      # Step 3: Generate column names for remaining dimensions
+      remaining_dims <- dim_parts[-1]
+      current_dim_number <- 1
+      
+      col_names <- map_chr(seq_along(remaining_dims), function(i) {
+        dim_name <- remaining_dims[i]
+        if (dim_name == "COMM") {
+          "Sector"
+        } else if (dim_name == "ACTS") {
+          "Activity"
+        } else if (dim_name == "REG") {
+          if (sum(remaining_dims == "REG") > 1) {
+            if (which(remaining_dims == "REG")[1] == i) "Source" else "Destination"
+          } else {
+            "Region"
+          }
+        } else {
+          if (!first_dim %in% c("COMM", "ACTS", "REG") && i == 1) {
+            current_dim_number <<- 2
+          }
+          paste0("Dim", current_dim_number + i - 1)
+        }
+      })
+      
+      # Add Type to column names
+      col_names <- c(col_names, "Type")
+      
+      # Split column names and assign proper names
+      df_long <- df_long %>%
+        separate(
+          col_name,
+          into = col_names,
+          sep = "\\.",
+          extra = "merge",
+          fill = "right"
+        ) %>%
+        mutate(
+          Type = ifelse(is.na(Type), "TOTAL", Type),
+          Variable = var_name,
+          Experiment = case,
+          Dimension = dimension,
+          DimSize = dim_size
+        )
+      
+      # Store with dimension size prefix and original dimension name as key
+      dim_list_name <- paste0(dim_size, "D_", paste(dim_parts, collapse = ""))
+      processed_dfs[[dim_list_name]] <- df_long
+      
+    }, error = function(e) {
+      error_vars <- c(error_vars, var_name)
+      warning(sprintf("Error processing %s with dimension %s: %s", 
+                      var_name, dimension, e$message))
+    })
+  }
+  
+  # Return results
+  result_list <- list(
+    Data = if (length(processed_dfs) > 0) processed_dfs else NULL,
+    Errors = error_vars
+  ) %>% purrr::compact()
+  
+  return(result_list)
 }
 
 ## Decomposition functions --------------------------------------
@@ -597,6 +596,14 @@ ev.decomp.dat <- function(case, variables) {
   
   # Process all variables at once
   result <- lapply(variables, function(var) {
+    
+    # Define mapping for variable names
+    ev.var.original.name <- c("alloc_A1", "ENDWB1", "tech_C1", "pop_D1", 
+                              "tot_E1", "IS_F1", "pref_G1")  # Don't change
+    ev.var.new.name <- c("AllocEff", "Endwb", "TechChg", "Pop", 
+                         "ToT", "I_S", "Pref") # New name
+    ev_name_mapping <- setNames(ev.var.new.name, ev.var.original.name)  
+    
     df <- as.data.frame(case.dta[[var]])
     colnames(df) <- ev_name_mapping[colnames(df)]
     return(df)
@@ -638,158 +645,184 @@ tot.decom.dat <- function(case, variables) {
 }
 
 
-
 # ============================= MAIN EXECUTION ================================= 
 
 ## Process One Dimension -------------------------------------
 if (!is.null(keyvar.list[["1"]])) {
-  one.dim.result <- lapply(case.name, function(case) {
-    execute.one.dimens(case, keyvar.list)
-  })
-  names(one.dim.result) <- case.name
-  one.dim.result <- one.dim.result[!sapply(one.dim.result, function(x) is.null(x) || 
-                                             (is.data.frame(x) && nrow(x) == 0))]
+  # Step 1: Process 1D data across all cases
+  one.dim.result <- setNames(
+    lapply(case.name, function(case) execute.one.dimens(case, keyvar.list)), 
+    case.name
+  ) %>%
+    Filter(function(x) !is.null(x) && any(sapply(x, nrow) > 0), .)
   
-  # Get the mapping data
-  one.dim.mapping <- keyvar.list[["1"]] %>%
-    select(Ori.Var.Name, New.Var.Name, Description, Unit)
+  # Step 2: Load variable metadata (New Names, Descriptions, Units)
+  one.dim.mapping <- keyvar.list[["1"]] %>% select(Ori.Var.Name, New.Var.Name, Description, Unit)
   
-  # Initialize list for combining data
-  one.dimens.list <- list()
-  
-  # Process ByRegion data
-  if (any(sapply(one.dim.result, function(x) "Region" %in% names(x)))) {
-    one.dimens.list$ByRegion <- bind_rows(lapply(one.dim.result, 
-                                                 function(x) x$Region)) %>%
-      left_join(one.dim.mapping, 
-                by = c("Variable" = "Ori.Var.Name"),
-                relationship = "many-to-many") %>%
-      rename(GTAPVar = Variable, 
-             Variable = New.Var.Name) %>%
-      select(Experiment, Region, Variable, GTAPVar, Description, Unit, Value)
+  # Step 3: Function to Process and Structure Data
+  process_dimension <- function(dim_type, id_col) {
+    if (any(sapply(one.dim.result, function(x) dim_type %in% names(x)))) {
+      bind_rows(lapply(one.dim.result, `[[`, dim_type)) %>%
+        left_join(one.dim.mapping, by = c("Variable" = "Ori.Var.Name")) %>%
+        rename(GTAPVar = Variable, Variable = New.Var.Name) %>%
+        select(Experiment, matches(id_col), Variable, GTAPVar, Description, Unit, Value, everything())
+    } else {
+      NULL
+    }
   }
   
-  # Process BySector data
-  if (any(sapply(one.dim.result, function(x) "Sector" %in% names(x)))) {
-    one.dimens.list$BySector <- bind_rows(lapply(one.dim.result, 
-                                                 function(x) x$Sector)) %>%
-      left_join(one.dim.mapping, 
-                by = c("Variable" = "Ori.Var.Name"),
-                relationship = "many-to-many") %>%
-      rename(GTAPVar = Variable, 
-             Variable = New.Var.Name) %>%
-      select(Experiment, Sector, Variable, GTAPVar, Description, Unit, Value)
-  }
+  # Step 4: Store Processed Data in Categorized Lists
+  one.dimens.list <- list(
+    ByRegion = process_dimension("ByRegion", "Region"),
+    BySector = process_dimension("BySector", "Sector"),
+    ByOther = process_dimension("ByOther", "Dim1")
+  ) %>% purrr::compact()  # Remove NULL elements
   
-  # Process ByOther data
-  if (any(sapply(one.dim.result, function(x) "Other" %in% names(x)))) {
-    one.dimens.list$ByOther <- bind_rows(lapply(one.dim.result, function(x) x$Other)) %>%
-      left_join(one.dim.mapping, 
-                by = c("Variable" = "Ori.Var.Name"),
-                relationship = "many-to-many") %>%
-      rename(GTAPVar = Variable, 
-             Variable = New.Var.Name) %>%
-      select(Experiment, Other, Variable, GTAPVar, Description, Unit, Value)
-  }
-  
-  rm(list = c("one.dim.result", "one.dim.mapping"))
+  rm(one.dim.result, one.dim.mapping)  # Cleanup memory
 } else {
   message("There is no 1-dimensional data")
 }
 
 ## Process Two Dimensions -------------------------------------
 if (!is.null(keyvar.list[["2"]])) {
-  two.dim.result <- lapply(case.name, function(case) {
-    execute.two.dimens(case, keyvar.list)
-  })
-  names(two.dim.result) <- case.name
+  two.dim.result <- setNames(
+    lapply(case.name, function(case) execute.two.dimens(case, keyvar.list)), 
+    case.name
+  ) %>%
+    Filter(function(x) !is.null(x) && any(sapply(x, nrow) > 0), .)
   
-  two.dimens.list <- list()
-  
-  # Process BySector data
-  if (any(sapply(two.dim.result, function(x) "BySector" %in% names(x)))) {
-    two.dimens.list$BySector <- bind_rows(lapply(two.dim.result, 
-                                                 function(x) x$BySector), .id = "Experiment") %>%
-      pivot_wider(names_from = Sector, values_from = Value)
-  }
-  
-  # Add mapping information
-  two.dimens.mapping <- keyvar.list[["2"]] %>%
+  two.dim.mapping <- keyvar.list[["2"]] %>% 
     select(Ori.Var.Name, New.Var.Name, Description, Unit)
   
-  # Process all other data (non-BySector)
-  if (any(sapply(two.dim.result, function(x) "Other" %in% names(x)))) {
-    # Combine all other data
-    two.dimens.list$ByRegion <- bind_rows(lapply(two.dim.result, 
-                                                 function(x) x$Other), .id = "Experiment") %>%
-      left_join(two.dimens.mapping, by = c("Variable" = "Ori.Var.Name")) %>%
-      rename(GTAPVar = Variable, Variable = New.Var.Name) %>%
-      select(Experiment, Region, Variable, GTAPVar, Description, Type, Value, Unit) %>%
-      distinct() %>%
-      arrange(Experiment, Region, Variable, Type)
+  process_dimension <- function(dim_type, id_col) {
+    if (any(sapply(two.dim.result, function(x) dim_type %in% names(x)))) {
+      bind_rows(lapply(two.dim.result, `[[`, dim_type)) %>%
+        left_join(two.dim.mapping, 
+                  by = c("Variable" = "Ori.Var.Name"), 
+                  relationship = "many-to-many") %>%
+        rename(GTAPVar = Variable, Variable = New.Var.Name) %>%
+        select(Experiment, matches(id_col), Type, Variable, 
+               GTAPVar, Description, Unit, Value, everything())
+    } else {
+      NULL
+    }
   }
   
-  rm(list = c("two.dim.result", "two.dimens.mapping"))
+  two.dimens.list <- list(
+    BySector = process_dimension("BySector", "Sector"),
+    ByRegion = process_dimension("ByRegion", "Region"),
+    ByOther = process_dimension("ByOther", "Dim1")
+  ) %>% purrr::compact()
+  
+  rm(two.dim.result, two.dim.mapping)
 } else {
   message("There is no 2-dimensional data")
 }
 
 ## Process Three Dimensions -------------------------------------
 if (!is.null(keyvar.list[["3"]])) {
-  three.dim.result <- lapply(case.name, function(case) {
-    execute.three.dimens(case, keyvar.list)
-  })
-  names(three.dim.result) <- case.name
+  three.dim.result <- setNames(
+    lapply(case.name, function(case) execute.three.dimens(case, keyvar.list)), 
+    case.name
+  ) %>%
+    Filter(function(x) !is.null(x) && any(sapply(x, function(y) length(y) > 0)), .)
   
-  # Initialize the three-dimensional list
-  three.dimens.list <- list()
-  
-  # For CommRegReg data
-  if (any(sapply(three.dim.result, function(x) "CommRegReg" %in% names(x)))) {
-    three.dimens.list$CommRegReg <- bind_rows(lapply(three.dim.result, function(x) x$CommRegReg), 
-                                              .id = "Experiment")
-  }
-  
-  # For EndwActsReg data
-  if (any(sapply(three.dim.result, function(x) "EndwActsReg" %in% names(x)))) {
-    three.dimens.list$EndwActsReg <- bind_rows(lapply(three.dim.result, function(x) x$EndwActsReg), 
-                                               .id = "Experiment")
-  }
-  
-  # For CommActsReg data
-  if (any(sapply(three.dim.result, function(x) "CommActsReg" %in% names(x)))) {
-    three.dimens.list$CommActsReg <- bind_rows(lapply(three.dim.result, function(x) x$CommActsReg), 
-                                               .id = "Experiment")
-  }
-  
-  # For EndwfActsReg data
-  if (any(sapply(three.dim.result, function(x) "EndwfActsReg" %in% names(x)))) {
-    three.dimens.list$EndwfActsReg <- bind_rows(lapply(three.dim.result, function(x) x$EndwfActsReg), 
-                                                .id = "Experiment")
-  }
-  
-  # Filter out NULL or empty datasets
-  three.dimens.list <- three.dimens.list[!sapply(three.dimens.list, function(x) is.null(x) ||
-                                                   (is.data.frame(x) && nrow(x) == 0))]
-  
-  # Adding Description, Unit, and renaming variables
-  three.dimens.mapping <- keyvar.list[["3"]] %>%
+  three.dim.mapping <- keyvar.list[["3"]] %>%
     select(Ori.Var.Name, New.Var.Name, Description, Unit)
   
-  # Map descriptions and units to each dataset in the list
-  three.dimens.list <- lapply(three.dimens.list, function(df) {
-    df %>%
-      left_join(three.dimens.mapping, 
-                by = c("Variable" = "Ori.Var.Name"),
-                relationship = "many-to-many") %>%
-      rename(GTAPVar = Variable, 
-             Variable = New.Var.Name) %>%
-      select(Experiment, Variable, GTAPVar, Description, Unit, everything())
-  })
+  process_dimension <- function(dim_list, id_cols) {
+    if (length(dim_list) > 0) {
+      bind_rows(dim_list) %>%
+        left_join(three.dim.mapping, by = c("Variable" = "Ori.Var.Name"), relationship = "many-to-many") %>%
+        rename(GTAPVar = Variable, Variable = New.Var.Name) %>%
+        select(Experiment, matches(id_cols), Type, Variable, GTAPVar, Description, Unit, Value, everything())
+    } else {
+      NULL
+    }
+  }
   
-  rm(list = c("three.dim.result", "three.dimens.mapping"))
+  three.dimens.list <- list()
+  
+  # Process ThreeD Data
+  if (!is.null(three.dim.result)) {
+    for (case in names(three.dim.result)) {
+      for (dim_name in names(three.dim.result[[case]]$ThreeD)) {
+        three.dimens.list[[dim_name]] <- process_dimension(three.dim.result[[case]]$ThreeD[[dim_name]], 
+                                                           c("Sector", "Source", "Destination", "Type"))
+      }
+    }
+  }
+  
+  # Process BilateralTrade Data Separately
+  if (!is.null(three.dim.result)) {
+    for (case in names(three.dim.result)) {
+      for (dim_name in names(three.dim.result[[case]]$BilateralTrade)) {
+        three.dimens.list[[paste0("BilateralTrade")]] <- process_dimension(three.dim.result[[case]]$BilateralTrade[[dim_name]], 
+                                                                                c("Sector", "Source", "Destination", "Type"))
+      }
+    }
+  }
+  
+  three.dimens.list <- purrr::compact(three.dimens.list)
+  
+  rm(three.dim.result, three.dim.mapping)
 } else {
   message("There is no 3-dimensional data")
+}
+
+## Process Dynamic Dimensions -------------------------------------
+# Only process if dimensions > 3 exist
+if (!is.null(keyvar.list) && any(as.numeric(names(keyvar.list)) > 3)) {
+  
+  dynamic.dim.result <- setNames(
+    lapply(case.name, function(case) execute.dynamic.dimens(case, keyvar.list)), 
+    case.name
+  ) %>%
+    Filter(function(x) !is.null(x) && any(sapply(x$Data, nrow) > 0), .)
+  
+  # Apply mapping
+  dynamic.dim.mapping <- do.call(rbind, keyvar.list) %>%
+    select(Ori.Var.Name, New.Var.Name, Description, Unit)
+  
+  process_dimension <- function(dim_data) {
+    if (!is.null(dim_data)) {
+      bind_rows(dim_data) %>%
+        left_join(dynamic.dim.mapping, 
+                  by = c("Variable" = "Ori.Var.Name"), 
+                  relationship = "many-to-many") %>%
+        rename(GTAPVar = Variable, Variable = New.Var.Name) %>%
+        select(Experiment, Dimension, DimSize, everything())
+    } else {
+      NULL
+    }
+  }
+  
+  # Process and merge across all cases
+  dynamic.dimens.list <- list()
+  
+  if (!is.null(dynamic.dim.result)) {
+    # Get all unique dimension names across all cases
+    all_dim_names <- unique(unlist(lapply(dynamic.dim.result, function(x) names(x$Data))))
+    
+    # For each unique dimension type
+    for (dim_name in all_dim_names) {
+      # Collect and merge data from all cases
+      all_case_data <- lapply(dynamic.dim.result, function(x) {
+        if (!is.null(x$Data[[dim_name]])) x$Data[[dim_name]] else NULL
+      })
+      
+      # Process merged data
+      dynamic.dimens.list[[dim_name]] <- process_dimension(
+        bind_rows(all_case_data)
+      )
+    }
+  }
+  
+  dynamic.dimens.list <- purrr::compact(dynamic.dimens.list)
+  
+  rm(dynamic.dim.result, dynamic.dim.mapping)
+} else {
+  message("There is no data with dimensions > 3")
 }
 
 
@@ -857,334 +890,151 @@ if(length(tot.var) > 0) {
 }
 
 
-
 # ================================ EXPORT OUTPUT =============================== 
 
-## README File ------------------------------------
+## Create Output Report (README) ------------------------------------
 get_output_location <- function(var_name, dimension, dimsize) {
-  # Base prefix based on dimension size
   prefix <- paste0(dimsize, "D")
   
   if (var_name == "qxs" && dimsize == 3) {
     return(paste0(prefix, "_BilateralTrade"))
   }
   
-  # For other cases, construct based on dimension type
-  suffix <- if (str_detect(dimension, "REG")) {
-    "ByRegion"
-  } else if (str_detect(dimension, "ACTS|COMM")) {
-    "BySector"
-  } else {
-    "ByOther"
-  }
+  suffix <- case_when(
+    str_detect(dimension, "REG") ~ "ByRegion",
+    str_detect(dimension, "ACTS|COMM") ~ "BySector",
+    TRUE ~ "ByOther"
+  )
   
   paste0(prefix, "_", suffix)
 }
 
-## Create Output Folders ------------------------------------
-output.report <- if(nrow(keysolmap) > 0 && "DimSize" %in% names(keysolmap)) {
-  # Process main variables
-  main_report <- keysolmap %>%
+output.report <- if (nrow(keysolmap) > 0 && "DimSize" %in% names(keysolmap)) {
+  result <- keysolmap %>%
     rowwise() %>%
-    mutate(
-      OutputFile = get_output_location(Ori.Var.Name, Dimension, DimSize)
-    ) %>%
-    select(
-      Variable = Ori.Var.Name,
-      OutputFile
-    )
+    mutate(OutputFile = get_output_location(Ori.Var.Name, Dimension, DimSize)) %>%
+    select(Variable = Ori.Var.Name, OutputFile)
   
-  # Start with main report
-  result <- main_report
+  decomposition_entries <- list()
   
-  # Add decompositions if they exist
-  if(length(ev.var) > 0) {
-    result <- bind_rows(
-      result,
-      tibble(
-        Variable = "Welfare Decomposition",
-        OutputFile = "All_EVDecomp"
-      )
-    )
+  if (length(ev.var) > 0) {
+    decomposition_entries <- append(decomposition_entries, tibble(Variable = "Welfare Decomposition", OutputFile = "All_EVDecomp"))
+  }
+  if (length(tot.var) > 0) {
+    decomposition_entries <- append(decomposition_entries, tibble(Variable = "Terms of Trade Decomposition", OutputFile = "All_ToTDecomp"))
   }
   
-  if(length(tot.var) > 0) {
-    result <- bind_rows(
-      result,
-      tibble(
-        Variable = "Terms of Trade Decomposition",
-        OutputFile = "All_ToTDecomp"
-      )
-    )
-  }
-  
-  result
-  
+  bind_rows(result, decomposition_entries)
 } else {
-  # If no keysolmap data, just check for decompositions
-  decomp_report <- tibble(
-    Variable = character(),
-    OutputFile = character()
+  tibble(
+    Variable = c(if (length(ev.var) > 0) "Welfare Decomposition", 
+                 if (length(tot.var) > 0) "Terms of Trade Decomposition"),
+    OutputFile = c(if (length(ev.var) > 0) "EVDecomp", 
+                   if (length(tot.var) > 0) "ToTDecomp")
   )
-  
-  if(length(ev.var) > 0) {
-    decomp_report <- bind_rows(
-      decomp_report,
-      tibble(
-        Variable = "Welfare Decomposition",
-        OutputFile = "EVDecomp"
-      )
-    )
-  }
-  
-  if(length(tot.var) > 0) {
-    decomp_report <- bind_rows(
-      decomp_report,
-      tibble(
-        Variable = "Terms of Trade Decomposition",
-        OutputFile = "ToTDecomp"
-      )
-    )
-  }
-  
-  decomp_report
 }
 
-## Export Functions and Displaying Results ------------------------------------
-# Validate output format settings first
+## Generate and Copy README Report ------------------------------------
+copy_readme_report <- function() {
+  wb <- createWorkbook()
+  addWorksheet(wb, "output.report")
+  writeData(wb, "output.report", output.report)
+  saveWorkbook(wb, file.path(output.folder, "0.README.xlsx"), overwrite = TRUE)
+}
+
+## Export Functions ------------------------------------
 is_yes <- function(value) {
   tolower(trimws(value)) == "yes"
 }
 
-is_no <- function(value) {
-  tolower(trimws(value)) == "no"
-}
-
-# Function to validate input is either yes or no (case insensitive)
-is_valid_input <- function(value) {
-  clean_value <- tolower(trimws(value))
-  clean_value %in% c("yes", "no")
-}
-
-# Check for invalid values (anything that's not a variation of yes/no)
-invalid_values <- character()
-
-if (!is_valid_input(csv.output)) invalid_values <- c(invalid_values, "csv.output")
-if (!is_valid_input(stata.output)) invalid_values <- c(invalid_values, "stata.output")
-if (!is_valid_input(r.output)) invalid_values <- c(invalid_values, "r.output")
-if (!is_valid_input(txt.output)) invalid_values <- c(invalid_values, "txt.output")
-
-if (length(invalid_values) > 0) {
-  stop(sprintf("
-Please specify either 'yes' or 'no' (case insensitive) under 'Directory' section for: %s", 
-               paste(invalid_values, collapse = ", ")))
-}
-
-# Function to safely check if object exists
-safe_exists <- function(x) {
-  exists(deparse(substitute(x)))
-}
-
-# Function to create directory if it doesn't exist
 create_dir_if_missing <- function(dir_path) {
   if (!dir.exists(dir_path)) {
     dir.create(dir_path, recursive = TRUE)
   }
 }
 
-# Only create directories for enabled output types
-if (is_yes(csv.output)) {
-  csv_output_dir <- file.path(output.folder, "CSV")
-  create_dir_if_missing(csv_output_dir)
-}
-if (is_yes(stata.output)) {
-  stata_output_dir <- file.path(output.folder, "STATA")
-  create_dir_if_missing(stata_output_dir)
-}
-if (is_yes(r.output)) {
-  r_output_dir <- file.path(output.folder, "R")
-  create_dir_if_missing(r_output_dir)
-}
-if (is_yes(txt.output)) {
-  txt_output_dir <- file.path(output.folder, "TXT")
-  create_dir_if_missing(txt_output_dir)
-}
+## Create Output Directories ------------------------------------
+output_dirs <- list(
+  CSV = if (is_yes(csv.output)) file.path(output.folder, "CSV"),
+  STATA = if (is_yes(stata.output)) file.path(output.folder, "STATA"),
+  R = if (is_yes(r.output)) file.path(output.folder, "R"),
+  TXT = if (is_yes(txt.output)) file.path(output.folder, "TXT")
+)
 
-# Function to process CommRegReg data with qxs separation
-process_comm_reg_reg <- function(data) {
-  if ("Variable" %in% names(data)) {
-    bilateral_trade <- data[data$Variable == "qxs", ]
-    other_data <- data[data$Variable != "qxs", ]
-    
-    return(list(
-      main = if(nrow(other_data) > 0) other_data else NULL,
-      bilateral = if(nrow(bilateral_trade) > 0) bilateral_trade else NULL
-    ))
-  }
-  return(list(main = data, bilateral = NULL))
-}
+invisible(lapply(output_dirs, create_dir_if_missing))
 
-# Function to create and copy README report
-copy_readme_report <- function() {
-  # 1. Create workbook with output.report data
-  wb <- createWorkbook()
-  addWorksheet(wb, "output.report")
-  writeData(wb, "output.report", output.report)
-  
-  # 2. Save to output.folder
-  saveWorkbook(wb, file.path(output.folder, "0.README.xlsx"), overwrite = TRUE)
-}
-
-# Function to safely export data based on enabled output types
+## Data Export Function ------------------------------------
 safe_export_data <- function(data, base_filename) {
-  # CSV export
-  if (is_yes(csv.output)) {
-    tryCatch({
-      write.csv(data, 
-                file.path(csv_output_dir, paste0(base_filename, ".csv")), 
-                row.names = FALSE)
-      message(sprintf("Successfully exported %s to CSV", base_filename))
-    }, error = function(e) {
-      message(sprintf("Error exporting %s to CSV: %s", base_filename, e$message))
-    })
-  }
-  
-  # STATA export
-  if (is_yes(stata.output)) {
-    tryCatch({
-      write_dta(as.data.frame(data), 
-                file.path(stata_output_dir, paste0(base_filename, ".dta")))
-      message(sprintf("Successfully exported %s to STATA", base_filename))
-    }, error = function(e) {
-      message(sprintf("Error exporting %s to STATA: %s", base_filename, e$message))
-    })
-  }
-  
-  # R export
-  if (is_yes(r.output)) {
-    tryCatch({
-      data_to_save <- data
-      save(data_to_save, 
-           file = file.path(r_output_dir, paste0(base_filename, ".RData")))
-      message(sprintf("Successfully exported %s to RData", base_filename))
-    }, error = function(e) {
-      message(sprintf("Error exporting %s to RData: %s", base_filename, e$message))
-    })
-  }
-  
-  # TXT export
-  if (is_yes(txt.output)) {
-    tryCatch({
-      # Convert to basic data.frame first
-      data_df <- as.data.frame(data, stringsAsFactors = FALSE)
-      
-      # Write using write.table with proper formatting
-      write.table(data_df, 
-                  file = file.path(txt_output_dir, paste0(base_filename, ".txt")),
-                  sep = "\t",  # Tab separated
-                  row.names = FALSE, 
-                  quote = FALSE,
-                  na = "")
-      
-      message(sprintf("Successfully exported %s to TXT", base_filename))
-    }, error = function(e) {
-      message(sprintf("Error exporting %s to TXT: %s", base_filename, e$message))
-    })
-  }
+  tryCatch({
+    if (is_yes(csv.output)) write.csv(data, file.path(output_dirs$CSV, paste0(base_filename, ".csv")), row.names = FALSE)
+    if (is_yes(stata.output)) write_dta(as.data.frame(data), file.path(output_dirs$STATA, paste0(base_filename, ".dta")))
+    if (is_yes(r.output)) save(data, file = file.path(output_dirs$R, paste0(base_filename, ".RData")))
+    if (is_yes(txt.output)) write.table(data, file.path(output_dirs$TXT, paste0(base_filename, ".txt")), sep = "\t", row.names = FALSE, quote = FALSE, na = "")
+    message(sprintf("Successfully exported: %s", base_filename))
+  }, error = function(e) {
+    message(sprintf("Error exporting %s: %s", base_filename, e$message))
+  })
 }
 
-# Function to safely process dimensional lists with special handling
+## Process and Export Dimensional Lists ------------------------------------
 safe_process_dim_list <- function(list_name, prefix) {
   tryCatch({
     if (exists(list_name, envir = .GlobalEnv)) {
       dim_list <- get(list_name, envir = .GlobalEnv)
       if (is.list(dim_list) && length(dim_list) > 0) {
         for (name in names(dim_list)) {
-          base_filename <- paste0(prefix, "_", name)
-          data <- dim_list[[name]]
-          
-          # Special handling for CommRegReg
-          if (name == "CommRegReg") {
-            processed_data <- process_comm_reg_reg(data)
-            
-            # Export main CommRegReg data if it exists
-            if (!is.null(processed_data$main)) {
-              safe_export_data(processed_data$main, base_filename)
-            }
-            
-            # Export bilateral trade data if it exists
-            if (!is.null(processed_data$bilateral)) {
-              bilateral_filename <- paste0(prefix, "_BilateralTrade")
-              safe_export_data(processed_data$bilateral, bilateral_filename)
-            }
-          } else {
-            # Normal export for other cases
-            safe_export_data(data, base_filename)
-          }
-          
-          message(sprintf("Completed processing %s - %s", list_name, name))
+          safe_export_data(dim_list[[name]], paste0(prefix, "_", name))
         }
       }
     }
   }, error = function(e) {
-    message(sprintf("Note: Error processing %s: %s", list_name, e$message))
+    message(sprintf("Error processing %s: %s", list_name, e$message))
   })
 }
 
-# Function to export decomposition sheets if they exist
+## Export Decomposition Sheets ------------------------------------
 safe_export_decomposition <- function() {
-  # Handle EV decomposition
-  if(length(ev.var) > 0 && exists("All_EVDecomp.sheet")) {
+  if (length(ev.var) > 0 && exists("All_EVDecomp.sheet")) {
     safe_export_data(All_EVDecomp.sheet, "EVDecomp")
   }
-  
-  # Handle ToT decomposition
-  if(length(tot.var) > 0 && exists("All_ToTDecomp.sheet")) {
+  if (length(tot.var) > 0 && exists("All_ToTDecomp.sheet")) {
     safe_export_data(All_ToTDecomp.sheet, "ToTDecomp")
   }
 }
 
-# Check if any output type is enabled before proceeding
+## Check Enabled Output Types and Execute ------------------------------------
 if (!any(sapply(c(csv.output, stata.output, r.output, txt.output), is_yes))) {
-  stop("No output types are enabled. Set at least one output type to 'yes' to 
-       export data.")
+  stop("No output types are enabled. Set at least one output type to 'yes' to export data.")
 } else {
-  # Process dimensional lists
+  # Define Dimensional Lists
   dim_lists <- list(
     "one.dimens.list" = "1D",
     "two.dimens.list" = "2D",
     "three.dimens.list" = "3D"
   )
   
-  # First create and copy README report to all enabled folders
+  # Add dynamic dimensions list if it exists
+  if (exists("dynamic.dimens.list") && length(dynamic.dimens.list) > 0) {
+    for (dim_name in names(dynamic.dimens.list)) {
+      dim_lists[[paste0("dynamic.dimens.list[['", dim_name, "']]")]] <- dim_name
+    }
+  }
+  
+  # Generate README
   copy_readme_report()
   
-  # Then process all dimensional lists
-  for (list_name in names(dim_lists)) {
+  # Process & Export All Detected Dimensions
+  lapply(names(dim_lists), function(list_name) {
     safe_process_dim_list(list_name, dim_lists[[list_name]])
-  }
+  })
   
-  # Export decomposition sheets if they exist
+  # Export Decomposition Sheets
   safe_export_decomposition()
   
-  # Print summary of enabled output types
+  # Print Export Summary
   message("\n=== Export Summary ===")
-  
-  if (is_yes(csv.output)) {
-    message("✓ CSV files saved successfully in: ", csv_output_dir)
-  }
-  if (is_yes(stata.output)) {
-    message("✓ STATA files saved successfully in: ", stata_output_dir)
-  }
-  if (is_yes(r.output)) {
-    message("✓ R files saved successfully in: ", r_output_dir)
-  }
-  if (is_yes(txt.output)) {  
-    message("✓ TXT files saved successfully in: ", txt_output_dir)
-  }
-  
-  message("==================")  
+  lapply(names(output_dirs), function(type) {
+    if (!is.null(output_dirs[[type]])) message(sprintf("✓ %s files saved successfully in: %s", type, output_dirs[[type]]))
+  })
+  message("==================")
 }
-
-
-

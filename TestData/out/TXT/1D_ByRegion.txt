@@ -1,0 +1,1366 @@
+Experiment	Region	Variable	GTAPVar	Description	Unit	Value	Type
+ExB14	SSA	afereg	afereg	afereg	afereg	0	TOTAL
+ExB14	EU	afereg	afereg	afereg	afereg	0	TOTAL
+ExB14	ROW	afereg	afereg	afereg	afereg	0	TOTAL
+ExB14	SSA	afreg	afreg	afreg	afreg	0	TOTAL
+ExB14	EU	afreg	afreg	afreg	afreg	0	TOTAL
+ExB14	ROW	afreg	afreg	afreg	afreg	0	TOTAL
+ExB14	SSA	aintreg	aintreg	aintreg	aintreg	0	TOTAL
+ExB14	EU	aintreg	aintreg	aintreg	aintreg	0	TOTAL
+ExB14	ROW	aintreg	aintreg	aintreg	aintreg	0	TOTAL
+ExB14	SSA	aoreg	aoreg	aoreg	aoreg	0	TOTAL
+ExB14	EU	aoreg	aoreg	aoreg	aoreg	0	TOTAL
+ExB14	ROW	aoreg	aoreg	aoreg	aoreg	0	TOTAL
+ExB14	SSA	atd	atd	atd	atd	0	TOTAL
+ExB14	EU	atd	atd	atd	atd	0	TOTAL
+ExB14	ROW	atd	atd	atd	atd	0	TOTAL
+ExB14	SSA	ats	ats	ats	ats	0	TOTAL
+ExB14	EU	ats	ats	ats	ats	0	TOTAL
+ExB14	ROW	ats	ats	ats	ats	0	TOTAL
+ExB14	SSA	au	au	au	au	0	TOTAL
+ExB14	EU	au	au	au	au	0	TOTAL
+ExB14	ROW	au	au	au	au	0	TOTAL
+ExB14	SSA	avareg	avareg	avareg	avareg	0	TOTAL
+ExB14	EU	avareg	avareg	avareg	avareg	0	TOTAL
+ExB14	ROW	avareg	avareg	avareg	avareg	0	TOTAL
+ExB14	SSA	c1_r	c1_r	c1_r	c1_r	0.247834861278534	TOTAL
+ExB14	EU	c1_r	c1_r	c1_r	c1_r	-0.0358430184423923	TOTAL
+ExB14	ROW	c1_r	c1_r	c1_r	c1_r	0.0177308917045593	TOTAL
+ExB14	SSA	c2_r	c2_r	c2_r	c2_r	0.987665832042694	TOTAL
+ExB14	EU	c2_r	c2_r	c2_r	c2_r	-0.44827201962471	TOTAL
+ExB14	ROW	c2_r	c2_r	c2_r	c2_r	0.291354477405548	TOTAL
+ExB14	SSA	c3_r	c3_r	c3_r	c3_r	0.562736451625824	TOTAL
+ExB14	EU	c3_r	c3_r	c3_r	c3_r	-0.401976108551025	TOTAL
+ExB14	ROW	c3_r	c3_r	c3_r	c3_r	0.257758885622025	TOTAL
+ExB14	SSA	cgdslack	cgdslack	cgdslack	cgdslack	0	TOTAL
+ExB14	EU	cgdslack	cgdslack	cgdslack	cgdslack	0	TOTAL
+ExB14	ROW	cgdslack	cgdslack	cgdslack	cgdslack	0	TOTAL
+ExB14	SSA	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	TOTAL
+ExB14	EU	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	TOTAL
+ExB14	ROW	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	TOTAL
+ExB14	SSA	CNTendwr	CNTendwr	CNTendwr	CNTendwr	3.97962867282331e-05	TOTAL
+ExB14	EU	CNTendwr	CNTendwr	CNTendwr	CNTendwr	0.00123059959150851	TOTAL
+ExB14	ROW	CNTendwr	CNTendwr	CNTendwr	CNTendwr	0.000145026948302984	TOTAL
+ExB14	SSA	CNTkb	CNTkb	CNTkb	CNTkb	0	TOTAL
+ExB14	EU	CNTkb	CNTkb	CNTkb	CNTkb	0	TOTAL
+ExB14	ROW	CNTkb	CNTkb	CNTkb	CNTkb	0	TOTAL
+ExB14	SSA	CNTpinv	CNTpinv	CNTpinv	CNTpinv	34.8875541687012	TOTAL
+ExB14	EU	CNTpinv	CNTpinv	CNTpinv	CNTpinv	311.408203125	TOTAL
+ExB14	ROW	CNTpinv	CNTpinv	CNTpinv	CNTpinv	-344.759490966797	TOTAL
+ExB14	SSA	CNTpop	CNTpop	CNTpop	CNTpop	0	TOTAL
+ExB14	EU	CNTpop	CNTpop	CNTpop	CNTpop	0	TOTAL
+ExB14	ROW	CNTpop	CNTpop	CNTpop	CNTpop	0	TOTAL
+ExB14	SSA	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	TOTAL
+ExB14	EU	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	TOTAL
+ExB14	ROW	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	TOTAL
+ExB14	SSA	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	65.5063629150391	TOTAL
+ExB14	EU	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	1787.63720703125	TOTAL
+ExB14	ROW	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	-1796.14562988281	TOTAL
+ExB14	SSA	CNTqor	CNTqor	CNTqor	CNTqor	-154.855880737305	TOTAL
+ExB14	EU	CNTqor	CNTqor	CNTqor	CNTqor	2623.00048828125	TOTAL
+ExB14	ROW	CNTqor	CNTqor	CNTqor	CNTqor	-37.3079948425293	TOTAL
+ExB14	SSA	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	98.1474838256836	TOTAL
+ExB14	EU	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	3423.16748046875	TOTAL
+ExB14	ROW	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	-1568.31042480469	TOTAL
+ExB14	SSA	CNTtotr	CNTtotr	CNTtotr	CNTtotr	521.233093261719	TOTAL
+ExB14	EU	CNTtotr	CNTtotr	CNTtotr	CNTtotr	-2201.04174804688	TOTAL
+ExB14	ROW	CNTtotr	CNTtotr	CNTtotr	CNTtotr	1657.68347167969	TOTAL
+ExB14	SSA	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-0.000804155948571861	TOTAL
+ExB14	EU	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	0.00224015163257718	TOTAL
+ExB14	ROW	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-0.00015396493836306	TOTAL
+ExB14	SSA	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	0.000317604455631226	TOTAL
+ExB14	EU	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	0.00164733652491122	TOTAL
+ExB14	ROW	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	-9.23879124457017e-05	TOTAL
+ExB14	SSA	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	TOTAL
+ExB14	EU	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	TOTAL
+ExB14	ROW	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	TOTAL
+ExB14	SSA	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	1.24015400615463e-07	TOTAL
+ExB14	EU	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	1.59866289095589e-07	TOTAL
+ExB14	ROW	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	-2.64410942918403e-07	TOTAL
+ExB14	SSA	del_taxric	del_taxric	del_taxric	del_taxric	-6.01993742748164e-05	TOTAL
+ExB14	EU	del_taxric	del_taxric	del_taxric	del_taxric	-8.55654832321306e-07	TOTAL
+ExB14	ROW	del_taxric	del_taxric	del_taxric	del_taxric	-3.14252952193783e-06	TOTAL
+ExB14	SSA	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-1.84709333552746e-05	TOTAL
+ExB14	EU	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-0.00154956162441522	TOTAL
+ExB14	ROW	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-2.46808267547749e-05	TOTAL
+ExB14	SSA	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-9.73718328189932e-10	TOTAL
+ExB14	EU	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	1.30446417556662e-10	TOTAL
+ExB14	ROW	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-1.84889992205228e-10	TOTAL
+ExB14	SSA	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-0.000303534849081188	TOTAL
+ExB14	EU	del_taxriu	del_taxriu	del_taxriu	del_taxriu	6.71266479912447e-06	TOTAL
+ExB14	ROW	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-2.08570272661746e-05	TOTAL
+ExB14	SSA	del_taxrout	del_taxrout	del_taxrout	del_taxrout	-0.000754912209231406	TOTAL
+ExB14	EU	del_taxrout	del_taxrout	del_taxrout	del_taxrout	0.00213844166137278	TOTAL
+ExB14	ROW	del_taxrout	del_taxrout	del_taxrout	del_taxrout	-5.14070461576921e-06	TOTAL
+ExB14	SSA	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	1.53042929014191e-05	TOTAL
+ExB14	EU	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	-1.67684549978731e-06	TOTAL
+ExB14	ROW	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	-7.4952754403057e-06	TOTAL
+ExB14	SSA	del_tbal	del_tbal	del_tbal	del_tbal	23.8323764801025	TOTAL
+ExB14	EU	del_tbal	del_tbal	del_tbal	del_tbal	-511.164855957031	TOTAL
+ExB14	ROW	del_tbal	del_tbal	del_tbal	del_tbal	487.342071533203	TOTAL
+ExB14	SSA	del_tbalry	del_tbalry	del_tbalry	del_tbalry	0.000107071100501344	TOTAL
+ExB14	EU	del_tbalry	del_tbalry	del_tbalry	del_tbalry	-0.00219670822843909	TOTAL
+ExB14	ROW	del_tbalry	del_tbalry	del_tbalry	del_tbalry	0.00208967505022883	TOTAL
+ExB14	SSA	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-0.000804156938102096	TOTAL
+ExB14	EU	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	0.00224015163257718	TOTAL
+ExB14	ROW	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-0.000153965142089874	TOTAL
+ExB14	SSA	dpav	dpav	dpav	dpav	0	TOTAL
+ExB14	EU	dpav	dpav	dpav	dpav	0	TOTAL
+ExB14	ROW	dpav	dpav	dpav	dpav	0	TOTAL
+ExB14	SSA	dpavev	dpavev	dpavev	dpavev	0	TOTAL
+ExB14	EU	dpavev	dpavev	dpavev	dpavev	0	TOTAL
+ExB14	ROW	dpavev	dpavev	dpavev	dpavev	0	TOTAL
+ExB14	SSA	dpgov	dpgov	dpgov	dpgov	0	TOTAL
+ExB14	EU	dpgov	dpgov	dpgov	dpgov	0	TOTAL
+ExB14	ROW	dpgov	dpgov	dpgov	dpgov	0	TOTAL
+ExB14	SSA	dppriv	dppriv	dppriv	dppriv	0	TOTAL
+ExB14	EU	dppriv	dppriv	dppriv	dppriv	0	TOTAL
+ExB14	ROW	dppriv	dppriv	dppriv	dppriv	0	TOTAL
+ExB14	SSA	dpsave	dpsave	dpsave	dpsave	0	TOTAL
+ExB14	EU	dpsave	dpsave	dpsave	dpsave	0	TOTAL
+ExB14	ROW	dpsave	dpsave	dpsave	dpsave	0	TOTAL
+ExB14	SSA	dpsum	dpsum	dpsum	dpsum	0	TOTAL
+ExB14	EU	dpsum	dpsum	dpsum	dpsum	0	TOTAL
+ExB14	ROW	dpsum	dpsum	dpsum	dpsum	0	TOTAL
+ExB14	SSA	EV	EV	EV	EV	524.71044921875	TOTAL
+ExB14	EU	EV	EV	EV	EV	6254.76513671875	TOTAL
+ExB14	ROW	EV	EV	EV	EV	-2886.939453125	TOTAL
+ExB14	SSA	EV_ALT	EV_ALT	EV_ALT	EV_ALT	524.7109375	TOTAL
+ExB14	EU	EV_ALT	EV_ALT	EV_ALT	EV_ALT	6254.7744140625	TOTAL
+ExB14	ROW	EV_ALT	EV_ALT	EV_ALT	EV_ALT	-2886.93041992188	TOTAL
+ExB14	SSA	fincome	fincome	fincome	fincome	1.82473254203796	TOTAL
+ExB14	EU	fincome	fincome	fincome	fincome	-0.954416573047638	TOTAL
+ExB14	ROW	fincome	fincome	fincome	fincome	0.382128149271011	TOTAL
+ExB14	SSA	incomeslack	incomeslack	incomeslack	incomeslack	0	TOTAL
+ExB14	EU	incomeslack	incomeslack	incomeslack	incomeslack	0	TOTAL
+ExB14	ROW	incomeslack	incomeslack	incomeslack	incomeslack	0	TOTAL
+ExB14	SSA	kb	kb	kb	kb	0	TOTAL
+ExB14	EU	kb	kb	kb	kb	0	TOTAL
+ExB14	ROW	kb	kb	kb	kb	0	TOTAL
+ExB14	SSA	ke	ke	ke	ke	0.000622981227934361	TOTAL
+ExB14	EU	ke	ke	ke	ke	0.000979404896497726	TOTAL
+ExB14	ROW	ke	ke	ke	ke	0.00171174760907888	TOTAL
+ExB14	SSA	p	p	p	p	1.53768455982208	TOTAL
+ExB14	EU	p	p	p	p	-0.799565136432648	TOTAL
+ExB14	ROW	p	p	p	p	0.381422340869904	TOTAL
+ExB14	SSA	pdw	pdw	pdw	pdw	0.624179840087891	TOTAL
+ExB14	EU	pdw	pdw	pdw	pdw	-0.292870223522186	TOTAL
+ExB14	ROW	pdw	pdw	pdw	pdw	0.272953152656555	TOTAL
+ExB14	SSA	pfactor	pfactor	pfactor	pfactor	1.69673812389374	TOTAL
+ExB14	EU	pfactor	pfactor	pfactor	pfactor	-0.924578607082367	TOTAL
+ExB14	ROW	pfactor	pfactor	pfactor	pfactor	0.367207288742065	TOTAL
+ExB14	SSA	pgdp	pgdp	pgdp	pgdp	1.6392377614975	TOTAL
+ExB14	EU	pgdp	pgdp	pgdp	pgdp	-0.813509345054626	TOTAL
+ExB14	ROW	pgdp	pgdp	pgdp	pgdp	0.374598294496536	TOTAL
+ExB14	SSA	pgov	pgov	pgov	pgov	1.30123174190521	TOTAL
+ExB14	EU	pgov	pgov	pgov	pgov	-0.826979398727417	TOTAL
+ExB14	ROW	pgov	pgov	pgov	pgov	0.294847160577774	TOTAL
+ExB14	SSA	pinv	pinv	pinv	pinv	0.926695287227631	TOTAL
+ExB14	EU	pinv	pinv	pinv	pinv	-0.726988554000854	TOTAL
+ExB14	ROW	pinv	pinv	pinv	pinv	0.261816114187241	TOTAL
+ExB14	SSA	pmwreg	pmwreg	pmwreg	pmwreg	0.62417995929718	TOTAL
+ExB14	EU	pmwreg	pmwreg	pmwreg	pmwreg	-0.292870223522186	TOTAL
+ExB14	ROW	pmwreg	pmwreg	pmwreg	pmwreg	0.272953152656555	TOTAL
+ExB14	SSA	pop	pop	pop	pop	0	TOTAL
+ExB14	EU	pop	pop	pop	pop	0	TOTAL
+ExB14	ROW	pop	pop	pop	pop	0	TOTAL
+ExB14	SSA	ppriv	ppriv	ppriv	ppriv	1.62365710735321	TOTAL
+ExB14	EU	ppriv	ppriv	ppriv	ppriv	-0.80236405134201	TOTAL
+ExB14	ROW	ppriv	ppriv	ppriv	ppriv	0.416845619678497	TOTAL
+ExB14	SSA	psave	psave	psave	psave	0.947730183601379	TOTAL
+ExB14	EU	psave	psave	psave	psave	-0.706298232078552	TOTAL
+ExB14	ROW	psave	psave	psave	psave	0.282712519168854	TOTAL
+ExB14	SSA	psaveslack	psaveslack	psaveslack	psaveslack	0	TOTAL
+ExB14	EU	psaveslack	psaveslack	psaveslack	psaveslack	0	TOTAL
+ExB14	ROW	psaveslack	psaveslack	psaveslack	psaveslack	0	TOTAL
+ExB14	SSA	psw	psw	psw	psw	1.29977405071259	TOTAL
+ExB14	EU	psw	psw	psw	psw	-0.37493833899498	TOTAL
+ExB14	ROW	psw	psw	psw	psw	0.324339181184769	TOTAL
+ExB14	SSA	pxwreg	pxwreg	pxwreg	pxwreg	1.29977405071259	TOTAL
+ExB14	EU	pxwreg	pxwreg	pxwreg	pxwreg	-0.37493833899498	TOTAL
+ExB14	ROW	pxwreg	pxwreg	pxwreg	pxwreg	0.324339181184769	TOTAL
+ExB14	SSA	qgdp	qgdp	qgdp	qgdp	-0.0099310614168644	TOTAL
+ExB14	EU	qgdp	qgdp	qgdp	qgdp	0.0992170944809914	TOTAL
+ExB14	ROW	qgdp	qgdp	qgdp	qgdp	-0.021230535581708	TOTAL
+ExB14	SSA	qinv	qinv	qinv	qinv	0.0116685032844543	TOTAL
+ExB14	EU	qinv	qinv	qinv	qinv	0.0160424690693617	TOTAL
+ExB14	ROW	qinv	qinv	qinv	qinv	0.0222908966243267	TOTAL
+ExB14	SSA	qmwreg	qmwreg	qmwreg	qmwreg	0.636134922504425	TOTAL
+ExB14	EU	qmwreg	qmwreg	qmwreg	qmwreg	0.13051101565361	TOTAL
+ExB14	ROW	qmwreg	qmwreg	qmwreg	qmwreg	0.0024623170029372	TOTAL
+ExB14	SSA	qpriv	qpriv	qpriv	qpriv	0.130959957838058	TOTAL
+ExB14	EU	qpriv	qpriv	qpriv	qpriv	0.0851009041070938	TOTAL
+ExB14	ROW	qpriv	qpriv	qpriv	qpriv	-0.0407832600176334	TOTAL
+ExB14	SSA	qsave	qsave	qsave	qsave	0.686687350273132	TOTAL
+ExB14	EU	qsave	qsave	qsave	qsave	0.00303352647460997	TOTAL
+ExB14	ROW	qsave	qsave	qsave	qsave	0.0535243302583694	TOTAL
+ExB14	SSA	qsaveev	qsaveev	qsaveev	qsaveev	0.193882495164871	TOTAL
+ExB14	EU	qsaveev	qsaveev	qsaveev	qsaveev	0.0885517299175262	TOTAL
+ExB14	ROW	qsaveev	qsaveev	qsaveev	qsaveev	-0.0167516302317381	TOTAL
+ExB14	SSA	qxwreg	qxwreg	qxwreg	qxwreg	0.0594060085713863	TOTAL
+ExB14	EU	qxwreg	qxwreg	qxwreg	qxwreg	0.195624023675919	TOTAL
+ExB14	ROW	qxwreg	qxwreg	qxwreg	qxwreg	-0.0306014269590378	TOTAL
+ExB14	SSA	rental	rental	rental	rental	1.10852444171906	TOTAL
+ExB14	EU	rental	rental	rental	rental	-0.918998122215271	TOTAL
+ExB14	ROW	rental	rental	rental	rental	0.307435154914856	TOTAL
+ExB14	SSA	rorc	rorc	rorc	rorc	0.293435603380203	TOTAL
+ExB14	EU	rorc	rorc	rorc	rorc	-0.321505606174469	TOTAL
+ExB14	ROW	rorc	rorc	rorc	rorc	0.0655127763748169	TOTAL
+ExB14	SSA	rore	rore	rore	rore	0.287185728549957	TOTAL
+ExB14	EU	rore	rore	rore	rore	-0.331270843744278	TOTAL
+ExB14	ROW	rore	rore	rore	rore	0.0483802445232868	TOTAL
+ExB14	SSA	tot	tot	tot	tot	0.671403586864471	TOTAL
+ExB14	EU	tot	tot	tot	tot	-0.08230921626091	TOTAL
+ExB14	ROW	tot	tot	tot	tot	0.0512461513280869	TOTAL
+ExB14	SSA	tot2	tot2	tot2	tot2	0.671403467655182	TOTAL
+ExB14	EU	tot2	tot2	tot2	tot2	-0.0823091343045235	TOTAL
+ExB14	ROW	tot2	tot2	tot2	tot2	0.0512460879981518	TOTAL
+ExB14	SSA	tpreg	tpreg	tpreg	tpreg	0	TOTAL
+ExB14	EU	tpreg	tpreg	tpreg	tpreg	0	TOTAL
+ExB14	ROW	tpreg	tpreg	tpreg	tpreg	0	TOTAL
+ExB14	SSA	u	u	u	u	0.189903825521469	TOTAL
+ExB14	EU	u	u	u	u	0.0868183448910713	TOTAL
+ExB14	ROW	u	u	u	u	-0.0164494384080172	TOTAL
+ExB14	SSA	uelas	uelas	uelas	uelas	-0.0879524275660515	TOTAL
+ExB14	EU	uelas	uelas	uelas	uelas	0.0102264443412423	TOTAL
+ExB14	ROW	uelas	uelas	uelas	uelas	-0.0284196119755507	TOTAL
+ExB14	SSA	uelasev	uelasev	uelasev	uelasev	0.00396733544766903	TOTAL
+ExB14	EU	uelasev	uelasev	uelasev	uelasev	0.00173098780214787	TOTAL
+ExB14	ROW	uelasev	uelasev	uelasev	uelasev	-0.000302258675219491	TOTAL
+ExB14	SSA	uepriv	uepriv	uepriv	uepriv	-0.11381821334362	TOTAL
+ExB14	EU	uepriv	uepriv	uepriv	uepriv	0.0147658633068204	TOTAL
+ExB14	ROW	uepriv	uepriv	uepriv	uepriv	-0.039356242865324	TOTAL
+ExB14	SSA	ueprivev	ueprivev	ueprivev	ueprivev	0.00513459090143442	TOTAL
+ExB14	EU	ueprivev	ueprivev	ueprivev	ueprivev	0.00249926652759314	TOTAL
+ExB14	ROW	ueprivev	ueprivev	ueprivev	ueprivev	-0.000418608746258542	TOTAL
+ExB14	SSA	ug	ug	ug	ug	0.335330337285995	TOTAL
+ExB14	EU	ug	ug	ug	ug	0.124724842607975	TOTAL
+ExB14	ROW	ug	ug	ug	ug	0.0414188951253891	TOTAL
+ExB14	SSA	ugev	ugev	ugev	ugev	0.193882495164871	TOTAL
+ExB14	EU	ugev	ugev	ugev	ugev	0.0885517299175262	TOTAL
+ExB14	ROW	ugev	ugev	ugev	ugev	-0.0167516302317381	TOTAL
+ExB14	SSA	up	up	up	up	0.131066098809242	TOTAL
+ExB14	EU	up	up	up	up	0.085098922252655	TOTAL
+ExB14	ROW	up	up	up	up	-0.0407898612320423	TOTAL
+ExB14	SSA	upev	upev	upev	upev	0.18873330950737	TOTAL
+ExB14	EU	upev	upev	upev	upev	0.0860490351915359	TOTAL
+ExB14	ROW	upev	upev	upev	upev	-0.0163331106305122	TOTAL
+ExB14	SSA	vgdp	vgdp	vgdp	vgdp	1.62914395332336	TOTAL
+ExB14	EU	vgdp	vgdp	vgdp	vgdp	-0.715099155902863	TOTAL
+ExB14	ROW	vgdp	vgdp	vgdp	vgdp	0.353288203477859	TOTAL
+ExB14	SSA	vmwreg	vmwreg	vmwreg	vmwreg	1.26428532600403	TOTAL
+ExB14	EU	vmwreg	vmwreg	vmwreg	vmwreg	-0.162741422653198	TOTAL
+ExB14	ROW	vmwreg	vmwreg	vmwreg	vmwreg	0.275422245264053	TOTAL
+ExB14	SSA	vxwreg	vxwreg	vxwreg	vxwreg	1.35995221138	TOTAL
+ExB14	EU	vxwreg	vxwreg	vxwreg	vxwreg	-0.180047765374184	TOTAL
+ExB14	ROW	vxwreg	vxwreg	vxwreg	vxwreg	0.293638497591019	TOTAL
+ExB14	SSA	y	y	y	y	1.73039984703064	TOTAL
+ExB14	EU	y	y	y	y	-0.713439702987671	TOTAL
+ExB14	ROW	y	y	y	y	0.364911526441574	TOTAL
+ExB14	SSA	yev	yev	yev	yev	0.189907610416412	TOTAL
+ExB14	EU	yev	yev	yev	yev	0.0868192315101624	TOTAL
+ExB14	ROW	yev	yev	yev	yev	-0.0164494216442108	TOTAL
+ExB14	SSA	yg	yg	yg	yg	1.64092528820038	TOTAL
+ExB14	EU	yg	yg	yg	yg	-0.703286111354828	TOTAL
+ExB14	ROW	yg	yg	yg	yg	0.336388230323792	TOTAL
+ExB14	SSA	ygev	ygev	ygev	ygev	0.193882495164871	TOTAL
+ExB14	EU	ygev	ygev	ygev	ygev	0.0885517299175262	TOTAL
+ExB14	ROW	ygev	ygev	ygev	ygev	-0.0167516302317381	TOTAL
+ExB14	SSA	yp	yp	yp	yp	1.75674295425415	TOTAL
+ExB14	EU	yp	yp	yp	yp	-0.71794605255127	TOTAL
+ExB14	ROW	yp	yp	yp	yp	0.375892341136932	TOTAL
+ExB14	SSA	ypev	ypev	ypev	ypev	0.18873818218708	TOTAL
+ExB14	EU	ypev	ypev	ypev	ypev	0.0860503017902374	TOTAL
+ExB14	ROW	ypev	ypev	ypev	ypev	-0.0163330901414156	TOTAL
+ExB15	SSA	afereg	afereg	afereg	afereg	0	TOTAL
+ExB15	SSA	afereg	afereg	afereg	afereg	0	to changes
+ExB15	SSA	afereg	afereg	afereg	afereg	0	txs changes
+ExB15	SSA	afereg	afereg	afereg	afereg	0	tms changes
+ExB15	EU	afereg	afereg	afereg	afereg	0	TOTAL
+ExB15	EU	afereg	afereg	afereg	afereg	0	to changes
+ExB15	EU	afereg	afereg	afereg	afereg	0	txs changes
+ExB15	EU	afereg	afereg	afereg	afereg	0	tms changes
+ExB15	ROW	afereg	afereg	afereg	afereg	0	TOTAL
+ExB15	ROW	afereg	afereg	afereg	afereg	0	to changes
+ExB15	ROW	afereg	afereg	afereg	afereg	0	txs changes
+ExB15	ROW	afereg	afereg	afereg	afereg	0	tms changes
+ExB15	SSA	afreg	afreg	afreg	afreg	0	TOTAL
+ExB15	SSA	afreg	afreg	afreg	afreg	0	to changes
+ExB15	SSA	afreg	afreg	afreg	afreg	0	txs changes
+ExB15	SSA	afreg	afreg	afreg	afreg	0	tms changes
+ExB15	EU	afreg	afreg	afreg	afreg	0	TOTAL
+ExB15	EU	afreg	afreg	afreg	afreg	0	to changes
+ExB15	EU	afreg	afreg	afreg	afreg	0	txs changes
+ExB15	EU	afreg	afreg	afreg	afreg	0	tms changes
+ExB15	ROW	afreg	afreg	afreg	afreg	0	TOTAL
+ExB15	ROW	afreg	afreg	afreg	afreg	0	to changes
+ExB15	ROW	afreg	afreg	afreg	afreg	0	txs changes
+ExB15	ROW	afreg	afreg	afreg	afreg	0	tms changes
+ExB15	SSA	aintreg	aintreg	aintreg	aintreg	0	TOTAL
+ExB15	SSA	aintreg	aintreg	aintreg	aintreg	0	to changes
+ExB15	SSA	aintreg	aintreg	aintreg	aintreg	0	txs changes
+ExB15	SSA	aintreg	aintreg	aintreg	aintreg	0	tms changes
+ExB15	EU	aintreg	aintreg	aintreg	aintreg	0	TOTAL
+ExB15	EU	aintreg	aintreg	aintreg	aintreg	0	to changes
+ExB15	EU	aintreg	aintreg	aintreg	aintreg	0	txs changes
+ExB15	EU	aintreg	aintreg	aintreg	aintreg	0	tms changes
+ExB15	ROW	aintreg	aintreg	aintreg	aintreg	0	TOTAL
+ExB15	ROW	aintreg	aintreg	aintreg	aintreg	0	to changes
+ExB15	ROW	aintreg	aintreg	aintreg	aintreg	0	txs changes
+ExB15	ROW	aintreg	aintreg	aintreg	aintreg	0	tms changes
+ExB15	SSA	aoreg	aoreg	aoreg	aoreg	0	TOTAL
+ExB15	SSA	aoreg	aoreg	aoreg	aoreg	0	to changes
+ExB15	SSA	aoreg	aoreg	aoreg	aoreg	0	txs changes
+ExB15	SSA	aoreg	aoreg	aoreg	aoreg	0	tms changes
+ExB15	EU	aoreg	aoreg	aoreg	aoreg	0	TOTAL
+ExB15	EU	aoreg	aoreg	aoreg	aoreg	0	to changes
+ExB15	EU	aoreg	aoreg	aoreg	aoreg	0	txs changes
+ExB15	EU	aoreg	aoreg	aoreg	aoreg	0	tms changes
+ExB15	ROW	aoreg	aoreg	aoreg	aoreg	0	TOTAL
+ExB15	ROW	aoreg	aoreg	aoreg	aoreg	0	to changes
+ExB15	ROW	aoreg	aoreg	aoreg	aoreg	0	txs changes
+ExB15	ROW	aoreg	aoreg	aoreg	aoreg	0	tms changes
+ExB15	SSA	atd	atd	atd	atd	0	TOTAL
+ExB15	SSA	atd	atd	atd	atd	0	to changes
+ExB15	SSA	atd	atd	atd	atd	0	txs changes
+ExB15	SSA	atd	atd	atd	atd	0	tms changes
+ExB15	EU	atd	atd	atd	atd	0	TOTAL
+ExB15	EU	atd	atd	atd	atd	0	to changes
+ExB15	EU	atd	atd	atd	atd	0	txs changes
+ExB15	EU	atd	atd	atd	atd	0	tms changes
+ExB15	ROW	atd	atd	atd	atd	0	TOTAL
+ExB15	ROW	atd	atd	atd	atd	0	to changes
+ExB15	ROW	atd	atd	atd	atd	0	txs changes
+ExB15	ROW	atd	atd	atd	atd	0	tms changes
+ExB15	SSA	ats	ats	ats	ats	0	TOTAL
+ExB15	SSA	ats	ats	ats	ats	0	to changes
+ExB15	SSA	ats	ats	ats	ats	0	txs changes
+ExB15	SSA	ats	ats	ats	ats	0	tms changes
+ExB15	EU	ats	ats	ats	ats	0	TOTAL
+ExB15	EU	ats	ats	ats	ats	0	to changes
+ExB15	EU	ats	ats	ats	ats	0	txs changes
+ExB15	EU	ats	ats	ats	ats	0	tms changes
+ExB15	ROW	ats	ats	ats	ats	0	TOTAL
+ExB15	ROW	ats	ats	ats	ats	0	to changes
+ExB15	ROW	ats	ats	ats	ats	0	txs changes
+ExB15	ROW	ats	ats	ats	ats	0	tms changes
+ExB15	SSA	au	au	au	au	0	TOTAL
+ExB15	SSA	au	au	au	au	0	to changes
+ExB15	SSA	au	au	au	au	0	txs changes
+ExB15	SSA	au	au	au	au	0	tms changes
+ExB15	EU	au	au	au	au	0	TOTAL
+ExB15	EU	au	au	au	au	0	to changes
+ExB15	EU	au	au	au	au	0	txs changes
+ExB15	EU	au	au	au	au	0	tms changes
+ExB15	ROW	au	au	au	au	0	TOTAL
+ExB15	ROW	au	au	au	au	0	to changes
+ExB15	ROW	au	au	au	au	0	txs changes
+ExB15	ROW	au	au	au	au	0	tms changes
+ExB15	SSA	avareg	avareg	avareg	avareg	0	TOTAL
+ExB15	SSA	avareg	avareg	avareg	avareg	0	to changes
+ExB15	SSA	avareg	avareg	avareg	avareg	0	txs changes
+ExB15	SSA	avareg	avareg	avareg	avareg	0	tms changes
+ExB15	EU	avareg	avareg	avareg	avareg	0	TOTAL
+ExB15	EU	avareg	avareg	avareg	avareg	0	to changes
+ExB15	EU	avareg	avareg	avareg	avareg	0	txs changes
+ExB15	EU	avareg	avareg	avareg	avareg	0	tms changes
+ExB15	ROW	avareg	avareg	avareg	avareg	0	TOTAL
+ExB15	ROW	avareg	avareg	avareg	avareg	0	to changes
+ExB15	ROW	avareg	avareg	avareg	avareg	0	txs changes
+ExB15	ROW	avareg	avareg	avareg	avareg	0	tms changes
+ExB15	SSA	c1_r	c1_r	c1_r	c1_r	0.247834861278534	TOTAL
+ExB15	SSA	c1_r	c1_r	c1_r	c1_r	0.0763494744896889	to changes
+ExB15	SSA	c1_r	c1_r	c1_r	c1_r	0.191411718726158	txs changes
+ExB15	SSA	c1_r	c1_r	c1_r	c1_r	-0.0199263449758291	tms changes
+ExB15	EU	c1_r	c1_r	c1_r	c1_r	-0.0358430184423923	TOTAL
+ExB15	EU	c1_r	c1_r	c1_r	c1_r	-0.0113803753629327	to changes
+ExB15	EU	c1_r	c1_r	c1_r	c1_r	-0.0274700801819563	txs changes
+ExB15	EU	c1_r	c1_r	c1_r	c1_r	0.00300743756815791	tms changes
+ExB15	ROW	c1_r	c1_r	c1_r	c1_r	0.0177308917045593	TOTAL
+ExB15	ROW	c1_r	c1_r	c1_r	c1_r	0.005694764200598	to changes
+ExB15	ROW	c1_r	c1_r	c1_r	c1_r	0.013535737991333	txs changes
+ExB15	ROW	c1_r	c1_r	c1_r	c1_r	-0.00149961095303297	tms changes
+ExB15	SSA	c2_r	c2_r	c2_r	c2_r	0.987665832042694	TOTAL
+ExB15	SSA	c2_r	c2_r	c2_r	c2_r	0.00256819953210652	to changes
+ExB15	SSA	c2_r	c2_r	c2_r	c2_r	-0.0534964539110661	txs changes
+ExB15	SSA	c2_r	c2_r	c2_r	c2_r	1.03856348991394	tms changes
+ExB15	EU	c2_r	c2_r	c2_r	c2_r	-0.44827201962471	TOTAL
+ExB15	EU	c2_r	c2_r	c2_r	c2_r	0.0133368028327823	to changes
+ExB15	EU	c2_r	c2_r	c2_r	c2_r	-0.0568542778491974	txs changes
+ExB15	EU	c2_r	c2_r	c2_r	c2_r	-0.404754638671875	tms changes
+ExB15	ROW	c2_r	c2_r	c2_r	c2_r	0.291354477405548	TOTAL
+ExB15	ROW	c2_r	c2_r	c2_r	c2_r	-0.00942176580429077	to changes
+ExB15	ROW	c2_r	c2_r	c2_r	c2_r	0.0411645248532295	txs changes
+ExB15	ROW	c2_r	c2_r	c2_r	c2_r	0.259611815214157	tms changes
+ExB15	SSA	c3_r	c3_r	c3_r	c3_r	0.562736451625824	TOTAL
+ExB15	SSA	c3_r	c3_r	c3_r	c3_r	-0.0170616302639246	to changes
+ExB15	SSA	c3_r	c3_r	c3_r	c3_r	0.56795072555542	txs changes
+ExB15	SSA	c3_r	c3_r	c3_r	c3_r	0.0118472073227167	tms changes
+ExB15	EU	c3_r	c3_r	c3_r	c3_r	-0.401976108551025	TOTAL
+ExB15	EU	c3_r	c3_r	c3_r	c3_r	0.0185828320682049	to changes
+ExB15	EU	c3_r	c3_r	c3_r	c3_r	-0.274083703756332	txs changes
+ExB15	EU	c3_r	c3_r	c3_r	c3_r	-0.146475315093994	tms changes
+ExB15	ROW	c3_r	c3_r	c3_r	c3_r	0.257758885622025	TOTAL
+ExB15	ROW	c3_r	c3_r	c3_r	c3_r	-0.0121351657435298	to changes
+ExB15	ROW	c3_r	c3_r	c3_r	c3_r	0.171220153570175	txs changes
+ExB15	ROW	c3_r	c3_r	c3_r	c3_r	0.0986738801002502	tms changes
+ExB15	SSA	cgdslack	cgdslack	cgdslack	cgdslack	0	TOTAL
+ExB15	SSA	cgdslack	cgdslack	cgdslack	cgdslack	0	to changes
+ExB15	SSA	cgdslack	cgdslack	cgdslack	cgdslack	0	txs changes
+ExB15	SSA	cgdslack	cgdslack	cgdslack	cgdslack	0	tms changes
+ExB15	EU	cgdslack	cgdslack	cgdslack	cgdslack	0	TOTAL
+ExB15	EU	cgdslack	cgdslack	cgdslack	cgdslack	0	to changes
+ExB15	EU	cgdslack	cgdslack	cgdslack	cgdslack	0	txs changes
+ExB15	EU	cgdslack	cgdslack	cgdslack	cgdslack	0	tms changes
+ExB15	ROW	cgdslack	cgdslack	cgdslack	cgdslack	0	TOTAL
+ExB15	ROW	cgdslack	cgdslack	cgdslack	cgdslack	0	to changes
+ExB15	ROW	cgdslack	cgdslack	cgdslack	cgdslack	0	txs changes
+ExB15	ROW	cgdslack	cgdslack	cgdslack	cgdslack	0	tms changes
+ExB15	SSA	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	TOTAL
+ExB15	SSA	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	to changes
+ExB15	SSA	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	txs changes
+ExB15	SSA	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	tms changes
+ExB15	EU	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	TOTAL
+ExB15	EU	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	to changes
+ExB15	EU	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	txs changes
+ExB15	EU	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	tms changes
+ExB15	ROW	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	TOTAL
+ExB15	ROW	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	to changes
+ExB15	ROW	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	txs changes
+ExB15	ROW	CNTdpar	CNTdpar	CNTdpar	CNTdpar	0	tms changes
+ExB15	SSA	CNTendwr	CNTendwr	CNTendwr	CNTendwr	3.97962867282331e-05	TOTAL
+ExB15	SSA	CNTendwr	CNTendwr	CNTendwr	CNTendwr	7.91431318702962e-07	to changes
+ExB15	SSA	CNTendwr	CNTendwr	CNTendwr	CNTendwr	-1.77254059963161e-05	txs changes
+ExB15	SSA	CNTendwr	CNTendwr	CNTendwr	CNTendwr	5.13228224008344e-05	tms changes
+ExB15	EU	CNTendwr	CNTendwr	CNTendwr	CNTendwr	0.00123059959150851	TOTAL
+ExB15	EU	CNTendwr	CNTendwr	CNTendwr	CNTendwr	-1.21516968647484e-05	to changes
+ExB15	EU	CNTendwr	CNTendwr	CNTendwr	CNTendwr	1.89391575986519e-05	txs changes
+ExB15	EU	CNTendwr	CNTendwr	CNTendwr	CNTendwr	0.000217304303077981	tms changes
+ExB15	ROW	CNTendwr	CNTendwr	CNTendwr	CNTendwr	0.000145026948302984	TOTAL
+ExB15	ROW	CNTendwr	CNTendwr	CNTendwr	CNTendwr	-5.42248017154634e-05	to changes
+ExB15	ROW	CNTendwr	CNTendwr	CNTendwr	CNTendwr	0.000281751563306898	txs changes
+ExB15	ROW	CNTendwr	CNTendwr	CNTendwr	CNTendwr	-1.65135352290235e-05	tms changes
+ExB15	SSA	CNTkb	CNTkb	CNTkb	CNTkb	0	TOTAL
+ExB15	SSA	CNTkb	CNTkb	CNTkb	CNTkb	0	to changes
+ExB15	SSA	CNTkb	CNTkb	CNTkb	CNTkb	0	txs changes
+ExB15	SSA	CNTkb	CNTkb	CNTkb	CNTkb	0	tms changes
+ExB15	EU	CNTkb	CNTkb	CNTkb	CNTkb	0	TOTAL
+ExB15	EU	CNTkb	CNTkb	CNTkb	CNTkb	0	to changes
+ExB15	EU	CNTkb	CNTkb	CNTkb	CNTkb	0	txs changes
+ExB15	EU	CNTkb	CNTkb	CNTkb	CNTkb	0	tms changes
+ExB15	ROW	CNTkb	CNTkb	CNTkb	CNTkb	0	TOTAL
+ExB15	ROW	CNTkb	CNTkb	CNTkb	CNTkb	0	to changes
+ExB15	ROW	CNTkb	CNTkb	CNTkb	CNTkb	0	txs changes
+ExB15	ROW	CNTkb	CNTkb	CNTkb	CNTkb	0	tms changes
+ExB15	SSA	CNTpinv	CNTpinv	CNTpinv	CNTpinv	34.8875541687012	TOTAL
+ExB15	SSA	CNTpinv	CNTpinv	CNTpinv	CNTpinv	1.78932678699493	to changes
+ExB15	SSA	CNTpinv	CNTpinv	CNTpinv	CNTpinv	0.981567561626434	txs changes
+ExB15	SSA	CNTpinv	CNTpinv	CNTpinv	CNTpinv	32.1166458129883	tms changes
+ExB15	EU	CNTpinv	CNTpinv	CNTpinv	CNTpinv	311.408203125	TOTAL
+ExB15	EU	CNTpinv	CNTpinv	CNTpinv	CNTpinv	51.6490898132324	to changes
+ExB15	EU	CNTpinv	CNTpinv	CNTpinv	CNTpinv	157.183731079102	txs changes
+ExB15	EU	CNTpinv	CNTpinv	CNTpinv	CNTpinv	102.575424194336	tms changes
+ExB15	ROW	CNTpinv	CNTpinv	CNTpinv	CNTpinv	-344.759490966797	TOTAL
+ExB15	ROW	CNTpinv	CNTpinv	CNTpinv	CNTpinv	-53.1347427368164	to changes
+ExB15	ROW	CNTpinv	CNTpinv	CNTpinv	CNTpinv	-157.319030761719	txs changes
+ExB15	ROW	CNTpinv	CNTpinv	CNTpinv	CNTpinv	-134.305694580078	tms changes
+ExB15	SSA	CNTpop	CNTpop	CNTpop	CNTpop	0	TOTAL
+ExB15	SSA	CNTpop	CNTpop	CNTpop	CNTpop	0	to changes
+ExB15	SSA	CNTpop	CNTpop	CNTpop	CNTpop	0	txs changes
+ExB15	SSA	CNTpop	CNTpop	CNTpop	CNTpop	0	tms changes
+ExB15	EU	CNTpop	CNTpop	CNTpop	CNTpop	0	TOTAL
+ExB15	EU	CNTpop	CNTpop	CNTpop	CNTpop	0	to changes
+ExB15	EU	CNTpop	CNTpop	CNTpop	CNTpop	0	txs changes
+ExB15	EU	CNTpop	CNTpop	CNTpop	CNTpop	0	tms changes
+ExB15	ROW	CNTpop	CNTpop	CNTpop	CNTpop	0	TOTAL
+ExB15	ROW	CNTpop	CNTpop	CNTpop	CNTpop	0	to changes
+ExB15	ROW	CNTpop	CNTpop	CNTpop	CNTpop	0	txs changes
+ExB15	ROW	CNTpop	CNTpop	CNTpop	CNTpop	0	tms changes
+ExB15	SSA	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	TOTAL
+ExB15	SSA	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	to changes
+ExB15	SSA	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	txs changes
+ExB15	SSA	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	tms changes
+ExB15	EU	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	TOTAL
+ExB15	EU	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	to changes
+ExB15	EU	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	txs changes
+ExB15	EU	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	tms changes
+ExB15	ROW	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	TOTAL
+ExB15	ROW	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	to changes
+ExB15	ROW	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	txs changes
+ExB15	ROW	CNTqfer	CNTqfer	CNTqfer	CNTqfer	0	tms changes
+ExB15	SSA	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	65.5063629150391	TOTAL
+ExB15	SSA	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	3.81468200683594	to changes
+ExB15	SSA	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	59.420711517334	txs changes
+ExB15	SSA	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	2.27095746994019	tms changes
+ExB15	EU	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	1787.63720703125	TOTAL
+ExB15	EU	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	175.719741821289	to changes
+ExB15	EU	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	-590.380615234375	txs changes
+ExB15	EU	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	2202.2978515625	tms changes
+ExB15	ROW	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	-1796.14562988281	TOTAL
+ExB15	ROW	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	-114.089073181152	to changes
+ExB15	ROW	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	-2797.04345703125	txs changes
+ExB15	ROW	CNTqmsr	CNTqmsr	CNTqmsr	CNTqmsr	1114.98693847656	tms changes
+ExB15	SSA	CNTqor	CNTqor	CNTqor	CNTqor	-154.855880737305	TOTAL
+ExB15	SSA	CNTqor	CNTqor	CNTqor	CNTqor	-15.0588426589966	to changes
+ExB15	SSA	CNTqor	CNTqor	CNTqor	CNTqor	-33.9202461242676	txs changes
+ExB15	SSA	CNTqor	CNTqor	CNTqor	CNTqor	-105.881187438965	tms changes
+ExB15	EU	CNTqor	CNTqor	CNTqor	CNTqor	2623.00048828125	TOTAL
+ExB15	EU	CNTqor	CNTqor	CNTqor	CNTqor	367.03857421875	to changes
+ExB15	EU	CNTqor	CNTqor	CNTqor	CNTqor	1070.291015625	txs changes
+ExB15	EU	CNTqor	CNTqor	CNTqor	CNTqor	1185.67126464844	tms changes
+ExB15	ROW	CNTqor	CNTqor	CNTqor	CNTqor	-37.3079948425293	TOTAL
+ExB15	ROW	CNTqor	CNTqor	CNTqor	CNTqor	-7.57835102081299	to changes
+ExB15	ROW	CNTqor	CNTqor	CNTqor	CNTqor	32.3955993652344	txs changes
+ExB15	ROW	CNTqor	CNTqor	CNTqor	CNTqor	-62.1252708435059	tms changes
+ExB15	SSA	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	98.1474838256836	TOTAL
+ExB15	SSA	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	12.2386589050293	to changes
+ExB15	SSA	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	-31.3066635131836	txs changes
+ExB15	SSA	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	117.215515136719	tms changes
+ExB15	EU	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	3423.16748046875	TOTAL
+ExB15	EU	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	256.419616699219	to changes
+ExB15	EU	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	3368.74267578125	txs changes
+ExB15	EU	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	-197.725051879883	tms changes
+ExB15	ROW	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	-1568.31042480469	TOTAL
+ExB15	ROW	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	-138.468719482422	to changes
+ExB15	ROW	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	-369.517822265625	txs changes
+ExB15	ROW	CNTqxsr	CNTqxsr	CNTqxsr	CNTqxsr	-1060.31298828125	tms changes
+ExB15	SSA	CNTtotr	CNTtotr	CNTtotr	CNTtotr	521.233093261719	TOTAL
+ExB15	SSA	CNTtotr	CNTtotr	CNTtotr	CNTtotr	78.6967086791992	to changes
+ExB15	SSA	CNTtotr	CNTtotr	CNTtotr	CNTtotr	-373.610382080078	txs changes
+ExB15	SSA	CNTtotr	CNTtotr	CNTtotr	CNTtotr	816.146789550781	tms changes
+ExB15	EU	CNTtotr	CNTtotr	CNTtotr	CNTtotr	-2201.04174804688	TOTAL
+ExB15	EU	CNTtotr	CNTtotr	CNTtotr	CNTtotr	-384.625335693359	to changes
+ExB15	EU	CNTtotr	CNTtotr	CNTtotr	CNTtotr	4493.9208984375	txs changes
+ExB15	EU	CNTtotr	CNTtotr	CNTtotr	CNTtotr	-6310.3388671875	tms changes
+ExB15	ROW	CNTtotr	CNTtotr	CNTtotr	CNTtotr	1657.68347167969	TOTAL
+ExB15	ROW	CNTtotr	CNTtotr	CNTtotr	CNTtotr	302.913299560547	to changes
+ExB15	ROW	CNTtotr	CNTtotr	CNTtotr	CNTtotr	-4096.25	txs changes
+ExB15	ROW	CNTtotr	CNTtotr	CNTtotr	CNTtotr	5451.02294921875	tms changes
+ExB15	SSA	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-0.000804155948571861	TOTAL
+ExB15	SSA	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-7.98870678409003e-05	to changes
+ExB15	SSA	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-0.000159850169438869	txs changes
+ExB15	SSA	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-0.000564439338631928	tms changes
+ExB15	EU	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	0.00224015163257718	TOTAL
+ExB15	EU	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	0.00185135845094919	to changes
+ExB15	EU	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	0.00166195165365934	txs changes
+ExB15	EU	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-0.00127273018006235	tms changes
+ExB15	ROW	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-0.00015396493836306	TOTAL
+ExB15	ROW	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-1.26095183077268e-05	to changes
+ExB15	ROW	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-8.79766084835865e-05	txs changes
+ExB15	ROW	del_indtaxr	del_indtaxr	del_indtaxr	del_indtaxr	-5.33788661414292e-05	tms changes
+ExB15	SSA	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	0.000317604455631226	TOTAL
+ExB15	SSA	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	3.98356751247775e-05	to changes
+ExB15	SSA	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	-0.000106677543953992	txs changes
+ExB15	SSA	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	0.000384446437237784	tms changes
+ExB15	EU	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	0.00164733652491122	TOTAL
+ExB15	EU	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	2.58574837062042e-05	to changes
+ExB15	EU	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	0.00164501753170043	txs changes
+ExB15	EU	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	-2.20629990508314e-05	tms changes
+ExB15	ROW	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	-9.23879124457017e-05	TOTAL
+ExB15	ROW	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	-8.15630755823804e-06	to changes
+ExB15	ROW	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	-2.23641782213235e-05	txs changes
+ExB15	ROW	del_taxrexp	del_taxrexp	del_taxrexp	del_taxrexp	-6.18674312136136e-05	tms changes
+ExB15	SSA	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	TOTAL
+ExB15	SSA	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	to changes
+ExB15	SSA	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	txs changes
+ExB15	SSA	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	tms changes
+ExB15	EU	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	TOTAL
+ExB15	EU	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	to changes
+ExB15	EU	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	txs changes
+ExB15	EU	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	tms changes
+ExB15	ROW	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	TOTAL
+ExB15	ROW	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	to changes
+ExB15	ROW	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	txs changes
+ExB15	ROW	del_taxrfu	del_taxrfu	del_taxrfu	del_taxrfu	0	tms changes
+ExB15	SSA	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	1.24015400615463e-07	TOTAL
+ExB15	SSA	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	3.49283268974432e-08	to changes
+ExB15	SSA	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	-4.16553774584827e-07	txs changes
+ExB15	SSA	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	5.0563954800964e-07	tms changes
+ExB15	EU	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	1.59866289095589e-07	TOTAL
+ExB15	EU	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	-1.11690974335943e-06	to changes
+ExB15	EU	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	2.58594667457146e-07	txs changes
+ExB15	EU	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	1.01817931863479e-06	tms changes
+ExB15	ROW	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	-2.64410942918403e-07	TOTAL
+ExB15	ROW	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	-2.16529887353545e-08	to changes
+ExB15	ROW	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	-1.85447831313468e-07	txs changes
+ExB15	ROW	del_taxrgc	del_taxrgc	del_taxrgc	del_taxrgc	-5.731011754051e-08	tms changes
+ExB15	SSA	del_taxric	del_taxric	del_taxric	del_taxric	-6.01993742748164e-05	TOTAL
+ExB15	SSA	del_taxric	del_taxric	del_taxric	del_taxric	-5.89083720115013e-06	to changes
+ExB15	SSA	del_taxric	del_taxric	del_taxric	del_taxric	-5.61129354537115e-06	txs changes
+ExB15	SSA	del_taxric	del_taxric	del_taxric	del_taxric	-4.86972385260742e-05	tms changes
+ExB15	EU	del_taxric	del_taxric	del_taxric	del_taxric	-8.55654832321306e-07	TOTAL
+ExB15	EU	del_taxric	del_taxric	del_taxric	del_taxric	-3.55092424797476e-06	to changes
+ExB15	EU	del_taxric	del_taxric	del_taxric	del_taxric	-2.69948100140027e-06	txs changes
+ExB15	EU	del_taxric	del_taxric	del_taxric	del_taxric	5.39475104233134e-06	tms changes
+ExB15	ROW	del_taxric	del_taxric	del_taxric	del_taxric	-3.14252952193783e-06	TOTAL
+ExB15	ROW	del_taxric	del_taxric	del_taxric	del_taxric	1.85520391937644e-07	to changes
+ExB15	ROW	del_taxric	del_taxric	del_taxric	del_taxric	-4.7795015234442e-07	txs changes
+ExB15	ROW	del_taxric	del_taxric	del_taxric	del_taxric	-2.85009605249797e-06	tms changes
+ExB15	SSA	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-1.84709333552746e-05	TOTAL
+ExB15	SSA	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-9.29999532672809e-06	to changes
+ExB15	SSA	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	0.000125146936625242	txs changes
+ExB15	SSA	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-0.000134389207232744	tms changes
+ExB15	EU	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-0.00154956162441522	TOTAL
+ExB15	EU	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	2.31709782383405e-05	to changes
+ExB15	EU	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-6.90770175424404e-05	txs changes
+ExB15	EU	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-0.00150365591980517	tms changes
+ExB15	ROW	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-2.46808267547749e-05	TOTAL
+ExB15	ROW	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-1.07749110611621e-06	to changes
+ExB15	ROW	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	-5.98661754338536e-05	txs changes
+ExB15	ROW	del_taxrimp	del_taxrimp	del_taxrimp	del_taxrimp	3.62665705324616e-05	tms changes
+ExB15	SSA	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-9.73718328189932e-10	TOTAL
+ExB15	SSA	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-9.31985044694272e-11	to changes
+ExB15	SSA	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-2.3838578333546e-10	txs changes
+ExB15	SSA	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-6.42133901607167e-10	tms changes
+ExB15	EU	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	1.30446417556662e-10	TOTAL
+ExB15	EU	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	2.00974917263785e-10	to changes
+ExB15	EU	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	1.43724851464633e-10	txs changes
+ExB15	EU	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-2.1425332341618e-10	tms changes
+ExB15	ROW	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-1.84889992205228e-10	TOTAL
+ExB15	ROW	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-1.57393004879269e-11	to changes
+ExB15	ROW	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-8.77657113651509e-11	txs changes
+ExB15	ROW	del_taxrinc	del_taxrinc	del_taxrinc	del_taxrinc	-8.13849612701922e-11	tms changes
+ExB15	SSA	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-0.000303534849081188	TOTAL
+ExB15	SSA	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-3.13137206831016e-05	to changes
+ExB15	SSA	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-3.32256095134653e-05	txs changes
+ExB15	SSA	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-0.000238995489780791	tms changes
+ExB15	EU	del_taxriu	del_taxriu	del_taxriu	del_taxriu	6.71266479912447e-06	TOTAL
+ExB15	EU	del_taxriu	del_taxriu	del_taxriu	del_taxriu	5.95138590142597e-06	to changes
+ExB15	EU	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-4.09894937547506e-06	txs changes
+ExB15	EU	del_taxriu	del_taxriu	del_taxriu	del_taxriu	4.86022736367886e-06	tms changes
+ExB15	ROW	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-2.08570272661746e-05	TOTAL
+ExB15	ROW	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-1.96883479475218e-06	to changes
+ExB15	ROW	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-7.11630173100275e-06	txs changes
+ExB15	ROW	del_taxriu	del_taxriu	del_taxriu	del_taxriu	-1.17718955152668e-05	tms changes
+ExB15	SSA	del_taxrout	del_taxrout	del_taxrout	del_taxrout	-0.000754912209231406	TOTAL
+ExB15	SSA	del_taxrout	del_taxrout	del_taxrout	del_taxrout	-7.45206561987288e-05	to changes
+ExB15	SSA	del_taxrout	del_taxrout	del_taxrout	del_taxrout	-0.000145463578519411	txs changes
+ExB15	SSA	del_taxrout	del_taxrout	del_taxrout	del_taxrout	-0.000534955062903464	tms changes
+ExB15	EU	del_taxrout	del_taxrout	del_taxrout	del_taxrout	0.00213844166137278	TOTAL
+ExB15	EU	del_taxrout	del_taxrout	del_taxrout	del_taxrout	0.00179518410004675	to changes
+ExB15	EU	del_taxrout	del_taxrout	del_taxrout	del_taxrout	9.35233983909711e-05	txs changes
+ExB15	EU	del_taxrout	del_taxrout	del_taxrout	del_taxrout	0.000249734352109954	tms changes
+ExB15	ROW	del_taxrout	del_taxrout	del_taxrout	del_taxrout	-5.14070461576921e-06	TOTAL
+ExB15	ROW	del_taxrout	del_taxrout	del_taxrout	del_taxrout	-9.91440174402669e-07	to changes
+ExB15	ROW	del_taxrout	del_taxrout	del_taxrout	del_taxrout	1.00685338111361e-05	txs changes
+ExB15	ROW	del_taxrout	del_taxrout	del_taxrout	del_taxrout	-1.42178168971441e-05	tms changes
+ExB15	SSA	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	1.53042929014191e-05	TOTAL
+ExB15	SSA	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	1.26754071061441e-06	to changes
+ExB15	SSA	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	6.39101699562161e-06	txs changes
+ExB15	SSA	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	7.64576998335542e-06	tms changes
+ExB15	EU	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	-1.67684549978731e-06	TOTAL
+ExB15	EU	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	5.8389541663928e-06	to changes
+ExB15	EU	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	-9.72225734585663e-07	txs changes
+ExB15	EU	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	-6.54359155305428e-06	tms changes
+ExB15	ROW	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	-7.4952754403057e-06	TOTAL
+ExB15	ROW	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	-5.79314246351714e-07	to changes
+ExB15	ROW	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	-8.03509101388045e-06	txs changes
+ExB15	ROW	del_taxrpc	del_taxrpc	del_taxrpc	del_taxrpc	1.11912106603995e-06	tms changes
+ExB15	SSA	del_tbal	del_tbal	del_tbal	del_tbal	23.8323764801025	TOTAL
+ExB15	SSA	del_tbal	del_tbal	del_tbal	del_tbal	-0.533648014068604	to changes
+ExB15	SSA	del_tbal	del_tbal	del_tbal	del_tbal	-4.8773398399353	txs changes
+ExB15	SSA	del_tbal	del_tbal	del_tbal	del_tbal	29.2440319061279	tms changes
+ExB15	EU	del_tbal	del_tbal	del_tbal	del_tbal	-511.164855957031	TOTAL
+ExB15	EU	del_tbal	del_tbal	del_tbal	del_tbal	410.43359375	to changes
+ExB15	EU	del_tbal	del_tbal	del_tbal	del_tbal	372.618194580078	txs changes
+ExB15	EU	del_tbal	del_tbal	del_tbal	del_tbal	-1294.21130371094	tms changes
+ExB15	ROW	del_tbal	del_tbal	del_tbal	del_tbal	487.342071533203	TOTAL
+ExB15	ROW	del_tbal	del_tbal	del_tbal	del_tbal	-409.899261474609	to changes
+ExB15	ROW	del_tbal	del_tbal	del_tbal	del_tbal	-367.742736816406	txs changes
+ExB15	ROW	del_tbal	del_tbal	del_tbal	del_tbal	1264.97692871094	tms changes
+ExB15	SSA	del_tbalry	del_tbalry	del_tbalry	del_tbalry	0.000107071100501344	TOTAL
+ExB15	SSA	del_tbalry	del_tbalry	del_tbalry	del_tbalry	7.50608614907833e-06	to changes
+ExB15	SSA	del_tbalry	del_tbalry	del_tbalry	del_tbalry	-1.13067389975186e-05	txs changes
+ExB15	SSA	del_tbalry	del_tbalry	del_tbalry	del_tbalry	0.000110874207166489	tms changes
+ExB15	EU	del_tbalry	del_tbalry	del_tbalry	del_tbalry	-0.00219670822843909	TOTAL
+ExB15	EU	del_tbalry	del_tbalry	del_tbalry	del_tbalry	0.00151287042535841	to changes
+ExB15	EU	del_tbalry	del_tbalry	del_tbalry	del_tbalry	0.00138115498702973	txs changes
+ExB15	EU	del_tbalry	del_tbalry	del_tbalry	del_tbalry	-0.00509071024134755	tms changes
+ExB15	ROW	del_tbalry	del_tbalry	del_tbalry	del_tbalry	0.00208967505022883	TOTAL
+ExB15	ROW	del_tbalry	del_tbalry	del_tbalry	del_tbalry	-0.00152037455700338	to changes
+ExB15	ROW	del_tbalry	del_tbalry	del_tbalry	del_tbalry	-0.00136985629796982	txs changes
+ExB15	ROW	del_tbalry	del_tbalry	del_tbalry	del_tbalry	0.00497987680137157	tms changes
+ExB15	SSA	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-0.000804156938102096	TOTAL
+ExB15	SSA	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-7.9887147876434e-05	to changes
+ExB15	SSA	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-0.000159850416821428	txs changes
+ExB15	SSA	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-0.000564439978916198	tms changes
+ExB15	EU	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	0.00224015163257718	TOTAL
+ExB15	EU	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	0.00185135856736451	to changes
+ExB15	EU	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	0.00166195177007467	txs changes
+ExB15	EU	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-0.001272730412893	tms changes
+ExB15	ROW	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-0.000153965142089874	TOTAL
+ExB15	ROW	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-1.26095355881262e-05	to changes
+ExB15	ROW	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-8.79766957950778e-05	txs changes
+ExB15	ROW	del_ttaxr	del_ttaxr	del_ttaxr	del_ttaxr	-5.33789498149417e-05	tms changes
+ExB15	SSA	dpav	dpav	dpav	dpav	0	TOTAL
+ExB15	SSA	dpav	dpav	dpav	dpav	0	to changes
+ExB15	SSA	dpav	dpav	dpav	dpav	0	txs changes
+ExB15	SSA	dpav	dpav	dpav	dpav	0	tms changes
+ExB15	EU	dpav	dpav	dpav	dpav	0	TOTAL
+ExB15	EU	dpav	dpav	dpav	dpav	0	to changes
+ExB15	EU	dpav	dpav	dpav	dpav	0	txs changes
+ExB15	EU	dpav	dpav	dpav	dpav	0	tms changes
+ExB15	ROW	dpav	dpav	dpav	dpav	0	TOTAL
+ExB15	ROW	dpav	dpav	dpav	dpav	0	to changes
+ExB15	ROW	dpav	dpav	dpav	dpav	0	txs changes
+ExB15	ROW	dpav	dpav	dpav	dpav	0	tms changes
+ExB15	SSA	dpavev	dpavev	dpavev	dpavev	0	TOTAL
+ExB15	SSA	dpavev	dpavev	dpavev	dpavev	0	to changes
+ExB15	SSA	dpavev	dpavev	dpavev	dpavev	0	txs changes
+ExB15	SSA	dpavev	dpavev	dpavev	dpavev	0	tms changes
+ExB15	EU	dpavev	dpavev	dpavev	dpavev	0	TOTAL
+ExB15	EU	dpavev	dpavev	dpavev	dpavev	0	to changes
+ExB15	EU	dpavev	dpavev	dpavev	dpavev	0	txs changes
+ExB15	EU	dpavev	dpavev	dpavev	dpavev	0	tms changes
+ExB15	ROW	dpavev	dpavev	dpavev	dpavev	0	TOTAL
+ExB15	ROW	dpavev	dpavev	dpavev	dpavev	0	to changes
+ExB15	ROW	dpavev	dpavev	dpavev	dpavev	0	txs changes
+ExB15	ROW	dpavev	dpavev	dpavev	dpavev	0	tms changes
+ExB15	SSA	dpgov	dpgov	dpgov	dpgov	0	TOTAL
+ExB15	SSA	dpgov	dpgov	dpgov	dpgov	0	to changes
+ExB15	SSA	dpgov	dpgov	dpgov	dpgov	0	txs changes
+ExB15	SSA	dpgov	dpgov	dpgov	dpgov	0	tms changes
+ExB15	EU	dpgov	dpgov	dpgov	dpgov	0	TOTAL
+ExB15	EU	dpgov	dpgov	dpgov	dpgov	0	to changes
+ExB15	EU	dpgov	dpgov	dpgov	dpgov	0	txs changes
+ExB15	EU	dpgov	dpgov	dpgov	dpgov	0	tms changes
+ExB15	ROW	dpgov	dpgov	dpgov	dpgov	0	TOTAL
+ExB15	ROW	dpgov	dpgov	dpgov	dpgov	0	to changes
+ExB15	ROW	dpgov	dpgov	dpgov	dpgov	0	txs changes
+ExB15	ROW	dpgov	dpgov	dpgov	dpgov	0	tms changes
+ExB15	SSA	dppriv	dppriv	dppriv	dppriv	0	TOTAL
+ExB15	SSA	dppriv	dppriv	dppriv	dppriv	0	to changes
+ExB15	SSA	dppriv	dppriv	dppriv	dppriv	0	txs changes
+ExB15	SSA	dppriv	dppriv	dppriv	dppriv	0	tms changes
+ExB15	EU	dppriv	dppriv	dppriv	dppriv	0	TOTAL
+ExB15	EU	dppriv	dppriv	dppriv	dppriv	0	to changes
+ExB15	EU	dppriv	dppriv	dppriv	dppriv	0	txs changes
+ExB15	EU	dppriv	dppriv	dppriv	dppriv	0	tms changes
+ExB15	ROW	dppriv	dppriv	dppriv	dppriv	0	TOTAL
+ExB15	ROW	dppriv	dppriv	dppriv	dppriv	0	to changes
+ExB15	ROW	dppriv	dppriv	dppriv	dppriv	0	txs changes
+ExB15	ROW	dppriv	dppriv	dppriv	dppriv	0	tms changes
+ExB15	SSA	dpsave	dpsave	dpsave	dpsave	0	TOTAL
+ExB15	SSA	dpsave	dpsave	dpsave	dpsave	0	to changes
+ExB15	SSA	dpsave	dpsave	dpsave	dpsave	0	txs changes
+ExB15	SSA	dpsave	dpsave	dpsave	dpsave	0	tms changes
+ExB15	EU	dpsave	dpsave	dpsave	dpsave	0	TOTAL
+ExB15	EU	dpsave	dpsave	dpsave	dpsave	0	to changes
+ExB15	EU	dpsave	dpsave	dpsave	dpsave	0	txs changes
+ExB15	EU	dpsave	dpsave	dpsave	dpsave	0	tms changes
+ExB15	ROW	dpsave	dpsave	dpsave	dpsave	0	TOTAL
+ExB15	ROW	dpsave	dpsave	dpsave	dpsave	0	to changes
+ExB15	ROW	dpsave	dpsave	dpsave	dpsave	0	txs changes
+ExB15	ROW	dpsave	dpsave	dpsave	dpsave	0	tms changes
+ExB15	SSA	dpsum	dpsum	dpsum	dpsum	0	TOTAL
+ExB15	SSA	dpsum	dpsum	dpsum	dpsum	0	to changes
+ExB15	SSA	dpsum	dpsum	dpsum	dpsum	0	txs changes
+ExB15	SSA	dpsum	dpsum	dpsum	dpsum	0	tms changes
+ExB15	EU	dpsum	dpsum	dpsum	dpsum	0	TOTAL
+ExB15	EU	dpsum	dpsum	dpsum	dpsum	0	to changes
+ExB15	EU	dpsum	dpsum	dpsum	dpsum	0	txs changes
+ExB15	EU	dpsum	dpsum	dpsum	dpsum	0	tms changes
+ExB15	ROW	dpsum	dpsum	dpsum	dpsum	0	TOTAL
+ExB15	ROW	dpsum	dpsum	dpsum	dpsum	0	to changes
+ExB15	ROW	dpsum	dpsum	dpsum	dpsum	0	txs changes
+ExB15	ROW	dpsum	dpsum	dpsum	dpsum	0	tms changes
+ExB15	SSA	EV	EV	EV	EV	524.71044921875	TOTAL
+ExB15	SSA	EV	EV	EV	EV	80.1975936889648	to changes
+ExB15	SSA	EV	EV	EV	EV	-435.100372314453	txs changes
+ExB15	SSA	EV	EV	EV	EV	879.612915039062	tms changes
+ExB15	EU	EV	EV	EV	EV	6254.76513671875	TOTAL
+ExB15	EU	EV	EV	EV	EV	437.446746826172	to changes
+ExB15	EU	EV	EV	EV	EV	8692.146484375	txs changes
+ExB15	EU	EV	EV	EV	EV	-2874.82543945312	tms changes
+ExB15	ROW	EV	EV	EV	EV	-2886.939453125	TOTAL
+ExB15	ROW	EV	EV	EV	EV	-61.9099006652832	to changes
+ExB15	ROW	EV	EV	EV	EV	-8232.9814453125	txs changes
+ExB15	ROW	EV	EV	EV	EV	5407.95361328125	tms changes
+ExB15	SSA	EV_ALT	EV_ALT	EV_ALT	EV_ALT	524.7109375	TOTAL
+ExB15	SSA	EV_ALT	EV_ALT	EV_ALT	EV_ALT	80.1976547241211	to changes
+ExB15	SSA	EV_ALT	EV_ALT	EV_ALT	EV_ALT	-435.100250244141	txs changes
+ExB15	SSA	EV_ALT	EV_ALT	EV_ALT	EV_ALT	879.61328125	tms changes
+ExB15	EU	EV_ALT	EV_ALT	EV_ALT	EV_ALT	6254.7744140625	TOTAL
+ExB15	EU	EV_ALT	EV_ALT	EV_ALT	EV_ALT	437.447082519531	to changes
+ExB15	EU	EV_ALT	EV_ALT	EV_ALT	EV_ALT	8692.1484375	txs changes
+ExB15	EU	EV_ALT	EV_ALT	EV_ALT	EV_ALT	-2874.82299804688	tms changes
+ExB15	ROW	EV_ALT	EV_ALT	EV_ALT	EV_ALT	-2886.93041992188	TOTAL
+ExB15	ROW	EV_ALT	EV_ALT	EV_ALT	EV_ALT	-61.9089164733887	to changes
+ExB15	ROW	EV_ALT	EV_ALT	EV_ALT	EV_ALT	-8232.9736328125	txs changes
+ExB15	ROW	EV_ALT	EV_ALT	EV_ALT	EV_ALT	5407.95361328125	tms changes
+ExB15	SSA	fincome	fincome	fincome	fincome	1.82473254203796	TOTAL
+ExB15	SSA	fincome	fincome	fincome	fincome	0.195765063166618	to changes
+ExB15	SSA	fincome	fincome	fincome	fincome	0.262847125530243	txs changes
+ExB15	SSA	fincome	fincome	fincome	fincome	1.36617743968964	tms changes
+ExB15	EU	fincome	fincome	fincome	fincome	-0.954416573047638	TOTAL
+ExB15	EU	fincome	fincome	fincome	fincome	-0.121460691094398	to changes
+ExB15	EU	fincome	fincome	fincome	fincome	-0.331999272108078	txs changes
+ExB15	EU	fincome	fincome	fincome	fincome	-0.500956833362579	tms changes
+ExB15	ROW	fincome	fincome	fincome	fincome	0.382128149271011	TOTAL
+ExB15	ROW	fincome	fincome	fincome	fincome	0.0466565378010273	to changes
+ExB15	ROW	fincome	fincome	fincome	fincome	0.136809140443802	txs changes
+ExB15	ROW	fincome	fincome	fincome	fincome	0.198662519454956	tms changes
+ExB15	SSA	incomeslack	incomeslack	incomeslack	incomeslack	0	TOTAL
+ExB15	SSA	incomeslack	incomeslack	incomeslack	incomeslack	0	to changes
+ExB15	SSA	incomeslack	incomeslack	incomeslack	incomeslack	0	txs changes
+ExB15	SSA	incomeslack	incomeslack	incomeslack	incomeslack	0	tms changes
+ExB15	EU	incomeslack	incomeslack	incomeslack	incomeslack	0	TOTAL
+ExB15	EU	incomeslack	incomeslack	incomeslack	incomeslack	0	to changes
+ExB15	EU	incomeslack	incomeslack	incomeslack	incomeslack	0	txs changes
+ExB15	EU	incomeslack	incomeslack	incomeslack	incomeslack	0	tms changes
+ExB15	ROW	incomeslack	incomeslack	incomeslack	incomeslack	0	TOTAL
+ExB15	ROW	incomeslack	incomeslack	incomeslack	incomeslack	0	to changes
+ExB15	ROW	incomeslack	incomeslack	incomeslack	incomeslack	0	txs changes
+ExB15	ROW	incomeslack	incomeslack	incomeslack	incomeslack	0	tms changes
+ExB15	SSA	kb	kb	kb	kb	0	TOTAL
+ExB15	SSA	kb	kb	kb	kb	0	to changes
+ExB15	SSA	kb	kb	kb	kb	0	txs changes
+ExB15	SSA	kb	kb	kb	kb	0	tms changes
+ExB15	EU	kb	kb	kb	kb	0	TOTAL
+ExB15	EU	kb	kb	kb	kb	0	to changes
+ExB15	EU	kb	kb	kb	kb	0	txs changes
+ExB15	EU	kb	kb	kb	kb	0	tms changes
+ExB15	ROW	kb	kb	kb	kb	0	TOTAL
+ExB15	ROW	kb	kb	kb	kb	0	to changes
+ExB15	ROW	kb	kb	kb	kb	0	txs changes
+ExB15	ROW	kb	kb	kb	kb	0	tms changes
+ExB15	SSA	ke	ke	ke	ke	0.000622981227934361	TOTAL
+ExB15	SSA	ke	ke	ke	ke	0.000348226865753531	to changes
+ExB15	SSA	ke	ke	ke	ke	0.000251074670813978	txs changes
+ExB15	SSA	ke	ke	ke	ke	2.38841475947993e-05	tms changes
+ExB15	EU	ke	ke	ke	ke	0.000979404896497726	TOTAL
+ExB15	EU	ke	ke	ke	ke	0.000547456438653171	to changes
+ExB15	EU	ke	ke	ke	ke	0.000394720933400095	txs changes
+ExB15	EU	ke	ke	ke	ke	3.75488707504701e-05	tms changes
+ExB15	ROW	ke	ke	ke	ke	0.00171174760907888	TOTAL
+ExB15	ROW	ke	ke	ke	ke	0.000956812989898026	to changes
+ExB15	ROW	ke	ke	ke	ke	0.000689870619680732	txs changes
+ExB15	ROW	ke	ke	ke	ke	6.56257616356015e-05	tms changes
+ExB15	SSA	p	p	p	p	1.53768455982208	TOTAL
+ExB15	SSA	p	p	p	p	0.157018288969994	to changes
+ExB15	SSA	p	p	p	p	0.402327805757523	txs changes
+ExB15	SSA	p	p	p	p	0.978338658809662	tms changes
+ExB15	EU	p	p	p	p	-0.799565136432648	TOTAL
+ExB15	EU	p	p	p	p	0.0724577978253365	to changes
+ExB15	EU	p	p	p	p	-0.272784650325775	txs changes
+ExB15	EU	p	p	p	p	-0.599238336086273	tms changes
+ExB15	ROW	p	p	p	p	0.381422340869904	TOTAL
+ExB15	ROW	p	p	p	p	0.0456032119691372	to changes
+ExB15	ROW	p	p	p	p	0.173986330628395	txs changes
+ExB15	ROW	p	p	p	p	0.161832913756371	tms changes
+ExB15	SSA	pdw	pdw	pdw	pdw	0.624179840087891	TOTAL
+ExB15	SSA	pdw	pdw	pdw	pdw	0.042132630944252	to changes
+ExB15	SSA	pdw	pdw	pdw	pdw	0.685786545276642	txs changes
+ExB15	SSA	pdw	pdw	pdw	pdw	-0.103739246726036	tms changes
+ExB15	EU	pdw	pdw	pdw	pdw	-0.292870223522186	TOTAL
+ExB15	EU	pdw	pdw	pdw	pdw	0.092229001224041	to changes
+ExB15	EU	pdw	pdw	pdw	pdw	-0.119921676814556	txs changes
+ExB15	EU	pdw	pdw	pdw	pdw	-0.265175342559814	tms changes
+ExB15	ROW	pdw	pdw	pdw	pdw	0.272953152656555	TOTAL
+ExB15	ROW	pdw	pdw	pdw	pdw	0.0323679782450199	to changes
+ExB15	ROW	pdw	pdw	pdw	pdw	0.252313137054443	txs changes
+ExB15	ROW	pdw	pdw	pdw	pdw	-0.0117279896512628	tms changes
+ExB15	SSA	pfactor	pfactor	pfactor	pfactor	1.69673812389374	TOTAL
+ExB15	SSA	pfactor	pfactor	pfactor	pfactor	0.182597160339355	to changes
+ExB15	SSA	pfactor	pfactor	pfactor	pfactor	0.246850743889809	txs changes
+ExB15	SSA	pfactor	pfactor	pfactor	pfactor	1.26734507083893	tms changes
+ExB15	EU	pfactor	pfactor	pfactor	pfactor	-0.924578607082367	TOTAL
+ExB15	EU	pfactor	pfactor	pfactor	pfactor	-0.11297420412302	to changes
+ExB15	EU	pfactor	pfactor	pfactor	pfactor	-0.320687383413315	txs changes
+ExB15	EU	pfactor	pfactor	pfactor	pfactor	-0.490917056798935	tms changes
+ExB15	ROW	pfactor	pfactor	pfactor	pfactor	0.367207288742065	TOTAL
+ExB15	ROW	pfactor	pfactor	pfactor	pfactor	0.0452532656490803	to changes
+ExB15	ROW	pfactor	pfactor	pfactor	pfactor	0.132674619555473	txs changes
+ExB15	ROW	pfactor	pfactor	pfactor	pfactor	0.189279437065125	tms changes
+ExB15	SSA	pgdp	pgdp	pgdp	pgdp	1.6392377614975	TOTAL
+ExB15	SSA	pgdp	pgdp	pgdp	pgdp	0.176031470298767	to changes
+ExB15	SSA	pgdp	pgdp	pgdp	pgdp	0.252284705638885	txs changes
+ExB15	SSA	pgdp	pgdp	pgdp	pgdp	1.21096646785736	tms changes
+ExB15	EU	pgdp	pgdp	pgdp	pgdp	-0.813509345054626	TOTAL
+ExB15	EU	pgdp	pgdp	pgdp	pgdp	0.0526186712086201	to changes
+ExB15	EU	pgdp	pgdp	pgdp	pgdp	-0.213038727641106	txs changes
+ExB15	EU	pgdp	pgdp	pgdp	pgdp	-0.65308940410614	tms changes
+ExB15	ROW	pgdp	pgdp	pgdp	pgdp	0.374598294496536	TOTAL
+ExB15	ROW	pgdp	pgdp	pgdp	pgdp	0.0457121394574642	to changes
+ExB15	ROW	pgdp	pgdp	pgdp	pgdp	0.144495889544487	txs changes
+ExB15	ROW	pgdp	pgdp	pgdp	pgdp	0.184390306472778	tms changes
+ExB15	SSA	pgov	pgov	pgov	pgov	1.30123174190521	TOTAL
+ExB15	SSA	pgov	pgov	pgov	pgov	0.141571193933487	to changes
+ExB15	SSA	pgov	pgov	pgov	pgov	0.206736028194427	txs changes
+ExB15	SSA	pgov	pgov	pgov	pgov	0.952972829341888	tms changes
+ExB15	EU	pgov	pgov	pgov	pgov	-0.826979398727417	TOTAL
+ExB15	EU	pgov	pgov	pgov	pgov	-0.0512725971639156	to changes
+ExB15	EU	pgov	pgov	pgov	pgov	-0.277413636445999	txs changes
+ExB15	EU	pgov	pgov	pgov	pgov	-0.498293340206146	tms changes
+ExB15	ROW	pgov	pgov	pgov	pgov	0.294847160577774	TOTAL
+ExB15	ROW	pgov	pgov	pgov	pgov	0.0385811850428581	to changes
+ExB15	ROW	pgov	pgov	pgov	pgov	0.113386087119579	txs changes
+ExB15	ROW	pgov	pgov	pgov	pgov	0.142879948019981	tms changes
+ExB15	SSA	pinv	pinv	pinv	pinv	0.926695287227631	TOTAL
+ExB15	SSA	pinv	pinv	pinv	pinv	0.103376187384129	to changes
+ExB15	SSA	pinv	pinv	pinv	pinv	0.150612816214561	txs changes
+ExB15	SSA	pinv	pinv	pinv	pinv	0.672748565673828	tms changes
+ExB15	EU	pinv	pinv	pinv	pinv	-0.726988554000854	TOTAL
+ExB15	EU	pinv	pinv	pinv	pinv	-0.0567761436104774	to changes
+ExB15	EU	pinv	pinv	pinv	pinv	-0.245779380202293	txs changes
+ExB15	EU	pinv	pinv	pinv	pinv	-0.42443311214447	tms changes
+ExB15	ROW	pinv	pinv	pinv	pinv	0.261816114187241	TOTAL
+ExB15	ROW	pinv	pinv	pinv	pinv	0.0353414788842201	to changes
+ExB15	ROW	pinv	pinv	pinv	pinv	0.103471137583256	txs changes
+ExB15	ROW	pinv	pinv	pinv	pinv	0.123003527522087	tms changes
+ExB15	SSA	pmwreg	pmwreg	pmwreg	pmwreg	0.62417995929718	TOTAL
+ExB15	SSA	pmwreg	pmwreg	pmwreg	pmwreg	0.042132630944252	to changes
+ExB15	SSA	pmwreg	pmwreg	pmwreg	pmwreg	0.685786426067352	txs changes
+ExB15	SSA	pmwreg	pmwreg	pmwreg	pmwreg	-0.103739246726036	tms changes
+ExB15	EU	pmwreg	pmwreg	pmwreg	pmwreg	-0.292870223522186	TOTAL
+ExB15	EU	pmwreg	pmwreg	pmwreg	pmwreg	0.092229001224041	to changes
+ExB15	EU	pmwreg	pmwreg	pmwreg	pmwreg	-0.119921676814556	txs changes
+ExB15	EU	pmwreg	pmwreg	pmwreg	pmwreg	-0.265175342559814	tms changes
+ExB15	ROW	pmwreg	pmwreg	pmwreg	pmwreg	0.272953152656555	TOTAL
+ExB15	ROW	pmwreg	pmwreg	pmwreg	pmwreg	0.0323679782450199	to changes
+ExB15	ROW	pmwreg	pmwreg	pmwreg	pmwreg	0.252313137054443	txs changes
+ExB15	ROW	pmwreg	pmwreg	pmwreg	pmwreg	-0.0117279877886176	tms changes
+ExB15	SSA	pop	pop	pop	pop	0	TOTAL
+ExB15	SSA	pop	pop	pop	pop	0	to changes
+ExB15	SSA	pop	pop	pop	pop	0	txs changes
+ExB15	SSA	pop	pop	pop	pop	0	tms changes
+ExB15	EU	pop	pop	pop	pop	0	TOTAL
+ExB15	EU	pop	pop	pop	pop	0	to changes
+ExB15	EU	pop	pop	pop	pop	0	txs changes
+ExB15	EU	pop	pop	pop	pop	0	tms changes
+ExB15	ROW	pop	pop	pop	pop	0	TOTAL
+ExB15	ROW	pop	pop	pop	pop	0	to changes
+ExB15	ROW	pop	pop	pop	pop	0	txs changes
+ExB15	ROW	pop	pop	pop	pop	0	tms changes
+ExB15	SSA	ppriv	ppriv	ppriv	ppriv	1.62365710735321	TOTAL
+ExB15	SSA	ppriv	ppriv	ppriv	ppriv	0.163239181041718	to changes
+ExB15	SSA	ppriv	ppriv	ppriv	ppriv	0.462254136800766	txs changes
+ExB15	SSA	ppriv	ppriv	ppriv	ppriv	0.998163521289825	tms changes
+ExB15	EU	ppriv	ppriv	ppriv	ppriv	-0.80236405134201	TOTAL
+ExB15	EU	ppriv	ppriv	ppriv	ppriv	0.127818822860718	to changes
+ExB15	EU	ppriv	ppriv	ppriv	ppriv	-0.275525659322739	txs changes
+ExB15	EU	ppriv	ppriv	ppriv	ppriv	-0.654657185077667	tms changes
+ExB15	ROW	ppriv	ppriv	ppriv	ppriv	0.416845619678497	TOTAL
+ExB15	ROW	ppriv	ppriv	ppriv	ppriv	0.0485277101397514	to changes
+ExB15	ROW	ppriv	ppriv	ppriv	ppriv	0.197808936238289	txs changes
+ExB15	ROW	ppriv	ppriv	ppriv	ppriv	0.170509040355682	tms changes
+ExB15	SSA	psave	psave	psave	psave	0.947730183601379	TOTAL
+ExB15	SSA	psave	psave	psave	psave	0.105345606803894	to changes
+ExB15	SSA	psave	psave	psave	psave	0.157730013132095	txs changes
+ExB15	SSA	psave	psave	psave	psave	0.684695184230804	tms changes
+ExB15	EU	psave	psave	psave	psave	-0.706298232078552	TOTAL
+ExB15	EU	psave	psave	psave	psave	-0.0548395439982414	to changes
+ExB15	EU	psave	psave	psave	psave	-0.238748118281364	txs changes
+ExB15	EU	psave	psave	psave	psave	-0.412710666656494	tms changes
+ExB15	ROW	psave	psave	psave	psave	0.282712519168854	TOTAL
+ExB15	ROW	psave	psave	psave	psave	0.0372972935438156	to changes
+ExB15	ROW	psave	psave	psave	psave	0.110565766692162	txs changes
+ExB15	ROW	psave	psave	psave	psave	0.134849488735199	tms changes
+ExB15	SSA	psaveslack	psaveslack	psaveslack	psaveslack	0	TOTAL
+ExB15	SSA	psaveslack	psaveslack	psaveslack	psaveslack	0	to changes
+ExB15	SSA	psaveslack	psaveslack	psaveslack	psaveslack	0	txs changes
+ExB15	SSA	psaveslack	psaveslack	psaveslack	psaveslack	0	tms changes
+ExB15	EU	psaveslack	psaveslack	psaveslack	psaveslack	0	TOTAL
+ExB15	EU	psaveslack	psaveslack	psaveslack	psaveslack	0	to changes
+ExB15	EU	psaveslack	psaveslack	psaveslack	psaveslack	0	txs changes
+ExB15	EU	psaveslack	psaveslack	psaveslack	psaveslack	0	tms changes
+ExB15	ROW	psaveslack	psaveslack	psaveslack	psaveslack	0	TOTAL
+ExB15	ROW	psaveslack	psaveslack	psaveslack	psaveslack	0	to changes
+ExB15	ROW	psaveslack	psaveslack	psaveslack	psaveslack	0	txs changes
+ExB15	ROW	psaveslack	psaveslack	psaveslack	psaveslack	0	tms changes
+ExB15	SSA	psw	psw	psw	psw	1.29977405071259	TOTAL
+ExB15	SSA	psw	psw	psw	psw	0.13868610560894	to changes
+ExB15	SSA	psw	psw	psw	psw	0.256650239229202	txs changes
+ExB15	SSA	psw	psw	psw	psw	0.904437720775604	tms changes
+ExB15	EU	psw	psw	psw	psw	-0.37493833899498	TOTAL
+ExB15	EU	psw	psw	psw	psw	0.0756053254008293	to changes
+ExB15	EU	psw	psw	psw	psw	0.0700039640069008	txs changes
+ExB15	EU	psw	psw	psw	psw	-0.520547688007355	tms changes
+ExB15	ROW	psw	psw	psw	psw	0.324339181184769	TOTAL
+ExB15	ROW	psw	psw	psw	psw	0.0407917760312557	to changes
+ExB15	ROW	psw	psw	psw	psw	0.135805904865265	txs changes
+ExB15	ROW	psw	psw	psw	psw	0.14774152636528	tms changes
+ExB15	SSA	pxwreg	pxwreg	pxwreg	pxwreg	1.29977405071259	TOTAL
+ExB15	SSA	pxwreg	pxwreg	pxwreg	pxwreg	0.13868610560894	to changes
+ExB15	SSA	pxwreg	pxwreg	pxwreg	pxwreg	0.256650298833847	txs changes
+ExB15	SSA	pxwreg	pxwreg	pxwreg	pxwreg	0.904437661170959	tms changes
+ExB15	EU	pxwreg	pxwreg	pxwreg	pxwreg	-0.37493833899498	TOTAL
+ExB15	EU	pxwreg	pxwreg	pxwreg	pxwreg	0.0756053254008293	to changes
+ExB15	EU	pxwreg	pxwreg	pxwreg	pxwreg	0.0700039714574814	txs changes
+ExB15	EU	pxwreg	pxwreg	pxwreg	pxwreg	-0.520547688007355	tms changes
+ExB15	ROW	pxwreg	pxwreg	pxwreg	pxwreg	0.324339181184769	TOTAL
+ExB15	ROW	pxwreg	pxwreg	pxwreg	pxwreg	0.0407917760312557	to changes
+ExB15	ROW	pxwreg	pxwreg	pxwreg	pxwreg	0.135805904865265	txs changes
+ExB15	ROW	pxwreg	pxwreg	pxwreg	pxwreg	0.14774152636528	tms changes
+ExB15	SSA	qgdp	qgdp	qgdp	qgdp	-0.0099310614168644	TOTAL
+ExB15	SSA	qgdp	qgdp	qgdp	qgdp	-9.13108306122012e-05	to changes
+ExB15	SSA	qgdp	qgdp	qgdp	qgdp	-0.0197484083473682	txs changes
+ExB15	SSA	qgdp	qgdp	qgdp	qgdp	0.00990879070013762	tms changes
+ExB15	EU	qgdp	qgdp	qgdp	qgdp	0.0992170944809914	TOTAL
+ExB15	EU	qgdp	qgdp	qgdp	qgdp	0.00938565842807293	to changes
+ExB15	EU	qgdp	qgdp	qgdp	qgdp	0.0492290072143078	txs changes
+ExB15	EU	qgdp	qgdp	qgdp	qgdp	0.0406027659773827	tms changes
+ExB15	ROW	qgdp	qgdp	qgdp	qgdp	-0.021230535581708	TOTAL
+ExB15	ROW	qgdp	qgdp	qgdp	qgdp	-0.00157551246229559	to changes
+ExB15	ROW	qgdp	qgdp	qgdp	qgdp	-0.0201160814613104	txs changes
+ExB15	ROW	qgdp	qgdp	qgdp	qgdp	0.000461042713141069	tms changes
+ExB15	SSA	qinv	qinv	qinv	qinv	0.0116685032844543	TOTAL
+ExB15	SSA	qinv	qinv	qinv	qinv	0.00652232486754656	to changes
+ExB15	SSA	qinv	qinv	qinv	qinv	0.00470265466719866	txs changes
+ExB15	SSA	qinv	qinv	qinv	qinv	0.000447352416813374	tms changes
+ExB15	EU	qinv	qinv	qinv	qinv	0.0160424690693617	TOTAL
+ExB15	EU	qinv	qinv	qinv	qinv	0.00896723382174969	to changes
+ExB15	EU	qinv	qinv	qinv	qinv	0.00646545505151153	txs changes
+ExB15	EU	qinv	qinv	qinv	qinv	0.000615043507423252	tms changes
+ExB15	ROW	qinv	qinv	qinv	qinv	0.0222908966243267	TOTAL
+ExB15	ROW	qinv	qinv	qinv	qinv	0.012459909543395	to changes
+ExB15	ROW	qinv	qinv	qinv	qinv	0.00898370519280434	txs changes
+ExB15	ROW	qinv	qinv	qinv	qinv	0.000854598707519472	tms changes
+ExB15	SSA	qmwreg	qmwreg	qmwreg	qmwreg	0.636134922504425	TOTAL
+ExB15	SSA	qmwreg	qmwreg	qmwreg	qmwreg	0.134776756167412	to changes
+ExB15	SSA	qmwreg	qmwreg	qmwreg	qmwreg	-1.21281754970551	txs changes
+ExB15	SSA	qmwreg	qmwreg	qmwreg	qmwreg	1.7141752243042	tms changes
+ExB15	EU	qmwreg	qmwreg	qmwreg	qmwreg	0.13051101565361	TOTAL
+ExB15	EU	qmwreg	qmwreg	qmwreg	qmwreg	-0.0105168856680393	to changes
+ExB15	EU	qmwreg	qmwreg	qmwreg	qmwreg	-0.287264347076416	txs changes
+ExB15	EU	qmwreg	qmwreg	qmwreg	qmwreg	0.42829230427742	tms changes
+ExB15	ROW	qmwreg	qmwreg	qmwreg	qmwreg	0.0024623170029372	TOTAL
+ExB15	ROW	qmwreg	qmwreg	qmwreg	qmwreg	0.00960853230208158	to changes
+ExB15	ROW	qmwreg	qmwreg	qmwreg	qmwreg	-0.300288140773773	txs changes
+ExB15	ROW	qmwreg	qmwreg	qmwreg	qmwreg	0.293141931295395	tms changes
+ExB15	SSA	qpriv	qpriv	qpriv	qpriv	0.130959957838058	TOTAL
+ExB15	SSA	qpriv	qpriv	qpriv	qpriv	0.0249350499361753	to changes
+ExB15	SSA	qpriv	qpriv	qpriv	qpriv	-0.201742187142372	txs changes
+ExB15	SSA	qpriv	qpriv	qpriv	qpriv	0.307767003774643	tms changes
+ExB15	EU	qpriv	qpriv	qpriv	qpriv	0.0851009041070938	TOTAL
+ExB15	EU	qpriv	qpriv	qpriv	qpriv	-0.0311428084969521	to changes
+ExB15	EU	qpriv	qpriv	qpriv	qpriv	0.120887324213982	txs changes
+ExB15	EU	qpriv	qpriv	qpriv	qpriv	-0.00464365351945162	tms changes
+ExB15	ROW	qpriv	qpriv	qpriv	qpriv	-0.0407832600176334	TOTAL
+ExB15	ROW	qpriv	qpriv	qpriv	qpriv	-0.00236440822482109	to changes
+ExB15	ROW	qpriv	qpriv	qpriv	qpriv	-0.0631512850522995	txs changes
+ExB15	ROW	qpriv	qpriv	qpriv	qpriv	0.024732444435358	tms changes
+ExB15	SSA	qsave	qsave	qsave	qsave	0.686687350273132	TOTAL
+ExB15	SSA	qsave	qsave	qsave	qsave	0.0732747763395309	to changes
+ExB15	SSA	qsave	qsave	qsave	qsave	0.0344799198210239	txs changes
+ExB15	SSA	qsave	qsave	qsave	qsave	0.578932583332062	tms changes
+ExB15	EU	qsave	qsave	qsave	qsave	0.00303352647460997	TOTAL
+ExB15	EU	qsave	qsave	qsave	qsave	0.0924435704946518	to changes
+ExB15	EU	qsave	qsave	qsave	qsave	0.0920280590653419	txs changes
+ExB15	EU	qsave	qsave	qsave	qsave	-0.181438207626343	tms changes
+ExB15	ROW	qsave	qsave	qsave	qsave	0.0535243302583694	TOTAL
+ExB15	ROW	qsave	qsave	qsave	qsave	0.0055867568589747	to changes
+ExB15	ROW	qsave	qsave	qsave	qsave	-0.00311369216069579	txs changes
+ExB15	ROW	qsave	qsave	qsave	qsave	0.0510536544024944	tms changes
+ExB15	SSA	qsaveev	qsaveev	qsaveev	qsaveev	0.193882495164871	TOTAL
+ExB15	SSA	qsaveev	qsaveev	qsaveev	qsaveev	0.0296332258731127	to changes
+ExB15	SSA	qsaveev	qsaveev	qsaveev	qsaveev	-0.160770073533058	txs changes
+ExB15	SSA	qsaveev	qsaveev	qsaveev	qsaveev	0.325019150972366	tms changes
+ExB15	EU	qsaveev	qsaveev	qsaveev	qsaveev	0.0885517299175262	TOTAL
+ExB15	EU	qsaveev	qsaveev	qsaveev	qsaveev	0.00619314284995198	to changes
+ExB15	EU	qsaveev	qsaveev	qsaveev	qsaveev	0.123059093952179	txs changes
+ExB15	EU	qsaveev	qsaveev	qsaveev	qsaveev	-0.0407005064189434	tms changes
+ExB15	ROW	qsaveev	qsaveev	qsaveev	qsaveev	-0.0167516302317381	TOTAL
+ExB15	ROW	qsaveev	qsaveev	qsaveev	qsaveev	-0.000359235767973587	to changes
+ExB15	ROW	qsaveev	qsaveev	qsaveev	qsaveev	-0.0477723330259323	txs changes
+ExB15	ROW	qsaveev	qsaveev	qsaveev	qsaveev	0.0313799567520618	tms changes
+ExB15	SSA	qxwreg	qxwreg	qxwreg	qxwreg	0.0594060085713863	TOTAL
+ExB15	SSA	qxwreg	qxwreg	qxwreg	qxwreg	0.047211367636919	to changes
+ExB15	SSA	qxwreg	qxwreg	qxwreg	qxwreg	-0.815755009651184	txs changes
+ExB15	SSA	qxwreg	qxwreg	qxwreg	qxwreg	0.827950239181519	tms changes
+ExB15	EU	qxwreg	qxwreg	qxwreg	qxwreg	0.195624023675919	TOTAL
+ExB15	EU	qxwreg	qxwreg	qxwreg	qxwreg	0.0211840830743313	to changes
+ExB15	EU	qxwreg	qxwreg	qxwreg	qxwreg	-0.452724099159241	txs changes
+ExB15	EU	qxwreg	qxwreg	qxwreg	qxwreg	0.627164304256439	tms changes
+ExB15	ROW	qxwreg	qxwreg	qxwreg	qxwreg	-0.0306014269590378	TOTAL
+ExB15	ROW	qxwreg	qxwreg	qxwreg	qxwreg	-0.00999915041029453	to changes
+ExB15	ROW	qxwreg	qxwreg	qxwreg	qxwreg	-0.19529139995575	txs changes
+ExB15	ROW	qxwreg	qxwreg	qxwreg	qxwreg	0.174688920378685	tms changes
+ExB15	SSA	rental	rental	rental	rental	1.10852444171906	TOTAL
+ExB15	SSA	rental	rental	rental	rental	0.126001805067062	to changes
+ExB15	SSA	rental	rental	rental	rental	0.107185050845146	txs changes
+ExB15	SSA	rental	rental	rental	rental	0.875337421894073	tms changes
+ExB15	EU	rental	rental	rental	rental	-0.918998122215271	TOTAL
+ExB15	EU	rental	rental	rental	rental	-0.108175300061703	to changes
+ExB15	EU	rental	rental	rental	rental	-0.313553780317307	txs changes
+ExB15	EU	rental	rental	rental	rental	-0.497269183397293	tms changes
+ExB15	ROW	rental	rental	rental	rental	0.307435154914856	TOTAL
+ExB15	ROW	rental	rental	rental	rental	0.0401171557605267	to changes
+ExB15	ROW	rental	rental	rental	rental	0.1065454185009	txs changes
+ExB15	ROW	rental	rental	rental	rental	0.1607725918293	tms changes
+ExB15	SSA	rorc	rorc	rorc	rorc	0.293435603380203	TOTAL
+ExB15	SSA	rorc	rorc	rorc	rorc	0.0365385748445988	to changes
+ExB15	SSA	rorc	rorc	rorc	rorc	-0.0705586895346642	txs changes
+ExB15	SSA	rorc	rorc	rorc	rorc	0.327455937862396	tms changes
+ExB15	EU	rorc	rorc	rorc	rorc	-0.321505606174469	TOTAL
+ExB15	EU	rorc	rorc	rorc	rorc	-0.0858383998274803	to changes
+ExB15	EU	rorc	rorc	rorc	rorc	-0.113380439579487	txs changes
+ExB15	EU	rorc	rorc	rorc	rorc	-0.122286818921566	tms changes
+ExB15	ROW	rorc	rorc	rorc	rorc	0.0655127763748169	TOTAL
+ExB15	ROW	rorc	rorc	rorc	rorc	0.00685611087828875	to changes
+ExB15	ROW	rorc	rorc	rorc	rorc	0.00439326325431466	txs changes
+ExB15	ROW	rorc	rorc	rorc	rorc	0.0542635507881641	tms changes
+ExB15	SSA	rore	rore	rore	rore	0.287185728549957	TOTAL
+ExB15	SSA	rore	rore	rore	rore	0.0330507047474384	to changes
+ExB15	SSA	rore	rore	rore	rore	-0.073069341480732	txs changes
+ExB15	SSA	rore	rore	rore	rore	0.327204585075378	tms changes
+ExB15	EU	rore	rore	rore	rore	-0.331270843744278	TOTAL
+ExB15	EU	rore	rore	rore	rore	-0.0912990421056747	to changes
+ExB15	EU	rore	rore	rore	rore	-0.11731681227684	txs changes
+ExB15	EU	rore	rore	rore	rore	-0.122654974460602	tms changes
+ExB15	ROW	rore	rore	rore	rore	0.0483802445232868	TOTAL
+ExB15	ROW	rore	rore	rore	rore	-0.00271442974917591	to changes
+ExB15	ROW	rore	rore	rore	rore	-0.00250687380321324	txs changes
+ExB15	ROW	rore	rore	rore	rore	0.0536014959216118	tms changes
+ExB15	SSA	tot	tot	tot	tot	0.671403586864471	TOTAL
+ExB15	SSA	tot	tot	tot	tot	0.0960818156599998	to changes
+ExB15	SSA	tot	tot	tot	tot	-0.429331719875336	txs changes
+ExB15	SSA	tot	tot	tot	tot	1.0046534538269	tms changes
+ExB15	EU	tot	tot	tot	tot	-0.08230921626091	TOTAL
+ExB15	EU	tot	tot	tot	tot	-0.0166360847651958	to changes
+ExB15	EU	tot	tot	tot	tot	0.190148830413818	txs changes
+ExB15	EU	tot	tot	tot	tot	-0.255821913480759	tms changes
+ExB15	ROW	tot	tot	tot	tot	0.0512461513280869	TOTAL
+ExB15	ROW	tot	tot	tot	tot	0.00840545725077391	to changes
+ExB15	ROW	tot	tot	tot	tot	-0.116371415555477	txs changes
+ExB15	ROW	tot	tot	tot	tot	0.15921214222908	tms changes
+ExB15	SSA	tot2	tot2	tot2	tot2	0.671403467655182	TOTAL
+ExB15	SSA	tot2	tot2	tot2	tot2	0.0960818231105804	to changes
+ExB15	SSA	tot2	tot2	tot2	tot2	-0.429331809282303	txs changes
+ExB15	SSA	tot2	tot2	tot2	tot2	1.0046534538269	tms changes
+ExB15	EU	tot2	tot2	tot2	tot2	-0.0823091343045235	TOTAL
+ExB15	EU	tot2	tot2	tot2	tot2	-0.0166360773146152	to changes
+ExB15	EU	tot2	tot2	tot2	tot2	0.190148860216141	txs changes
+ExB15	EU	tot2	tot2	tot2	tot2	-0.255821913480759	tms changes
+ExB15	ROW	tot2	tot2	tot2	tot2	0.0512460879981518	TOTAL
+ExB15	ROW	tot2	tot2	tot2	tot2	0.00840545166283846	to changes
+ExB15	ROW	tot2	tot2	tot2	tot2	-0.1163714453578	txs changes
+ExB15	ROW	tot2	tot2	tot2	tot2	0.15921214222908	tms changes
+ExB15	SSA	tpreg	tpreg	tpreg	tpreg	0	TOTAL
+ExB15	SSA	tpreg	tpreg	tpreg	tpreg	0	to changes
+ExB15	SSA	tpreg	tpreg	tpreg	tpreg	0	txs changes
+ExB15	SSA	tpreg	tpreg	tpreg	tpreg	0	tms changes
+ExB15	EU	tpreg	tpreg	tpreg	tpreg	0	TOTAL
+ExB15	EU	tpreg	tpreg	tpreg	tpreg	0	to changes
+ExB15	EU	tpreg	tpreg	tpreg	tpreg	0	txs changes
+ExB15	EU	tpreg	tpreg	tpreg	tpreg	0	tms changes
+ExB15	ROW	tpreg	tpreg	tpreg	tpreg	0	TOTAL
+ExB15	ROW	tpreg	tpreg	tpreg	tpreg	0	to changes
+ExB15	ROW	tpreg	tpreg	tpreg	tpreg	0	txs changes
+ExB15	ROW	tpreg	tpreg	tpreg	tpreg	0	tms changes
+ExB15	SSA	u	u	u	u	0.189903825521469	TOTAL
+ExB15	SSA	u	u	u	u	0.0290252864360809	to changes
+ExB15	SSA	u	u	u	u	-0.157473206520081	txs changes
+ExB15	SSA	u	u	u	u	0.318351536989212	tms changes
+ExB15	EU	u	u	u	u	0.0868183448910713	TOTAL
+ExB15	EU	u	u	u	u	0.0060719195753336	to changes
+ExB15	EU	u	u	u	u	0.120649680495262	txs changes
+ExB15	EU	u	u	u	u	-0.0399032607674599	tms changes
+ExB15	ROW	u	u	u	u	-0.0164494384080172	TOTAL
+ExB15	ROW	u	u	u	u	-0.00035275481059216	to changes
+ExB15	ROW	u	u	u	u	-0.04691057279706	txs changes
+ExB15	ROW	u	u	u	u	0.0308139026165009	tms changes
+ExB15	SSA	uelas	uelas	uelas	uelas	-0.0879524275660515	TOTAL
+ExB15	SSA	uelas	uelas	uelas	uelas	-0.0069179586134851	to changes
+ExB15	SSA	uelas	uelas	uelas	uelas	-0.0508942827582359	txs changes
+ExB15	SSA	uelas	uelas	uelas	uelas	-0.0301402062177658	tms changes
+ExB15	EU	uelas	uelas	uelas	uelas	0.0102264443412423	TOTAL
+ExB15	EU	uelas	uelas	uelas	uelas	-0.0414242818951607	to changes
+ExB15	EU	uelas	uelas	uelas	uelas	0.00565807474777102	txs changes
+ExB15	EU	uelas	uelas	uelas	uelas	0.0459926091134548	tms changes
+ExB15	ROW	uelas	uelas	uelas	uelas	-0.0284196119755507	TOTAL
+ExB15	ROW	uelas	uelas	uelas	uelas	-0.00233284034766257	to changes
+ExB15	ROW	uelas	uelas	uelas	uelas	-0.0194631349295378	txs changes
+ExB15	ROW	uelas	uelas	uelas	uelas	-0.00662364857271314	tms changes
+ExB15	SSA	uelasev	uelasev	uelasev	uelasev	0.00396733544766903	TOTAL
+ExB15	SSA	uelasev	uelasev	uelasev	uelasev	0.000606452522333711	to changes
+ExB15	SSA	uelasev	uelasev	uelasev	uelasev	-0.00329088629223406	txs changes
+ExB15	SSA	uelasev	uelasev	uelasev	uelasev	0.00665176566690207	tms changes
+ExB15	EU	uelasev	uelasev	uelasev	uelasev	0.00173098780214787	TOTAL
+ExB15	EU	uelasev	uelasev	uelasev	uelasev	0.00012106700160075	to changes
+ExB15	EU	uelasev	uelasev	uelasev	uelasev	0.00240508047863841	txs changes
+ExB15	EU	uelasev	uelasev	uelasev	uelasev	-0.000795158615801483	tms changes
+ExB15	ROW	uelasev	uelasev	uelasev	uelasev	-0.000302258675219491	TOTAL
+ExB15	ROW	uelasev	uelasev	uelasev	uelasev	-6.48095783617464e-06	to changes
+ExB15	ROW	uelasev	uelasev	uelasev	uelasev	-0.00086203427053988	txs changes
+ExB15	ROW	uelasev	uelasev	uelasev	uelasev	0.000566256698220968	tms changes
+ExB15	SSA	uepriv	uepriv	uepriv	uepriv	-0.11381821334362	TOTAL
+ExB15	SSA	uepriv	uepriv	uepriv	uepriv	-0.00895236805081367	to changes
+ExB15	SSA	uepriv	uepriv	uepriv	uepriv	-0.0658629462122917	txs changes
+ExB15	SSA	uepriv	uepriv	uepriv	uepriv	-0.039002925157547	tms changes
+ExB15	EU	uepriv	uepriv	uepriv	uepriv	0.0147658633068204	TOTAL
+ExB15	EU	uepriv	uepriv	uepriv	uepriv	-0.0598115362226963	to changes
+ExB15	EU	uepriv	uepriv	uepriv	uepriv	0.00816948711872101	txs changes
+ExB15	EU	uepriv	uepriv	uepriv	uepriv	0.0664078369736671	tms changes
+ExB15	ROW	uepriv	uepriv	uepriv	uepriv	-0.039356242865324	TOTAL
+ExB15	ROW	uepriv	uepriv	uepriv	uepriv	-0.00323057360947132	to changes
+ExB15	ROW	uepriv	uepriv	uepriv	uepriv	-0.0269532222300768	txs changes
+ExB15	ROW	uepriv	uepriv	uepriv	uepriv	-0.00917245261371136	tms changes
+ExB15	SSA	ueprivev	ueprivev	ueprivev	ueprivev	0.00513459090143442	TOTAL
+ExB15	SSA	ueprivev	ueprivev	ueprivev	ueprivev	0.000784894393291324	to changes
+ExB15	SSA	ueprivev	ueprivev	ueprivev	ueprivev	-0.00425931066274643	txs changes
+ExB15	SSA	ueprivev	ueprivev	ueprivev	ueprivev	0.00860900152474642	tms changes
+ExB15	EU	ueprivev	ueprivev	ueprivev	ueprivev	0.00249926652759314	TOTAL
+ExB15	EU	ueprivev	ueprivev	ueprivev	ueprivev	0.000174800792592578	to changes
+ExB15	EU	ueprivev	ueprivev	ueprivev	ueprivev	0.00347257568500936	txs changes
+ExB15	EU	ueprivev	ueprivev	ueprivev	ueprivev	-0.00114810955710709	tms changes
+ExB15	ROW	ueprivev	ueprivev	ueprivev	ueprivev	-0.000418608746258542	TOTAL
+ExB15	ROW	ueprivev	ueprivev	ueprivev	ueprivev	-8.97615245776251e-06	to changes
+ExB15	ROW	ueprivev	ueprivev	ueprivev	ueprivev	-0.00119383621495217	txs changes
+ExB15	ROW	ueprivev	ueprivev	ueprivev	ueprivev	0.000784204166848212	tms changes
+ExB15	SSA	ug	ug	ug	ug	0.335330337285995	TOTAL
+ExB15	SSA	ug	ug	ug	ug	0.0372791662812233	to changes
+ExB15	SSA	ug	ug	ug	ug	-0.0141352582722902	txs changes
+ExB15	SSA	ug	ug	ug	ug	0.312186360359192	tms changes
+ExB15	EU	ug	ug	ug	ug	0.124724842607975	TOTAL
+ExB15	EU	ug	ug	ug	ug	0.0889452248811722	to changes
+ExB15	EU	ug	ug	ug	ug	0.13103412091732	txs changes
+ExB15	EU	ug	ug	ug	ug	-0.0952545553445816	tms changes
+ExB15	ROW	ug	ug	ug	ug	0.0414188951253891	TOTAL
+ExB15	ROW	ug	ug	ug	ug	0.00430637272074819	to changes
+ExB15	ROW	ug	ug	ug	ug	-0.00592725584283471	txs changes
+ExB15	ROW	ug	ug	ug	ug	0.0430397614836693	tms changes
+ExB15	SSA	ugev	ugev	ugev	ugev	0.193882495164871	TOTAL
+ExB15	SSA	ugev	ugev	ugev	ugev	0.0296332258731127	to changes
+ExB15	SSA	ugev	ugev	ugev	ugev	-0.160770073533058	txs changes
+ExB15	SSA	ugev	ugev	ugev	ugev	0.325019150972366	tms changes
+ExB15	EU	ugev	ugev	ugev	ugev	0.0885517299175262	TOTAL
+ExB15	EU	ugev	ugev	ugev	ugev	0.00619314284995198	to changes
+ExB15	EU	ugev	ugev	ugev	ugev	0.123059093952179	txs changes
+ExB15	EU	ugev	ugev	ugev	ugev	-0.0407005064189434	tms changes
+ExB15	ROW	ugev	ugev	ugev	ugev	-0.0167516302317381	TOTAL
+ExB15	ROW	ugev	ugev	ugev	ugev	-0.000359235767973587	to changes
+ExB15	ROW	ugev	ugev	ugev	ugev	-0.0477723330259323	txs changes
+ExB15	ROW	ugev	ugev	ugev	ugev	0.0313799567520618	tms changes
+ExB15	SSA	up	up	up	up	0.131066098809242	TOTAL
+ExB15	SSA	up	up	up	up	0.0249515436589718	to changes
+ExB15	SSA	up	up	up	up	-0.201847761869431	txs changes
+ExB15	SSA	up	up	up	up	0.307962238788605	tms changes
+ExB15	EU	up	up	up	up	0.085098922252655	TOTAL
+ExB15	EU	up	up	up	up	-0.0311406310647726	to changes
+ExB15	EU	up	up	up	up	0.120881974697113	txs changes
+ExB15	EU	up	up	up	up	-0.00464234640821815	tms changes
+ExB15	ROW	up	up	up	up	-0.0407898612320423	TOTAL
+ExB15	ROW	up	up	up	up	-0.00236478494480252	to changes
+ExB15	ROW	up	up	up	up	-0.0631629452109337	txs changes
+ExB15	ROW	up	up	up	up	0.024737885221839	tms changes
+ExB15	SSA	upev	upev	upev	upev	0.18873330950737	TOTAL
+ExB15	SSA	upev	upev	upev	upev	0.02884641289711	to changes
+ExB15	SSA	upev	upev	upev	upev	-0.156503021717072	txs changes
+ExB15	SSA	upev	upev	upev	upev	0.31638976931572	tms changes
+ExB15	EU	upev	upev	upev	upev	0.0860490351915359	TOTAL
+ExB15	EU	upev	upev	upev	upev	0.00601811800152063	to changes
+ExB15	EU	upev	upev	upev	upev	0.119580328464508	txs changes
+ExB15	EU	upev	upev	upev	upev	-0.0395494103431702	tms changes
+ExB15	ROW	upev	upev	upev	upev	-0.0163331106305122	TOTAL
+ExB15	ROW	upev	upev	upev	upev	-0.000350259535480291	to changes
+ExB15	ROW	upev	upev	upev	upev	-0.0465788803994656	txs changes
+ExB15	ROW	upev	upev	upev	upev	0.0305960346013308	tms changes
+ExB15	SSA	vgdp	vgdp	vgdp	vgdp	1.62914395332336	TOTAL
+ExB15	SSA	vgdp	vgdp	vgdp	vgdp	0.175929039716721	to changes
+ExB15	SSA	vgdp	vgdp	vgdp	vgdp	0.232396095991135	txs changes
+ExB15	SSA	vgdp	vgdp	vgdp	vgdp	1.22087430953979	tms changes
+ExB15	EU	vgdp	vgdp	vgdp	vgdp	-0.715099155902863	TOTAL
+ExB15	EU	vgdp	vgdp	vgdp	vgdp	0.0620107240974903	to changes
+ExB15	EU	vgdp	vgdp	vgdp	vgdp	-0.164054572582245	txs changes
+ExB15	EU	vgdp	vgdp	vgdp	vgdp	-0.613055408000946	tms changes
+ExB15	ROW	vgdp	vgdp	vgdp	vgdp	0.353288203477859	TOTAL
+ExB15	ROW	vgdp	vgdp	vgdp	vgdp	0.0441285595297813	to changes
+ExB15	ROW	vgdp	vgdp	vgdp	vgdp	0.124330833554268	txs changes
+ExB15	ROW	vgdp	vgdp	vgdp	vgdp	0.184828832745552	tms changes
+ExB15	SSA	vmwreg	vmwreg	vmwreg	vmwreg	1.26428532600403	TOTAL
+ExB15	SSA	vmwreg	vmwreg	vmwreg	vmwreg	0.177504613995552	to changes
+ExB15	SSA	vmwreg	vmwreg	vmwreg	vmwreg	-0.529924631118774	txs changes
+ExB15	SSA	vmwreg	vmwreg	vmwreg	vmwreg	1.61670529842377	tms changes
+ExB15	EU	vmwreg	vmwreg	vmwreg	vmwreg	-0.162741422653198	TOTAL
+ExB15	EU	vmwreg	vmwreg	vmwreg	vmwreg	0.0817316100001335	to changes
+ExB15	EU	vmwreg	vmwreg	vmwreg	vmwreg	-0.406827807426453	txs changes
+ExB15	EU	vmwreg	vmwreg	vmwreg	vmwreg	0.16235476732254	tms changes
+ExB15	ROW	vmwreg	vmwreg	vmwreg	vmwreg	0.275422245264053	TOTAL
+ExB15	ROW	vmwreg	vmwreg	vmwreg	vmwreg	0.041986808180809	to changes
+ExB15	ROW	vmwreg	vmwreg	vmwreg	vmwreg	-0.048455748707056	txs changes
+ExB15	ROW	vmwreg	vmwreg	vmwreg	vmwreg	0.281891167163849	tms changes
+ExB15	SSA	vxwreg	vxwreg	vxwreg	vxwreg	1.35995221138	TOTAL
+ExB15	SSA	vxwreg	vxwreg	vxwreg	vxwreg	0.18618269264698	to changes
+ExB15	SSA	vxwreg	vxwreg	vxwreg	vxwreg	-0.563760042190552	txs changes
+ExB15	SSA	vxwreg	vxwreg	vxwreg	vxwreg	1.73753035068512	tms changes
+ExB15	EU	vxwreg	vxwreg	vxwreg	vxwreg	-0.180047765374184	TOTAL
+ExB15	EU	vxwreg	vxwreg	vxwreg	vxwreg	0.0967599451541901	to changes
+ExB15	EU	vxwreg	vxwreg	vxwreg	vxwreg	-0.382053375244141	txs changes
+ExB15	EU	vxwreg	vxwreg	vxwreg	vxwreg	0.10524594783783	tms changes
+ExB15	ROW	vxwreg	vxwreg	vxwreg	vxwreg	0.293638497591019	TOTAL
+ExB15	ROW	vxwreg	vxwreg	vxwreg	vxwreg	0.0307661760598421	to changes
+ExB15	ROW	vxwreg	vxwreg	vxwreg	vxwreg	-0.0598130822181702	txs changes
+ExB15	ROW	vxwreg	vxwreg	vxwreg	vxwreg	0.322685241699219	tms changes
+ExB15	SSA	y	y	y	y	1.73039984703064	TOTAL
+ExB15	SSA	y	y	y	y	0.186387270689011	to changes
+ExB15	SSA	y	y	y	y	0.244184970855713	txs changes
+ExB15	SSA	y	y	y	y	1.29988467693329	tms changes
+ExB15	EU	y	y	y	y	-0.713439702987671	TOTAL
+ExB15	EU	y	y	y	y	0.0785701349377632	to changes
+ExB15	EU	y	y	y	y	-0.152661189436913	txs changes
+ExB15	EU	y	y	y	y	-0.639348566532135	tms changes
+ExB15	ROW	y	y	y	y	0.364911526441574	TOTAL
+ExB15	ROW	y	y	y	y	0.0452451035380363	to changes
+ExB15	ROW	y	y	y	y	0.126981422305107	txs changes
+ExB15	ROW	y	y	y	y	0.192685008049011	tms changes
+ExB15	SSA	yev	yev	yev	yev	0.189907610416412	TOTAL
+ExB15	SSA	yev	yev	yev	yev	0.0290257818996906	to changes
+ExB15	SSA	yev	yev	yev	yev	-0.157475203275681	txs changes
+ExB15	SSA	yev	yev	yev	yev	0.318356871604919	tms changes
+ExB15	EU	yev	yev	yev	yev	0.0868192315101624	TOTAL
+ExB15	EU	yev	yev	yev	yev	0.0060719782486558	to changes
+ExB15	EU	yev	yev	yev	yev	0.120651267468929	txs changes
+ExB15	EU	yev	yev	yev	yev	-0.039903998374939	tms changes
+ExB15	ROW	yev	yev	yev	yev	-0.0164494216442108	TOTAL
+ExB15	ROW	yev	yev	yev	yev	-0.000352754927007481	to changes
+ExB15	ROW	yev	yev	yev	yev	-0.0469104908406734	txs changes
+ExB15	ROW	yev	yev	yev	yev	0.0308138411492109	tms changes
+ExB15	SSA	yg	yg	yg	yg	1.64092528820038	TOTAL
+ExB15	SSA	yg	yg	yg	yg	0.179323852062225	to changes
+ExB15	SSA	yg	yg	yg	yg	0.192841559648514	txs changes
+ExB15	SSA	yg	yg	yg	yg	1.26883935928345	tms changes
+ExB15	EU	yg	yg	yg	yg	-0.703286111354828	TOTAL
+ExB15	EU	yg	yg	yg	yg	0.0372815690934658	to changes
+ExB15	EU	yg	yg	yg	yg	-0.147023350000381	txs changes
+ExB15	EU	yg	yg	yg	yg	-0.593544542789459	tms changes
+ExB15	ROW	yg	yg	yg	yg	0.336388230323792	TOTAL
+ExB15	ROW	yg	yg	yg	yg	0.042901411652565	to changes
+ExB15	ROW	yg	yg	yg	yg	0.107469648122787	txs changes
+ExB15	ROW	yg	yg	yg	yg	0.186017170548439	tms changes
+ExB15	SSA	ygev	ygev	ygev	ygev	0.193882495164871	TOTAL
+ExB15	SSA	ygev	ygev	ygev	ygev	0.0296332258731127	to changes
+ExB15	SSA	ygev	ygev	ygev	ygev	-0.160770073533058	txs changes
+ExB15	SSA	ygev	ygev	ygev	ygev	0.325019150972366	tms changes
+ExB15	EU	ygev	ygev	ygev	ygev	0.0885517299175262	TOTAL
+ExB15	EU	ygev	ygev	ygev	ygev	0.00619314284995198	to changes
+ExB15	EU	ygev	ygev	ygev	ygev	0.123059093952179	txs changes
+ExB15	EU	ygev	ygev	ygev	ygev	-0.0407005064189434	tms changes
+ExB15	ROW	ygev	ygev	ygev	ygev	-0.0167516302317381	TOTAL
+ExB15	ROW	ygev	ygev	ygev	ygev	-0.000359235767973587	to changes
+ExB15	ROW	ygev	ygev	ygev	ygev	-0.0477723330259323	txs changes
+ExB15	ROW	ygev	ygev	ygev	ygev	0.0313799567520618	tms changes
+ExB15	SSA	yp	yp	yp	yp	1.75674295425415	TOTAL
+ExB15	SSA	yp	yp	yp	yp	0.188466921448708	to changes
+ExB15	SSA	yp	yp	yp	yp	0.259301662445068	txs changes
+ExB15	SSA	yp	yp	yp	yp	1.30902516841888	tms changes
+ExB15	EU	yp	yp	yp	yp	-0.71794605255127	TOTAL
+ExB15	EU	yp	yp	yp	yp	0.0968949869275093	to changes
+ExB15	EU	yp	yp	yp	yp	-0.155163422226906	txs changes
+ExB15	EU	yp	yp	yp	yp	-0.659677684307098	tms changes
+ExB15	ROW	yp	yp	yp	yp	0.375892341136932	TOTAL
+ExB15	ROW	yp	yp	yp	yp	0.046147383749485	to changes
+ExB15	ROW	yp	yp	yp	yp	0.13449302315712	txs changes
+ExB15	ROW	yp	yp	yp	yp	0.195252001285553	tms changes
+ExB15	SSA	ypev	ypev	ypev	ypev	0.18873818218708	TOTAL
+ExB15	SSA	ypev	ypev	ypev	ypev	0.0288470555096865	to changes
+ExB15	SSA	ypev	ypev	ypev	ypev	-0.15650562942028	txs changes
+ExB15	SSA	ypev	ypev	ypev	ypev	0.316396594047546	tms changes
+ExB15	EU	ypev	ypev	ypev	ypev	0.0860503017902374	TOTAL
+ExB15	EU	ypev	ypev	ypev	ypev	0.00601820275187492	to changes
+ExB15	EU	ypev	ypev	ypev	ypev	0.119582571089268	txs changes
+ExB15	EU	ypev	ypev	ypev	ypev	-0.0395504646003246	tms changes
+ExB15	ROW	ypev	ypev	ypev	ypev	-0.0163330901414156	TOTAL
+ExB15	ROW	ypev	ypev	ypev	ypev	-0.000350259739207104	to changes
+ExB15	ROW	ypev	ypev	ypev	ypev	-0.0465787723660469	txs changes
+ExB15	ROW	ypev	ypev	ypev	ypev	0.0305959526449442	tms changes
