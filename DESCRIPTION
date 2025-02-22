@@ -1,0 +1,58 @@
+Package: GTAPViz
+Title: Visualization of GTAP Model Results from HAR and SL4 Files
+Version: 0.0.0.9000
+Author: Pattawee Puangchit <ppuangch@purdue.edu>
+Authors@R: 
+    person("Pattawee", "Puangchit", , "ppuangch@purdue.edu", role = c("aut", "cre"))
+Description: HARplusViz is an extension package of HARplus, designed to provide seamless 
+    data visualization for GTAP model results from `.HAR` and `.SL4` files. This package 
+    focuses on user-friendly visualization tools, enabling GTAP users to analyze and compare 
+    simulation results efficiently without requiring deep coding knowledge. With built-in 
+    functions for pivoting, mapping, unit assignments, and graphical representation, HARplusViz 
+    enhances economic model interpretation by generating structured, publication-ready plots. 
+    It is ideal for GTAP researchers, policymakers, and analysts looking for intuitive data 
+    exploration and visual insights from GEMPACK outputs.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+BugReports: https://github.com/bodysbobb/HARplus/issues
+URL: https://github.com/bodysbobb/HARplus
+Imports:
+    HARplus,
+    stats,
+    ggplot2,
+    dplyr,
+    tidyr,
+    openxlsx,
+    utils,
+    tidyselect,
+    tools,
+    colorspace,
+    grDevices,
+    rlang,
+    scales
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Exports:
+    add_unit_col,
+    comparison_plot,
+    detail_plot,
+    macro_plot,
+    gtap_macros_data,
+    add_mapping_info
+ImportFrom:
+    HARplus get_data_by_var load_sl4x
+    stats setNames
+    ggplot2 ggplot aes aes_string geom_bar geom_text geom_vline geom_col geom_hline facet_wrap 
+        theme_minimal theme element_text element_rect element_blank unit margin labs 
+        scale_fill_manual scale_y_continuous position_dodge expansion
+    dplyr filter mutate case_when
+    colorspace hex2RGB hex polarLUV sRGB
+    grDevices col2rgb rgb
+    rlang sym
+    scales squish
+Depends: 
+    R (>= 3.5)
