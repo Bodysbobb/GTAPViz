@@ -1,4 +1,6 @@
 .Rproj.user
 inst/doc
-.Rhistory
 LICENSE.md
+*.Rproj
+*.Rhistory
+*.Rbuildignore

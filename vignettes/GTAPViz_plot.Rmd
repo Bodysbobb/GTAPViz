@@ -41,7 +41,7 @@ harplot <- readxl::read_xlsx(mapping.output, sheet = "HARPlot")
 setwd <- "D:/GitHub/GTAPViz/R"
 devtools::load_all()
 
-devtools::install_github("Bodysbobb/GTAPViz")
+#devtools::install_github("Bodysbobb/GTAPViz")
 ```
 
 
@@ -54,7 +54,7 @@ The visualization framework relies on the **`SL4Plot`** and **`HARPlot`** sheets
 By leveraging HARplus for data extraction and GTAPViz for visualization, this package provides a streamlined workflow to generate insightful graphs without requiring extensive manual coding.
 
 For an overview of data processing functionalities, refer to the separate vignette:  
-[\href{../GTAPViz_data_processing.html}{GTAPViz: Automating GTAP Data Processing}](../GTAPViz_data_processing.html).
+[\href{https://github.com/Bodysbobb/GTAPViz}{GTAPViz - Data Processing}](https://github.com/Bodysbobb/HARplus).
 
 # Project Directory {#sec:project-setting}
 

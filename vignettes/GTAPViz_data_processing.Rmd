@@ -39,7 +39,7 @@ harmap <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
 setwd <- "D:/GitHub/GTAPViz/R"
 devtools::load_all()
 
-devtools::install_github("Bodysbobb/GTAPViz")
+#devtools::install_github("Bodysbobb/GTAPViz")
 ```
 
 # Introduction {#sec:introduction}
