@@ -1,4 +1,4 @@
 url: https://bodysbobb.github.io/GTAPViz/
 template:
   bootstrap: 5
-
+  bootswatch: flatly 

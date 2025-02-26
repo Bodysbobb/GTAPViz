@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   GTAPViz_data_processing: GTAPViz_data_processing.html
   GTAPViz_plot: GTAPViz_plot.html
-last_built: 2025-02-26T15:40Z
+last_built: 2025-02-26T15:49Z
 urls:
   reference: https://bodysbobb.github.io/GTAPViz/reference
   article: https://bodysbobb.github.io/GTAPViz/articles
