@@ -67,7 +67,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   }
 
   extracted_data <- lapply(seq_along(file_paths), function(i) {
-    sl4_data <- load_sl4x(file_paths[[i]])
+    sl4_data <- HARplus::load_sl4x(file_paths[[i]])
     dataset <- sl4_data$data
     scenario <- experiment_names[i]
 
@@ -1083,26 +1083,26 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
     if (!is.data.frame(df)) return(df)
 
     if (!is.null(region_select) && "REG" %in% names(df)) {
-      df <- df %>% filter(REG %in% region_select) %>%
-        mutate(REG = factor(REG, levels = region_select))
+      df <- dplyr::filter(df, REG %in% region_select)
+      df$REG <- factor(df$REG, levels = region_select)
     }
 
     if (!is.null(experiment_select) && "Experiment" %in% names(df)) {
-      df <- df %>% filter(Experiment %in% experiment_select) %>%
-        mutate(Experiment = factor(Experiment, levels = experiment_select))
+      df <- dplyr::filter(df, Experiment %in% experiment_select)
+      df$Experiment <- factor(df$Experiment, levels = experiment_select)
     }
 
     sector_col <- if ("COMM" %in% names(df)) "COMM" else if ("ACTS" %in% names(df)) "ACTS" else NULL
 
     if (!is.null(sector_select) && !is.null(sector_col)) {
-      df <- df %>% filter(.data[[sector_col]] %in% sector_select) %>%
-        mutate(!!sym(sector_col) := factor(.data[[sector_col]], levels = sector_select))
+      df <- dplyr::filter(df, .data[[sector_col]] %in% sector_select)
+      df[[sector_col]] <- factor(df[[sector_col]], levels = sector_select)
     }
 
     if (!is.null(sector_col)) {
-      df <- df %>% arrange(Experiment, REG, .data[[sector_col]])
+      df <- dplyr::arrange(df, Experiment, REG, .data[[sector_col]])
     } else {
-      df <- df %>% arrange(Experiment, REG)
+      df <- dplyr::arrange(df, Experiment, REG)
     }
 
     return(df)
@@ -1124,6 +1124,8 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
 
   return(data)
 }
+
+
 
 
 #' @title Validate GTAP Files for Extraction

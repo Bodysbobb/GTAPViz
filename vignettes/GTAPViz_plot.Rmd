@@ -1,0 +1,336 @@
+---
+title: "GTAPViz: Visualizing GTAP Model Results"
+author: "Pattawee Puangchit"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GTAPViz: Visualizing GTAP Model Results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  eval = requireNamespace("GTAPViz", quietly = TRUE)
+)
+
+required_pkgs <- c("tidyverse", "writexl", "dplyr", "devtools", 
+                   "openxlsx", "readxl", "knitr", "rmarkdown", "data.table", 
+                   "ggplot2", "tcltk", "gridExtra", "haven", "citation", "tinytex", "bookdown", "HARplus")
+
+# Load packages quietly, but only if available
+lapply(required_pkgs, function(pkg) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    warning(sprintf("Package '%s' is not installed. Please install it before running this vignette.", pkg))
+  }
+})
+
+# Directory
+project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data/Plot"
+input.folder <- paste0(project.folder, "/in")
+output.folder <- paste0(project.folder, "/out")
+map.folder <- paste0(project.folder, "/map")
+mapping.output <- paste0(map.folder, "/OutputMapping.xlsx")
+sl4plot <- readxl::read_xlsx(mapping.output, sheet = "SL4Plot")
+harplot <- readxl::read_xlsx(mapping.output, sheet = "HARPlot")
+setwd <- "D:/GitHub/GTAPViz/R"
+devtools::load_all()
+
+devtools::install_github("Bodysbobb/GTAPViz")
+```
+
+
+# Introduction {#sec:introduction}
+
+GTAPViz, built on the **HARplus** package, enhances the visualization of GTAP model results, making it easier for users to interpret and communicate economic simulation outputs. This vignette demonstrates how to create structured, publication-ready figures using GTAPViz’s built-in visualization tools.
+
+The visualization framework relies on the **`SL4Plot`** and **`HARPlot`** sheets, which specify the variables and figure titles used for plotting. Users can define these directly within an external mapping file or generate them dynamically in the R environment.
+
+By leveraging HARplus for data extraction and GTAPViz for visualization, this package provides a streamlined workflow to generate insightful graphs without requiring extensive manual coding.
+
+For an overview of data processing functionalities, refer to the separate vignette:  
+[\href{../GTAPViz_data_processing.html}{GTAPViz: Automating GTAP Data Processing}](../GTAPViz_data_processing.html).
+
+# Project Directory {#sec:project-setting}
+
+To use this R code, all solution files, including `.sl4` and `.har`, must be saved from RUNGTAP or CMD and placed in the same folder.
+
+Adjust the `<project.folder>` directory to your desired path. If you maintain the same folder structure as in this code, you may not need to modify the input (`<input.folder>`), output (`<output.folder>`), or mapping (`<map.folder>`) directories.
+
+By default, this R code assumes that `<project.folder>` contains the following three main folders:
+
+-   **in** – Stores all input files (i.e., `.sl4` and `.har`). See the [Solution files](#sec:input-files) for details.
+-   **out** – Stores all exported output files.
+-   **map** – Stores the mapping `.xlsx` file (**critical for processing**).
+
+<div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
+📂 project.folder/ <br>
+ ├── 📂 in/  <span style="color: #61AFEF;"># Stores input files (<code>.sl4</code>, <code>.har</code>)</span> <br>
+ ├── 📂 out/ <span style="color: #98C379;"># Stores output files</span> <br>
+ ├── 📂 map/ <span style="color: #E5C07B;"># Stores the mapping file (<code>OutputMapping.xlsx</code>)</span> <br>
+</div>
+   
+: Example of Project Folder
+
+# Mapping Files {#sec:mapping-files}
+
+The **`<OutputMapping.xlsx>`** specifies the variables to extract from the solution files `<SL4File sheet>` and the HAR file `<HARFile sheet>`. All required variables must be listed in the `"Variable"` column.
+
+For `"Description"` and `"Unit"`, you may:
+
+- Leave the columns blank and put `"No"` in `<info.mode>` [setting](#sec:setting) to exclude these columns.  
+  \footnote{If you leave them blank and put `"Yes"` instead of `"No"`, the result will return an empty column in your output.}
+
+- Manually define **all variables** and put `"Yes"` in `<info.mode>` [setting](#sec:setting).
+
+- Leave the columns blank and put `"GTAPv7"` in `<info.mode>` [setting](#sec:setting) to get the default definition and unit based on GTAPv7.  
+  \footnote{The GTAP default can only define variables based on the GTAPv7 default set. If you add additional variables to the model, you must manually define the `"Description"` and `"Unit"` in the sheet if needed.}
+
+- Define only some variables, leave others blank, and put `"Mix"` in `<info.mode>` [setting](#sec:setting) to get the definition based on your input for defined variables and the GTAP default for the others.
+
+
+| Variable     | Description         | Unit        |
+|--------------|---------------------|-------------|
+| qgdp         | Real GDP Index (%)  | percent     |
+| EV           | Welfare Equivalents | million USD |
+| pebfactreal  | Cost of endownment  | percent     |
+
+: Example of SL4File and HARFile sheet
+
+
+The `<SL4Plot sheet>` and `<HARPlot sheet>` are used for creating figure illustrations. Instructions for this can be found in another vignette called *GTAPViz_plot*. Essentially, the table contains two columns: `"Variable"`, which specifies the data used for figure creation, and `"PlotTitle"`, which defines the figure name. Users familiar with the R language can also create this table as a dataframe within the R environment.
+
+| Variable      | PlotTitle             | Unit        |
+|---------------|-----------------------|-------------|
+| qgdp          | Real GDP Index        | percent     |
+| EV            | Welfare Equivalents   | million USD |
+| ppriv         | Consumer Price Index  | percent     |
+
+: Example of SL4Plot and HARPlot sheet
+
+
+💡 **Note:** The mapping file (`<OutputMapping.xlsx>`) can also be manually created in R as a dataframe, provided that it follows the exact structure, including column names. The dataframe must contain at least the `"Variable"` column, while `"Description"` and `"Unit"` columns are optional depending on the selected `<info.mode>`.  
+
+
+For example, the following R code creates an equivalent mapping dataframe:
+
+```{r, eval=FALSE}
+mapping_df <- data.frame(
+  Variable = c("qgdp", "EV", "ppriv"),
+  PlotTitle = c("Real GDP Index", "Welfare Equivalents", "Cost of endowment"),
+  Unit = c("Percent", "million USD", "percent"),
+  stringsAsFactors = FALSE
+)
+```
+
+# Input Files {#sec:input-files}
+
+The `<case.name>` variable in [setting](#sec:setting) contains experiment names from which results will be extracted and merged into a single output for further analysis, such as graph creation. Multiple experiments can be included, but increasing their number will extend processing time.
+
+## Input Files Format
+
+All input files must be stored in `<input.folder>` (default: `"in"` inside `<project.folder>`). File names must follow `<case.name>` to ensure consistency between input each `.sl4` file must have a corresponding `-WEL.HAR` file
+
+-   `EXP1.sl4`, `EXP1-WEL.har`
+-   `EXP2.sl4`, `EXP2-WEL.har`
+
+<div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
+📂 in/ <br>
+ ├── 📄 EXP1.sl4 <br>
+ ├── 📄 EXP1-WEL.har <br>
+ ├── 📄 EXP2.sl4 <br>
+ ├── 📄 EXP2-WEL.har <br>
+</div>
+: Example of Input Files within the Input Folder
+
+# Sample Data
+Sample data used in this vignette is obtained from the GTAPv7 model and utilizes publicly available data from the GTAP 9 database. For more details, refer to the [GTAP Database Archive](https://www.gtap.agecon.purdue.edu/databases/archives.asp).
+
+# Loading Package
+Before proceeding, ensure that `GTAPViz` and `HARplus` are installed and loaded:
+```{r package}
+library(GTAPViz)
+```
+
+# Input Setup {#sec:setting}
+
+This chunk defines the **experiment names**, **handling of description and unit columns**, and **output formats** for processing GTAP model results.
+
+- **Experiment Names (`experiment`)**:  
+  Specifies the names of experiments to process, matching the prefixes of `.sl4` and `.har` files.  
+  Example:  
+  - `EXP1.sl4` and `EXP1-WEL.har` → Processed as `EXP1`.  
+  - `EXP2.sl4` and `EXP2-WEL.har` → Processed as `EXP2`.  
+
+- **Description and Unit Handling (`info.mode`)**:  
+  Determines how the `"Description"` and `"Unit"` columns are included in the output:  
+  - `"Yes"` → Use manually defined descriptions and units from the mapping file.  
+  - `"No"` → Exclude the `"Description"` and `"Unit"` columns.  
+  - `"GTAPv7"` → Use default definitions and units based on **GTAP Model Version 7**.  
+  - `"Mix"` → Use manually defined values where available, and GTAP defaults for the rest.  
+  
+```{r Input Setup}
+# Define experiment name / output name 
+case.name <- c("US_All", "US_All_RetalTar", "US_All_ReduceTar50", "US_All_RegReduceTar50",
+                    "US_All10", "US_All10_RetalTar", "US_All10_ReduceTar50", "US_All10_RegReduceTar50")
+
+# Adding Description / Unit (Yes/No/GTAPv7/Mix)
+info.mode <- "GTAPv7"
+```
+
+
+# Preparing Input Data
+```{r Preparing Data for Plot}
+# Define variables to extract
+# Region to be plotted
+selected_regions <- c("USA", "CHN", "CAN", "ASEAN", "ROW")
+
+# Sector to be plotted (NULL to select all)
+selected_sector <- NULL
+
+# Extract data with region and experiment filters
+plot.dta <- plot_gtap_data(
+  sl4file  = sl4plot,
+  harfile = harplot, 
+  experiment  = case.name,
+  mapping_info = info.mode, 
+  region_select  = selected_regions,
+  sector_select = selected_sector,
+  project_dir = project.folder
+)
+
+# Convert Value if Needed
+sl4.plot.data <- convert_units(
+  sl4.plot.data,
+  change_unit_from = c("million USD"),
+  change_unit_to = c("billion USD"),
+  adjustment = c("/1000")
+)
+
+har.plot.data <- convert_units(
+  har.plot.data,
+  change_unit_from = c("million USD"),
+  change_unit_to = c("billion USD"),
+  adjustment = c("/1000")
+)
+
+# Convert the column name if needed
+rename_col <- data.frame(
+  old = c("REG", "COMM", "ACTS"),
+  new = c("Region", "Commodity", "Activity")
+  )
+sl4.plot.data <- HARplus::rename_dims(sl4.plot.data, rename_col)
+har.plot.data <- HARplus::rename_dims(har.plot.data, rename_col)
+
+# Define the sublists to keep in the first list
+reg_dim <- c("qgdp", "ppriv", "EV", "tot", "u")
+reg_sl4 <- sl4.plot.data[reg_dim]
+reg_sl4_map <- sl4plot[sl4plot$Variable %in% reg_dim, ]
+reg_oth_sl4 <- sl4.plot.data[setdiff(names(sl4.plot.data), reg_dim)]
+reg_oth_map <- sl4plot[!sl4plot$Variable %in% reg_dim, ]
+
+```
+
+# Comparison Plot
+```{r Comparison Plot}
+lapply(reg_sl4, function(df) {
+  comparison_plot(df,
+                  x_axis_from = "Region",
+                  plot_var = reg_sl4_map,
+                  title_prefix = "Impact on",
+                  output_dir = output.folder,
+                  compare_by_x_axis = FALSE,
+                  separate_figure = FALSE,
+                  color_tone = "grey",
+                  width = 20,
+                  height = 12,
+                  legend_position = "bottom")})
+
+report_table(reg_sl4, vars = reg_sl4_map$Variable, 
+             col_names = reg_sl4_map$PlotTitle,  
+             x_axis_from = "Region",
+             output_dir = output.folder)
+```
+
+# GTAP MAcro Variable Plot (i.e., Scalar Plot without Region)
+```{r GTAP Macro Plot}
+Macros <- do.call(gtap_macros_data, c(as.list(paste0(input.folder, "/", case.name, ".sl4")),
+                  list(experiment_names = case.name)))
+
+# Selecting Variables
+selected_marcro <- c("pgdpwld", "qgdpwld", "vgdpwld")
+macros_new_name <- c("pgdpwld", "qgdpwld", "vgdpwld")
+macro.map <- data.frame(
+  Variable = selected_marcro,
+  PlotTitle = macros_new_name,
+  stringsAsFactors = FALSE
+)
+
+# Plotting
+macro_plot(Macros,
+           plot_var = macro.map,
+           compare_by_x_axis = FALSE,
+           color_tone = "grey",
+           output_dir = output.folder,
+           panel_rows = 2,
+           width = 45,
+           separate_figure = FALSE,
+           legend_position = "bottom")
+
+# Reporting Table
+scalar_table(Macros, vars = selected_marcro, 
+             output_dir = output.folder)
+```
+
+# Detail Plot
+```{r Detail Plot}
+lapply(reg_oth_sl4, function(df) {
+  detail_plot(df,
+              y_axis_from = c("Commodity", "Activity"),
+              figure_separate_by = "Region",
+              plot_var = reg_oth_map,
+              output_dir = output.folder,
+              top_impact = NULL,
+              panel_rows = 1,
+              panel_cols = 8,
+              width = 45)})
+
+```
+
+# Decomposition Plot
+```{r Decomposition Plot}
+# Rename Value if needed
+welfare <- har.plot.data[["A"]]
+welfare[["Variable"]] <- "Welfare"
+welfare <- rename_value(har.plot.data[["A"]], 
+                        column_name = "COLUMN",
+                        original_values = c("alloc_A1", "ENDWB1", "tech_C1", "pop_D1", "pref_G1", "tot_E1", "IS_F1"),
+                        new_values = c("Alloc Eff.", "Endwb", "Tech Chg.", "Pop", "Perf", "ToT", "I-S"))
+
+# Define Decomposition
+stack_plot(data = welfare,
+          x_axis_from = "Region",
+          stack_value_from = "COLUMN",
+          title_prefix = "Decomposition",
+          output_dir = output.folder,
+          separate_figure = FALSE,
+          color_tone = "green",
+          width = 30,
+          height = 15,
+          legend_position = "bottom",
+          unstack_plot = FALSE)
+
+# Table of Decomposition
+decomp_table(har.plot.data, 
+             header = c("A", "E1"),
+             wide_cols = list(A = "COLUMN", E1 = "PRICES"),
+             total_column = TRUE,
+             output_dir = output.folder,
+             export_table = TRUE)
+```
+

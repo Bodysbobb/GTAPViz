@@ -67,7 +67,6 @@ report_table <- function(data, vars, x_axis_from, output_dir = NULL,
   }
 
   if (is.list(data) && !is.data.frame(data)) {
-    # Check which variables exist in the data and filter vars
     existing_vars <- intersect(vars, names(data))
     missing_vars <- setdiff(vars, names(data))
 
@@ -82,12 +81,10 @@ report_table <- function(data, vars, x_axis_from, output_dir = NULL,
               paste(missing_vars, collapse = ", "))
     }
 
-    # Use only variables that exist in the data
     data <- data[existing_vars]
     data <- do.call(rbind, data)
     vars <- existing_vars
   } else if (is.data.frame(data)) {
-    # For data frame input, check if specified variables exist in Variable column
     if ("Variable" %in% names(data)) {
       existing_vars <- intersect(vars, unique(data$Variable))
       missing_vars <- setdiff(vars, existing_vars)
@@ -103,9 +100,8 @@ report_table <- function(data, vars, x_axis_from, output_dir = NULL,
                 paste(missing_vars, collapse = ", "))
       }
 
-      # Filter data to include only existing variables
       data <- data[data$Variable %in% existing_vars, ]
-      vars <- existing_vars  # Update vars to only include existing variables
+      vars <- existing_vars
     }
   }
 
@@ -115,44 +111,36 @@ report_table <- function(data, vars, x_axis_from, output_dir = NULL,
     stop("Required columns missing: ", paste(missing_cols, collapse = ", "))
   }
 
-  # Create a base result table
-  result <- data %>%
-    dplyr::select(Experiment, dplyr::all_of(x_axis_from), Variable, Value) %>%
-    dplyr::mutate(Value = as.numeric(Value)) %>%
-    tidyr::pivot_wider(names_from = Variable, values_from = Value) %>%
-    dplyr::rename(Group = dplyr::all_of(x_axis_from), Experiment = Experiment) %>%
-    dplyr::arrange(Experiment, Group) %>%
-    dplyr::mutate(dplyr::across(where(is.numeric), ~round(., 2)))
+  # Create base result table using explicit function calls instead of %>%
+  result <- dplyr::select(data, Experiment, dplyr::all_of(x_axis_from), Variable, Value)
+  result$Value <- as.numeric(result$Value)
+  result <- tidyr::pivot_wider(result, names_from = Variable, values_from = Value)
+  result <- dplyr::rename(result, Group = dplyr::all_of(x_axis_from), Experiment = Experiment)
+  result <- dplyr::arrange(result, Experiment, Group)
+  result <- dplyr::mutate(result, dplyr::across(where(is.numeric), round, 2))
 
   # Handle column names with unit information
   if (!is.null(col_names)) {
-    # Check if col_names is a data frame
     if (is.data.frame(col_names)) {
       if (!all(c("Variable", "PlotTitle") %in% names(col_names))) {
         stop("col_names data frame must contain both 'Variable' and 'PlotTitle' columns")
       }
 
-      # Filter col_names to include only the variables that exist in the data
       col_names <- col_names[col_names$Variable %in% vars, ]
       name_mapping <- setNames(col_names$PlotTitle, col_names$Variable)
     } else {
-      # Assume it's a character vector
       if (length(col_names) != length(vars)) {
         warning("Length of col_names does not match length of existing vars, using available mappings")
-        name_mapping <- setNames(col_names[1:min(length(col_names), length(vars))], vars[1:min(length(col_names), length(vars))])
+        name_mapping <- setNames(col_names[1:min(length(col_names), length(vars))],
+                                 vars[1:min(length(col_names), length(vars))])
       } else {
         name_mapping <- setNames(col_names, vars)
       }
     }
 
-    # Get unit information
     if ("Unit" %in% names(data)) {
-      unit_info <- data %>%
-        dplyr::filter(Variable %in% vars) %>%
-        dplyr::select(Variable, Unit) %>%
-        dplyr::distinct()
+      unit_info <- dplyr::distinct(dplyr::select(dplyr::filter(data, Variable %in% vars), Variable, Unit))
 
-      # Create new column names with units
       new_col_names <- sapply(vars, function(var) {
         unit <- unit_info$Unit[unit_info$Variable == var][1]
         custom_name <- name_mapping[var]
@@ -168,14 +156,12 @@ report_table <- function(data, vars, x_axis_from, output_dir = NULL,
         }
       })
 
-      # Rename columns
       old_names <- vars
       cols_to_rename <- intersect(old_names, names(result))
       if (length(cols_to_rename) > 0) {
         names(result)[match(cols_to_rename, names(result))] <- new_col_names[match(cols_to_rename, old_names)]
       }
     } else {
-      # No unit information, just use custom names
       old_names <- vars
       cols_to_rename <- intersect(old_names, names(result))
       if (length(cols_to_rename) > 0) {
@@ -183,12 +169,8 @@ report_table <- function(data, vars, x_axis_from, output_dir = NULL,
       }
     }
   } else {
-    # Use default variable names with unit information
     if ("Unit" %in% names(data)) {
-      unit_info <- data %>%
-        dplyr::filter(Variable %in% vars) %>%
-        dplyr::select(Variable, Unit) %>%
-        dplyr::distinct()
+      unit_info <- dplyr::distinct(dplyr::select(dplyr::filter(data, Variable %in% vars), Variable, Unit))
 
       new_col_names <- sapply(vars, function(var) {
         unit <- unit_info$Unit[unit_info$Variable == var][1]
@@ -310,14 +292,11 @@ scalar_table <- function(data, vars = NULL, output_dir = NULL,
     stop("Required columns missing: ", paste(missing_cols, collapse = ", "))
   }
 
-  result <- data %>%
-    dplyr::select(Variable, Experiment, Value) %>%
-    dplyr::mutate(Value = as.numeric(Value)) %>%
-    tidyr::pivot_wider(
-      names_from = Experiment,
-      values_from = Value
-    ) %>%
-    dplyr::mutate(dplyr::across(where(is.numeric), ~round(., 2)))
+  # Rewriting without `%>%`
+  result <- dplyr::select(data, Variable, Experiment, Value)
+  result$Value <- as.numeric(result$Value)
+  result <- tidyr::pivot_wider(result, names_from = Experiment, values_from = Value)
+  result <- dplyr::mutate(result, dplyr::across(where(is.numeric), round, 2))
 
   if (!is.null(output_dir)) {
     if (!dir.exists(output_dir)) {
@@ -421,12 +400,13 @@ decomp_table <- function(data_list, header, wide_cols, total_column = FALSE,
     if (!wide_col %in% names(df)) stop(sprintf("Column '%s' not found in dataset", wide_col))
 
     keep_cols <- setdiff(names(df), c(wide_col, "Value"))
-    wide_data <- reshape(df, direction = "wide", timevar = wide_col, idvar = keep_cols, v.names = "Value")
-    names(wide_data) <- sub("^Value\\.", "", names(wide_data))
+
+    # Replacing reshape() with tidyr::pivot_wider()
+    wide_data <- tidyr::pivot_wider(df, names_from = wide_col, values_from = "Value")
 
     if (total_column) {
-      numeric_cols <- sapply(wide_data, is.numeric)
-      if (any(numeric_cols)) {
+      numeric_cols <- which(sapply(wide_data, is.numeric))
+      if (length(numeric_cols) > 0) {
         wide_data$Total <- rowSums(wide_data[, numeric_cols, drop = FALSE], na.rm = TRUE)
       }
     }
@@ -458,4 +438,5 @@ decomp_table <- function(data_list, header, wide_cols, total_column = FALSE,
 
   return(invisible(result_list))
 }
+
 

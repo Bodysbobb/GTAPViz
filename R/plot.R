@@ -1136,15 +1136,15 @@ stack_plot <- function(data, plot_var = NULL,
       unit_data <- unit_groups[[unit_name]]
 
       # Calculate totals for each x-axis group and experiment
-      total_data <- unit_data %>%
-        dplyr::group_by_at(c("Experiment", x_axis_from)) %>%
-        dplyr::summarise(
-          Total = sum(Value, na.rm = TRUE),
-          PositiveTotal = sum(pmax(Value, 0), na.rm = TRUE),
-          NegativeTotal = sum(pmin(Value, 0), na.rm = TRUE),
-          .groups = "drop"
-        ) %>%
-        dplyr::mutate(TotalLabel = sprintf("Total\n%.2f", Total))
+      total_data <- dplyr::group_by_at(unit_data, c("Experiment", x_axis_from))
+      total_data <- dplyr::summarise(
+        total_data,
+        Total = sum(Value, na.rm = TRUE),
+        PositiveTotal = sum(pmax(Value, 0), na.rm = TRUE),
+        NegativeTotal = sum(pmin(Value, 0), na.rm = TRUE),
+        .groups = "drop"
+      )
+      total_data <- dplyr::mutate(total_data, TotalLabel = sprintf("Total\n%.2f", Total))
 
       if (separate_figure) {
         split_column <- if (compare_by_x_axis) x_axis_from else "Experiment"

@@ -34,7 +34,8 @@ Imports:
     scales,
     purrr,
     readxl,
-    writexl
+    writexl,
+    magrittr
 Suggests: 
     knitr,
     rmarkdown

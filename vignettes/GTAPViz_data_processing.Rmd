@@ -38,6 +38,8 @@ sl4map <- readxl::read_xlsx(mapping.output, sheet = "SL4File")
 harmap <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
 setwd <- "D:/GitHub/GTAPViz/R"
 devtools::load_all()
+
+devtools::install_github("Bodysbobb/GTAPViz")
 ```
 
 # Introduction {#sec:introduction}
@@ -64,6 +66,14 @@ By default, this R code assumes that `<project.folder>` contains the following t
 -   **out** – Stores all exported output files.
 -   **map** – Stores the mapping `.xlsx` file (**critical for processing**).
 
+<div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
+📂 project.folder/ <br>
+ ├── 📂 in/  <span style="color: #61AFEF;"># Stores input files (<code>.sl4</code>, <code>.har</code>)</span> <br>
+ ├── 📂 out/ <span style="color: #98C379;"># Stores output files</span> <br>
+ ├── 📂 map/ <span style="color: #E5C07B;"># Stores the mapping file (<code>OutputMapping.xlsx</code>)</span> <br>
+</div>
+   
+: Example of Project Folder
 
 # Mapping Files {#sec:mapping-files}
 
@@ -93,13 +103,28 @@ For `"Description"` and `"Unit"`, you may:
 
 The `<SL4Plot sheet>` and `<HARPlot sheet>` are used for creating figure illustrations. Instructions for this can be found in another vignette called *GTAPViz_plot*. Essentially, the table contains two columns: `"Variable"`, which specifies the data used for figure creation, and `"PlotTitle"`, which defines the figure name. Users familiar with the R language can also create this table as a dataframe within the R environment.
 
-| Variable     | PlotTitle            |
-|--------------|----------------------|
-| qgdp         | Real GDP Index       | 
-| EV           | Welfare              | 
-| ppriv        | Consumer Price Index | 
+| Variable      | PlotTitle             | Unit        |
+|---------------|-----------------------|-------------|
+| qgdp          | Real GDP Index        | percent     |
+| EV            | Welfare Equivalents   | million USD |
+| ppriv         | Consumer Price Index  | percent     |
 
 : Example of SL4Plot and HARPlot sheet
+
+
+💡 **Note:** The mapping file (`<OutputMapping.xlsx>`) can also be manually created in R as a dataframe, provided that it follows the exact structure, including column names. The dataframe must contain at least the `"Variable"` column, while `"Description"` and `"Unit"` columns are optional depending on the selected `<info.mode>`.  
+
+
+For example, the following R code creates an equivalent mapping dataframe:
+
+```{r, eval=FALSE}
+mapping_df <- data.frame(
+  Variable = c("qgdp", "EV", "pebfactreal"),
+  Description = c("Real GDP Index (%)", "Welfare Equivalents", "Cost of endowment"),
+  Unit = c("percent", "million USD", "percent"),
+  stringsAsFactors = FALSE
+)
+```
 
 # Input Files {#sec:input-files}
 
@@ -112,6 +137,14 @@ All input files must be stored in `<input.folder>` (default: `"in"` inside `<pro
 -   `EXP1.sl4`, `EXP1-WEL.har`
 -   `EXP2.sl4`, `EXP2-WEL.har`
 
+<div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
+📂 in/ <br>
+ ├── 📄 EXP1.sl4 <br>
+ ├── 📄 EXP1-WEL.har <br>
+ ├── 📄 EXP2.sl4 <br>
+ ├── 📄 EXP2-WEL.har <br>
+</div>
+: Example of Input Files within the Input Folder
 
 # Output Files {#sec:output-files}
 
@@ -167,7 +200,7 @@ This chunk defines the **experiment names**, **handling of description and unit 
 
 This setup allows users to customize how data is processed and exported based on their needs.
 
-```{r Output Setup}
+```{r Input and Output Setup}
 # Define experiment name / output name 
 experiment <- c("EXP1", "EXP2")
 
@@ -182,12 +215,9 @@ r.output <- "Yes"
 txt.output <- "No"   
 ```
 
-# Preparing Input Data
-
-The rest of the code prepares the input, creates functions, and exports the output. You may skip to the [Execution](#sec:execution) section for details on executing functions separately.
+# Extracting Data 
 
 ```{r GTAP Automating}
-# Auto Process GTAP data from GTAPViz 
 process_gtap_data(
   sl4file = sl4map, 
   harfile = harmap,
@@ -198,4 +228,3 @@ process_gtap_data(
 )
 ```
 
-# References {.unnumbered}

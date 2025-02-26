@@ -182,11 +182,24 @@
 #' @return Filtered data frame with only top impact items.
 #' @keywords internal
 #'
-.select_top_impact <- function(df, n, y_col, sep_by) {
-  if (is.null(n) || n <= 0) return(df)
+.select_top_impact <- function(data, top_n, group_by_col) {
+  if (is.null(top_n) || top_n <= 0 || top_n >= nrow(data)) {
+    return(data)
+  }
 
-  df %>%
-    group_by(across(all_of(c(sep_by, "Experiment")))) %>%
-    slice_head(n = n) %>%  # Take exactly n rows per group
-    ungroup()
+  groups <- unique(data[[group_by_col]])
+  result <- NULL
+
+  for (group in groups) {
+    group_data <- data[data[[group_by_col]] == group, ]
+    if (nrow(group_data) <= top_n) {
+      result <- rbind(result, group_data)
+    } else {
+      abs_values <- abs(group_data$Value)
+      top_indices <- order(abs_values, decreasing = TRUE)[1:top_n]
+      result <- rbind(result, group_data[top_indices, ])
+    }
+  }
+
+  return(result)
 }
