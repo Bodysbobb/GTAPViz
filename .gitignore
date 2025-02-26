@@ -1,6 +1,6 @@
-.Rproj.user
+*.Rproj.user
 inst/doc
-LICENSE.md
+LICENSE
 *.Rproj
 *.Rhistory
 *.Rbuildignore
