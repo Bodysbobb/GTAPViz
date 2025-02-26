@@ -1,0 +1,201 @@
+---
+title: "GTAPViz: Automating GTAP Data Processing with HARplus"
+author: "Pattawee Puangchit"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GTAPViz: Automating GTAP Data Processing with HARplus}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  eval = requireNamespace("GTAPViz", quietly = TRUE)
+)
+
+required_pkgs <- c("tidyverse", "writexl", "dplyr", "devtools", 
+                   "openxlsx", "readxl", "knitr", "rmarkdown", "data.table", 
+                   "ggplot2", "tcltk", "gridExtra", "haven", "citation", "tinytex", "bookdown", "HARplus")
+
+# Load packages quietly, but only if available
+lapply(required_pkgs, function(pkg) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    warning(sprintf("Package '%s' is not installed. Please install it before running this vignette.", pkg))
+  }
+})
+# Directory
+project.folder <- "D:/GitHub/GTAPViz/inst/extdata"
+input.folder <- paste0(project.folder, "/in")
+map.folder <- paste0(project.folder, "/map")
+mapping.output <- paste0(map.folder, "/OutputMapping.xlsx")
+sl4map <- readxl::read_xlsx(mapping.output, sheet = "SL4File")
+harmap <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
+setwd <- "D:/GitHub/GTAPViz/R"
+devtools::load_all()
+```
+
+# Introduction {#sec:introduction}
+
+GTAPViz is built upon the **HARplus** package to facilitate the workflow of GTAP users by automating data extraction and processing from `.sl4` and `.har` result files. This vignette illustrates how to efficiently handle GTAP model output files using GTAPViz, ensuring seamless data manipulation for further analysis.
+
+For data processing, the default variable definitions are based on **GTAP Model Version 7**, aligning with the standard structure used in the Global Trade Analysis Project (GTAP). Users can customize variable mappings, extract relevant indicators, and format the data for various analytical needs.
+
+GTAPViz provides structured methodologies to process these datasets, integrating automated extraction, unit assignments, and data validation. By leveraging HARplus functionalities, this package simplifies handling multi-dimensional economic data from GTAP simulations.
+
+For more details on HARplus, see:  
+[\href{https://github.com/Bodysbobb/HARplus}{HARplus GitHub Repository}](https://github.com/Bodysbobb/HARplus).
+
+
+# Project Directory {#sec:project-setting}
+
+To use this R code, all solution files, including `.sl4` and `.har`, must be saved from RUNGTAP or CMD and placed in the same folder.
+
+Adjust the `<project.folder>` directory to your desired path. If you maintain the same folder structure as in this code, you may not need to modify the input (`<input.folder>`), output (`<output.folder>`), or mapping (`<map.folder>`) directories.
+
+By default, this R code assumes that `<project.folder>` contains the following three main folders:
+
+-   **in** – Stores all input files (i.e., `.sl4` and `.har`). See the [Solution files](#sec:input-files) for details.
+-   **out** – Stores all exported output files.
+-   **map** – Stores the mapping `.xlsx` file (**critical for processing**).
+
+
+# Mapping Files {#sec:mapping-files}
+
+The **`<OutputMapping.xlsx>`** specifies the variables to extract from the solution files `<SL4File sheet>` and the HAR file `<HARFile sheet>`. All required variables must be listed in the `"Variable"` column.
+
+For `"Description"` and `"Unit"`, you may:
+
+- Leave the columns blank and put `"No"` in `<info.mode>` [setting](#sec:setting) to exclude these columns.  
+  \footnote{If you leave them blank and put `"Yes"` instead of `"No"`, the result will return an empty column in your output.}
+
+- Manually define **all variables** and put `"Yes"` in `<info.mode>` [setting](#sec:setting).
+
+- Leave the columns blank and put `"GTAPv7"` in `<info.mode>` [setting](#sec:setting) to get the default definition and unit based on GTAPv7.  
+  \footnote{The GTAP default can only define variables based on the GTAPv7 default set. If you add additional variables to the model, you must manually define the `"Description"` and `"Unit"` in the sheet if needed.}
+
+- Define only some variables, leave others blank, and put `"Mix"` in `<info.mode>` [setting](#sec:setting) to get the definition based on your input for defined variables and the GTAP default for the others.
+
+
+| Variable     | Description         | Unit        |
+|--------------|---------------------|-------------|
+| qgdp         | Real GDP Index (%)  | percent     |
+| EV           | Welfare Equivalents | million USD |
+| pebfactreal  | Cost of endownment  | percent     |
+
+: Example of SL4File and HARFile sheet
+
+
+The `<SL4Plot sheet>` and `<HARPlot sheet>` are used for creating figure illustrations. Instructions for this can be found in another vignette called *GTAPViz_plot*. Essentially, the table contains two columns: `"Variable"`, which specifies the data used for figure creation, and `"PlotTitle"`, which defines the figure name. Users familiar with the R language can also create this table as a dataframe within the R environment.
+
+| Variable     | PlotTitle            |
+|--------------|----------------------|
+| qgdp         | Real GDP Index       | 
+| EV           | Welfare              | 
+| ppriv        | Consumer Price Index | 
+
+: Example of SL4Plot and HARPlot sheet
+
+# Input Files {#sec:input-files}
+
+The `<case.name>` variable in [setting](#sec:setting) contains experiment names from which results will be extracted and merged into a single output for further analysis, such as graph creation. Multiple experiments can be included, but increasing their number will extend processing time.
+
+## Input Files Format
+
+All input files must be stored in `<input.folder>` (default: `"in"` inside `<project.folder>`). File names must follow `<case.name>` to ensure consistency between input each `.sl4` file must have a corresponding `-WEL.HAR` file
+
+-   `EXP1.sl4`, `EXP1-WEL.har`
+-   `EXP2.sl4`, `EXP2-WEL.har`
+
+
+# Output Files {#sec:output-files}
+
+This R code, by default, can generate four output formats: CSV, STATA, R, and Text files, defined by `<csv.output>`, `<stata.output>`, `<r.output>`, and `<txt.output>`, respectively. In [setting](#sec:setting), placing `"Yes"` or `"No"` for the required format. 
+
+At the end, the code will automatically generate a `"README.xlsx"` file, reporting the location of exported key variables (i.e., sheet names). Since GTAP results contain different data dimensions, the output will be separated by dimension (1D, 2D, 3D).
+
+For 1D and 2D data, results are automatically grouped into `"Region"` and `"Sector"`—distinguishing variables reported at the sector level from those reported by region—for easier data manipulation.
+
+However, data larger than 3D will be reported separately by dimension, with output files named according to their original dimension names. An exception is `qxs`, which represents bilateral trade changes; if selected for export, it will be placed in the `"BilateralTrade"` sheet.
+
+
+# Flexibility and Applicability {#sec:flexibility}
+
+This R code is designed to extract any variable from `.SL4` and `.HAR` files, even those newly created by users that are not included in the original GTAP model. 
+
+Furthermore, this code is adaptable to any version of the GTAP CGE model, provided that the `.SL4` and `.HAR` files exist and adhere to the required format.\footnote{With minor modifications, this R script can also be used to extract all types of three-dimensional data formatted in `.SL4` and `.HAR`.} 
+
+In cases where `HARFile.HAR` files are unavailable, the script will still function, but the decomposition component will be skipped.
+
+# Sample Data
+Sample data used in this vignette is obtained from the GTAPv7 model and utilizes publicly available data from the GTAP 9 database. For more details, refer to the [GTAP Database Archive](https://www.gtap.agecon.purdue.edu/databases/archives.asp).
+
+# Loading Package
+Before proceeding, ensure that `GTAPViz` and `HARplus` are installed and loaded:
+```{r package}
+library(GTAPViz)
+```
+
+# Output Setup {#sec:setting}
+
+This chunk defines the **experiment names**, **handling of description and unit columns**, and **output formats** for processing GTAP model results.
+
+- **Experiment Names (`experiment`)**:  
+  Specifies the names of experiments to process, matching the prefixes of `.sl4` and `.har` files.  
+  Example:  
+  - `EXP1.sl4` and `EXP1-WEL.har` → Processed as `EXP1`.  
+  - `EXP2.sl4` and `EXP2-WEL.har` → Processed as `EXP2`.  
+
+- **Description and Unit Handling (`info.mode`)**:  
+  Determines how the `"Description"` and `"Unit"` columns are included in the output:  
+  - `"Yes"` → Use manually defined descriptions and units from the mapping file.  
+  - `"No"` → Exclude the `"Description"` and `"Unit"` columns.  
+  - `"GTAPv7"` → Use default definitions and units based on **GTAP Model Version 7**.  
+  - `"Mix"` → Use manually defined values where available, and GTAP defaults for the rest.  
+
+- **Output Formats**:  
+  Controls which file formats are generated (`"Yes"` = export, `"No"` = skip):  
+  - **CSV (`csv.output`)** → `"No"`  
+  - **STATA (`stata.output`)** → `"No"`  
+  - **R (`r.output`)** → `"Yes"` (only `.rds` output enabled)  
+  - **Text (`txt.output`)** → `"No"`  
+
+This setup allows users to customize how data is processed and exported based on their needs.
+
+```{r Output Setup}
+# Define experiment name / output name 
+experiment <- c("EXP1", "EXP2")
+
+# Adding Description / Unit (Yes/No/GTAPv7/Mix)
+info.mode <- "GTAPv7"
+
+# Output: (CSV, STATA, R) 
+# "Yes" to opt for this output format, "No" to skip the output format
+csv.output <- "No"    
+stata.output <- "No"  
+r.output <- "Yes"
+txt.output <- "No"   
+```
+
+# Preparing Input Data
+
+The rest of the code prepares the input, creates functions, and exports the output. You may skip to the [Execution](#sec:execution) section for details on executing functions separately.
+
+```{r GTAP Automating}
+# Auto Process GTAP data from GTAPViz 
+process_gtap_data(
+  sl4file = sl4map, 
+  harfile = harmap,
+  experiment = experiment,
+  mapping_info = info.mode,
+  project_dir = project.folder,
+  export_data = FALSE
+)
+```
+
+# References {.unnumbered}

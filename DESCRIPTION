@@ -31,7 +31,10 @@ Imports:
     colorspace,
     grDevices,
     rlang,
-    scales
+    scales,
+    purrr,
+    readxl,
+    writexl
 Suggests: 
     knitr,
     rmarkdown

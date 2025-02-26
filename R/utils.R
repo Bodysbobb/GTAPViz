@@ -14,7 +14,7 @@
 #' @keywords internal
 #'
 .calculate_panel_layout <- function(data, panel_rows = NULL, panel_cols = NULL,
-                                   compare_by_x_axis = FALSE, x_axis_from = NULL) {
+                                    compare_by_x_axis = FALSE, x_axis_from = NULL) {
   num_panels <- if(compare_by_x_axis && !is.null(x_axis_from)) {
     length(unique(data[[x_axis_from]]))
   } else {
@@ -35,13 +35,34 @@
     return(list(rows = panel_rows, cols = panel_cols))
   } else {
     if(num_panels <= 1) {
-      list(rows = 1, cols = 1)
+      return(list(rows = 1, cols = 1))
     } else if(num_panels <= 3) {
-      list(rows = 1, cols = num_panels)
+      return(list(rows = 1, cols = num_panels))
     } else {
-      cols <- ceiling(sqrt(num_panels))
-      rows <- ceiling(num_panels / cols)
-      list(rows = rows, cols = cols)
+      factors <- c()
+      for(i in 1:sqrt(num_panels)) {
+        if(num_panels %% i == 0) {
+          factors <- c(factors, i)
+        }
+      }
+
+      if(length(factors) > 0) {
+        best_factor <- factors[length(factors)]
+        rows <- best_factor
+        cols <- num_panels / best_factor
+      } else {
+        cols <- ceiling(sqrt(num_panels))
+        rows <- ceiling(num_panels / cols)
+      }
+
+      if(cols > 2 * rows) {
+        new_cols <- ceiling(sqrt(num_panels))
+        new_rows <- ceiling(num_panels / new_cols)
+        rows <- new_rows
+        cols <- new_cols
+      }
+
+      return(list(rows = rows, cols = cols))
     }
   }
 }
@@ -153,4 +174,19 @@
 }
 
 
+#' @title Select Top Impact Items
+#' @description Selects the top N items based on absolute value of the impact.
+#' @param data Data frame containing the data to filter.
+#' @param top_n Number of top items to select.
+#' @param group_by_col Column name to group by when selecting top items.
+#' @return Filtered data frame with only top impact items.
+#' @keywords internal
+#'
+.select_top_impact <- function(df, n, y_col, sep_by) {
+  if (is.null(n) || n <= 0) return(df)
 
+  df %>%
+    group_by(across(all_of(c(sep_by, "Experiment")))) %>%
+    slice_head(n = n) %>%  # Take exactly n rows per group
+    ungroup()
+}
