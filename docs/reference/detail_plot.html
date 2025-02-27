@@ -5,7 +5,7 @@ Uses a separate dataframe to specify variables to plot and their titles."></head
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
@@ -50,9 +50,10 @@ Uses a separate dataframe to specify variables to plot and their titles.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  plot_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">y_axis_from</span>,</span>
-<span>  <span class="va">figure_separate_by</span>,</span>
+<span>  <span class="va">split_by</span>,</span>
 <span>  title_prefix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  title_suffix <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  description_as_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  panel_rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  panel_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  positive_color <span class="op">=</span> <span class="st">"#2E8B57"</span>,</span>
@@ -60,7 +61,12 @@ Uses a separate dataframe to specify variables to plot and their titles.</p>
 <span>  output_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_impact <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  width <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  height <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  height <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  invert_panel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  legend_position <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  width_dodge <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  width_bar <span class="op">=</span> <span class="fl">0.4</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -81,7 +87,7 @@ If NULL, all variables in the data will be plotted with default titles.</p></dd>
 <dd><p>Character vector. Column names to use for the y-axis.</p></dd>
 
 
-<dt id="arg-figure-separate-by">figure_separate_by<a class="anchor" aria-label="anchor" href="#arg-figure-separate-by"></a></dt>
+<dt id="arg-split-by">split_by<a class="anchor" aria-label="anchor" href="#arg-split-by"></a></dt>
 <dd><p>Character. Column used to separate different plots.</p></dd>
 
 
@@ -91,6 +97,10 @@ If NULL, all variables in the data will be plotted with default titles.</p></dd>
 
 <dt id="arg-title-suffix">title_suffix<a class="anchor" aria-label="anchor" href="#arg-title-suffix"></a></dt>
 <dd><p>Optional character string to append to the title.</p></dd>
+
+
+<dt id="arg-description-as-title">description_as_title<a class="anchor" aria-label="anchor" href="#arg-description-as-title"></a></dt>
+<dd><p>Logical. If TRUE, uses the "Description" column from plot_var as the plot title.</p></dd>
 
 
 <dt id="arg-panel-rows">panel_rows<a class="anchor" aria-label="anchor" href="#arg-panel-rows"></a></dt>
@@ -123,6 +133,14 @@ If NULL, all variables in the data will be plotted with default titles.</p></dd>
 
 <dt id="arg-height">height<a class="anchor" aria-label="anchor" href="#arg-height"></a></dt>
 <dd><p>Optional numeric. Height of the output plot. If left blank, it will be automatically adjusted.</p></dd>
+
+
+<dt id="arg-separate-figure">separate_figure<a class="anchor" aria-label="anchor" href="#arg-separate-figure"></a></dt>
+<dd><p>Logical. If TRUE, creates separate figures for each combination of variable and category.</p></dd>
+
+
+<dt id="arg-invert-panel">invert_panel<a class="anchor" aria-label="anchor" href="#arg-invert-panel"></a></dt>
+<dd><p>Logical. If TRUE, swaps the roles of Experiment and split_by in faceting and figure separation.</p></dd>
 
 </dl></div>
     <div class="section level2">

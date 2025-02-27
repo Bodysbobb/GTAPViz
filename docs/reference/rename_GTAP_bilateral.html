@@ -5,7 +5,7 @@ to Source and Destination in data frames with COMMREGREG dimension structure."><
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
@@ -72,18 +72,19 @@ to Source and Destination in data frames with COMM<em>REG</em>REG dimension stru
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">get_data_by_var</span><span class="op">(</span><span class="st">"qxs"</span>, <span class="va">sl4_data</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_data_by_var("qxs", sl4_data):</span> could not find function "get_data_by_var"</span>
 <span class="r-in"><span><span class="va">df_renamed</span> <span class="op">&lt;-</span> <span class="fu">rename_GTAP_bilateral</span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rename_GTAP_bilateral(df):</span> could not find function "rename_GTAP_bilateral"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For list output with multiple variables</span></span></span>
 <span class="r-in"><span><span class="va">data_list</span> <span class="op">&lt;-</span> <span class="fu">get_data_by_var</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qxs"</span>, <span class="st">"viws"</span><span class="op">)</span>, <span class="va">sl4_data</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_data_by_var(c("qxs", "viws"), sl4_data):</span> could not find function "get_data_by_var"</span>
 <span class="r-in"><span><span class="va">renamed_list</span> <span class="op">&lt;-</span> <span class="fu">rename_GTAP_bilateral</span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'data_list' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rename_GTAP_bilateral(data_list):</span> could not find function "rename_GTAP_bilateral"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For grouped dimension output</span></span></span>
 <span class="r-in"><span><span class="va">grouped_data</span> <span class="op">&lt;-</span> <span class="fu">group_data_by_dims</span><span class="op">(</span><span class="st">"COMM*REG*REG"</span>, <span class="va">sl4_data</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in group_data_by_dims("COMM*REG*REG", sl4_data):</span> could not find function "group_data_by_dims"</span>
 <span class="r-in"><span><span class="va">renamed_grouped</span> <span class="op">&lt;-</span> <span class="fu">rename_GTAP_bilateral</span><span class="op">(</span><span class="va">grouped_data</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'grouped_data' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rename_GTAP_bilateral(grouped_data):</span> could not find function "rename_GTAP_bilateral"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

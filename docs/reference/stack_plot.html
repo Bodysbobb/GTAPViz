@@ -7,7 +7,7 @@ Auto-adjusts dimensions and panel layout if not specified."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
@@ -57,13 +57,15 @@ Auto-adjusts dimensions and panel layout if not specified.</p>
 <span>  title_prefix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  title_suffix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  y_axis_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  compare_by_x_axis <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  compare_by_experiment <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  unstack_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  panel_rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  panel_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color_tone <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_total <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  description_as_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  legend_position <span class="op">=</span> <span class="st">"bottom"</span>,</span>
 <span>  y_limit <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  width <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -104,7 +106,7 @@ If NULL, all variables in the data will be plotted with default titles.</p></dd>
 <dd><p>Character. Y-axis label. If NULL, uses Unit if available.</p></dd>
 
 
-<dt id="arg-compare-by-x-axis">compare_by_x_axis<a class="anchor" aria-label="anchor" href="#arg-compare-by-x-axis"></a></dt>
+<dt id="arg-compare-by-experiment">compare_by_experiment<a class="anchor" aria-label="anchor" href="#arg-compare-by-experiment"></a></dt>
 <dd><p>Logical. If TRUE, compares x-axis values within experiments</p></dd>
 
 

@@ -7,7 +7,7 @@ If any variable is added apart from the default GTAPv7 model, the information wi
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
@@ -100,11 +100,14 @@ When using "Yes" mapping mode with an external map, it will use provided Descrip
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sl4_data1</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/HARplus/man/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"TAR10.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">add_mapping_info</span><span class="op">(</span><span class="va">sl4_data1</span>, mapping <span class="op">=</span> <span class="st">"GTAPv7"</span>, unit_info <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># Add only Description</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in add_mapping_info(sl4_data1, mapping = "GTAPv7", unit_info = FALSE):</span> could not find function "add_mapping_info"</span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">add_mapping_info</span><span class="op">(</span><span class="va">sl4_data1</span>, mapping <span class="op">=</span> <span class="st">"GTAPv7"</span>, description_info <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># Add only Unit</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in add_mapping_info(sl4_data1, mapping = "GTAPv7", description_info = FALSE):</span> could not find function "add_mapping_info"</span>
 <span class="r-in"><span><span class="va">custom_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                             Description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Real GDP"</span>, <span class="st">"Economic Value"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                             Unit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Percent"</span>, <span class="st">"million USD"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">add_mapping_info</span><span class="op">(</span><span class="va">sl4_data1</span>, external_map <span class="op">=</span> <span class="va">custom_mapping</span>, mapping <span class="op">=</span> <span class="st">"Mix"</span><span class="op">)</span> <span class="co"># Custom + GTAPv7</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in add_mapping_info(sl4_data1, external_map = custom_mapping, mapping = "Mix"):</span> could not find function "add_mapping_info"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
