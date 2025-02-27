@@ -57,7 +57,7 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
       df <- data_list[[header_name]]
 
       # Special handling for E1 header
-      if (header_name == "E1" && "FORM" %in% names(df)) {
+      if (header_name %in% c("E1", "COMM*REG*PRICES*FORM") && "FORM" %in% names(df)) {
         # Drop Unit column if it already exists
         if ("Unit" %in% names(df)) {
           df[["Unit"]] <- NULL
@@ -65,6 +65,12 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 
         # Rename FORM to Unit
         names(df)[names(df) == "FORM"] <- "Unit"
+        rename.unit <- data.frame(
+          OldName = c("percent", "value"),
+          NewName = c("Percent", "million USD"),
+          stringsAsFactors = FALSE
+        )
+        df <- rename_value(df, "Unit", mapping.file = rename.unit)
 
         # Add description if needed
         if (description_info) {
@@ -395,40 +401,97 @@ convert_units <- function(data, change_unit_from, change_unit_to,
 }
 
 
-#' @title Change Specific Values in a Dataframe Column
+#' @title Rename Values in a Data Frame or List of Data Frames
 #'
-#' @description Replaces specified values in a given column with new values.
-#' Only values listed in the original_values parameter will be changed.
+#' @description Replaces specified values in a given column with new values based on a mapping file.
+#' If `column_name` is not provided, it will be automatically extracted from `mapping.file` if available.
 #'
-#' @param data A data frame containing the column to modify.
-#' @param column_name Character. The name of the column where values will be changed.
-#' @param original_values Character vector. The values to be replaced.
-#' @param new_values Character vector. The new values corresponding to original_values.
+#' @param data A data frame or a list of data frames containing the column to modify.
+#' @param column_name Optional. Character. The name of the column where values will be changed.
+#' If NULL, the function will attempt to extract `ColumnName` from `mapping.file`.
+#' @param mapping.file A data frame containing `OldName` and `NewName` columns that specify
+#' the mapping of values to be replaced. Optionally, a `ColumnName` column may define which
+#' column should be modified.
 #'
-#' @return A modified data frame with specified values replaced.
+#' @return A modified data frame or list of data frames with specified values replaced.
 #' @author Pattawee Puangchit
 #' @export
 #'
 #' @examples
+#' # Example mapping file
+#' wefare.decomp.rename <- data.frame(
+#'   OldName = c("alloc_A1", "ENDWB1", "tech_C1"),
+#'   NewName = c("Allocation", "Endowment", "Technology"),
+#'   ColumnName = "Variable",
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' # Load example data
 #' har_data <- HARplus::load_harx(c("globalcgds", "vgdpwld", "WEV"))
 #' har_data <- HARplus::get_data_by_var(c("globalcgds", "vgdpwld", "WEV"), har_data)
-#' modified_data <- rename_value(har_data[["A"]], "Variable",
-#'                                c("alloc_A1", "ENDWB1", "tech_C1"),
-#'                                c("Allocation", "Endowment", "Technology"))
 #'
-rename_value <- function(data, column_name, original_values, new_values) {
-  if (!column_name %in% names(data)) {
-    stop("Column not found in the dataframe.")
+#' # Apply renaming
+#' modified_list <- rename_value(har_data, mapping.file = wefare.decomp.rename)
+#'
+rename_value <- function(data, column_name = NULL, mapping.file) {
+  if (!all(c("OldName", "NewName") %in% names(mapping.file))) {
+    stop("mapping.file must contain 'OldName' and 'NewName' columns.")
   }
-  if (length(original_values) != length(new_values)) {
-    stop("The number of original values must match the number of new values.")
+
+  if (is.null(column_name)) {
+    column_name <- unique(mapping.file$ColumnName)
+    if (length(column_name) != 1) {
+      stop("ColumnName in mapping.file must contain a single unique value or be specified manually.")
+    }
   }
-  replacement_map <- setNames(new_values, original_values)
-  data[[column_name]] <- ifelse(data[[column_name]] %in% original_values,
-                                replacement_map[as.character(data[[column_name]])],
-                                data[[column_name]])
-  return(data)
+
+  rename_column <- function(df, column_name, mapping.file) {
+    if (!column_name %in% names(df)) {
+      return(df)
+    }
+
+    # Convert the column to character if it's a factor
+    is_factor <- is.factor(df[[column_name]])
+    if (is_factor) {
+      original_levels <- levels(df[[column_name]])
+      df[[column_name]] <- as.character(df[[column_name]])
+    }
+
+    # Do the replacements
+    for (i in 1:nrow(mapping.file)) {
+      old_value <- mapping.file$OldName[i]
+      new_value <- mapping.file$NewName[i]
+      df[[column_name]] <- ifelse(df[[column_name]] == old_value, new_value, df[[column_name]])
+    }
+
+    # Convert back to factor if it was a factor originally
+    if (is_factor) {
+      new_levels <- unique(c(original_levels, df[[column_name]]))
+      df[[column_name]] <- factor(df[[column_name]], levels = new_levels)
+    }
+
+    return(df)
+  }
+
+  if (is.data.frame(data)) {
+    return(rename_column(data, column_name, mapping.file))
+  } else if (is.list(data) && !is.data.frame(data)) {
+    result <- lapply(data, function(df) {
+      if (is.data.frame(df)) {
+        rename_column(df, column_name, mapping.file)
+      } else {
+        df
+      }
+    })
+    names(result) <- names(data)
+    attributes(result) <- attributes(data)
+    class(result) <- class(data)
+    return(result)
+  } else {
+    stop("Unsupported data type. Input should be a data frame or a list of data frames.")
+  }
 }
+
 
 
 #' @title Rename GTAP Bilateral Trade Columns

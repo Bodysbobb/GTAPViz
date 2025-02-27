@@ -174,32 +174,59 @@
 }
 
 
-#' @title Select Top Impact Items
-#' @description Selects the top N items based on absolute value of the impact.
-#' @param data Data frame containing the data to filter.
-#' @param top_n Number of top items to select.
-#' @param group_by_col Column name to group by when selecting top items.
-#' @return Filtered data frame with only top impact items.
+#' @title Generate Title Mapping for Plot Labels (Internal)
+#'
+#' @description Determines appropriate title names for plotting based on available columns in the dataset.
+#' If a `Description` column exists and `description_as_title` is `TRUE`, it uses `Description` as titles.
+#' Otherwise, it checks for `PlotTitle` or falls back to using `Variable` names.
+#'
+#' @param data A data frame or a list of data frames containing the dataset.
+#' @param description_as_title Logical. If `TRUE`, prioritizes the `Description` column for titles.
+#' If `FALSE`, using `Variable` as title name.
+#'
+#' @return A named vector where variable names map to their corresponding titles.
 #' @keywords internal
 #'
-.select_top_impact <- function(data, top_n, group_by_col) {
-  if (is.null(top_n) || top_n <= 0 || top_n >= nrow(data)) {
-    return(data)
-  }
+#' @examples
+#' # Example with a data frame
+#' df <- data.frame(
+#'   Variable = c("GDP", "Consumption"),
+#'   Description = c("Gross Domestic Product", "Household Consumption"),
+#'   PlotTitle = c("GDP Growth", "Consumption Level")
+#' )
+#'
+#' get_title_mapping(df)  # Uses "Description" by default
+#' get_title_mapping(df, description_as_title = FALSE)  # Uses "PlotTitle"
+#'
+#' # Example with a list of data frames
+#' data_list <- list(
+#'   df1 = df,
+#'   df2 = data.frame(Variable = c("Investment"), PlotTitle = c("Investment Level"))
+#' )
+#'
+#' get_title_mapping(data_list)
+#'
+.get_title_mapping <- function(data, description_as_title = TRUE) {
+  extract_title_mapping <- function(df) {
+    if (!is.data.frame(df)) return(NULL)
 
-  groups <- unique(data[[group_by_col]])
-  result <- NULL
-
-  for (group in groups) {
-    group_data <- data[data[[group_by_col]] == group, ]
-    if (nrow(group_data) <= top_n) {
-      result <- rbind(result, group_data)
+    title_col <- if (description_as_title && "Description" %in% names(df)) {
+      "Description"
     } else {
-      abs_values <- abs(group_data$Value)
-      top_indices <- order(abs_values, decreasing = TRUE)[1:top_n]
-      result <- rbind(result, group_data[top_indices, ])
+      "Variable"
     }
+
+    setNames(unique(df[[title_col]]), unique(df$Variable))
   }
 
-  return(result)
+  if (is.data.frame(data)) {
+    return(extract_title_mapping(data))
+  } else if (is.list(data)) {
+    result <- lapply(data, extract_title_mapping)
+    result <- result[!sapply(result, is.null)]
+    return(do.call(c, result))
+  } else {
+    stop("Unsupported data type. Input should be a data frame or a list of data frames.")
+  }
 }
+

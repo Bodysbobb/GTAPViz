@@ -1370,6 +1370,8 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
 #' @param input_dir Optional. Directory path for input files; overrides project_dir/in if provided.
 #' @param sl4_list_name A character string specifying the global variable name for SL4 plotting data. Default is "sl4.plot.data".
 #' @param har_list_name A character string specifying the global variable name for HAR plotting data. Default is "har.plot.data".
+#' @param sl4_structure_name A character string specifying the global variable name for SL4 structure. Default is "sl4.structure".
+#' @param har_structure_name A character string specifying the global variable name for HAR structure. Default is "har.structure".
 #'
 #' @return A list containing extracted data with applied filters.
 #' @export
@@ -1399,8 +1401,11 @@ plot_gtap_data <- function(sl4file,
                            mapping_info = "GTAPv7",
                            project_dir = NULL,
                            input_dir = NULL,
+                           subtotal = FALSE,
                            sl4_list_name = "sl4.plot.data",
-                           har_list_name = "har.plot.data") {
+                           har_list_name = "har.plot.data",
+                           sl4_structure_name = "sl4.structure",
+                           har_structure_name = "har.structure") {
 
   if (is.null(input_dir) && !is.null(project_dir)) {
     input_dir <- file.path(project_dir, "in")
@@ -1437,19 +1442,20 @@ plot_gtap_data <- function(sl4file,
   valid_sl4_cases <- experiment[tolower(experiment) %in% sl4_bases]
   valid_har_cases <- experiment[tolower(experiment) %in% har_bases]
 
-  if(process_sl4) {
-    sl4.plot.data <- list()
-  }
+  # Initialize return objects
+  result <- list()
+  sl4_data <- NULL
+  har_data <- NULL
+  sl4structure <- NULL
+  harstructure <- NULL
 
-  if(process_har) {
-    har.plot.data <- list()
-  }
-
+  # Process SL4 files
   if (process_sl4 && length(valid_sl4_cases) > 0) {
     sl4_variables <- if (is.null(sl4file)) NULL else sl4file$Variable
 
     message("Processing SL4 files...")
 
+    # Load SL4 files
     sl4_data_raw <- setNames(
       lapply(valid_sl4_cases, function(scenario) {
         sl4_path <- file.path(input_dir, paste0(scenario, ".sl4"))
@@ -1471,20 +1477,40 @@ plot_gtap_data <- function(sl4file,
     sl4_data_raw <- sl4_data_raw[!sapply(sl4_data_raw, is.null)]
 
     if (length(sl4_data_raw) > 0) {
+      # Generate SL4 variable structure
+      sl4structure <- do.call(
+        HARplus::compare_var_structure,
+        c(list(NULL, keep_unique = TRUE), sl4_data_raw)
+      )[["match"]]
+
+      sl4file_name <- deparse(substitute(sl4file))
+      sl4structure <- dplyr::left_join(sl4file, sl4structure[c("Variable", "Dimensions")], by = "Variable")
+      sl4structure <- sl4structure[order(sl4structure$Dimensions), ]
+      sl4structure$Unit <- NULL
+
+      # Assign to global environment if name provided
+      if (!is.null(sl4_structure_name)) {
+        assign(sl4file_name, sl4structure, envir = .GlobalEnv)
+      }
+
+      # Use get_data_by_dims with merge=TRUE
       sl4_data <- do.call(
-        HARplus::get_data_by_var,
+        HARplus::get_data_by_dims,
         c(
           list(
-            var_names = sl4_variables,
+            patterns = NULL,
             experiment_names = names(sl4_data_raw),
-            merge_data = TRUE
+            merge_data = TRUE,
+            subtotal_level = subtotal
           ),
           sl4_data_raw
         )
       )
 
+      # Apply mapping info
       sl4_data <- add_mapping_info(sl4_data, external_map = sl4file, mapping = mapping_info)
 
+      # Apply filters
       sl4_data <- .apply_filters(
         sl4_data,
         region_select = region_select,
@@ -1492,16 +1518,23 @@ plot_gtap_data <- function(sl4file,
         sector_select = sector_select
       )
 
-      sl4.plot.data <- sl4_data
-      assign(sl4_list_name, sl4.plot.data, envir = .GlobalEnv)
+      # Assign to global environment if name provided
+      if (!is.null(sl4_list_name)) {
+        assign(sl4_list_name, sl4_data, envir = .GlobalEnv)
+      }
+
+      # Add to result list
+      result$sl4_data <- sl4_data
     }
   }
 
+  # Process HAR files
   if (process_har && length(valid_har_cases) > 0) {
     har_variables <- if (is.null(harfile)) NULL else harfile$Variable
 
     message("Processing HAR files...")
 
+    # Load HAR files
     har_data_raw <- setNames(
       lapply(valid_har_cases, function(scenario) {
         har_path <- file.path(input_dir, paste0(scenario, "-WEL.har"))
@@ -1523,20 +1556,40 @@ plot_gtap_data <- function(sl4file,
     har_data_raw <- har_data_raw[!sapply(har_data_raw, is.null)]
 
     if (length(har_data_raw) > 0) {
+      # Generate HAR variable structure
+      harstructure <- do.call(
+        HARplus::compare_var_structure,
+        c(list(NULL, keep_unique = TRUE), har_data_raw)
+      )[["match"]]
+
+      harfile_name <- deparse(substitute(harfile))
+      harstructure <- dplyr::left_join(harfile, harstructure[c("Variable", "Dimensions")], by = "Variable")
+      harstructure <- harstructure[order(harstructure$Dimensions), ]
+      harstructure$Unit <- NULL
+
+      # Assign to global environment if name provided
+      if (!is.null(har_structure_name)) {
+        assign(harfile_name, harstructure, envir = .GlobalEnv)
+      }
+
+      # Use get_data_by_dims with merge=TRUE
       har_data <- do.call(
         HARplus::get_data_by_var,
         c(
           list(
-            var_names = har_variables,
+            NULL,
             experiment_names = names(har_data_raw),
-            merge_data = TRUE
+            merge_data = TRUE,
+            subtotal_level = subtotal
           ),
           har_data_raw
         )
       )
 
+      # Apply mapping info
       har_data <- add_mapping_info(har_data, external_map = harfile, mapping = mapping_info)
 
+      # Apply filters
       har_data <- .apply_filters(
         har_data,
         region_select = region_select,
@@ -1544,8 +1597,13 @@ plot_gtap_data <- function(sl4file,
         sector_select = sector_select
       )
 
-      har.plot.data <- har_data
-      assign(har_list_name, har.plot.data, envir = .GlobalEnv)
+      # Assign to global environment if name provided
+      if (!is.null(har_list_name)) {
+        assign(har_list_name, har_data, envir = .GlobalEnv)
+      }
+
+      # Add to result list
+      result$har_data <- har_data
     }
   }
 
