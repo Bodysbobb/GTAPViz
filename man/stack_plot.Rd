@@ -12,13 +12,15 @@ stack_plot(
   title_prefix = "",
   title_suffix = "",
   y_axis_title = NULL,
-  compare_by_x_axis = FALSE,
+  compare_by_experiment = FALSE,
   separate_figure = FALSE,
   unstack_plot = FALSE,
   output_dir = NULL,
   panel_rows = NULL,
   panel_cols = NULL,
   color_tone = NULL,
+  show_total = TRUE,
+  description_as_title = TRUE,
   legend_position = "bottom",
   y_limit = NULL,
   width = NULL,
@@ -41,7 +43,7 @@ If NULL, all variables in the data will be plotted with default titles.}
 
 \item{y_axis_title}{Character. Y-axis label. If NULL, uses Unit if available.}
 
-\item{compare_by_x_axis}{Logical. If TRUE, compares x-axis values within experiments}
+\item{compare_by_experiment}{Logical. If TRUE, compares x-axis values within experiments}
 
 \item{separate_figure}{Logical. If TRUE, creates separate figures instead of panels}
 

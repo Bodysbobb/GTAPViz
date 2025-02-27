@@ -11,10 +11,11 @@
   stack_value_from,
   plot_title,
   y_axis_title,
-  compare_by_x_axis,
+  compare_by_experiment,
   color_tone,
   panel_rows,
   panel_cols,
+  show_total = TRUE,
   legend_position = "bottom",
   y_limit = NULL
 )
@@ -32,7 +33,7 @@
 
 \item{y_axis_title}{Label for the y-axis}
 
-\item{compare_by_x_axis}{Logical. If TRUE, compares x-axis values within experiments}
+\item{compare_by_experiment}{Logical. If TRUE, compares x-axis values within experiments}
 
 \item{color_tone}{Base color for the plot}
 

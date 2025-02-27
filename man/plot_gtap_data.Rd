@@ -13,8 +13,11 @@ plot_gtap_data(
   mapping_info = "GTAPv7",
   project_dir = NULL,
   input_dir = NULL,
+  subtotal = FALSE,
   sl4_list_name = "sl4.plot.data",
-  har_list_name = "har.plot.data"
+  har_list_name = "har.plot.data",
+  sl4_structure_name = "sl4.structure",
+  har_structure_name = "har.structure"
 )
 }
 \arguments{
@@ -37,6 +40,10 @@ plot_gtap_data(
 \item{sl4_list_name}{A character string specifying the global variable name for SL4 plotting data. Default is "sl4.plot.data".}
 
 \item{har_list_name}{A character string specifying the global variable name for HAR plotting data. Default is "har.plot.data".}
+
+\item{sl4_structure_name}{A character string specifying the global variable name for SL4 structure. Default is "sl4.structure".}
+
+\item{har_structure_name}{A character string specifying the global variable name for HAR structure. Default is "har.structure".}
 }
 \value{
 A list containing extracted data with applied filters.

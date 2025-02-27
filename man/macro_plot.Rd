@@ -2,14 +2,15 @@
 % Please edit documentation in R/plot.R
 \name{macro_plot}
 \alias{macro_plot}
-\title{Generate Macro Plot}
+\title{Generate Macro Plot with Flexible Title Options}
 \usage{
 macro_plot(
   data,
   plot_var = NULL,
   title_prefix = "",
   title_suffix = "",
-  compare_by_x_axis = FALSE,
+  compare_by_experiment = FALSE,
+  description_as_title = FALSE,
   output_dir = NULL,
   panel_rows = NULL,
   panel_cols = NULL,
@@ -23,14 +24,18 @@ macro_plot(
 \arguments{
 \item{data}{A data frame containing the full dataset with macroeconomic variables.}
 
-\item{plot_var}{A data frame with "Variable" and "PlotTitle" columns specifying which variables to plot and their titles.
-If NULL, all variables in the data will be plotted with default titles.}
+\item{plot_var}{A data frame with "Variable" column and optionally "PlotTitle" or "Description" columns
+specifying which variables to plot and their titles. If NULL, all variables in the data will be
+plotted with default titles.}
 
 \item{title_prefix}{Optional character string to prepend to the title.}
 
 \item{title_suffix}{Optional character string to append to the title.}
 
-\item{compare_by_x_axis}{Logical. If \code{TRUE}, compares experiments within x-axis categories.}
+\item{compare_by_experiment}{Logical. If \code{TRUE}, compares experiments within x-axis categories.}
+
+\item{description_as_title}{Logical. If TRUE, uses the "Description" column for plot titles instead
+of "PlotTitle". Default is FALSE.}
 
 \item{output_dir}{Optional character. Directory to save the output plot.}
 
@@ -53,5 +58,20 @@ A \code{ggplot} object or a list of plots if \code{separate_figure = TRUE}.
 }
 \description{
 Creates figures of macro variables from the Macros header in the SL4.
-Uses a separate dataframe to specify variables to plot and their titles.
+Uses a separate dataframe to specify variables to plot with options for using either variable names,
+PlotTitle, or Description columns for plot titles.
+}
+\examples{
+\dontrun{
+macro_plot(Macros,
+           plot_var = macro.map,
+           compare_by_experiment = FALSE,
+           color_tone = "grey",
+           output_dir = output.folder,
+           description_as_title = FALSE,
+           panel_rows = 2,
+           width = 45,
+           separate_figure = FALSE,
+           legend_position = "bottom")
+}
 }

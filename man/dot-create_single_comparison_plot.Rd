@@ -2,18 +2,20 @@
 % Please edit documentation in R/plot.R
 \name{.create_single_comparison_plot}
 \alias{.create_single_comparison_plot}
-\title{Update Single Comparison Plot (Internal)}
+\title{Create Single Comparison Plot (Internal)}
 \usage{
 .create_single_comparison_plot(
   data,
   x_axis_from,
   plot_title,
   unit,
-  compare_by_x_axis,
+  compare_by_experiment,
   color_tone,
   panel_rows,
   panel_cols,
-  legend_position = "none"
+  legend_position = "none",
+  invert_panel = FALSE,
+  panel_var = "Experiment"
 )
 }
 \arguments{
@@ -25,7 +27,7 @@
 
 \item{unit}{Unit of measurement}
 
-\item{compare_by_x_axis}{Logical. If TRUE, compares x-axis values within experiments}
+\item{compare_by_experiment}{Logical. If TRUE, compares experiments within x-axis categories}
 
 \item{color_tone}{Base color for the plot}
 
@@ -34,11 +36,15 @@
 \item{panel_cols}{Number of panel columns}
 
 \item{legend_position}{Position of the legend: "none", "bottom", "top", "left", or "right"}
+
+\item{invert_panel}{Logical. If TRUE, swaps the roles of Experiment and split_by in faceting}
+
+\item{panel_var}{Character. Column name to use for panel faceting}
 }
 \value{
 A ggplot object
 }
 \description{
-Creates a single comparison plot with title unit formatting - "\%" instead of "Percent".
+Creates a single comparison plot with title unit formatting.
 }
 \keyword{internal}

@@ -8,9 +8,10 @@ detail_plot(
   data,
   plot_var = NULL,
   y_axis_from,
-  figure_separate_by,
+  split_by,
   title_prefix = "",
   title_suffix = "",
+  description_as_title = TRUE,
   panel_rows = NULL,
   panel_cols = NULL,
   positive_color = "#2E8B57",
@@ -18,7 +19,12 @@ detail_plot(
   output_dir = NULL,
   top_impact = NULL,
   width = NULL,
-  height = NULL
+  height = NULL,
+  separate_figure = FALSE,
+  invert_panel = FALSE,
+  legend_position = "none",
+  width_dodge = 0.5,
+  width_bar = 0.4
 )
 }
 \arguments{
@@ -29,11 +35,13 @@ If NULL, all variables in the data will be plotted with default titles.}
 
 \item{y_axis_from}{Character vector. Column names to use for the y-axis.}
 
-\item{figure_separate_by}{Character. Column used to separate different plots.}
+\item{split_by}{Character. Column used to separate different plots.}
 
 \item{title_prefix}{Optional character string to prepend to the title.}
 
 \item{title_suffix}{Optional character string to append to the title.}
+
+\item{description_as_title}{Logical. If TRUE, uses the "Description" column from plot_var as the plot title.}
 
 \item{panel_rows}{Optional numeric. Number of panel rows. If left blank, it will be automatically adjusted.}
 
@@ -50,6 +58,10 @@ If NULL, all variables in the data will be plotted with default titles.}
 \item{width}{Optional numeric. Width of the output plot. If left blank, it will be automatically adjusted.}
 
 \item{height}{Optional numeric. Height of the output plot. If left blank, it will be automatically adjusted.}
+
+\item{separate_figure}{Logical. If TRUE, creates separate figures for each combination of variable and category.}
+
+\item{invert_panel}{Logical. If TRUE, swaps the roles of Experiment and split_by in faceting and figure separation.}
 }
 \value{
 A \code{ggplot} object or NULL if no plots could be generated.

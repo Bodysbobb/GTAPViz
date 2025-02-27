@@ -2,16 +2,19 @@
 % Please edit documentation in R/plot.R
 \name{comparison_plot}
 \alias{comparison_plot}
-\title{Generate Comparison Plot}
+\title{Generate Comparison Plots}
 \usage{
 comparison_plot(
   data,
   plot_var = NULL,
-  x_axis_from = "Region",
+  x_axis_from,
+  split_by,
   title_prefix = "",
   title_suffix = "",
-  compare_by_x_axis = FALSE,
+  compare_by_experiment = FALSE,
   separate_figure = FALSE,
+  invert_panel = FALSE,
+  description_as_title = FALSE,
   output_dir = NULL,
   panel_rows = NULL,
   panel_cols = NULL,
@@ -22,40 +25,59 @@ comparison_plot(
 )
 }
 \arguments{
-\item{data}{A data frame containing the full dataset.}
+\item{data}{Data frame containing "Variable", "Value", "Experiment", "Unit" columns plus x_axis_from and split_by variables.}
 
-\item{plot_var}{A data frame with "Variable" and "PlotTitle" columns specifying which variables to plot and their titles.
-If NULL, all variables in the data will be plotted with default titles.}
+\item{plot_var}{Optional. Character vector or data frame with "Variable" column to specify which variables to plot.}
 
-\item{x_axis_from}{Character. Column name to use for the x-axis. Default is "Region"}
+\item{x_axis_from}{Column name to use for x-axis values (or panels if compare_by_experiment = TRUE).}
 
-\item{title_prefix}{Optional character string to prepend to the title}
+\item{split_by}{Column name for separating plots (or panels if invert_panel = TRUE).}
 
-\item{title_suffix}{Optional character string to append to the title}
+\item{title_prefix}{Optional text to prepend to plot titles.}
 
-\item{compare_by_x_axis}{Logical. If TRUE, compares experiments within x-axis categories}
+\item{title_suffix}{Optional text to append to plot titles.}
 
-\item{separate_figure}{Logical. If TRUE, creates separate figures instead of panels. Default is FALSE}
+\item{compare_by_experiment}{If TRUE, Experiment is plotted on x-axis, x_axis_from values as panels.}
 
-\item{output_dir}{Optional character. Directory to save the output plot}
+\item{separate_figure}{If TRUE, creates individual figures for each panel value.}
 
-\item{panel_rows}{Optional numeric. Number of panel rows}
+\item{invert_panel}{If TRUE, uses split_by for panels and Experiment for separation.}
 
-\item{panel_cols}{Optional numeric. Number of panel columns}
+\item{description_as_title}{If TRUE, uses "Description" column for titles instead of "Variable".}
 
-\item{color_tone}{Optional character. Base color for the plot}
+\item{output_dir}{Optional path to save plots. If NULL, plots are only returned.}
 
-\item{legend_position}{Character. Position of the legend: "none" (default), "bottom", "top", "left", or "right"}
+\item{panel_rows}{Optional number of panel rows. Auto-calculated if NULL.}
 
-\item{width}{Optional numeric. Width of the output plot}
+\item{panel_cols}{Optional number of panel columns. Auto-calculated if NULL.}
 
-\item{height}{Optional numeric. Height of the output plot}
+\item{color_tone}{Optional base color for the plot. NULL uses default ggplot2 colors.}
+
+\item{legend_position}{Position of legend: "none" (default), "bottom", "top", "left", "right".}
+
+\item{width}{Optional width in inches. Auto-calculated if NULL.}
+
+\item{height}{Optional height in inches. Auto-calculated if NULL.}
 }
 \value{
 A list of ggplot objects or a single ggplot object depending on settings
 }
 \description{
-Creates comparison plots with enhanced features for unit handling and figure separation.
-Uses a separate dataframe to specify variables to plot and their titles.
-Auto-adjusts dimensions and panel layout if not specified.
+Creates bar plots comparing values across categories with flexible panel configuration.
+}
+\examples{
+\dontrun{
+comparison_plot(sl4.plot.data$REG,
+                x_axis_from = "Region",
+                plot_var = sl4plot,
+                title_prefix = "Impact on",
+                output_dir = output.folder,
+                compare_by_experiment = FALSE,
+                description_as_title = TRUE,
+                separate_figure = FALSE,
+                color_tone = "grey",
+                width = 20,
+                height = 12,
+                legend_position = "bottom")
+}
 }

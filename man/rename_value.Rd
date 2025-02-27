@@ -2,32 +2,42 @@
 % Please edit documentation in R/data_manipulation.R
 \name{rename_value}
 \alias{rename_value}
-\title{Change Specific Values in a Dataframe Column}
+\title{Rename Values in a Data Frame or List of Data Frames}
 \usage{
-rename_value(data, column_name, original_values, new_values)
+rename_value(data, column_name = NULL, mapping.file)
 }
 \arguments{
-\item{data}{A data frame containing the column to modify.}
+\item{data}{A data frame or a list of data frames containing the column to modify.}
 
-\item{column_name}{Character. The name of the column where values will be changed.}
+\item{column_name}{Optional. Character. The name of the column where values will be changed.
+If NULL, the function will attempt to extract \code{ColumnName} from \code{mapping.file}.}
 
-\item{original_values}{Character vector. The values to be replaced.}
-
-\item{new_values}{Character vector. The new values corresponding to original_values.}
+\item{mapping.file}{A data frame containing \code{OldName} and \code{NewName} columns that specify
+the mapping of values to be replaced. Optionally, a \code{ColumnName} column may define which
+column should be modified.}
 }
 \value{
-A modified data frame with specified values replaced.
+A modified data frame or list of data frames with specified values replaced.
 }
 \description{
-Replaces specified values in a given column with new values.
-Only values listed in the original_values parameter will be changed.
+Replaces specified values in a given column with new values based on a mapping file.
+If \code{column_name} is not provided, it will be automatically extracted from \code{mapping.file} if available.
 }
 \examples{
+# Example mapping file
+wefare.decomp.rename <- data.frame(
+  OldName = c("alloc_A1", "ENDWB1", "tech_C1"),
+  NewName = c("Allocation", "Endowment", "Technology"),
+  ColumnName = "Variable",
+  stringsAsFactors = FALSE
+)
+
+# Load example data
 har_data <- HARplus::load_harx(c("globalcgds", "vgdpwld", "WEV"))
 har_data <- HARplus::get_data_by_var(c("globalcgds", "vgdpwld", "WEV"), har_data)
-modified_data <- rename_value(har_data[["A"]], "Variable",
-                               c("alloc_A1", "ENDWB1", "tech_C1"),
-                               c("Allocation", "Endowment", "Technology"))
+
+# Apply renaming
+modified_list <- rename_value(har_data, mapping.file = wefare.decomp.rename)
 
 }
 \author{
