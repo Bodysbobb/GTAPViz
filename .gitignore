@@ -1,5 +1,6 @@
 *.Rproj.user
 inst/doc
+inst/GTAPDefault
 LICENSE
 *.Rproj
 *.Rhistory
@@ -7,5 +8,4 @@ LICENSE
 docs
 R/.Rhistory
 .Rproj.user
-R/.Rhistory
-R/.Rhistory
+
