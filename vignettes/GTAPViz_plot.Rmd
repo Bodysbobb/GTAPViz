@@ -198,7 +198,7 @@ This chunk defines the **experiment names**, **handling of description and unit 
   - `"GTAPv7"` → Use default definitions and units based on **GTAP Model Version 7**.  
   - `"Mix"` → Use manually defined values where available, and GTAP defaults for the rest.  
   
-```{r Input Setup, eval = FALSE}
+```{r Input Setup}
 # Define experiment name / output name 
 case.name <- c("US_All", "US_All_RetalTar", "US_All_ReduceTar50", "US_All_RegReduceTar50",
                     "US_All10", "US_All10_RetalTar", "US_All10_ReduceTar50", "US_All10_RegReduceTar50")
@@ -228,7 +228,7 @@ This command performs the following tasks automatically:
 
 **Tip:** This automation uses the `"HARplus::get_data_by_dims"` command. However, other formats, such as `"HARplus::get_data_by_var"`, `"HARplus::group_data_by_var"`, or your own data format, can also work with the figure code. Keep in mind that these alternatives may require additional data preparation to ensure compatibility with the figure command.
 
-```{r Preparing Data for Plot, eval = FALSE}
+```{r Preparing Data for Plot}
 # Region to be plotted
 selected_regions <- c("USA", "CHN", "CAN", "ASEAN", "ROW")
 
