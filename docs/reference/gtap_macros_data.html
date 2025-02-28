@@ -68,7 +68,7 @@
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code>add_unit_col</code>, <code><a href="add_mapping_info.html">add_mapping_info</a></code></p></div>
+    <div class="dont-index"><p><code><a href="add_mapping_info.html">add_mapping_info</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -77,19 +77,19 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Import sample data</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># Import sample data</span></span></span>
 <span class="r-in"><span><span class="va">sl4_data1</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/HARplus/man/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"TAR10.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sl4_data2</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/HARplus/man/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"SUBT10.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Method 1: Using a list of datasets</span></span></span>
 <span class="r-in"><span><span class="va">data_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>base <span class="op">=</span> <span class="va">sl4_data1</span>, policy <span class="op">=</span> <span class="va">sl4_data2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Macros1</span> <span class="op">&lt;-</span> <span class="fu">gtap_macros_data</span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gtap_macros_data(data_list):</span> could not find function "gtap_macros_data"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Method 2: Using multiple arguments</span></span></span>
 <span class="r-in"><span><span class="va">Macros2</span> <span class="op">&lt;-</span> <span class="fu">gtap_macros_data</span><span class="op">(</span><span class="va">sl4_data1</span>, <span class="va">sl4_data2</span>,</span></span>
 <span class="r-in"><span>                           experiment_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Base"</span>, <span class="st">"Policy"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gtap_macros_data(sl4_data1, sl4_data2, experiment_names = c("Base",     "Policy")):</span> could not find function "gtap_macros_data"</span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

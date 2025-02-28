@@ -96,25 +96,43 @@
 <dd><p>Optional. Directory path for input files; overrides project_dir/in if provided.</p></dd>
 
 
+<dt id="arg-subtotal">subtotal<a class="anchor" aria-label="anchor" href="#arg-subtotal"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, includes subtotal data. Default is <code>FALSE</code>.</p></dd>
+
+
 <dt id="arg-sl-list-name">sl4_list_name<a class="anchor" aria-label="anchor" href="#arg-sl-list-name"></a></dt>
-<dd><p>A character string specifying the global variable name for SL4 plotting data. Default is "sl4.plot.data".</p></dd>
+<dd><p>A character string specifying the variable name for SL4 plotting data. Default is "sl4.plot.data".</p></dd>
 
 
 <dt id="arg-har-list-name">har_list_name<a class="anchor" aria-label="anchor" href="#arg-har-list-name"></a></dt>
-<dd><p>A character string specifying the global variable name for HAR plotting data. Default is "har.plot.data".</p></dd>
+<dd><p>A character string specifying the variable name for HAR plotting data. Default is "har.plot.data".</p></dd>
 
 
 <dt id="arg-sl-structure-name">sl4_structure_name<a class="anchor" aria-label="anchor" href="#arg-sl-structure-name"></a></dt>
-<dd><p>A character string specifying the global variable name for SL4 structure. Default is "sl4.structure".</p></dd>
+<dd><p>A character string specifying the variable name for SL4 structure. Default is "sl4.structure".</p></dd>
 
 
 <dt id="arg-har-structure-name">har_structure_name<a class="anchor" aria-label="anchor" href="#arg-har-structure-name"></a></dt>
-<dd><p>A character string specifying the global variable name for HAR structure. Default is "har.structure".</p></dd>
+<dd><p>A character string specifying the variable name for HAR structure. Default is "har.structure".</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list containing extracted data with applied filters.</p>
+    <p>A list containing extracted data with applied filters:</p>
+<dl><dt>sl4_data</dt>
+<dd><p>Extracted and filtered SL4 data if SL4 processing is enabled</p></dd>
+
+<dt>sl4structure</dt>
+<dd><p>Structure information for SL4 variables if available</p></dd>
+
+<dt>har_data</dt>
+<dd><p>Extracted and filtered HAR data if HAR processing is enabled</p></dd>
+
+<dt>harstructure</dt>
+<dd><p>Structure information for HAR variables if available</p></dd>
+
+</dl><p>For backward compatibility, the data can still be assigned to specified variables
+via the sl4_list_name, har_list_name, sl4_structure_name, and har_structure_name parameters.</p>
     </div>
 
     <div class="section level2">
@@ -134,7 +152,6 @@
 <span class="r-in"><span>  input_dir <span class="op">=</span> <span class="st">"D:/GTAP_inputs"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

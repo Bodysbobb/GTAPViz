@@ -56,7 +56,9 @@ headers, independent column selections, and optional total calculations.</p>
 <span>  total_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  export_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  multi_sheet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  output_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sheet_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  include_units <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -64,18 +66,21 @@ headers, independent column selections, and optional total calculations.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-header">header<a class="anchor" aria-label="anchor" href="#arg-header"></a></dt>
-<dd><p>Optional. A character vector specifying headers to filter each dataset.
-Required if <code>data</code> is a list.</p></dd>
+<dl><dt id="arg-data-list">data_list<a class="anchor" aria-label="anchor" href="#arg-data-list"></a></dt>
+<dd><p>A named list of data frames. Each data frame must contain an "Experiment" column.</p></dd>
+
+
+<dt id="arg-header">header<a class="anchor" aria-label="anchor" href="#arg-header"></a></dt>
+<dd><p>A character vector specifying which dataset names from <code>data_list</code> should be processed.</p></dd>
 
 
 <dt id="arg-wide-cols">wide_cols<a class="anchor" aria-label="anchor" href="#arg-wide-cols"></a></dt>
-<dd><p>A named list specifying the column(s) to be converted into wide format for each dataset.
+<dd><p>A named list specifying the column to be transformed into wide format for each dataset.
 Example: <code>list(A = "COLUMN", E1 = "PRICES")</code>.</p></dd>
 
 
 <dt id="arg-total-column">total_column<a class="anchor" aria-label="anchor" href="#arg-total-column"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, calculates a total column for each dataset. Default is <code>FALSE</code>.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, calculates a total column for each dataset by summing numeric columns. Default is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-export-table">export_table<a class="anchor" aria-label="anchor" href="#arg-export-table"></a></dt>
@@ -83,19 +88,19 @@ Example: <code>list(A = "COLUMN", E1 = "PRICES")</code>.</p></dd>
 
 
 <dt id="arg-multi-sheet">multi_sheet<a class="anchor" aria-label="anchor" href="#arg-multi-sheet"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, exports each dataset to a separate sheet in the Excel file. Default is <code>FALSE</code>.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, each dataset is written to a separate sheet in the Excel file. Default is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-output-dir">output_dir<a class="anchor" aria-label="anchor" href="#arg-output-dir"></a></dt>
-<dd><p>Optional character. Directory to save the output file if <code>export_table = TRUE</code>.</p></dd>
+<dd><p>Optional character string specifying the directory where the Excel file should be saved.</p></dd>
 
 
-<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A data frame or a named list of data frames, each containing decomposition data.</p></dd>
+<dt id="arg-sheet-names">sheet_names<a class="anchor" aria-label="anchor" href="#arg-sheet-names"></a></dt>
+<dd><p>Optional named list providing custom names for sheets in the exported Excel file.</p></dd>
 
 
-<dt id="arg-workbook-name">workbook_name<a class="anchor" aria-label="anchor" href="#arg-workbook-name"></a></dt>
-<dd><p>Optional character. Name of the output Excel workbook if <code>export_table = TRUE</code>. Default is <code>"decomp_results.xlsx"</code>.</p></dd>
+<dt id="arg-include-units">include_units<a class="anchor" aria-label="anchor" href="#arg-include-units"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> and a "Unit" column exists in the data, unit information is merged into the final output. Default is <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -125,14 +130,14 @@ If <code>export_table = TRUE</code>, the results are also saved to an Excel file
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Convert decomposition tables for both datasets</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">decomp_table</span><span class="op">(</span>data <span class="op">=</span> <span class="va">har.plot.data</span>, header <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"E1"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">decomp_table</span><span class="op">(</span>data_list <span class="op">=</span> <span class="va">har.plot.data</span>, header <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"E1"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                       wide_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">"COLUMN"</span>, E1 <span class="op">=</span> <span class="st">"PRICES"</span><span class="op">)</span>, total_column <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Export as an Excel file with multiple sheets</span></span></span>
-<span class="r-in"><span><span class="fu">decomp_table</span><span class="op">(</span>data <span class="op">=</span> <span class="va">har.plot.data</span>, header <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"E1"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="fu">decomp_table</span><span class="op">(</span>data_list <span class="op">=</span> <span class="va">har.plot.data</span>, header <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"E1"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>             wide_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">"COLUMN"</span>, E1 <span class="op">=</span> <span class="st">"PRICES"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>             total_column <span class="op">=</span> <span class="cn">TRUE</span>, export_table <span class="op">=</span> <span class="cn">TRUE</span>, multi_sheet <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>             output_dir <span class="op">=</span> <span class="st">"results"</span>, workbook_name <span class="op">=</span> <span class="st">"decomposition_summary.xlsx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>             output_dir <span class="op">=</span> <span class="st">"results"</span>, sheet_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">"Welfare"</span>, E1 <span class="op">=</span> <span class="st">"Prices"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
