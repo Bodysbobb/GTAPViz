@@ -57,6 +57,10 @@ If NULL, all variables in the data will be plotted with default titles.}
 
 \item{color_tone}{Optional character. Base color for plot color generation}
 
+\item{show_total}{Logical. If \code{TRUE}, displays total values above stacked bars. Default is \code{TRUE}.}
+
+\item{description_as_title}{Logical. If \code{TRUE}, uses the "Description" column as the title instead of "Variable". Default is \code{TRUE}.}
+
 \item{legend_position}{Character. Position of the legend: "bottom" (default), "top", "left", "right", or "none"}
 
 \item{y_limit}{Optional numeric vector. Custom y-axis limits (e.g., c(-5, 5))}

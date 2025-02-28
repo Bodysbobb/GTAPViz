@@ -32,6 +32,15 @@ Data structure with same format as input but with adjusted values and units
 \description{
 Convert Multiple Units in Nested Data Structures
 }
+\examples{
+\dontrun{
+har.plot.data <- convert_units(har.plot.data,
+change_unit_from = c("million USD"),
+change_unit_to = c("billion USD"),
+adjustment = c("/1000"))
+}
+
+}
 \author{
 Pattawee Puangchit
 }

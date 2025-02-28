@@ -37,16 +37,24 @@ plot_gtap_data(
 
 \item{input_dir}{Optional. Directory path for input files; overrides project_dir/in if provided.}
 
-\item{sl4_list_name}{A character string specifying the global variable name for SL4 plotting data. Default is "sl4.plot.data".}
+\item{subtotal}{Logical. If \code{TRUE}, includes subtotal data. Default is \code{FALSE}.}
 
-\item{har_list_name}{A character string specifying the global variable name for HAR plotting data. Default is "har.plot.data".}
+\item{sl4_list_name}{A character string specifying the variable name for SL4 plotting data. Default is "sl4.plot.data".}
 
-\item{sl4_structure_name}{A character string specifying the global variable name for SL4 structure. Default is "sl4.structure".}
+\item{har_list_name}{A character string specifying the variable name for HAR plotting data. Default is "har.plot.data".}
 
-\item{har_structure_name}{A character string specifying the global variable name for HAR structure. Default is "har.structure".}
+\item{sl4_structure_name}{A character string specifying the variable name for SL4 structure. Default is "sl4.structure".}
+
+\item{har_structure_name}{A character string specifying the variable name for HAR structure. Default is "har.structure".}
 }
 \value{
-A list containing extracted data with applied filters.
+A list containing extracted data with applied filters:
+\item{sl4_data}{Extracted and filtered SL4 data if SL4 processing is enabled}
+\item{sl4structure}{Structure information for SL4 variables if available}
+\item{har_data}{Extracted and filtered HAR data if HAR processing is enabled}
+\item{harstructure}{Structure information for HAR variables if available}
+For backward compatibility, the data can still be assigned to specified variables
+via the sl4_list_name, har_list_name, sl4_structure_name, and har_structure_name parameters.
 }
 \description{
 Extracts data from GTAP SL4 and HAR files with simplified filtering options.
@@ -67,5 +75,4 @@ result <- plot_gtap_data(
   input_dir = "D:/GTAP_inputs"
 )
 }
-
 }

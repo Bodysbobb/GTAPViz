@@ -12,9 +12,10 @@
 #'   - "Value": The extracted numeric value
 #'
 #' @author Pattawee Puangchit
-#' @seealso \code{\link{add_unit_col}}, \code{\link{add_mapping_info}}
+#' @seealso \code{\link{add_mapping_info}}
 #' @export
 #' @examples
+#' \dontrun{
 #' # Import sample data
 #' sl4_data1 <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4", package = "HARplus"))
 #' sl4_data2 <- HARplus::load_sl4x(system.file("extdata", "SUBT10.sl4", package = "HARplus"))
@@ -26,6 +27,7 @@
 #' # Method 2: Using multiple arguments
 #' Macros2 <- gtap_macros_data(sl4_data1, sl4_data2,
 #'                            experiment_names = c("Base", "Policy"))
+#' }
 #'
 gtap_macros_data <- function(..., experiment_names = NULL) {
   # Define the specific macro variables to extract
@@ -55,7 +57,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   }
 
   if (length(experiment_names) != length(file_paths)) {
-    stop("Number of experiment names must match number of file paths")
+    stop("ERROR: Number of experiment names must match number of file paths")
   }
 
   get_unit <- function(var_name) {
@@ -97,7 +99,6 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
 
   return(Macros)
 }
-
 
 #' @title Determine Output Formats
 #' @description Returns a character vector of output format names for which the corresponding global variable is set to "yes".
@@ -150,8 +151,8 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   if (length(output_formats) == 0) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ No output format selected",
-                                     "ℹ️ Please set at least one output format to 'YES':",
+                                     "No output format selected",
+                                     "Please set at least one output format to 'YES':",
                                      "   - csv.output",
                                      "   - stata.output",
                                      "   - r.output",
@@ -163,15 +164,15 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   # Check mapping_info - set default if missing
   if (is.null(mapping_info)) {
     mapping_info <- "GTAPv7"
-    message("ℹ️ mapping_info not specified, using default: GTAPv7")
+    message("  mapping_info not specified, using default: GTAPv7")
   }
 
   # Validate input folder
   if (!dir.exists(input_dir)) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ Input folder does not exist",
-                                     "ℹ️ Please check input_dir path and ensure it exists")
+                                     "Input folder does not exist",
+                                     "Please check input_dir path and ensure it exists")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -185,8 +186,8 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
     if (!is.data.frame(sl4file) || !"Variable" %in% names(sl4file)) {
       validation_results$status <- "error"
       validation_results$messages <- c(validation_results$messages,
-                                       "❌ Invalid SL4File structure",
-                                       "ℹ️ Required column: Variable")
+                                       "Invalid SL4File structure",
+                                       "Required column: Variable")
       validation_results$proceed <- FALSE
       return(validation_results)
     }
@@ -197,7 +198,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
       if (length(missing_cols) > 0) {
         validation_results$status <- "warning"
         validation_results$messages <- c(validation_results$messages,
-                                         sprintf("⚠️ sl4file is missing columns: %s",
+                                         sprintf("sl4file is missing columns: %s",
                                                  paste(missing_cols, collapse = ", ")))
         validation_results$messages <- c(validation_results$messages,
                                          "These are required for mapping_info = 'Yes' or 'Mix'")
@@ -221,8 +222,8 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
     if (!is.data.frame(harfile) || !"Variable" %in% names(harfile)) {
       validation_results$status <- "error"
       validation_results$messages <- c(validation_results$messages,
-                                       "❌ Invalid HARFile structure",
-                                       "ℹ️ Required column: Variable")
+                                       "Invalid HARFile structure",
+                                       "Required column: Variable")
       validation_results$proceed <- FALSE
       return(validation_results)
     }
@@ -233,7 +234,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
       if (length(missing_cols) > 0) {
         validation_results$status <- "warning"
         validation_results$messages <- c(validation_results$messages,
-                                         sprintf("⚠️ harfile is missing columns: %s",
+                                         sprintf("harfile is missing columns: %s",
                                                  paste(missing_cols, collapse = ", ")))
         validation_results$messages <- c(validation_results$messages,
                                          "These are required for mapping_info = 'Yes' or 'Mix'")
@@ -255,31 +256,31 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   # Add messages for NULL mappings
   if (process_sl4 && is.null(sl4file)) {
     validation_results$messages <- c(validation_results$messages,
-                                     "ℹ️ sl4file is NULL - all SL4 variables will be extracted with GTAPv7 mapping")
+                                     "sl4file is NULL - all SL4 variables will be extracted with GTAPv7 mapping")
   }
 
   if (process_har && is.null(harfile)) {
     validation_results$messages <- c(validation_results$messages,
-                                     "ℹ️ harfile is NULL - all HAR variables will be extracted with GTAPv7 mapping")
+                                     "harfile is NULL - all HAR variables will be extracted with GTAPv7 mapping")
   }
 
   # Add messages for skipped processes
   if (!process_sl4) {
     validation_results$messages <- c(validation_results$messages,
-                                     "ℹ️ sl4file is FALSE - SL4 processing will be skipped")
+                                     "sl4file is FALSE - SL4 processing will be skipped")
   }
 
   if (!process_har) {
     validation_results$messages <- c(validation_results$messages,
-                                     "ℹ️ harfile is FALSE - HAR processing will be skipped")
+                                     "harfile is FALSE - HAR processing will be skipped")
   }
 
   # Case Names Validation
   if (length(experiment) == 0) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ No case names provided",
-                                     "ℹ️ Please define experiment variable with experiment names")
+                                     "No case names provided",
+                                     "Please define experiment variable with experiment names")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -289,9 +290,9 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
     duplicate_cases <- experiment[duplicated(experiment)]
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ Duplicate case names found:",
+                                     "Duplicate case names found:",
                                      paste("   -", duplicate_cases),
-                                     "ℹ️ Each case name must be unique")
+                                     "Each case name must be unique")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -305,9 +306,9 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
     duplicate_files <- files[duplicated(files_lower)]
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ Duplicate file names found (case-insensitive):",
+                                     "Duplicate file names found (case-insensitive):",
                                      paste("   -", duplicate_files),
-                                     "ℹ️ File names must be unique (ignoring case)")
+                                     "File names must be unique (ignoring case)")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -325,7 +326,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   if (process_sl4 && length(sl4_files) == 0) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ No .sl4 files found in the input folder but sl4file is specified")
+                                     "No .sl4 files found in the input folder but sl4file is specified")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -333,7 +334,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   if (process_har && length(har_files) == 0) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ No -WEL.har files found in the input folder but harfile is specified")
+                                     "No -WEL.har files found in the input folder but harfile is specified")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -347,7 +348,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   if (length(missing_cases) == length(case_names_lower)) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     sprintf("❌ None of the specified cases were found: %s",
+                                     sprintf("None of the specified cases were found: %s",
                                              paste(experiment[!case_names_lower %in% available_bases],
                                                    collapse = ", ")))
     validation_results$proceed <- FALSE
@@ -358,7 +359,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   if (process_sl4 && process_har && length(sl4_files) != length(har_files)) {
     validation_results$status <- "warning"
     validation_results$messages <- c(validation_results$messages,
-                                     sprintf("⚠️ Unequal number of files found: %d .sl4 files and %d -WEL.har files",
+                                     sprintf("Unequal number of files found: %d .sl4 files and %d -WEL.har files",
                                              length(sl4_files), length(har_files)))
 
     # Print messages before asking for confirmation
@@ -382,12 +383,12 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
       validation_results$status <- "warning"
       if (length(unmatched_sl4) > 0) {
         validation_results$messages <- c(validation_results$messages,
-                                         sprintf("⚠️ SL4 files without matching HAR files: %s",
+                                         sprintf("SL4 files without matching HAR files: %s",
                                                  paste(unmatched_sl4, collapse = ", ")))
       }
       if (length(unmatched_har) > 0) {
         validation_results$messages <- c(validation_results$messages,
-                                         sprintf("⚠️ HAR files without matching SL4 files: %s",
+                                         sprintf("HAR files without matching SL4 files: %s",
                                                  paste(unmatched_har, collapse = ", ")))
       }
 
@@ -414,7 +415,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
     missing_cases <- experiment[!case_names_lower %in% available_bases]
     validation_results$status <- "warning"
     validation_results$messages <- c(validation_results$messages,
-                                     sprintf("⚠️ Some specified cases were not found: %s",
+                                     sprintf("Some specified cases were not found: %s",
                                              paste(missing_cases, collapse = ", ")))
 
     # Print messages before asking for confirmation
@@ -431,7 +432,7 @@ gtap_macros_data <- function(..., experiment_names = NULL) {
   # If everything is fine, add success message
   if (validation_results$status == "ok") {
     validation_results$messages <- c(validation_results$messages,
-                                     sprintf("✅ All files verified successfully."))
+                                     sprintf("All files verified successfully."))
     if (process_sl4 && process_har) {
       matched_pairs <- intersect(sl4_bases, har_bases)
       validation_results$messages <- c(validation_results$messages,
@@ -1149,15 +1150,15 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
   if (is.null(info.mode)) {
     info.mode <- "GTAPv7"
     validation_results$messages <- c(validation_results$messages,
-                                     "ℹ️ info.mode not specified, using default: GTAPv7")
+                                     "info.mode not specified, using default: GTAPv7")
   }
 
   # Validate input folder
   if (!dir.exists(input.folder)) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ Input folder does not exist",
-                                     "ℹ️ Please check input.folder path and ensure it exists")
+                                     "Input folder does not exist",
+                                     "Please check input.folder path and ensure it exists")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -1171,8 +1172,8 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
     if (!is.data.frame(sl4map) || !"Variable" %in% names(sl4map)) {
       validation_results$status <- "error"
       validation_results$messages <- c(validation_results$messages,
-                                       "❌ Invalid sl4map structure",
-                                       "ℹ️ Required column: Variable")
+                                       "Invalid sl4map structure",
+                                       "Required column: Variable")
       validation_results$proceed <- FALSE
       return(validation_results)
     }
@@ -1183,7 +1184,7 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
       if (length(missing_cols) > 0) {
         validation_results$status <- "warning"
         validation_results$messages <- c(validation_results$messages,
-                                         sprintf("⚠️ sl4map is missing columns: %s",
+                                         sprintf("sl4map is missing columns: %s",
                                                  paste(missing_cols, collapse = ", ")),
                                          "These are required for info.mode = 'Yes' or 'Mix'")
 
@@ -1206,8 +1207,8 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
     if (!is.data.frame(harmap) || !"Variable" %in% names(harmap)) {
       validation_results$status <- "error"
       validation_results$messages <- c(validation_results$messages,
-                                       "❌ Invalid harmap structure",
-                                       "ℹ️ Required column: Variable")
+                                       "Invalid harmap structure",
+                                       "Required column: Variable")
       validation_results$proceed <- FALSE
       return(validation_results)
     }
@@ -1218,7 +1219,7 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
       if (length(missing_cols) > 0) {
         validation_results$status <- "warning"
         validation_results$messages <- c(validation_results$messages,
-                                         sprintf("⚠️ harmap is missing columns: %s",
+                                         sprintf("harmap is missing columns: %s",
                                                  paste(missing_cols, collapse = ", ")),
                                          "These are required for info.mode = 'Yes' or 'Mix'")
 
@@ -1239,31 +1240,31 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
   # Add messages for NULL mappings
   if (process_sl4 && is.null(sl4map)) {
     validation_results$messages <- c(validation_results$messages,
-                                     "ℹ️ sl4map is NULL - all SL4 variables will be extracted with GTAPv7 mapping")
+                                     "sl4map is NULL - all SL4 variables will be extracted with GTAPv7 mapping")
   }
 
   if (process_har && is.null(harmap)) {
     validation_results$messages <- c(validation_results$messages,
-                                     "ℹ️ harmap is NULL - all HAR variables will be extracted with GTAPv7 mapping")
+                                     "harmap is NULL - all HAR variables will be extracted with GTAPv7 mapping")
   }
 
   # Add messages for skipped processes
   if (!process_sl4) {
     validation_results$messages <- c(validation_results$messages,
-                                     "ℹ️ sl4map is FALSE - SL4 processing will be skipped")
+                                     "  sl4map is FALSE - SL4 processing will be skipped")
   }
 
   if (!process_har) {
     validation_results$messages <- c(validation_results$messages,
-                                     "ℹ️ harmap is FALSE - HAR processing will be skipped")
+                                     "  harmap is FALSE - HAR processing will be skipped")
   }
 
   # Case Names Validation
   if (length(case.name) == 0) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ No experiment names provided",
-                                     "ℹ️ Please define experiment variable with experiment names")
+                                     "No experiment names provided",
+                                     "Please define experiment variable with experiment names")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -1273,9 +1274,9 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
     duplicate_cases <- case.name[duplicated(case.name)]
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ Duplicate experiment names found:",
+                                     "Duplicate experiment names found:",
                                      paste("   -", duplicate_cases),
-                                     "ℹ️ Each experiment name must be unique")
+                                     "Each experiment name must be unique")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -1296,7 +1297,7 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
   if (process_sl4 && length(sl4_files) == 0) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ No .sl4 files found in the input folder but sl4map is specified")
+                                     "No .sl4 files found in the input folder but sl4map is specified")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -1304,7 +1305,7 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
   if (process_har && length(har_files) == 0) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     "❌ No -WEL.har files found in the input folder but harmap is specified")
+                                     "No -WEL.har files found in the input folder but harmap is specified")
     validation_results$proceed <- FALSE
     return(validation_results)
   }
@@ -1318,7 +1319,7 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
   if (length(missing_cases) == length(case_names_lower)) {
     validation_results$status <- "error"
     validation_results$messages <- c(validation_results$messages,
-                                     sprintf("❌ None of the specified experiments were found: %s",
+                                     sprintf("None of the specified experiments were found: %s",
                                              paste(case.name[!case_names_lower %in% available_bases],
                                                    collapse = ", ")))
     validation_results$proceed <- FALSE
@@ -1332,7 +1333,7 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
     missing_cases <- case.name[!case_names_lower %in% available_bases]
     validation_results$status <- "warning"
     validation_results$messages <- c(validation_results$messages,
-                                     sprintf("⚠️ Some specified experiments were not found: %s",
+                                     sprintf("Some specified experiments were not found: %s",
                                              paste(missing_cases, collapse = ", ")))
 
     # Ask for confirmation
@@ -1350,7 +1351,7 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
   # If everything is fine, add success message
   if (validation_results$status == "ok") {
     validation_results$messages <- c(validation_results$messages,
-                                     "✅ All files verified successfully.")
+                                     "All files verified successfully.")
   }
 
   return(validation_results)
@@ -1358,6 +1359,7 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
 
 
 #' @title Extract GTAP Data
+#'
 #' @description Extracts data from GTAP SL4 and HAR files with simplified filtering options.
 #'
 #' @param sl4file A data frame containing SL4 mapping information, or FALSE to skip SL4 processing.
@@ -1368,12 +1370,20 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
 #' @param mapping_info A character string indicating the mapping mode (e.g., "GTAPv7"). Default is "GTAPv7".
 #' @param project_dir Optional. Path to the project directory containing the "in" folder.
 #' @param input_dir Optional. Directory path for input files; overrides project_dir/in if provided.
-#' @param sl4_list_name A character string specifying the global variable name for SL4 plotting data. Default is "sl4.plot.data".
-#' @param har_list_name A character string specifying the global variable name for HAR plotting data. Default is "har.plot.data".
-#' @param sl4_structure_name A character string specifying the global variable name for SL4 structure. Default is "sl4.structure".
-#' @param har_structure_name A character string specifying the global variable name for HAR structure. Default is "har.structure".
+#' @param subtotal Logical. If `TRUE`, includes subtotal data. Default is `FALSE`.
+#' @param sl4_list_name A character string specifying the variable name for SL4 plotting data. Default is "sl4.plot.data".
+#' @param har_list_name A character string specifying the variable name for HAR plotting data. Default is "har.plot.data".
+#' @param sl4_structure_name A character string specifying the variable name for SL4 structure. Default is "sl4.structure".
+#' @param har_structure_name A character string specifying the variable name for HAR structure. Default is "har.structure".
 #'
-#' @return A list containing extracted data with applied filters.
+#' @return A list containing extracted data with applied filters:
+#' \item{sl4_data}{Extracted and filtered SL4 data if SL4 processing is enabled}
+#' \item{sl4structure}{Structure information for SL4 variables if available}
+#' \item{har_data}{Extracted and filtered HAR data if HAR processing is enabled}
+#' \item{harstructure}{Structure information for HAR variables if available}
+#' For backward compatibility, the data can still be assigned to specified variables
+#' via the sl4_list_name, har_list_name, sl4_structure_name, and har_structure_name parameters.
+#'
 #' @export
 #'
 #' @examples
@@ -1392,7 +1402,6 @@ process_gtap_data <- function(sl4file, harfile, experiment, mapping_info = "GTAP
 #'   input_dir = "D:/GTAP_inputs"
 #' )
 #' }
-#'
 plot_gtap_data <- function(sl4file,
                            harfile,
                            experiment,
@@ -1487,10 +1496,38 @@ plot_gtap_data <- function(sl4file,
       sl4structure <- dplyr::left_join(sl4file, sl4structure[c("Variable", "Dimensions")], by = "Variable")
       sl4structure <- sl4structure[order(sl4structure$Dimensions), ]
       sl4structure$Unit <- NULL
+      colnames(sl4structure)[colnames(sl4structure) == "Description"] <- "PlotTitle"
 
-      # Assign to global environment if name provided
+      # Store in result list
+      result$sl4structure <- sl4structure
+
+      # For backward compatibility, still assign to the parent environment if name provided
       if (!is.null(sl4_structure_name)) {
-        assign(sl4file_name, sl4structure, envir = .GlobalEnv)
+        assign(sl4_structure_name, sl4structure, envir = parent.frame())
+      }
+
+      # Get variable structure using do.call to pass all loaded data
+      var_structure <- do.call(
+        HARplus::compare_var_structure,
+        c(list(NULL), sl4_data_raw)
+      )
+      var_structure <- var_structure[["match"]]
+
+      # Update sl4file with dimension information
+      if (!is.null(sl4file) && is.data.frame(sl4file)) {
+        sl4file$Dimension <- NA_character_
+        for (i in seq_len(nrow(sl4file))) {
+          var_idx <- match(sl4file$Variable[i], var_structure$Variable)
+          if (!is.na(var_idx)) {
+            sl4file$Dimension[i] <- var_structure$Dimensions[var_idx]
+          }
+        }
+      } else if (is.null(sl4file)) {
+        sl4file <- data.frame(
+          Variable = var_structure$Variable,
+          Dimension = var_structure$Dimensions,
+          stringsAsFactors = FALSE
+        )
       }
 
       # Use get_data_by_dims with merge=TRUE
@@ -1518,13 +1555,13 @@ plot_gtap_data <- function(sl4file,
         sector_select = sector_select
       )
 
-      # Assign to global environment if name provided
-      if (!is.null(sl4_list_name)) {
-        assign(sl4_list_name, sl4_data, envir = .GlobalEnv)
-      }
-
-      # Add to result list
+      # Store in result list
       result$sl4_data <- sl4_data
+
+      # For backward compatibility, still assign to the parent environment if name provided
+      if (!is.null(sl4_list_name)) {
+        assign(sl4_list_name, sl4_data, envir = parent.frame())
+      }
     }
   }
 
@@ -1566,10 +1603,37 @@ plot_gtap_data <- function(sl4file,
       harstructure <- dplyr::left_join(harfile, harstructure[c("Variable", "Dimensions")], by = "Variable")
       harstructure <- harstructure[order(harstructure$Dimensions), ]
       harstructure$Unit <- NULL
+      colnames(harstructure)[colnames(harstructure) == "Description"] <- "PlotTitle"
 
-      # Assign to global environment if name provided
+      # Store in result list
+      result$harstructure <- harstructure
+
+      # For backward compatibility, still assign to the parent environment if name provided
       if (!is.null(har_structure_name)) {
-        assign(harfile_name, harstructure, envir = .GlobalEnv)
+        assign(har_structure_name, harstructure, envir = parent.frame())
+      }
+
+      # Get variable structure
+      var_structure <- do.call(
+        HARplus::get_var_structure,
+        c(list(NULL), har_data_raw)
+      )[[1]]
+
+      # Update harfile with dimension information
+      if (!is.null(harfile) && is.data.frame(harfile)) {
+        harfile$Dimension <- NA_character_
+        for (i in seq_len(nrow(harfile))) {
+          var_idx <- match(harfile$Variable[i], var_structure$Variable)
+          if (!is.na(var_idx)) {
+            harfile$Dimension[i] <- var_structure$Dimensions[var_idx]
+          }
+        }
+      } else if (is.null(harfile)) {
+        harfile <- data.frame(
+          Variable = var_structure$Variable,
+          Dimension = var_structure$Dimensions,
+          stringsAsFactors = FALSE
+        )
       }
 
       # Use get_data_by_dims with merge=TRUE
@@ -1597,17 +1661,17 @@ plot_gtap_data <- function(sl4file,
         sector_select = sector_select
       )
 
-      # Assign to global environment if name provided
-      if (!is.null(har_list_name)) {
-        assign(har_list_name, har_data, envir = .GlobalEnv)
-      }
-
-      # Add to result list
+      # Store in result list
       result$har_data <- har_data
+
+      # For backward compatibility, still assign to the parent environment if name provided
+      if (!is.null(har_list_name)) {
+        assign(har_list_name, har_data, envir = parent.frame())
+      }
     }
   }
 
   message("GTAP plotting data extraction completed!")
 
-  return(invisible(NULL))
+  return(result)
 }

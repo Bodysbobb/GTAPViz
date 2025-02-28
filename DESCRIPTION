@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Author: Pattawee Puangchit <ppuangch@purdue.edu>
 Authors@R: 
     person("Pattawee", "Puangchit", , "ppuangch@purdue.edu", role = c("aut", "cre"))
-Description: HARplusViz is an extension package of HARplus, designed to provide seamless 
+Description: GTAPViz is an extension package of HARplus, designed to provide seamless 
     data visualization for GTAP model results from `.HAR` and `.SL4` files. This package 
     focuses on user-friendly visualization tools, enabling GTAP users to analyze and compare 
     simulation results efficiently without requiring deep coding knowledge. With built-in 
@@ -25,8 +25,6 @@ Imports:
     dplyr,
     tidyr,
     openxlsx,
-    utils,
-    tidyselect,
     tools,
     colorspace,
     grDevices,
@@ -35,10 +33,12 @@ Imports:
     purrr,
     readxl,
     writexl,
-    magrittr
+    utils,
+    methods
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    devtools
 VignetteBuilder: knitr
 Exports:
     add_unit_col,

@@ -345,16 +345,16 @@ scalar_table <- function(data, vars = NULL, output_dir = NULL,
 #' Converts specified columns into wide format per dataset while supporting multiple
 #' headers, independent column selections, and optional total calculations.
 #'
-#' @param data A data frame or a named list of data frames, each containing decomposition data.
-#' @param header Optional. A character vector specifying headers to filter each dataset.
-#'        Required if `data` is a list.
-#' @param wide_cols A named list specifying the column(s) to be converted into wide format for each dataset.
+#' @param data_list A named list of data frames. Each data frame must contain an "Experiment" column.
+#' @param header A character vector specifying which dataset names from `data_list` should be processed.
+#' @param wide_cols A named list specifying the column to be transformed into wide format for each dataset.
 #'        Example: `list(A = "COLUMN", E1 = "PRICES")`.
-#' @param total_column Logical. If `TRUE`, calculates a total column for each dataset. Default is `FALSE`.
+#' @param total_column Logical. If `TRUE`, calculates a total column for each dataset by summing numeric columns. Default is `FALSE`.
 #' @param export_table Logical. If `TRUE`, exports the result to an Excel file. Default is `FALSE`.
-#' @param multi_sheet Logical. If `TRUE`, exports each dataset to a separate sheet in the Excel file. Default is `FALSE`.
-#' @param output_dir Optional character. Directory to save the output file if `export_table = TRUE`.
-#' @param workbook_name Optional character. Name of the output Excel workbook if `export_table = TRUE`. Default is `"decomp_results.xlsx"`.
+#' @param multi_sheet Logical. If `TRUE`, each dataset is written to a separate sheet in the Excel file. Default is `FALSE`.
+#' @param output_dir Optional character string specifying the directory where the Excel file should be saved.
+#' @param sheet_names Optional named list providing custom names for sheets in the exported Excel file.
+#' @param include_units Logical. If `TRUE` and a "Unit" column exists in the data, unit information is merged into the final output. Default is `FALSE`.
 #'
 #' @details
 #' - If `data` is a single data frame, `header` is ignored, and `wide_cols` should be a single column name.
@@ -379,17 +379,18 @@ scalar_table <- function(data, vars = NULL, output_dir = NULL,
 #' )
 #'
 #' # Convert decomposition tables for both datasets
-#' result <- decomp_table(data = har.plot.data, header = c("A", "E1"),
+#' result <- decomp_table(data_list = har.plot.data, header = c("A", "E1"),
 #'                        wide_cols = list(A = "COLUMN", E1 = "PRICES"), total_column = TRUE)
 #'
 #' # Export as an Excel file with multiple sheets
-#' decomp_table(data = har.plot.data, header = c("A", "E1"),
+#' decomp_table(data_list = har.plot.data, header = c("A", "E1"),
 #'              wide_cols = list(A = "COLUMN", E1 = "PRICES"),
 #'              total_column = TRUE, export_table = TRUE, multi_sheet = TRUE,
-#'              output_dir = "results", workbook_name = "decomposition_summary.xlsx")
+#'              output_dir = "results", sheet_names = list(A = "Welfare", E1 = "Prices"))
 #' }
 decomp_table <- function(data_list, header, wide_cols, total_column = FALSE,
-                         export_table = FALSE, multi_sheet = FALSE, output_dir = NULL) {
+                         export_table = FALSE, multi_sheet = FALSE, output_dir = NULL,
+                         sheet_names = NULL, include_units = FALSE) {
 
   if (!is.list(data_list)) stop("Data must be a list of dataframes.")
   if (!all(header %in% names(data_list))) stop("Some headers do not match dataset names.")
@@ -411,6 +412,12 @@ decomp_table <- function(data_list, header, wide_cols, total_column = FALSE,
       }
     }
 
+    # Add unit information if requested and available
+    if (include_units && "Unit" %in% names(df)) {
+      unit_info <- unique(df$Unit)
+      attr(wide_data, "units") <- unit_info
+    }
+
     return(wide_data)
   }
 
@@ -428,8 +435,14 @@ decomp_table <- function(data_list, header, wide_cols, total_column = FALSE,
     wb <- openxlsx::createWorkbook()
 
     for (hdr in names(result_list)) {
-      openxlsx::addWorksheet(wb, hdr)
-      openxlsx::writeData(wb, hdr, result_list[[hdr]])
+      sheet_name <- if (!is.null(sheet_names) && hdr %in% names(sheet_names)) {
+        sheet_names[[hdr]]
+      } else {
+        hdr
+      }
+
+      openxlsx::addWorksheet(wb, sheet_name)
+      openxlsx::writeData(wb, sheet_name, result_list[[hdr]])
     }
 
     openxlsx::saveWorkbook(wb, file_path, overwrite = TRUE)
@@ -438,5 +451,3 @@ decomp_table <- function(data_list, header, wide_cols, total_column = FALSE,
 
   return(invisible(result_list))
 }
-
-

@@ -62,6 +62,12 @@ If NULL, all variables in the data will be plotted with default titles.}
 \item{separate_figure}{Logical. If TRUE, creates separate figures for each combination of variable and category.}
 
 \item{invert_panel}{Logical. If TRUE, swaps the roles of Experiment and split_by in faceting and figure separation.}
+
+\item{legend_position}{Character. Position of the legend: "none" (default), "bottom", "top", "left", or "right".}
+
+\item{width_dodge}{Numeric. Dodge width for bar position adjustment. Default is 0.5.}
+
+\item{width_bar}{Numeric. Width of bars in the plot. Default is 0.4.}
 }
 \value{
 A \code{ggplot} object or NULL if no plots could be generated.

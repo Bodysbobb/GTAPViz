@@ -17,17 +17,14 @@ Renames bilateral trade columns in GTAP data output, specifically targeting REG 
 to Source and Destination in data frames with COMM\emph{REG}REG dimension structure.
 }
 \examples{
+\dontrun{
+# Load Sample Data
+sl4_data <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4", package = "HARplus"))
+
 # For direct data frame output
-df <- get_data_by_var("qxs", sl4_data)
+df <- HARplus::get_data_by_dims("COMM*REG*REG", sl4_data)
 df_renamed <- rename_GTAP_bilateral(df)
-
-# For list output with multiple variables
-data_list <- get_data_by_var(c("qxs", "viws"), sl4_data)
-renamed_list <- rename_GTAP_bilateral(data_list)
-
-# For grouped dimension output
-grouped_data <- group_data_by_dims("COMM*REG*REG", sl4_data)
-renamed_grouped <- rename_GTAP_bilateral(grouped_data)
+}
 
 }
 \author{

@@ -92,32 +92,37 @@ For `"Description"` and `"Unit"`, you may:
 - Define only some variables, leave others blank, and put `"Mix"` in `<info.mode>` [setting](#sec:setting) to get the definition based on your input for defined variables and the GTAP default for the others.
 
 
-| Variable     | Description         | Unit        |
-|--------------|---------------------|-------------|
-| qgdp         | Real GDP Index (%)  | percent     |
-| EV           | Welfare Equivalents | million USD |
-| pebfactreal  | Cost of endownment  | percent     |
+<div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
+  <table style="border-collapse: collapse; width: 100%;">
+    <tr>
+      <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Variable</th>
+      <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Description</th>
+      <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Unit</th>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">qgdp</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">Real GDP Index (%)</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">percent</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">EV</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">Welfare Equivalents</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">million USD</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">pebfactreal</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">Cost of endowment</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">percent</td>
+    </tr>
+  </table>
+</div>
 
 : Example of SL4File and HARFile sheet
 
 
-The `<SL4Plot sheet>` and `<HARPlot sheet>` are used for creating figure illustrations. Instructions for this can be found in another vignette called *GTAPViz_plot*. Essentially, the table contains two columns: `"Variable"`, which specifies the data used for figure creation, and `"PlotTitle"`, which defines the figure name. Users familiar with the R language can also create this table as a dataframe within the R environment.
+💡 **Tip:** The mapping file (`<OutputMapping.xlsx>`) can also be manually created in R as a dataframe, provided that it follows the exact structure, including column names. The dataframe must contain at least the `"Variable"` column, while `"Description"` and `"Unit"` columns are optional depending on the selected `<info.mode>`. 
 
-| Variable      | PlotTitle             | Unit        |
-|---------------|-----------------------|-------------|
-| qgdp          | Real GDP Index        | percent     |
-| EV            | Welfare Equivalents   | million USD |
-| ppriv         | Consumer Price Index  | percent     |
-
-: Example of SL4Plot and HARPlot sheet
-
-
-💡 **Note:** The mapping file (`<OutputMapping.xlsx>`) can also be manually created in R as a dataframe, provided that it follows the exact structure, including column names. The dataframe must contain at least the `"Variable"` column, while `"Description"` and `"Unit"` columns are optional depending on the selected `<info.mode>`.  
-
-
-For example, the following R code creates an equivalent mapping dataframe:
-
-```{r, eval=FALSE}
+```{r R Output Mapping, eval = FALSE}
 mapping_df <- data.frame(
   Variable = c("qgdp", "EV", "pebfactreal"),
   Description = c("Real GDP Index (%)", "Welfare Equivalents", "Cost of endowment"),
@@ -170,7 +175,7 @@ Sample data used in this vignette is obtained from the GTAPv7 model and utilizes
 
 # Loading Package
 Before proceeding, ensure that `GTAPViz` and `HARplus` are installed and loaded:
-```{r package}
+```{r package, eval = FALSE}
 library(GTAPViz)
 ```
 
@@ -200,7 +205,7 @@ This chunk defines the **experiment names**, **handling of description and unit 
 
 This setup allows users to customize how data is processed and exported based on their needs.
 
-```{r Input and Output Setup}
+```{r Input and Output Setup, eval = FALSE}
 # Define experiment name / output name 
 experiment <- c("EXP1", "EXP2")
 
@@ -217,7 +222,7 @@ txt.output <- "No"
 
 # Extracting Data 
 
-```{r GTAP Automating}
+```{r GTAP Automating, eval = FALSE}
 process_gtap_data(
   sl4file = sl4map, 
   harfile = harmap,

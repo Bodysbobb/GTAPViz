@@ -9,8 +9,11 @@
 #' When using "Yes" mapping mode with an external map, it will use provided Description and Unit values.
 #'
 #' @param data_list A list or data frame containing GTAP variables.
-#' @param external_map **Optional**. A data frame containing external mapping information with columns `"Variable"`, `"Description"`, and `"Unit"`. If `NULL`, the default GTAPv7 mapping is used.
-#' @param mapping **Optional**. Either `"GTAPv7"`, `"No"`, `"Yes"`, or `"Mix"`. Determines the mapping approach. Default is `"GTAPv7"`.
+#' @param external_map **Optional**. A data frame containing external mapping
+#' information with columns `"Variable"`, `"Description"`, and `"Unit"`. If `NULL`,
+#' the default GTAPv7 mapping is used.
+#' @param mapping **Optional**. Either `"GTAPv7"`, `"No"`, `"Yes"`, or `"Mix"`.
+#' Determines the mapping approach. Default is `"GTAPv7"`.
 #' @param description_info **Optional**. Logical. If `TRUE`, adds description information. Default is `TRUE`.
 #' @param unit_info **Optional**. Logical. If `TRUE`, adds unit information. Default is `TRUE`.
 #'
@@ -21,14 +24,20 @@
 #' @export
 #'
 #' @examples
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4", package = "HARplus"))
-#' result <- add_mapping_info(sl4_data1, mapping = "GTAPv7", unit_info = FALSE) # Add only Description
-#' result <- add_mapping_info(sl4_data1, mapping = "GTAPv7", description_info = FALSE) # Add only Unit
+#' \dontrun{
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4",
+#' package = "HARplus"))
+#' # Add only Description
+#' result <- add_mapping_info(sl4_data1, mapping = "GTAPv7", unit_info = FALSE)
+#' # Add only Unit
+#' result <- add_mapping_info(sl4_data1, mapping = "GTAPv7",
+#' description_info = FALSE)
 #' custom_mapping <- data.frame(Variable = c("qgdp", "EV"),
 #'                              Description = c("Real GDP", "Economic Value"),
 #'                              Unit = c("Percent", "million USD"))
-#' result <- add_mapping_info(sl4_data1, external_map = custom_mapping, mapping = "Mix") # Custom + GTAPv7
-#'
+#' result <- add_mapping_info(sl4_data1, external_map = custom_mapping,
+#' mapping = "Mix")
+#' }
 add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
                              description_info = TRUE, unit_info = TRUE) {
   if (!is.null(mapping)) {
@@ -314,7 +323,15 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 #' @param unit_col Column name containing unit information (default: "Unit")
 #' @return Data structure with same format as input but with adjusted values and units
 #' @author Pattawee Puangchit
-#' @export
+#'
+#' @examples
+#' \dontrun{
+#' har.plot.data <- convert_units(har.plot.data,
+#' change_unit_from = c("million USD"),
+#' change_unit_to = c("billion USD"),
+#' adjustment = c("/1000"))
+#' }
+#'
 convert_units <- function(data, change_unit_from, change_unit_to,
                           adjustment, value_col = "Value", unit_col = "Unit") {
 
@@ -338,7 +355,7 @@ convert_units <- function(data, change_unit_from, change_unit_to,
   # Process data frame
   if (is.data.frame(data)) {
     if (!all(c(value_col, unit_col) %in% names(data))) {
-      return(data) # Skip if required columns don't exist
+      return(data)
     }
 
     # Create a copy of the input data
@@ -418,6 +435,7 @@ convert_units <- function(data, change_unit_from, change_unit_to,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Example mapping file
 #' wefare.decomp.rename <- data.frame(
 #'   OldName = c("alloc_A1", "ENDWB1", "tech_C1"),
@@ -427,12 +445,12 @@ convert_units <- function(data, change_unit_from, change_unit_to,
 #' )
 #'
 #' # Load example data
-#' har_data <- HARplus::load_harx(c("globalcgds", "vgdpwld", "WEV"))
-#' har_data <- HARplus::get_data_by_var(c("globalcgds", "vgdpwld", "WEV"), har_data)
+#' har_path <- system.file("extdata", "TAR10-WEL.har", package = "HARplus")
+#' har_data <- HARplus::load_harx(har_path)
 #'
 #' # Apply renaming
-#' modified_list <- rename_value(har_data, mapping.file = wefare.decomp.rename)
-#'
+#' modified_data <- rename_value(har_data, mapping.file = wefare.decomp.rename)
+#' }
 rename_value <- function(data, column_name = NULL, mapping.file) {
   if (!all(c("OldName", "NewName") %in% names(mapping.file))) {
     stop("mapping.file must contain 'OldName' and 'NewName' columns.")
@@ -504,17 +522,14 @@ rename_value <- function(data, column_name = NULL, mapping.file) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' # Load Sample Data
+#' sl4_data <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4", package = "HARplus"))
+#'
 #' # For direct data frame output
-#' df <- get_data_by_var("qxs", sl4_data)
+#' df <- HARplus::get_data_by_dims("COMM*REG*REG", sl4_data)
 #' df_renamed <- rename_GTAP_bilateral(df)
-#'
-#' # For list output with multiple variables
-#' data_list <- get_data_by_var(c("qxs", "viws"), sl4_data)
-#' renamed_list <- rename_GTAP_bilateral(data_list)
-#'
-#' # For grouped dimension output
-#' grouped_data <- group_data_by_dims("COMM*REG*REG", sl4_data)
-#' renamed_grouped <- rename_GTAP_bilateral(grouped_data)
+#' }
 #'
 rename_GTAP_bilateral <- function(data) {
   rename_cols_in_df <- function(df) {

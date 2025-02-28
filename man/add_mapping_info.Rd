@@ -15,9 +15,12 @@ add_mapping_info(
 \arguments{
 \item{data_list}{A list or data frame containing GTAP variables.}
 
-\item{external_map}{\strong{Optional}. A data frame containing external mapping information with columns \code{"Variable"}, \code{"Description"}, and \code{"Unit"}. If \code{NULL}, the default GTAPv7 mapping is used.}
+\item{external_map}{\strong{Optional}. A data frame containing external mapping
+information with columns \code{"Variable"}, \code{"Description"}, and \code{"Unit"}. If \code{NULL},
+the default GTAPv7 mapping is used.}
 
-\item{mapping}{\strong{Optional}. Either \code{"GTAPv7"}, \code{"No"}, \code{"Yes"}, or \code{"Mix"}. Determines the mapping approach. Default is \code{"GTAPv7"}.}
+\item{mapping}{\strong{Optional}. Either \code{"GTAPv7"}, \code{"No"}, \code{"Yes"}, or \code{"Mix"}.
+Determines the mapping approach. Default is \code{"GTAPv7"}.}
 
 \item{description_info}{\strong{Optional}. Logical. If \code{TRUE}, adds description information. Default is \code{TRUE}.}
 
@@ -36,14 +39,20 @@ For the "E1" header in HAR files, if using GTAPv7 or Mix mapping mode, it rename
 When using "Yes" mapping mode with an external map, it will use provided Description and Unit values.
 }
 \examples{
-sl4_data1 <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4", package = "HARplus"))
-result <- add_mapping_info(sl4_data1, mapping = "GTAPv7", unit_info = FALSE) # Add only Description
-result <- add_mapping_info(sl4_data1, mapping = "GTAPv7", description_info = FALSE) # Add only Unit
+\dontrun{
+sl4_data1 <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4",
+package = "HARplus"))
+# Add only Description
+result <- add_mapping_info(sl4_data1, mapping = "GTAPv7", unit_info = FALSE)
+# Add only Unit
+result <- add_mapping_info(sl4_data1, mapping = "GTAPv7",
+description_info = FALSE)
 custom_mapping <- data.frame(Variable = c("qgdp", "EV"),
                              Description = c("Real GDP", "Economic Value"),
                              Unit = c("Percent", "million USD"))
-result <- add_mapping_info(sl4_data1, external_map = custom_mapping, mapping = "Mix") # Custom + GTAPv7
-
+result <- add_mapping_info(sl4_data1, external_map = custom_mapping,
+mapping = "Mix")
+}
 }
 \author{
 Pattawee Puangchit

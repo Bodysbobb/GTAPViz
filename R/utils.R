@@ -187,25 +187,6 @@
 #' @return A named vector where variable names map to their corresponding titles.
 #' @keywords internal
 #'
-#' @examples
-#' # Example with a data frame
-#' df <- data.frame(
-#'   Variable = c("GDP", "Consumption"),
-#'   Description = c("Gross Domestic Product", "Household Consumption"),
-#'   PlotTitle = c("GDP Growth", "Consumption Level")
-#' )
-#'
-#' get_title_mapping(df)  # Uses "Description" by default
-#' get_title_mapping(df, description_as_title = FALSE)  # Uses "PlotTitle"
-#'
-#' # Example with a list of data frames
-#' data_list <- list(
-#'   df1 = df,
-#'   df2 = data.frame(Variable = c("Investment"), PlotTitle = c("Investment Level"))
-#' )
-#'
-#' get_title_mapping(data_list)
-#'
 .get_title_mapping <- function(data, description_as_title = TRUE) {
   extract_title_mapping <- function(df) {
     if (!is.data.frame(df)) return(NULL)

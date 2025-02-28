@@ -11,27 +11,30 @@ decomp_table(
   total_column = FALSE,
   export_table = FALSE,
   multi_sheet = FALSE,
-  output_dir = NULL
+  output_dir = NULL,
+  sheet_names = NULL,
+  include_units = FALSE
 )
 }
 \arguments{
-\item{header}{Optional. A character vector specifying headers to filter each dataset.
-Required if \code{data} is a list.}
+\item{data_list}{A named list of data frames. Each data frame must contain an "Experiment" column.}
 
-\item{wide_cols}{A named list specifying the column(s) to be converted into wide format for each dataset.
+\item{header}{A character vector specifying which dataset names from \code{data_list} should be processed.}
+
+\item{wide_cols}{A named list specifying the column to be transformed into wide format for each dataset.
 Example: \code{list(A = "COLUMN", E1 = "PRICES")}.}
 
-\item{total_column}{Logical. If \code{TRUE}, calculates a total column for each dataset. Default is \code{FALSE}.}
+\item{total_column}{Logical. If \code{TRUE}, calculates a total column for each dataset by summing numeric columns. Default is \code{FALSE}.}
 
 \item{export_table}{Logical. If \code{TRUE}, exports the result to an Excel file. Default is \code{FALSE}.}
 
-\item{multi_sheet}{Logical. If \code{TRUE}, exports each dataset to a separate sheet in the Excel file. Default is \code{FALSE}.}
+\item{multi_sheet}{Logical. If \code{TRUE}, each dataset is written to a separate sheet in the Excel file. Default is \code{FALSE}.}
 
-\item{output_dir}{Optional character. Directory to save the output file if \code{export_table = TRUE}.}
+\item{output_dir}{Optional character string specifying the directory where the Excel file should be saved.}
 
-\item{data}{A data frame or a named list of data frames, each containing decomposition data.}
+\item{sheet_names}{Optional named list providing custom names for sheets in the exported Excel file.}
 
-\item{workbook_name}{Optional character. Name of the output Excel workbook if \code{export_table = TRUE}. Default is \code{"decomp_results.xlsx"}.}
+\item{include_units}{Logical. If \code{TRUE} and a "Unit" column exists in the data, unit information is merged into the final output. Default is \code{FALSE}.}
 }
 \value{
 A list of data frames, each containing wide-format decomposition data.
@@ -62,13 +65,13 @@ har.plot.data <- list(
 )
 
 # Convert decomposition tables for both datasets
-result <- decomp_table(data = har.plot.data, header = c("A", "E1"),
+result <- decomp_table(data_list = har.plot.data, header = c("A", "E1"),
                        wide_cols = list(A = "COLUMN", E1 = "PRICES"), total_column = TRUE)
 
 # Export as an Excel file with multiple sheets
-decomp_table(data = har.plot.data, header = c("A", "E1"),
+decomp_table(data_list = har.plot.data, header = c("A", "E1"),
              wide_cols = list(A = "COLUMN", E1 = "PRICES"),
              total_column = TRUE, export_table = TRUE, multi_sheet = TRUE,
-             output_dir = "results", workbook_name = "decomposition_summary.xlsx")
+             output_dir = "results", sheet_names = list(A = "Welfare", E1 = "Prices"))
 }
 }

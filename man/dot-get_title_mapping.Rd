@@ -20,24 +20,4 @@ Determines appropriate title names for plotting based on available columns in th
 If a \code{Description} column exists and \code{description_as_title} is \code{TRUE}, it uses \code{Description} as titles.
 Otherwise, it checks for \code{PlotTitle} or falls back to using \code{Variable} names.
 }
-\examples{
-# Example with a data frame
-df <- data.frame(
-  Variable = c("GDP", "Consumption"),
-  Description = c("Gross Domestic Product", "Household Consumption"),
-  PlotTitle = c("GDP Growth", "Consumption Level")
-)
-
-get_title_mapping(df)  # Uses "Description" by default
-get_title_mapping(df, description_as_title = FALSE)  # Uses "PlotTitle"
-
-# Example with a list of data frames
-data_list <- list(
-  df1 = df,
-  df2 = data.frame(Variable = c("Investment"), PlotTitle = c("Investment Level"))
-)
-
-get_title_mapping(data_list)
-
-}
 \keyword{internal}

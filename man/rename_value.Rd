@@ -24,6 +24,7 @@ Replaces specified values in a given column with new values based on a mapping f
 If \code{column_name} is not provided, it will be automatically extracted from \code{mapping.file} if available.
 }
 \examples{
+\dontrun{
 # Example mapping file
 wefare.decomp.rename <- data.frame(
   OldName = c("alloc_A1", "ENDWB1", "tech_C1"),
@@ -33,12 +34,12 @@ wefare.decomp.rename <- data.frame(
 )
 
 # Load example data
-har_data <- HARplus::load_harx(c("globalcgds", "vgdpwld", "WEV"))
-har_data <- HARplus::get_data_by_var(c("globalcgds", "vgdpwld", "WEV"), har_data)
+har_path <- system.file("extdata", "TAR10-WEL.har", package = "HARplus")
+har_data <- HARplus::load_harx(har_path)
 
 # Apply renaming
-modified_list <- rename_value(har_data, mapping.file = wefare.decomp.rename)
-
+modified_data <- rename_value(har_data, mapping.file = wefare.decomp.rename)
+}
 }
 \author{
 Pattawee Puangchit

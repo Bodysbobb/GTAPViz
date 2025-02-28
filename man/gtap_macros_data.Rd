@@ -27,6 +27,7 @@ A data frame with three columns:
 Extracts scalar macroeconomic variables from multiple SL4 datasets and aggregates them into a structured data frame.
 }
 \examples{
+\dontrun{
 # Import sample data
 sl4_data1 <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4", package = "HARplus"))
 sl4_data2 <- HARplus::load_sl4x(system.file("extdata", "SUBT10.sl4", package = "HARplus"))
@@ -38,10 +39,11 @@ Macros1 <- gtap_macros_data(data_list)
 # Method 2: Using multiple arguments
 Macros2 <- gtap_macros_data(sl4_data1, sl4_data2,
                            experiment_names = c("Base", "Policy"))
+}
 
 }
 \seealso{
-\code{\link{add_unit_col}}, \code{\link{add_mapping_info}}
+\code{\link{add_mapping_info}}
 }
 \author{
 Pattawee Puangchit
