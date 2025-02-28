@@ -35,7 +35,7 @@ project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data/Plot"
 input.folder <- paste0(project.folder, "/in")
 output.folder <- paste0(project.folder, "/out")
 map.folder <- paste0(project.folder, "/map")
-mapping.output <- paste0(map.folder, "/OutputMapping.xlsx")
+mapping.output <- system.file("extdata", "map", "OutputMapping.xlsx", package = "GTAPViz")
 sl4plot <- readxl::read_xlsx(mapping.output, sheet = "SL4File")
 harplot <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
 setwd <- "D:/GitHub/GTAPViz/R"
@@ -198,7 +198,7 @@ This chunk defines the **experiment names**, **handling of description and unit 
   - `"GTAPv7"` → Use default definitions and units based on **GTAP Model Version 7**.  
   - `"Mix"` → Use manually defined values where available, and GTAP defaults for the rest.  
   
-```{r Input Setup}
+```{r Input Setup, eval = FALSE}
 # Define experiment name / output name 
 case.name <- c("US_All", "US_All_RetalTar", "US_All_ReduceTar50", "US_All_RegReduceTar50",
                     "US_All10", "US_All10_RetalTar", "US_All10_ReduceTar50", "US_All10_RegReduceTar50")
@@ -228,7 +228,7 @@ This command performs the following tasks automatically:
 
 **Tip:** This automation uses the `"HARplus::get_data_by_dims"` command. However, other formats, such as `"HARplus::get_data_by_var"`, `"HARplus::group_data_by_var"`, or your own data format, can also work with the figure code. Keep in mind that these alternatives may require additional data preparation to ensure compatibility with the figure command.
 
-```{r Preparing Data for Plot}
+```{r Preparing Data for Plot, eval = FALSE}
 # Region to be plotted
 selected_regions <- c("USA", "CHN", "CAN", "ASEAN", "ROW")
 
@@ -289,7 +289,7 @@ The following two optional processes are recommended for better figure illustrat
 
 2. **Renaming column names** for figure generation (e.g., renaming `REG` to `Region`) using `<HARplus::rename_dims>`.
 
-```{r Optional Convert Unit and Rename Columns}
+```{r Optional Convert Unit and Rename Columns, eval = FALSE}
 # Convert Value if Needed
 sl4.plot.data <- convert_units(
   sl4.plot.data,
@@ -558,7 +558,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/unstack_plot.png")
 ```
 
-# Decomposition Table {#sec:stackplot}
+# Decomposition Table {#sec:stackplottable}
 ```{r Decomposition Table, eval = FALSE}
 # Table of Decomposition
 decomp_table(har.plot.data, 

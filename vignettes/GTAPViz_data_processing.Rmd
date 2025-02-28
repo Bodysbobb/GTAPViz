@@ -33,7 +33,7 @@ lapply(required_pkgs, function(pkg) {
 project.folder <- "D:/GitHub/GTAPViz/inst/extdata"
 input.folder <- paste0(project.folder, "/in")
 map.folder <- paste0(project.folder, "/map")
-mapping.output <- paste0(map.folder, "/OutputMapping.xlsx")
+mapping.output <- system.file("extdata", "map", "OutputMapping.xlsx", package = "GTAPViz")
 sl4map <- readxl::read_xlsx(mapping.output, sheet = "SL4File")
 harmap <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
 setwd <- "D:/GitHub/GTAPViz/R"
