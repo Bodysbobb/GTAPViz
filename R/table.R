@@ -367,6 +367,7 @@ scalar_table <- function(data, vars = NULL, output_dir = NULL,
 #' If `export_table = TRUE`, the results are also saved to an Excel file.
 #'
 #' @export
+#' @author Pattawee Puangchit
 #'
 #' @examples
 #' \dontrun{

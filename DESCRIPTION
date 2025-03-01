@@ -25,7 +25,6 @@ Imports:
     dplyr,
     tidyr,
     openxlsx,
-    tools,
     colorspace,
     grDevices,
     rlang,

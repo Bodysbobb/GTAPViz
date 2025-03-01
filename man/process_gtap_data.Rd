@@ -2,25 +2,31 @@
 % Please edit documentation in R/GTAPauto.R
 \name{process_gtap_data}
 \alias{process_gtap_data}
-\title{Process GTAP Data Automation}
+\title{Process GTAP Data Automation with Flexible Output Options}
 \usage{
 process_gtap_data(
-  sl4file,
-  harfile,
   experiment,
   mapping_info = "GTAPv7",
   project_dir = NULL,
   input_dir = NULL,
   output_dir = NULL,
   output_formats = NULL,
-  export_data = TRUE
+  plot_data = FALSE,
+  region_select = NULL,
+  sector_select = NULL,
+  subtotal = FALSE,
+  sl4_list_name = "sl4.plot.data",
+  har_list_name = "har.plot.data",
+  sl4_structure_name = "sl4.structure",
+  har_structure_name = "har.structure",
+  GTAPMacro_name = "GTAPMacro",
+  sl4var = NULL,
+  harvar = NULL,
+  sl4map = NULL,
+  harmap = NULL
 )
 }
 \arguments{
-\item{sl4file}{Data frame, NULL, or FALSE. Mapping for SL4 variables. Set to NULL to extract all variables, or FALSE to skip SL4 processing.}
-
-\item{harfile}{Data frame, NULL, or FALSE. Mapping for HAR variables. Set to NULL to extract all variables, or FALSE to skip HAR processing.}
-
 \item{experiment}{Character vector. Case names to process.}
 
 \item{mapping_info}{Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".}
@@ -31,28 +37,49 @@ process_gtap_data(
 
 \item{output_dir}{Character. Path to the output folder. Overrides project_dir/out if specified.}
 
-\item{output_formats}{Character vector. Output formats (e.g., c("csv", "stata", "rds", "txt")).}
+\item{output_formats}{Character vector or list. Exports data in these formats (valid: "csv", "stata", "rds", "txt").}
 
-\item{export_data}{Logical. If TRUE, exports processed data to files.}
+\item{plot_data}{Logical. If TRUE, prepares data for plotting and assigns to variables.}
+
+\item{region_select}{Optional vector. Specifies regions to filter the data.}
+
+\item{sector_select}{Optional vector. Specifies sectors to filter the data.}
+
+\item{subtotal}{Logical. If TRUE, includes subtotal data. Default is FALSE.}
+
+\item{sl4_list_name}{Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".}
+
+\item{har_list_name}{Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".}
+
+\item{sl4_structure_name}{Character. Variable name for SL4 structure if generating plot data. Default is "sl4.structure".}
+
+\item{har_structure_name}{Character. Variable name for HAR structure if generating plot data. Default is "har.structure".}
+
+\item{GTAPMacro_name}{Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".}
+
+\item{sl4var}{Data frame, NULL, or FALSE. Variables to extract from SL4 files. Set to NULL to extract all variables, or FALSE to skip SL4 processing.}
+
+\item{harvar}{Data frame, NULL, or FALSE. Variables to extract from HAR files. Set to NULL to extract all variables, or FALSE to skip HAR processing.}
+
+\item{sl4map}{Data frame or NULL. Mapping information for SL4 variables (with "Variable", "Description", and "Unit" columns).}
+
+\item{harmap}{Data frame or NULL. Mapping information for HAR variables (with "Variable", "Description", and "Unit" columns).}
 }
 \value{
-If export_data=TRUE, returns NULL invisibly. If export_data=FALSE, returns a list of processed data.
+Returns the processed data invisibly, which will not be printed to the console.
 }
 \description{
-Processes GTAP data from SL4 and HAR files automatically using external mapping files.
-By default, uses GTAPv7 definition for variable descriptions and units.
+Processes GTAP data from SL4 and HAR files with options for exporting and preparing plot-ready data.
 }
 \details{
-This function provides a complete automation workflow for processing GTAP model outputs.
-It handles both SL4 files (solution files) and HAR files (welfare decomposition files).
+This function provides a complete automation workflow for processing GTAP model outputs,
+with flexible output options and optional filtering for plot data.
 
-The key parameters \code{sl4file} and \code{harfile} each accept three different input types:
+The key parameters \code{sl4var} and \code{harvar} each accept three different input types:
 \itemize{
-\item \strong{Data frame}: Contains variable mappings with required "Variable" column and
-optional "Description" and "Unit" columns. When provided, only specified variables
-will be extracted.
-\item \strong{NULL}: Extracts all available variables from the respective file type,
-using GTAPv7 definitions for descriptions and units.
+\item \strong{Data frame}: Contains variable mappings with required "Variable" column. When
+provided, only specified variables will be extracted.
+\item \strong{NULL}: Extracts all available variables from the respective file type.
 \item \strong{FALSE}: Completely skips processing of that file type, allowing
 the function to focus only on the other file type.
 }
@@ -60,64 +87,32 @@ the function to focus only on the other file type.
 The \code{mapping_info} parameter controls how descriptions and units are assigned:
 \itemize{
 \item \strong{GTAPv7}: Uses standard GTAPv7 definitions (default)
-\item \strong{Yes}: Uses only the supplied descriptions and units from sl4file/harfile
+\item \strong{Yes}: Uses only the supplied descriptions and units from sl4map/harmap
 \item \strong{No}: Does not add any descriptions or units
 \item \strong{Mix}: Prioritizes supplied descriptions and units, falling back to GTAPv7
 for any missing values
 }
 }
 \examples{
-# Example 1: Process all variables from both SL4 and HAR files
 \dontrun{
+# Extract data with region and experiment filters
 process_gtap_data(
-  sl4file = NULL,
-  harfile = NULL,
-  experiment = c("baseline", "scenario1"),
-  project_dir = "D:/GTAP_Project",
-  mapping_info = "GTAPv7"
-)
-}
-
-# Example 2: Process only specific variables using custom mapping
-\dontrun{
-# Create mapping for selected SL4 variables
-sl4_selected <- data.frame(
-  Variable = c("qo", "qgdp", "EV"),
-  stringsAsFactors = FALSE
-)
-
-# Create mapping for selected HAR variables
-har_selected <- data.frame(
-  Variable = c("A", "E1"),  # Welfare and ToT decomposition
-  stringsAsFactors = FALSE
-)
-
-process_gtap_data(
-  sl4file = sl4_selected,
-  harfile = har_selected,
-  experiment = c("baseline", "policy"),
-  input_dir = "D:/GTAP_inputs",
-  output_dir = "D:/GTAP_results"
-)
-}
-
-# Example 3: Custom descriptions and units instead of GTAPv7 defaults
-\dontrun{
-# Create custom mapping with descriptions and units
-custom_mapping <- data.frame(
-  Variable = c("qo", "qgdp", "EV"),
-  Description = c("Output by sector", "Real GDP", "Equivalent Variation"),
-  Unit = c("\% change", "\% change", "million USD"),
-  stringsAsFactors = FALSE
-)
-
-process_gtap_data(
-  sl4file = custom_mapping,
-  harfile = FALSE,  # Skip HAR processing
-  experiment = c("baseline", "policy"),
-  project_dir = "D:/GTAP_Project",
-  mapping_info = "Yes"  # Use only supplied descriptions and units
-)
+  sl4var = NULL,
+  harvar = NULL,
+  sl4map = sl4map,
+  harmap = harmap,
+  region_select = selected_regions,
+  sector_select = NULL,
+  subtotal = FALSE,
+  experiment = experiment,
+  mapping_info = info.mode,
+  project_dir = project.folder,
+  plot_data = TRUE,
+  output_formats = list(
+    "csv" = "No",
+    "stata" = "No",
+    "rds" = "No",
+    "txt" = "No"))
 }
 
 }

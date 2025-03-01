@@ -51,4 +51,7 @@ A ggplot object
 \description{
 Creates a single stacked bar plot with given parameters and total labels.
 }
+\author{
+Pattawee Puangchit
+}
 \keyword{internal}

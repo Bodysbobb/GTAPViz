@@ -7,26 +7,23 @@
 rename_GTAP_bilateral(data)
 }
 \arguments{
-\item{data}{List or data frame. Output from get_data_by_var, get_data_by_dims, or group_data_by_dims.}
+\item{data}{Data structure containing GTAP bilateral trade data}
 }
 \value{
-Data with renamed columns, maintaining the original structure type.
+Data structure with renamed bilateral trade columns
 }
 \description{
-Renames bilateral trade columns in GTAP data output, specifically targeting REG columns
-to Source and Destination in data frames with COMM\emph{REG}REG dimension structure.
+Renames bilateral trade columns in GTAP data output
 }
 \examples{
 \dontrun{
 # Load Sample Data
-sl4_data <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4", package = "HARplus"))
-
-# For direct data frame output
-df <- HARplus::get_data_by_dims("COMM*REG*REG", sl4_data)
-df_renamed <- rename_GTAP_bilateral(df)
+sl4_data <- HARplus::load_sl4x(system.file("extdata/in", "EXP1-WEL.sl4",
+                                          package = "GTAPViz"))
+sl4_data <- rename_GTAP_bilateral(df)
 }
 
 }
 \author{
-Your Name
+Pattawee Puangchit
 }

@@ -77,3 +77,6 @@ Creates stacked bar plots with automatic total calculations and flexible groupin
 Uses a separate dataframe to specify variables to plot and their titles.
 Auto-adjusts dimensions and panel layout if not specified.
 }
+\author{
+Pattawee Puangchit
+}

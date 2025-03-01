@@ -14,9 +14,12 @@
 \item{color_tone}{Optional base color to influence the palette}
 }
 \value{
-A named vector of colors for each stack component
+A named vector of colors for each stack component.
 }
 \description{
 Generates a diverse color palette for stacked bar components, ensuring good contrast between items.
+}
+\author{
+Pattawee Puangchit
 }
 \keyword{internal}

@@ -1,11 +1,6 @@
 *.Rproj.user
-inst/doc
 inst/GTAPDefault
 LICENSE
 *.Rproj
 *.Rhistory
 *.Rbuildignore
-docs
-R/.Rhistory
-.Rproj.user
-

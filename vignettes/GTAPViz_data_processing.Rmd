@@ -32,8 +32,7 @@ lapply(required_pkgs, function(pkg) {
 # Directory
 project.folder <- "D:/GitHub/GTAPViz/inst/extdata"
 input.folder <- paste0(project.folder, "/in")
-map.folder <- paste0(project.folder, "/map")
-mapping.output <- system.file("extdata", "map", "OutputMapping.xlsx", package = "GTAPViz")
+mapping.output <- paste0(project.folder, "/map/OutputMapping.xlsx")
 sl4map <- readxl::read_xlsx(mapping.output, sheet = "SL4File")
 harmap <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
 setwd <- "D:/GitHub/GTAPViz/R"
@@ -214,22 +213,32 @@ info.mode <- "GTAPv7"
 
 # Output: (CSV, STATA, R) 
 # "Yes" to opt for this output format, "No" to skip the output format
-csv.output <- "No"    
-stata.output <- "No"  
-r.output <- "Yes"
-txt.output <- "No"   
+csv.output <- "YES"    
+stata.output <- "YES"  
+r.output <- "YES"
+txt.output <- "YES"   
 ```
 
 # Extracting Data 
 
 ```{r GTAP Automating, eval = FALSE}
 process_gtap_data(
-  sl4file = sl4map, 
-  harfile = harmap,
+  sl4var = NULL, 
+  harvar = NULL,
+  sl4map = sl4map,
+  harmap = harmap,
+  region_select = NULL,
+  sector_select = NULL,
+  subtotal = FALSE,
   experiment = experiment,
   mapping_info = info.mode,
   project_dir = project.folder,
-  export_data = FALSE
+  plot_data = FALSE,
+  output_formats = list(
+    "csv" = csv.output,
+    "stata" = stata.output,
+    "rds" = r.output,
+    "txt" = txt.output),
 )
 ```
 

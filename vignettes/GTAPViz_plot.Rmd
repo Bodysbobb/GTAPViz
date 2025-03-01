@@ -11,6 +11,8 @@ vignette: >
 
 
 ```{r, include = FALSE}
+rm(list=ls())
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -18,7 +20,6 @@ knitr::opts_chunk$set(
   message = FALSE,
   eval = requireNamespace("GTAPViz", quietly = TRUE)
 )
-rm(list=ls())
 required_pkgs <- c("tidyverse", "writexl", "dplyr", "devtools", 
                    "openxlsx", "readxl", "knitr", "rmarkdown", "data.table", 
                    "ggplot2", "tcltk", "gridExtra", "haven", "citation", "tinytex", "bookdown", "HARplus")
@@ -34,10 +35,9 @@ lapply(required_pkgs, function(pkg) {
 project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data/Plot"
 input.folder <- paste0(project.folder, "/in")
 output.folder <- paste0(project.folder, "/out")
-map.folder <- paste0(project.folder, "/map")
-mapping.output <- system.file("extdata", "map", "OutputMapping.xlsx", package = "GTAPViz")
-sl4plot <- readxl::read_xlsx(mapping.output, sheet = "SL4File")
-harplot <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
+mapping.output <- paste0(project.folder, "/map/OutputMapping.xlsx")
+sl4map <- readxl::read_xlsx(mapping.output, sheet = "SL4File")
+harmap <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
 setwd <- "D:/GitHub/GTAPViz/R"
 devtools::load_all()
 
@@ -49,7 +49,7 @@ devtools::load_all()
 
 This vignette demonstrates how to generate structured, publication-ready figures using GTAPViz’s built-in visualization tools.  
 
-The visualization framework is based on the **`SL4Plot`** and **`HARPlot`** sheets, which define the variables and figure titles used for plotting. Users can specify these directly within an external mapping file or generate them dynamically in the R environment.
+The visualization framework is based on the **`sl4map`** and **`harmap`** sheets, which define the variables and figure titles used for plotting. Users can specify these directly within an external mapping file or generate them dynamically in the R environment.
 
 ## Plot Types  
 
@@ -154,11 +154,11 @@ mapping_df <- data.frame(
 
 # Input Files {#sec:input-files}
 
-The `<case.name>` variable in [setting](#sec:setting) contains experiment names from which results will be extracted and merged into a single output for further analysis, such as graph creation. Multiple experiments can be included, but increasing their number will extend processing time.
+The `<experiment>` variable in [setting](#sec:setting) contains experiment names from which results will be extracted and merged into a single output for further analysis, such as graph creation. Multiple experiments can be included, but increasing their number will extend processing time.
 
 ## Input Files Format
 
-All input files must be stored in `<input.folder>` (default: `"in"` inside `<project.folder>`). File names must follow `<case.name>` to ensure consistency between input each `.sl4` file must have a corresponding `-WEL.HAR` file
+All input files must be stored in `<input.folder>` (default: `"in"` inside `<project.folder>`). File names must follow `<experiment>` to ensure consistency between input each `.sl4` file must have a corresponding `-WEL.HAR` file
 
 -   `EXP1.sl4`, `EXP1-WEL.har`
 -   `EXP2.sl4`, `EXP2-WEL.har`
@@ -177,7 +177,7 @@ Sample data used in this vignette is obtained from the GTAPv7 model and utilizes
 
 # Loading Package
 Before proceeding, ensure that `GTAPViz` and `HARplus` are installed and loaded:
-```{r package}
+```{r package, eval = FALSE}
 library(GTAPViz)
 ```
 
@@ -200,7 +200,7 @@ This chunk defines the **experiment names**, **handling of description and unit 
   
 ```{r Input Setup}
 # Define experiment name / output name 
-case.name <- c("US_All", "US_All_RetalTar", "US_All_ReduceTar50", "US_All_RegReduceTar50",
+experiment <- c("US_All", "US_All_RetalTar", "US_All_ReduceTar50", "US_All_RegReduceTar50",
                     "US_All10", "US_All10_RetalTar", "US_All10_ReduceTar50", "US_All10_RegReduceTar50")
 
 # Adding Description / Unit (Yes/No/GTAPv7/Mix)
@@ -209,10 +209,10 @@ info.mode <- "Mix"
 
 # Preparing Input Data
 
-All figures and tables will be sorted according to the order of your input in `<case.name>`, `<selected_regions>`, and `<selected_sector>`.  
+All figures and tables will be sorted according to the order of your input in `<experiment>`, `<selected_regions>`, and `<selected_sector>`.  
 For example:  
 - If `selected_regions <- c("USA", "CHN")`, the plot for **USA** will appear before **CHN**.  
-- If `case.name <- c(EXP2, EXP1)`, the figure panel for **EXP2** will appear before **EXP1** (i.e., from left to right).  
+- If `experiment <- c(EXP2, EXP1)`, the figure panel for **EXP2** will appear before **EXP1** (i.e., from left to right).  
 
 ## Automation Based on GTAPv7 Results {#sec:automategtap}
 
@@ -226,9 +226,9 @@ This command performs the following tasks automatically:
 2. **Filtering selected sectors** based on the (`ACTS`/`COMM`) column, as defined in the `<selected_sector>` variable below. Set to `NULL` to extract all sectors.
 3. **Adding unit columns** to the dataset.
 
-**Tip:** This automation uses the `"HARplus::get_data_by_dims"` command. However, other formats, such as `"HARplus::get_data_by_var"`, `"HARplus::group_data_by_var"`, or your own data format, can also work with the figure code. Keep in mind that these alternatives may require additional data preparation to ensure compatibility with the figure command.
+**Tip:** This automation uses the `"HARplus::group_data_by_dims"` command. However, other formats, such as `"HARplus::get_data_by_var"`, `"HARplus::get_data_by_dims"`, or your own data format, can also work with the figure code. Keep in mind that these alternatives may require additional data preparation to ensure compatibility with the figure command.
 
-```{r Preparing Data for Plot}
+```{r Preparing Data for Plot, eval = FALSE}
 # Region to be plotted
 selected_regions <- c("USA", "CHN", "CAN", "ASEAN", "ROW")
 
@@ -236,16 +236,23 @@ selected_regions <- c("USA", "CHN", "CAN", "ASEAN", "ROW")
 selected_sector <- NULL
 
 # Extract data with region and experiment filters
-plot.dta <- plot_gtap_data(
-  sl4file = sl4plot,
-  harfile = harplot, 
-  experiment  = case.name,
-  mapping_info = info.mode, 
-  region_select  = selected_regions,
-  sector_select = selected_sector,
+process_gtap_data(
+  sl4var = sl4map, 
+  harvar = harmap,
+  sl4map = sl4map,
+  harmap = harmap,
+  region_select = selected_regions,
+  sector_select = NULL,
+  subtotal = FALSE,
+  experiment = experiment, 
+  mapping_info = info.mode,
   project_dir = project.folder,
-  subtotal = FALSE
-)
+  plot_data = TRUE,
+  output_formats = list(
+    "csv" = "No",
+    "stata" = "No",
+    "rds" = "No",
+    "txt" = "No"))
 ```
 
 ## Manual Data Preparation {#sec:manualdata}
@@ -290,30 +297,18 @@ The following two optional processes are recommended for better figure illustrat
 2. **Renaming column names** for figure generation (e.g., renaming `REG` to `Region`) using `<HARplus::rename_dims>`.
 
 ```{r Optional Convert Unit and Rename Columns, eval = FALSE}
-# Convert Value if Needed
-sl4.plot.data <- convert_units(
-  sl4.plot.data,
-  change_unit_from = c("million USD"),
-  change_unit_to = c("billion USD"),
-  adjustment = c("/1000")
-)
+datasets <- list(sl4.plot.data, har.plot.data)
 
-har.plot.data <- convert_units(
-  har.plot.data,
-  change_unit_from = c("million USD"),
-  change_unit_to = c("billion USD"),
-  adjustment = c("/1000")
-)
+# Convert Unit if Needed
+datasets <- lapply(datasets, convert_units,
+                   change_unit_from = "million USD",
+                   change_unit_to = "billion USD",
+                   adjustment = "/1000")
 
-# Convert the column name if needed
-rename_col <- data.frame(
-  old = c("REG", "COMM", "ACTS"),
-  new = c("Region", "Commodity", "Activity")
-  )
+sl4.plot.data <- datasets[[1]]
+har.plot.data <- datasets[[2]]
 
-sl4.plot.data <- HARplus::rename_dims(sl4.plot.data, rename_col)
-har.plot.data <- HARplus::rename_dims(har.plot.data, rename_col)
-
+rm(datasets)
 ```
 
 
@@ -367,16 +362,19 @@ To better understand how the command works, I highly encourage you to use the he
 **Tip:** Since the plot does not allow direct font size adjustments, the key to achieving the best figure format is to modify **panel_rows**/**panel_cols** and **width**/**height** for optimal output. By default, the command automatically calculates a balanced square layout, but I highly recommend experimenting with these settings to refine the result.  
 
 ```{r Comparison Plot, eval = FALSE}
-comparison_plot(sl4.plot.data$REG,
+region.dta <- sl4.plot.data[["1D"]][["Region"]]
+
+comparison_plot(region.dta,
                 x_axis_from = "Region",
-                plot_var = sl4plot,
+                split_by = "Variable",
+                plot_var = sl4map,
                 title_prefix = "Impact on",
                 output_dir = output.folder,
                 description_as_title = TRUE,
                 compare_by_experiment = FALSE,
                 invert_panel = FALSE,
                 separate_figure = FALSE,
-                color_tone = "grey",
+                color_tone = "purdue",
                 panel_rows = NULL,
                 panel_cols = NULL,
                 width = 20,
@@ -393,8 +391,8 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 This is a report table for all variables used in the comparison plot. Based on the previous plot structure, the table pivots the data in the order of **Experiment > Region**, with all variables presented in a wide format (i.e., each variable has its own column). The table also avoids repeating experiment names and maintains the same sorting order as the figure.
 
 ```{r Comparison Table, eval = FALSE}
-report_table(sl4.plot.data$REG, vars = sl4plot$Variable, 
-             col_names = sl4plot$Description,  
+report_table(region.dta, vars = sl4map$Variable, 
+             col_names = sl4map$Description,  
              x_axis_from = "Region",
              output_dir = output.folder)
 ```
@@ -409,8 +407,11 @@ This figure is designed to display aggregated values for comparison across all e
 To generate this figure, users must first extract the relevant GTAP Macro variables using the `<gtap_macros_data>` command:  
 
 ```{r GTAP Macro Plot Data, eval = FALSE}
-Macros <- do.call(gtap_macros_data, c(as.list(paste0(input.folder, "/", case.name, ".sl4")),
-                  list(experiment_names = case.name)))
+Macros <- gtap_macros_data(
+  input_dir = input.folder,
+  experiment_names = experiment,
+  subtotal_level = FALSE
+)
 ```
 
 While it's quite similar process to other variables, the process is a little trickier for GTAP Macros variable since those variables are nested in a single header `"Macros"` and did not follow your mapping external file automatically.
@@ -473,14 +474,14 @@ lapply(sl4.plot.data, function(df) {
   detail_plot(df,
               y_axis_from = c("Commodity", "Activity"),
               split_by = "Region",
-              plot_var = sl4plot,
+              plot_var = sl4map,
               output_dir = output.folder,
               description_as_title = TRUE,
               top_impact = 10,
               panel_rows = 1,
               panel_cols = NULL,
               separate_figure = FALSE,
-              invert_panel = TRUE,
+              invert_panel = FALSE,
               width = 50)})
 ```
 
@@ -529,7 +530,7 @@ stack_plot(data = har.plot.data[["A"]],
           height = 15,
           legend_position = "bottom",
           show_total = TRUE,
-          unstack_plot = FALSE,
+          unstack_plot = TRUE,
           description_as_title = TRUE)
 
 har.plot.data[["E1"]][["Variable"]] <- "Terms of Trade"
@@ -572,7 +573,27 @@ decomp_table(har.plot.data,
 
 # Useful Commands {#sec:usefulcmd}  
 
-If you need to automatically modify any value in any column across the entire dataframe before plotting—such as renaming countries in the `REG` column (e.g., changing `USA` to `United States` or `CHN` to `China`)—the following command will be useful:  
+## Renaming Columns and Data List Names
+
+If you need to automatically modify column names across all datasets and/or rename the data list names simultaneously—such as changing the column name `REG` to `Region` or `COMM` to `Commodity`—the following command will be useful:
+
+```{r Rename Column, eval = FALSE}
+# Creating Mapping File
+rename_col <- data.frame(
+  old = c("REG", "COMM", "ACTS"),
+  new = c("Region", "Commodity", "Activity")
+  )
+
+har.plot.data <- HARplus::rename_col(har.plot.data, rename_col)
+```
+
+**Tip:** You can also create this dataframe for mapping in Excel and import it into the R environment.  
+**Note:** The column names must be `"old"` and `"new"`. See `<?HARplus::rename_col>` for more details.
+
+
+## Renaming Values in a Dataframe
+
+If you need to automatically modify values in any column across the entire dataframe before plotting—such as renaming country names in the `REG` column (e.g., changing `"USA"` to `"United States"` or `"CHN"` to `"China"`)—the following command will be useful:
 
 ```{r Rename Value, eval = FALSE}
 rename.region <- data.frame(

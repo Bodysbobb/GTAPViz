@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{.filter_top_impact}
 \alias{.filter_top_impact}
-\title{Filter Top Impact Data}
+\title{Filter Top Impact Data (Internal)}
 \usage{
 .filter_top_impact(data, top_impact, group_col)
 }
@@ -34,5 +34,8 @@ quota is filled with the other category.
 \item The final dataset is sorted by \code{Experiment}, \code{Variable}, \code{Unit}, \code{group_col},
 and \code{Value}.
 }
+}
+\author{
+Pattawee Puangchit
 }
 \keyword{internal}

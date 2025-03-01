@@ -42,9 +42,12 @@
 \item{panel_var}{Character. Column name to use for panel faceting}
 }
 \value{
-A ggplot object
+A ggplot object representing the comparison plot.
 }
 \description{
 Creates a single comparison plot with title unit formatting.
+}
+\author{
+Pattawee Puangchit
 }
 \keyword{internal}

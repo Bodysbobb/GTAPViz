@@ -67,17 +67,24 @@ Creates bar plots comparing values across categories with flexible panel configu
 }
 \examples{
 \dontrun{
-comparison_plot(sl4.plot.data$REG,
-                x_axis_from = "Region",
-                plot_var = sl4plot,
-                title_prefix = "Impact on",
-                output_dir = output.folder,
-                compare_by_experiment = FALSE,
-                description_as_title = TRUE,
-                separate_figure = FALSE,
-                color_tone = "grey",
-                width = 20,
-                height = 12,
-                legend_position = "bottom")
+# Generate comparison plot
+comparison_plot(
+  data = sl4.plot.data$REG,
+  x_axis_from = "Region",
+  plot_var = sl4plot,
+  title_prefix = "Impact on",
+  output_dir = output.folder,
+  compare_by_experiment = FALSE,
+  description_as_title = TRUE,
+  separate_figure = FALSE,
+  color_tone = "grey",
+  width = 20,
+  height = 12,
+  legend_position = "bottom"
+)
 }
+
+}
+\author{
+Pattawee Puangchit
 }

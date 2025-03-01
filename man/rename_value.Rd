@@ -2,26 +2,22 @@
 % Please edit documentation in R/data_manipulation.R
 \name{rename_value}
 \alias{rename_value}
-\title{Rename Values in a Data Frame or List of Data Frames}
+\title{Rename Values in Data Structures}
 \usage{
 rename_value(data, column_name = NULL, mapping.file)
 }
 \arguments{
-\item{data}{A data frame or a list of data frames containing the column to modify.}
+\item{data}{Data structure containing data to rename}
 
-\item{column_name}{Optional. Character. The name of the column where values will be changed.
-If NULL, the function will attempt to extract \code{ColumnName} from \code{mapping.file}.}
+\item{column_name}{Column name to modify. If NULL, extracted from mapping file}
 
-\item{mapping.file}{A data frame containing \code{OldName} and \code{NewName} columns that specify
-the mapping of values to be replaced. Optionally, a \code{ColumnName} column may define which
-column should be modified.}
+\item{mapping.file}{Data frame with OldName and NewName columns for renaming}
 }
 \value{
 A modified data frame or list of data frames with specified values replaced.
 }
 \description{
-Replaces specified values in a given column with new values based on a mapping file.
-If \code{column_name} is not provided, it will be automatically extracted from \code{mapping.file} if available.
+Replaces specified values in a column across nested data structures
 }
 \examples{
 \dontrun{
@@ -34,12 +30,13 @@ wefare.decomp.rename <- data.frame(
 )
 
 # Load example data
-har_path <- system.file("extdata", "TAR10-WEL.har", package = "HARplus")
-har_data <- HARplus::load_harx(har_path)
+har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
+                                          package = "GTAPViz"))
 
 # Apply renaming
 modified_data <- rename_value(har_data, mapping.file = wefare.decomp.rename)
 }
+
 }
 \author{
 Pattawee Puangchit

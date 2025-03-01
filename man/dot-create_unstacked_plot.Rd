@@ -50,4 +50,7 @@ A ggplot object
 \description{
 Creates a side-by-side bar plot for components with given parameters.
 }
+\author{
+Pattawee Puangchit
+}
 \keyword{internal}

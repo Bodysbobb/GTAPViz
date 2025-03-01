@@ -74,4 +74,8 @@ macro_plot(Macros,
            separate_figure = FALSE,
            legend_position = "bottom")
 }
+
+}
+\author{
+Pattawee Puangchit
 }

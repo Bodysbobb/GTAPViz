@@ -75,3 +75,6 @@ decomp_table(data_list = har.plot.data, header = c("A", "E1"),
              output_dir = "results", sheet_names = list(A = "Welfare", E1 = "Prices"))
 }
 }
+\author{
+Pattawee Puangchit
+}

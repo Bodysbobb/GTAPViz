@@ -76,3 +76,6 @@ A \code{ggplot} object or NULL if no plots could be generated.
 Creates a detailed plot reporting all regions or sectors depending on the variable selection.
 Uses a separate dataframe to specify variables to plot and their titles.
 }
+\author{
+Pattawee Puangchit
+}

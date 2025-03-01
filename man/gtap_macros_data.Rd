@@ -4,46 +4,49 @@
 \alias{gtap_macros_data}
 \title{Extract and Aggregate Scalar Macroeconomic Variables}
 \usage{
-gtap_macros_data(..., experiment_names = NULL)
+gtap_macros_data(
+  input_dir = NULL,
+  experiment_names = NULL,
+  output_dir = NULL,
+  output_formats = NULL,
+  subtotal_level = FALSE,
+  select_var = NULL
+)
 }
 \arguments{
-\item{...}{One or more SL4 data objects. Can be either:
-\itemize{
-\item A single list containing multiple SL4 datasets
-\item Multiple SL4 datasets as separate arguments
-}}
+\item{input_dir}{Character. Directory containing SL4 files.}
 
-\item{experiment_names}{Optional character vector of experiment names. If NULL, names are inferred.}
+\item{experiment_names}{Character vector. List of experiment names corresponding to SL4 files.}
+
+\item{output_dir}{Character (optional). Directory to save exported data.}
+
+\item{output_formats}{Character vector (optional). List of output formats (e.g., "csv", "xlsx").}
+
+\item{subtotal_level}{Logical. Whether to include subtotal levels in the processed data.}
+
+\item{select_var}{Character vector (optional). List of specific variable names to filter from the final result. If NULL, all variables are returned.}
 }
 \value{
-A data frame with three columns:
-\itemize{
-\item "Experiment": The scenario name
-\item "Variable": The macroeconomic variable name
-\item "Value": The extracted numeric value
-}
+A sorted dataframe containing processed GTAP macro data.
 }
 \description{
 Extracts scalar macroeconomic variables from multiple SL4 datasets and aggregates them into a structured data frame.
 }
 \examples{
 \dontrun{
-# Import sample data
-sl4_data1 <- HARplus::load_sl4x(system.file("extdata", "TAR10.sl4", package = "HARplus"))
-sl4_data2 <- HARplus::load_sl4x(system.file("extdata", "SUBT10.sl4", package = "HARplus"))
+# Method 1: Extract all variables
+input_dir <- paste0(input.folder)
+experiment <- c("EXP1", "EXP2") # File name (.sl4)
+Macros <- gtap_macros_data(input_dir, experiment_names = experiment,
+subtotal_level = FALSE)
 
-# Method 1: Using a list of datasets
-data_list <- list(base = sl4_data1, policy = sl4_data2)
-Macros1 <- gtap_macros_data(data_list)
-
-# Method 2: Using multiple arguments
-Macros2 <- gtap_macros_data(sl4_data1, sl4_data2,
-                           experiment_names = c("Base", "Policy"))
+# Method 2: Filter specific variables
+Macros <- gtap_macros_data(input_dir, experiment_names = experiment,
+                          select_var = c("qgdp", "pop", "gdpexp"))
 }
-
 }
 \seealso{
-\code{\link{add_mapping_info}}
+\code{\link{add_mapping_info}}, \code{\link{process_gtap_data}}
 }
 \author{
 Pattawee Puangchit

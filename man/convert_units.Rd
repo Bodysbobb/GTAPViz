@@ -34,7 +34,11 @@ Convert Multiple Units in Nested Data Structures
 }
 \examples{
 \dontrun{
-har.plot.data <- convert_units(har.plot.data,
+# Load example data
+har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
+                                          package = "GTAPViz"))
+
+har_data <- convert_units(har_data,
 change_unit_from = c("million USD"),
 change_unit_to = c("billion USD"),
 adjustment = c("/1000"))

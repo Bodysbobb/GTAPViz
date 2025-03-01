@@ -16,8 +16,8 @@
 #' @param invert_panel Logical. If TRUE, swaps the roles of Experiment and split_by in faceting
 #' @param panel_var Character. Column name to use for panel faceting
 #'
-#' @return A ggplot object
-#'
+#' @return A ggplot object representing the comparison plot.
+#' @author Pattawee Puangchit
 #' @keywords internal
 .create_single_comparison_plot <- function(data, x_axis_from, plot_title, unit,
                                            compare_by_experiment, color_tone,
@@ -175,22 +175,27 @@
 #' @param height Optional height in inches. Auto-calculated if NULL.
 #'
 #' @return A list of ggplot objects or a single ggplot object depending on settings
+#' @author Pattawee Puangchit
+#' @export
 #' @examples
 #' \dontrun{
-#' comparison_plot(sl4.plot.data$REG,
-#'                 x_axis_from = "Region",
-#'                 plot_var = sl4plot,
-#'                 title_prefix = "Impact on",
-#'                 output_dir = output.folder,
-#'                 compare_by_experiment = FALSE,
-#'                 description_as_title = TRUE,
-#'                 separate_figure = FALSE,
-#'                 color_tone = "grey",
-#'                 width = 20,
-#'                 height = 12,
-#'                 legend_position = "bottom")
+#' # Generate comparison plot
+#' comparison_plot(
+#'   data = sl4.plot.data$REG,
+#'   x_axis_from = "Region",
+#'   plot_var = sl4plot,
+#'   title_prefix = "Impact on",
+#'   output_dir = output.folder,
+#'   compare_by_experiment = FALSE,
+#'   description_as_title = TRUE,
+#'   separate_figure = FALSE,
+#'   color_tone = "grey",
+#'   width = 20,
+#'   height = 12,
+#'   legend_position = "bottom"
+#' )
 #' }
-#' @export
+#'
 comparison_plot <- function(data, plot_var = NULL,
                             x_axis_from,
                             split_by,
@@ -205,7 +210,7 @@ comparison_plot <- function(data, plot_var = NULL,
                             legend_position = "none",
                             width = NULL, height = NULL) {
 
-  if (!"Unit" %in% names(data)) stop('Missing "Unit" column, see "add_unit_col" function')
+  if (!"Unit" %in% names(data)) stop('Missing "Unit" column, see "add_mapping_info" function')
   if (!"Variable" %in% names(data)) stop('Missing "Variable" column in the data frame')
 
   # Filter by variables in plot_var if provided
@@ -424,7 +429,7 @@ comparison_plot <- function(data, plot_var = NULL,
 # Detail Plot -------------------------------------------------------------
 
 
-#' @title Filter Top Impact Data
+#' @title Filter Top Impact Data (Internal)
 #'
 #' @description This internal function filters the top `top_impact` observations
 #' within each group in the dataset, selecting an equal number of positive
@@ -447,7 +452,7 @@ comparison_plot <- function(data, plot_var = NULL,
 #'
 #' @return A filtered data frame (or a list of data frames if `data` is a list),
 #'   containing only the top `top_impact` observations for each group.
-#'
+#' @author Pattawee Puangchit
 #' @keywords internal
 #'
 .filter_top_impact <- function(data, top_impact, group_col) {
@@ -542,7 +547,7 @@ comparison_plot <- function(data, plot_var = NULL,
 #' @param width_bar Numeric. Width of bars in the plot. Default is 0.4.
 #'
 #' @return A `ggplot` object or NULL if no plots could be generated.
-#'
+#' @author Pattawee Puangchit
 #' @export
 #'
 detail_plot <- function(data, plot_var = NULL,
@@ -931,6 +936,9 @@ detail_plot <- function(data, plot_var = NULL,
 #' @param legend_position Position of the legend: "none", "bottom", "top", "left", or "right"
 #'
 #' @return A `ggplot` object or a list of plots if `separate_figure = TRUE`.
+#' @author Pattawee Puangchit
+#' @export
+#'
 #' @examples
 #' \dontrun{
 #' macro_plot(Macros,
@@ -944,7 +952,7 @@ detail_plot <- function(data, plot_var = NULL,
 #'            separate_figure = FALSE,
 #'            legend_position = "bottom")
 #' }
-#' @export
+#'
 macro_plot <- function(data, plot_var = NULL,
                        title_prefix = "", title_suffix = "",
                        compare_by_experiment = FALSE,
@@ -1136,9 +1144,10 @@ macro_plot <- function(data, plot_var = NULL,
 #' @param stack_value_from Column name containing the stack categories
 #' @param color_tone Optional base color to influence the palette
 #'
-#' @return A named vector of colors for each stack component
-#'
+#' @return A named vector of colors for each stack component.
+#' @author Pattawee Puangchit
 #' @keywords internal
+#'
 .generate_stack_colors <- function(data, stack_value_from, color_tone = NULL) {
   # Get unique stack components
   components <- unique(data[[stack_value_from]])
@@ -1228,6 +1237,7 @@ macro_plot <- function(data, plot_var = NULL,
 }
 
 
+
 #' @title Create Single Stack Plot (Internal)
 #'
 #' @description Creates a single stacked bar plot with given parameters and total labels.
@@ -1246,8 +1256,9 @@ macro_plot <- function(data, plot_var = NULL,
 #' @param y_limit Optional y-axis limits
 #'
 #' @return A ggplot object
-#'
+#' @author Pattawee Puangchit
 #' @keywords internal
+#'
 .create_single_stack_plot <- function(data, total_data, x_axis_from, stack_value_from,
                                       plot_title, y_axis_title,
                                       compare_by_experiment, color_tone,
@@ -1359,8 +1370,9 @@ macro_plot <- function(data, plot_var = NULL,
 #' @param y_limit Optional y-axis limits
 #'
 #' @return A ggplot object
-#'
+#' @author Pattawee Puangchit
 #' @keywords internal
+#'
 .create_unstacked_plot <- function(data, total_data, x_axis_from, stack_value_from,
                                    plot_title, y_axis_title,
                                    compare_by_experiment, color_tone,
@@ -1487,7 +1499,7 @@ macro_plot <- function(data, plot_var = NULL,
 #' @param description_as_title Logical. If `TRUE`, uses the "Description" column as the title instead of "Variable". Default is `TRUE`.
 #'
 #' @return A list of ggplot objects or a single ggplot object depending on settings
-#'
+#' @author Pattawee Puangchit
 #' @export
 #'
 stack_plot <- function(data, plot_var = NULL,
