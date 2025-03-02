@@ -4,3 +4,4 @@ LICENSE
 *.Rproj
 *.Rhistory
 *.Rbuildignore
+.Rproj.user

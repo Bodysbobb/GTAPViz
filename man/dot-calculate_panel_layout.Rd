@@ -27,8 +27,7 @@
 A list with \code{rows} and \code{cols} specifying the calculated panel layout.
 }
 \description{
-Determines the optimal panel layout for plotting based on the number of experiments
-or unique values of an x-axis variable.
+Determines the optimal panel layout for plotting based on the number of panels needed.
 }
 \author{
 Pattawee Puangchit

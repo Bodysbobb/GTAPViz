@@ -2,83 +2,78 @@
 % Please edit documentation in R/table.R
 \name{report_table}
 \alias{report_table}
-\title{Create Report Table}
+\title{Generate a Detailed Report Table}
 \usage{
 report_table(
-  data,
-  vars,
-  x_axis_from,
+  data_list,
+  pivot_col,
+  total_column = FALSE,
+  export_table = FALSE,
+  separate_file = FALSE,
   output_dir = NULL,
-  workbook_name = NULL,
-  sheet_name = "Results",
-  col_names = NULL
+  sheet_names = NULL,
+  include_units = FALSE,
+  component_exclude = NULL,
+  group_by = NULL,
+  rename_cols = NULL,
+  var_name_by_description = TRUE,
+  add_var_info = FALSE,
+  decimal = 2,
+  unit_select = NULL,
+  separate_sheet_by = NULL,
+  subtotal_level = FALSE,
+  repeat_label = FALSE,
+  workbook_name = "detail_results",
+  add_group_line = FALSE
 )
 }
 \arguments{
-\item{data}{A data frame or list containing the dataset. If a list, it is converted into a
-data frame before processing.}
+\item{data_list}{A named list of data frames.}
 
-\item{vars}{A character vector specifying the variables to include in the report.}
+\item{pivot_col}{A named list indicating which column is pivoted into wide format for each dataset.}
 
-\item{x_axis_from}{A character string specifying the column used for grouping (e.g., \code{"REG"}, \code{"COMM"}).}
+\item{total_column}{Logical. Adds a "Total" column summing numeric columns if \code{TRUE}.}
 
-\item{output_dir}{Optional character string specifying the directory where the report
-will be saved as an Excel file. If \code{NULL}, the table is not exported.}
+\item{export_table}{Logical. Exports the tables to Excel if \code{TRUE}.}
 
-\item{workbook_name}{Optional character string for the Excel workbook name. Default is \code{"Report_table"}.}
+\item{separate_file}{Logical. If \code{TRUE}, each data frame is saved in a separate Excel file.}
 
-\item{sheet_name}{Optional character string for the worksheet name. Default is \code{"Results"}.}
+\item{output_dir}{Character. Directory where Excel files are written if \code{export_table=TRUE}.}
 
-\item{col_names}{Optional data frame or character vector for renaming columns. If a data
-frame, it must contain \code{"Variable"} and \code{"PlotTitle"} columns to map variable names
-to custom titles. If a character vector, it must match the length of \code{vars}.}
+\item{sheet_names}{Optional named list for custom sheet names.}
+
+\item{include_units}{Logical. If \code{TRUE}, includes the "Unit" column in grouping.}
+
+\item{component_exclude}{Optional character vector of pivoted values to exclude.}
+
+\item{group_by}{A list or character vector of grouping columns, or \code{NULL}.}
+
+\item{rename_cols}{A named list for renaming columns.}
+
+\item{var_name_by_description}{Logical. If \code{TRUE}, replaces Variable names with Description or vice versa.}
+
+\item{add_var_info}{Logical. If \code{TRUE}, appends the other part in parentheses.}
+
+\item{decimal}{Numeric. Decimal places for rounding.}
+
+\item{unit_select}{Optional. Filters rows to this unit.}
+
+\item{separate_sheet_by}{Optional column name to split sheets.}
+
+\item{subtotal_level}{Logical. If \code{TRUE}, includes all Subtotal values; otherwise keeps only Subtotal="TOTAL".}
+
+\item{repeat_label}{Logical. If \code{TRUE}, repeats the first group column in exports.}
+
+\item{workbook_name}{Character. Name of the Excel workbook (no extension).}
+
+\item{add_group_line}{Logical. If \code{TRUE}, draws a thin line after each group.}
 }
 \value{
-A formatted data frame in wide format with grouped variables as columns and
-experimental groups as rows. If \code{output_dir} is provided, the function also saves
-the output to an Excel file.
+A named list of data frames, each transformed into wide format, optionally exported to Excel.
 }
 \description{
-Generates a structured report table from a given dataset, allowing for flexible
-formatting and customization of column names. The function reshapes the data to present
-variables in a wide format with experimental groups as rows.
-}
-\details{
-\itemize{
-\item The function checks for the required columns \code{"Experiment"}, \code{"Variable"}, \code{"Value"},
-and the specified \code{x_axis_from} column.
-\item The table is formatted to ensure numerical values are rounded to two decimal places.
-\item If \code{output_dir} is provided, the table is exported as an Excel file with enhanced formatting.
-\item If column renaming (\code{col_names}) is specified, it is applied to improve readability.
-}
-}
-\examples{
-\dontrun{
-# Example dataset
-data <- data.frame(
-  Experiment = rep(c("Baseline", "Policy"), each = 3),
-  REG = rep(c("USA", "CHN", "EU"), 2),
-  Variable = rep(c("GDP", "Consumption", "Investment"), 2),
-  Value = c(100, 50, 30, 105, 55, 35)
-)
-
-# Generate report table
-report <- report_table(data, vars = c("GDP", "Consumption"),
-                       x_axis_from = "REG", output_dir = "results")
-
-# Custom column names
-col_names_df <- data.frame(
-  Variable = c("GDP", "Consumption"),
-  PlotTitle = c("Gross Domestic Product", "Household Consumption")
-)
-
-report_table(data, vars = c("GDP", "Consumption"), x_axis_from = "REG",
-             output_dir = "results", col_names = col_names_df)
-}
-
-}
-\seealso{
-\code{\link{scalar_table}}, \code{\link{decomp_table}}
+Transforms one or more datasets into a wide-format table based on specified
+grouping columns and pivot column(s), with optional subtotal filtering and export.
 }
 \author{
 Pattawee Puangchit

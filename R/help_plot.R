@@ -165,8 +165,7 @@
 
 #' @title Calculate Panel Layout (Internal)
 #'
-#' @description Determines the optimal panel layout for plotting based on the number of experiments
-#' or unique values of an x-axis variable.
+#' @description Determines the optimal panel layout for plotting based on the number of panels needed.
 #'
 #' @param data A data frame containing the relevant plotting data.
 #' @param panel_rows Optional. Number of rows for the panel layout.
@@ -180,55 +179,72 @@
 #'
 .calculate_panel_layout <- function(data, panel_rows = NULL, panel_cols = NULL,
                                     compare_by_x_axis = FALSE, x_axis_from = NULL) {
+  # Determine the number of panels needed
   num_panels <- if(compare_by_x_axis && !is.null(x_axis_from)) {
     length(unique(data[[x_axis_from]]))
   } else {
     length(unique(data$Experiment))
   }
 
+  # Return early if both panel_rows and panel_cols are specified
   if (!is.null(panel_rows) && !is.null(panel_cols)) {
+    # Check if provided dimensions are sufficient
     if(panel_rows * panel_cols < num_panels) {
       warning("Provided dimensions insufficient. Adjusting columns to fit all panels.")
       panel_cols <- ceiling(num_panels / panel_rows)
     }
     return(list(rows = panel_rows, cols = panel_cols))
-  } else if (!is.null(panel_rows)) {
+  }
+
+  # Handle when only one dimension is specified
+  if (!is.null(panel_rows)) {
     panel_cols <- ceiling(num_panels / panel_rows)
     return(list(rows = panel_rows, cols = panel_cols))
   } else if (!is.null(panel_cols)) {
     panel_rows <- ceiling(num_panels / panel_cols)
     return(list(rows = panel_rows, cols = panel_cols))
+  }
+
+  # Auto calculate layout when neither dimension is specified
+  if(num_panels <= 1) {
+    return(list(rows = 1, cols = 1))
+  } else if(num_panels <= 3) {
+    return(list(rows = 1, cols = num_panels))
+  } else if(num_panels <= 4) {
+    return(list(rows = 2, cols = 2))
+  } else if(num_panels <= 6) {
+    return(list(rows = 2, cols = 3))
+  } else if(num_panels <= 9) {
+    return(list(rows = 3, cols = 3))
+  } else if(num_panels <= 12) {
+    return(list(rows = 3, cols = 4))
   } else {
-    if(num_panels <= 1) {
-      return(list(rows = 1, cols = 1))
-    } else if(num_panels <= 3) {
-      return(list(rows = 1, cols = num_panels))
-    } else {
-      factors <- c()
-      for(i in 1:sqrt(num_panels)) {
-        if(num_panels %% i == 0) {
-          factors <- c(factors, i)
-        }
+    # For larger numbers, find the best grid layout
+    factors <- c()
+    for(i in 1:sqrt(num_panels)) {
+      if(num_panels %% i == 0) {
+        factors <- c(factors, i)
       }
-
-      if(length(factors) > 0) {
-        best_factor <- factors[length(factors)]
-        rows <- best_factor
-        cols <- num_panels / best_factor
-      } else {
-        cols <- ceiling(sqrt(num_panels))
-        rows <- ceiling(num_panels / cols)
-      }
-
-      if(cols > 2 * rows) {
-        new_cols <- ceiling(sqrt(num_panels))
-        new_rows <- ceiling(num_panels / new_cols)
-        rows <- new_rows
-        cols <- new_cols
-      }
-
-      return(list(rows = rows, cols = cols))
     }
+
+    if(length(factors) > 0) {
+      best_factor <- factors[length(factors)]
+      rows <- best_factor
+      cols <- num_panels / best_factor
+    } else {
+      cols <- ceiling(sqrt(num_panels))
+      rows <- ceiling(num_panels / cols)
+    }
+
+    # Avoid very wide, short layouts
+    if(cols > 2 * rows) {
+      new_cols <- ceiling(sqrt(num_panels))
+      new_rows <- ceiling(num_panels / new_cols)
+      rows <- new_rows
+      cols <- new_cols
+    }
+
+    return(list(rows = rows, cols = cols))
   }
 }
 

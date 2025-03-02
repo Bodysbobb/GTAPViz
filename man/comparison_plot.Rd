@@ -85,6 +85,10 @@ comparison_plot(
 }
 
 }
+\seealso{
+\code{\link{detail_plot}}, \code{\link{macro_plot}}, , \code{\link{macro_plot}},
+\code{\link{stack_plot}}
+}
 \author{
 Pattawee Puangchit
 }

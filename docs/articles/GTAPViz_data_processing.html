@@ -60,7 +60,7 @@
                         <h4 data-toc-skip class="author">Pattawee
 Puangchit</h4>
             
-            <h4 data-toc-skip class="date">2025-02-27</h4>
+            <h4 data-toc-skip class="date">2025-03-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bodysbobb/GTAPViz/blob/HEAD/vignettes/GTAPViz_data_processing.Rmd" class="external-link"><code>vignettes/GTAPViz_data_processing.Rmd</code></a></small>
       <div class="d-none name"><code>GTAPViz_data_processing.Rmd</code></div>
@@ -370,22 +370,32 @@ exported based on their needs.</p>
 <span></span>
 <span><span class="co"># Output: (CSV, STATA, R) </span></span>
 <span><span class="co"># "Yes" to opt for this output format, "No" to skip the output format</span></span>
-<span><span class="va">csv.output</span> <span class="op">&lt;-</span> <span class="st">"No"</span>    </span>
-<span><span class="va">stata.output</span> <span class="op">&lt;-</span> <span class="st">"No"</span>  </span>
-<span><span class="va">r.output</span> <span class="op">&lt;-</span> <span class="st">"Yes"</span></span>
-<span><span class="va">txt.output</span> <span class="op">&lt;-</span> <span class="st">"No"</span>   </span></code></pre></div>
+<span><span class="va">csv.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span>    </span>
+<span><span class="va">stata.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span>  </span>
+<span><span class="va">r.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span></span>
+<span><span class="va">txt.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span>   </span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="extracting-data">Extracting Data<a class="anchor" aria-label="anchor" href="#extracting-data"></a>
 </h2>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/process_gtap_data.html">process_gtap_data</a></span><span class="op">(</span></span>
-<span>  sl4file <span class="op">=</span> <span class="va">sl4map</span>, </span>
-<span>  harfile <span class="op">=</span> <span class="va">harmap</span>,</span>
+<span>  sl4var <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>  harvar <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sl4map <span class="op">=</span> <span class="va">sl4map</span>,</span>
+<span>  harmap <span class="op">=</span> <span class="va">harmap</span>,</span>
+<span>  region_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sector_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subtotal <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  experiment <span class="op">=</span> <span class="va">experiment</span>,</span>
 <span>  mapping_info <span class="op">=</span> <span class="va">info.mode</span>,</span>
 <span>  project_dir <span class="op">=</span> <span class="va">project.folder</span>,</span>
-<span>  export_data <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  plot_data <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  output_formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    <span class="st">"csv"</span> <span class="op">=</span> <span class="va">csv.output</span>,</span>
+<span>    <span class="st">"stata"</span> <span class="op">=</span> <span class="va">stata.output</span>,</span>
+<span>    <span class="st">"rds"</span> <span class="op">=</span> <span class="va">r.output</span>,</span>
+<span>    <span class="st">"txt"</span> <span class="op">=</span> <span class="va">txt.output</span><span class="op">)</span>,</span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

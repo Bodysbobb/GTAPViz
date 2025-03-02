@@ -366,13 +366,13 @@ process_gtap_data <- function(experiment, mapping_info = "GTAPv7",
             sl4structure_df <- sl4structure_df[order(sl4structure_df$Dimensions), ]
 
             if ("Description" %in% names(sl4structure_df)) {
-              names(sl4structure_df)[names(sl4structure_df) == "Description"] <- "PlotTitle"
+              names(sl4structure_df)[names(sl4structure_df) == "Description"] <- "Description"
             }
 
             sl4structure_df$Unit <- NULL
           } else {
             sl4structure_df <- sl4structure[, c("Variable", "Dimensions")]
-            sl4structure_df$PlotTitle <- sl4structure_df$Variable
+            sl4structure_df$Description <- sl4structure_df$Variable
           }
 
           all_data$sl4structure <- sl4structure_df
@@ -522,13 +522,13 @@ process_gtap_data <- function(experiment, mapping_info = "GTAPv7",
           harstructure_df <- harstructure_df[order(harstructure_df$Dimensions), ]
 
           if ("Description" %in% names(harstructure_df)) {
-            names(harstructure_df)[names(harstructure_df) == "Description"] <- "PlotTitle"
+            names(harstructure_df)[names(harstructure_df) == "Description"] <- "Description"
           }
 
           harstructure_df$Unit <- NULL
         } else {
           harstructure_df <- harstructure[, c("Variable", "Dimensions")]
-          harstructure_df$PlotTitle <- harstructure_df$Variable
+          harstructure_df$Description <- harstructure_df$Variable
         }
 
         all_data$harstructure <- harstructure_df

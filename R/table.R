@@ -1,454 +1,553 @@
-#' @title Create Report Table
+#' @title Generate a Detailed Report Table
 #'
-#' @description Generates a structured report table from a given dataset, allowing for flexible
-#' formatting and customization of column names. The function reshapes the data to present
-#' variables in a wide format with experimental groups as rows.
+#' @description
+#' Transforms one or more datasets into a wide-format table based on specified
+#' grouping columns and pivot column(s), with optional subtotal filtering and export.
 #'
-#' @param data A data frame or list containing the dataset. If a list, it is converted into a
-#'        data frame before processing.
-#' @param vars A character vector specifying the variables to include in the report.
-#' @param x_axis_from A character string specifying the column used for grouping (e.g., `"REG"`, `"COMM"`).
-#' @param output_dir Optional character string specifying the directory where the report
-#'        will be saved as an Excel file. If `NULL`, the table is not exported.
-#' @param workbook_name Optional character string for the Excel workbook name. Default is `"Report_table"`.
-#' @param sheet_name Optional character string for the worksheet name. Default is `"Results"`.
-#' @param col_names Optional data frame or character vector for renaming columns. If a data
-#'        frame, it must contain `"Variable"` and `"PlotTitle"` columns to map variable names
-#'        to custom titles. If a character vector, it must match the length of `vars`.
+#' @param data_list A named list of data frames.
+#' @param pivot_col A named list indicating which column is pivoted into wide format for each dataset.
+#' @param total_column Logical. Adds a "Total" column summing numeric columns if `TRUE`.
+#' @param export_table Logical. Exports the tables to Excel if `TRUE`.
+#' @param separate_file Logical. If `TRUE`, each data frame is saved in a separate Excel file.
+#' @param output_dir Character. Directory where Excel files are written if `export_table=TRUE`.
+#' @param sheet_names Optional named list for custom sheet names.
+#' @param include_units Logical. If `TRUE`, includes the "Unit" column in grouping.
+#' @param component_exclude Optional character vector of pivoted values to exclude.
+#' @param group_by A list or character vector of grouping columns, or `NULL`.
+#' @param rename_cols A named list for renaming columns.
+#' @param var_name_by_description Logical. If `TRUE`, replaces Variable names with Description or vice versa.
+#' @param add_var_info Logical. If `TRUE`, appends the other part in parentheses.
+#' @param decimal Numeric. Decimal places for rounding.
+#' @param unit_select Optional. Filters rows to this unit.
+#' @param separate_sheet_by Optional column name to split sheets.
+#' @param subtotal_level Logical. If `TRUE`, includes all Subtotal values; otherwise keeps only Subtotal="TOTAL".
+#' @param repeat_label Logical. If `TRUE`, repeats the first group column in exports.
+#' @param workbook_name Character. Name of the Excel workbook (no extension).
+#' @param add_group_line Logical. If `TRUE`, draws a thin line after each group.
 #'
-#' @details
-#' - The function checks for the required columns `"Experiment"`, `"Variable"`, `"Value"`,
-#'   and the specified `x_axis_from` column.
-#' - The table is formatted to ensure numerical values are rounded to two decimal places.
-#' - If `output_dir` is provided, the table is exported as an Excel file with enhanced formatting.
-#' - If column renaming (`col_names`) is specified, it is applied to improve readability.
+#' @return A named list of data frames, each transformed into wide format, optionally exported to Excel.
 #'
-#' @return A formatted data frame in wide format with grouped variables as columns and
-#' experimental groups as rows. If `output_dir` is provided, the function also saves
-#' the output to an Excel file.
-#'
-#' @export
 #' @author Pattawee Puangchit
-#' @seealso \code{\link{scalar_table}}, \code{\link{decomp_table}}
+#' @export
 #'
-#' @examples
-#' \dontrun{
-#' # Example dataset
-#' data <- data.frame(
-#'   Experiment = rep(c("Baseline", "Policy"), each = 3),
-#'   REG = rep(c("USA", "CHN", "EU"), 2),
-#'   Variable = rep(c("GDP", "Consumption", "Investment"), 2),
-#'   Value = c(100, 50, 30, 105, 55, 35)
-#' )
-#'
-#' # Generate report table
-#' report <- report_table(data, vars = c("GDP", "Consumption"),
-#'                        x_axis_from = "REG", output_dir = "results")
-#'
-#' # Custom column names
-#' col_names_df <- data.frame(
-#'   Variable = c("GDP", "Consumption"),
-#'   PlotTitle = c("Gross Domestic Product", "Household Consumption")
-#' )
-#'
-#' report_table(data, vars = c("GDP", "Consumption"), x_axis_from = "REG",
-#'              output_dir = "results", col_names = col_names_df)
-#' }
-#'
-report_table <- function(data, vars, x_axis_from, output_dir = NULL,
-                         workbook_name = NULL, sheet_name = "Results",
-                         col_names = NULL) {
-  if (is.null(output_dir)) {
-    output_dir <- tempdir()
-  }
+report_table <- function(data_list,
+                         pivot_col,
+                         total_column = FALSE,
+                         export_table = FALSE,
+                         separate_file = FALSE,
+                         output_dir = NULL,
+                         sheet_names = NULL,
+                         include_units = FALSE,
+                         component_exclude = NULL,
+                         group_by = NULL,
+                         rename_cols = NULL,
+                         var_name_by_description = TRUE,
+                         add_var_info = FALSE,
+                         decimal = 2,
+                         unit_select = NULL,
+                         separate_sheet_by = NULL,
+                         subtotal_level = FALSE,
+                         repeat_label = FALSE,
+                         workbook_name = "detail_results",
+                         add_group_line = FALSE) {
 
-  if (is.null(workbook_name)) {
-    workbook_name <- "Report_table"
-  }
+  if (!is.list(data_list)) stop("data_list must be a list.")
+  if (!is.list(pivot_col) || length(pivot_col) == 0) stop("pivot_col must be a non-empty named list.")
+  hnames <- names(pivot_col)
+  if (is.null(hnames) || any(hnames == "")) stop("pivot_col must have named elements.")
+  miss <- setdiff(hnames, names(data_list))
+  if (length(miss) > 0) stop("Data list is missing: ", paste(miss, collapse=", "))
 
-  if (is.list(data) && !is.data.frame(data)) {
-    existing_vars <- intersect(vars, names(data))
-    missing_vars <- setdiff(vars, names(data))
-
-    if (length(existing_vars) == 0) {
-      warning("None of the specified variables found in data. Available variables: ",
-              paste(names(data), collapse = ", "))
-      return(NULL)
-    }
-
-    if (length(missing_vars) > 0) {
-      warning("Variables not found in data and will be skipped: ",
-              paste(missing_vars, collapse = ", "))
-    }
-
-    data <- data[existing_vars]
-    data <- do.call(rbind, data)
-    vars <- existing_vars
-  } else if (is.data.frame(data)) {
-    if ("Variable" %in% names(data)) {
-      existing_vars <- intersect(vars, unique(data$Variable))
-      missing_vars <- setdiff(vars, existing_vars)
-
-      if (length(existing_vars) == 0) {
-        warning("None of the specified variables found in data. Available variables: ",
-                paste(unique(data$Variable), collapse = ", "))
-        return(NULL)
-      }
-
-      if (length(missing_vars) > 0) {
-        warning("Variables not found in data and will be skipped: ",
-                paste(missing_vars, collapse = ", "))
-      }
-
-      data <- data[data$Variable %in% existing_vars, ]
-      vars <- existing_vars
-    }
-  }
-
-  required_cols <- c("Experiment", "Variable", "Value", x_axis_from)
-  missing_cols <- setdiff(required_cols, names(data))
-  if (length(missing_cols) > 0) {
-    stop("Required columns missing: ", paste(missing_cols, collapse = ", "))
-  }
-
-  # Create base result table using explicit function calls instead of %>%
-  result <- dplyr::select(data, Experiment, dplyr::all_of(x_axis_from), Variable, Value)
-  result$Value <- as.numeric(result$Value)
-  result <- tidyr::pivot_wider(result, names_from = Variable, values_from = Value)
-  result <- dplyr::rename(result, Group = dplyr::all_of(x_axis_from), Experiment = Experiment)
-  result <- dplyr::arrange(result, Experiment, Group)
-  result <- dplyr::mutate(result, dplyr::across(where(is.numeric), round, 2))
-
-  # Handle column names with unit information
-  if (!is.null(col_names)) {
-    if (is.data.frame(col_names)) {
-      if (!all(c("Variable", "PlotTitle") %in% names(col_names))) {
-        stop("col_names data frame must contain both 'Variable' and 'PlotTitle' columns")
-      }
-
-      col_names <- col_names[col_names$Variable %in% vars, ]
-      name_mapping <- setNames(col_names$PlotTitle, col_names$Variable)
+  rename_mapping <- list()
+  if (!is.null(rename_cols)) {
+    if (!is.list(rename_cols)) {
+      warning("rename_cols must be a list. Ignoring.")
     } else {
-      if (length(col_names) != length(vars)) {
-        warning("Length of col_names does not match length of existing vars, using available mappings")
-        name_mapping <- setNames(col_names[1:min(length(col_names), length(vars))],
-                                 vars[1:min(length(col_names), length(vars))])
+      rename_mapping <- rename_cols
+    }
+  }
+
+  norm_group <- list()
+  if (is.null(group_by)) {
+    for (h in hnames) {
+      d <- data_list[[h]]
+      pot <- intersect(c("Experiment","EXPERIMENT","experiment","Case","CASE","case","Scenario","SCENARIO","scenario"),
+                       names(d))
+      if (length(pot) > 0) {
+        norm_group[[h]] <- pot[1]
       } else {
-        name_mapping <- setNames(col_names, vars)
+        norm_group[[h]] <- NULL
+        warning(sprintf("No grouping columns found for '%s'", h))
       }
     }
-
-    if ("Unit" %in% names(data)) {
-      unit_info <- dplyr::distinct(dplyr::select(dplyr::filter(data, Variable %in% vars), Variable, Unit))
-
-      new_col_names <- sapply(vars, function(var) {
-        unit <- unit_info$Unit[unit_info$Variable == var][1]
-        custom_name <- name_mapping[var]
-
-        if (!is.na(unit)) {
-          if (tolower(unit) == "percent") {
-            paste0(custom_name, " (%)")
-          } else {
-            paste0(custom_name, " (", unit, ")")
-          }
+  } else if (any(names(group_by) %in% hnames)) {
+    for (h in hnames) {
+      if (h %in% names(group_by)) {
+        gval <- group_by[[h]]
+        if (is.character(gval)) {
+          norm_group[[h]] <- gval
+        } else if (is.list(gval)) {
+          norm_group[[h]] <- unlist(gval)
         } else {
-          custom_name
+          norm_group[[h]] <- NULL
+          warning(sprintf("Ignoring invalid group spec for '%s'", h))
         }
-      })
-
-      old_names <- vars
-      cols_to_rename <- intersect(old_names, names(result))
-      if (length(cols_to_rename) > 0) {
-        names(result)[match(cols_to_rename, names(result))] <- new_col_names[match(cols_to_rename, old_names)]
-      }
-    } else {
-      old_names <- vars
-      cols_to_rename <- intersect(old_names, names(result))
-      if (length(cols_to_rename) > 0) {
-        names(result)[match(cols_to_rename, names(result))] <- name_mapping[cols_to_rename]
+      } else {
+        norm_group[[h]] <- NULL
       }
     }
   } else {
-    if ("Unit" %in% names(data)) {
-      unit_info <- dplyr::distinct(dplyr::select(dplyr::filter(data, Variable %in% vars), Variable, Unit))
-
-      new_col_names <- sapply(vars, function(var) {
-        unit <- unit_info$Unit[unit_info$Variable == var][1]
-        if (!is.na(unit)) {
-          if (tolower(unit) == "percent") {
-            paste0(var, " (%)")
-          } else {
-            paste0(var, " (", unit, ")")
-          }
-        } else {
-          var
-        }
-      })
-
-      old_names <- vars
-      cols_to_rename <- intersect(old_names, names(result))
-      if (length(cols_to_rename) > 0) {
-        names(result)[match(cols_to_rename, names(result))] <- new_col_names[match(cols_to_rename, old_names)]
-      }
-    }
-  }
-
-  if (!is.null(output_dir)) {
-    if (!dir.exists(output_dir)) {
-      dir.create(output_dir, recursive = TRUE)
-    }
-
-    wb <- openxlsx::createWorkbook()
-    openxlsx::addWorksheet(wb, sheet_name)
-
-    header_style <- openxlsx::createStyle(textDecoration = "bold", border = "TopBottom", borderStyle = "medium")
-    number_style <- openxlsx::createStyle(numFmt = "0.00", halign = "right")
-
-    openxlsx::writeData(wb, sheet_name, result, headerStyle = header_style)
-
-    numeric_cols <- which(sapply(result, is.numeric))
-    for (col in numeric_cols) {
-      openxlsx::addStyle(wb, sheet_name, number_style, rows = 2:(nrow(result) + 1), cols = col)
-    }
-
-    Experiment_groups <- rle(as.character(result$Experiment))
-    current_row <- 2
-    for (i in seq_along(Experiment_groups$lengths)) {
-      if (Experiment_groups$lengths[i] > 1) {
-        openxlsx::mergeCells(wb, sheet_name, rows = current_row:(current_row + Experiment_groups$lengths[i] - 1), cols = 1)
-      }
-      current_row <- current_row + Experiment_groups$lengths[i]
-    }
-
-    openxlsx::setColWidths(wb, sheet_name, cols = 1:ncol(result), widths = c(15, 12, rep(10, ncol(result)-2)))
-
-    filepath <- file.path(output_dir, paste0(workbook_name, ".xlsx"))
-    openxlsx::saveWorkbook(wb, filepath, overwrite = TRUE)
-    message("Table exported to: ", filepath)
-  }
-
-  return(invisible(result))
-}
-
-
-#' @title Create Scalar Result Table
-#'
-#' @description Generates a formatted table summarizing scalar results from a given dataset.
-#' The function transforms long-format data into a wide format with scenarios as columns,
-#' making comparisons across experiments more accessible.
-#'
-#' @param data A data frame or list containing scalar data, where each observation consists of
-#'        an experiment name, variable name, and corresponding value.
-#' @param vars Optional character vector of variable names to include in the table.
-#'        If `NULL`, all available variables in the dataset will be used.
-#' @param output_dir Optional character. Directory where the generated table will be saved
-#'        as an Excel file. If `NULL`, no file will be created.
-#' @param workbook_name Optional character. Name of the output Excel workbook. Default is `"scalar_results"`.
-#' @param sheet_name Optional character. Name of the worksheet in the Excel file. Default is `"Results"`.
-#'
-#' @details
-#' - If `data` is a list and not a data frame, the function attempts to combine it into a data frame.
-#' - The table is formatted to ensure numerical values are rounded to two decimal places.
-#' - If `output_dir` is specified, the table is exported as an Excel file with proper formatting.
-#' - Required columns in `data` are `"Experiment"`, `"Variable"`, and `"Value"`.
-#'
-#' @return A formatted data frame in wide format with variables as rows and experiments as columns.
-#' If `output_dir` is provided, the function also saves the output to an Excel file.
-#'
-#' @export
-#' @author Pattawee Puangchit
-#' @seealso \code{\link{report_table}}, \code{\link{decomp_table}}
-#'
-#' @examples
-#' \dontrun{
-#' sl4_data1 <- HARplus::get_data_by_var(c("globalcgds", "vgdpwld", "WEV"), sl4_data)
-#' scalar_table <- scalar_table(
-#'   data = sl4_data1,
-#'   vars = "vgdpwld",
-#'   output_dir = temp_dir,
-#'   workbook_name = "global_indicators",
-#'   sheet_name = "Results"
-#' )
-#' }
-scalar_table <- function(data, vars = NULL, output_dir = NULL,
-                         workbook_name = "scalar_results",
-                         sheet_name = "Results") {
-  if (is.list(data) && !is.data.frame(data)) {
-    if (is.null(vars)) {
-      vars <- names(data)
+    if (is.character(group_by)) {
+      for (h in hnames) norm_group[[h]] <- group_by
+    } else if (is.list(group_by) && !any(sapply(group_by, is.list))) {
+      uu <- unlist(group_by)
+      for (h in hnames) norm_group[[h]] <- uu
     } else {
-      missing_vars <- setdiff(vars, names(data))
-      if (length(missing_vars) > 0) {
-        stop("Variables not found in data: ", paste(missing_vars, collapse = ", "))
+      norm_group <- NULL
+      warning("group_by must be a character vector or list.")
+    }
+  }
+
+  out_list <- list()
+
+  for (hd in hnames) {
+    df <- data_list[[hd]]
+    piv <- pivot_col[[hd]]
+    if (!piv %in% names(df)) stop(sprintf("Column '%s' not found in '%s'", piv, hd))
+    if (!"Value" %in% names(df)) stop(sprintf("'Value' missing in '%s'", hd))
+
+    gc <- character(0)
+    if (!is.null(norm_group[[hd]])) {
+      for (g_ in norm_group[[hd]]) {
+        if (g_ %in% names(df)) {
+          gc <- c(gc, g_)
+        } else {
+          warning(sprintf("Column '%s' not found in '%s'", g_, hd))
+        }
       }
     }
-    data <- data[vars]
-    data <- do.call(rbind, data)
-  }
-
-  required_cols <- c("Experiment", "Variable", "Value")
-  missing_cols <- setdiff(required_cols, names(data))
-  if (length(missing_cols) > 0) {
-    stop("Required columns missing: ", paste(missing_cols, collapse = ", "))
-  }
-
-  # Rewriting without `%>%`
-  result <- dplyr::select(data, Variable, Experiment, Value)
-  result$Value <- as.numeric(result$Value)
-  result <- tidyr::pivot_wider(result, names_from = Experiment, values_from = Value)
-  result <- dplyr::mutate(result, dplyr::across(where(is.numeric), round, 2))
-
-  if (!is.null(output_dir)) {
-    if (!dir.exists(output_dir)) {
-      dir.create(output_dir, recursive = TRUE)
+    if (length(gc)==0) {
+      guess <- grep("^experiment$|^reg$|^region$|^comm$|^sector$|^acts$|^source$|^destination$",
+                    names(df), value=TRUE, ignore.case=TRUE)
+      gc <- guess
+      if (length(gc)==0) warning(sprintf("No grouping found for '%s'", hd))
     }
 
-    wb <- openxlsx::createWorkbook()
-    openxlsx::addWorksheet(wb, sheet_name)
-
-    header_style <- openxlsx::createStyle(
-      textDecoration = "bold",
-      border = "TopBottom",
-      borderStyle = "medium"
-    )
-
-    number_style <- openxlsx::createStyle(
-      numFmt = "0.00",
-      halign = "right"
-    )
-
-    openxlsx::writeData(wb, sheet_name, result, headerStyle = header_style)
-
-    numeric_cols <- which(sapply(result, is.numeric))
-    for (col in numeric_cols) {
-      openxlsx::addStyle(wb, sheet_name, number_style,
-                         rows = 2:(nrow(result) + 1),
-                         cols = col)
+    if ("Subtotal" %in% names(df)) {
+      if (!subtotal_level) {
+        keep <- tolower(df$Subtotal)=="total"
+        df <- df[keep, ]
+        df$Subtotal <- NULL
+      } else {
+        if (!"Subtotal" %in% gc) gc <- c(gc,"Subtotal")
+      }
     }
 
-    openxlsx::setColWidths(wb, sheet_name,
-                           cols = 1:ncol(result),
-                           widths = c(15, rep(12, ncol(result)-1)))
+    if ("Unit" %in% names(df)) {
+      if (!is.null(unit_select)) {
+        fun_ <- function(x) tolower(gsub("\\s+","",x))
+        df$.__u__ <- fun_(df$Unit)
+        slct <- fun_(unit_select)
+        df <- df[df$.__u__==slct, ]
+        df$.__u__<-NULL
+        if (nrow(df)==0) {
+          warning(sprintf("No data found for unit='%s' in '%s'", unit_select, hd))
+          next
+        }
+      }
+      if (length(unique(df$Unit))>1) {
+        if (!"Unit"%in%gc) gc<-c(gc,"Unit")
+      } else {
+        if (include_units && !"Unit"%in%gc) gc<-c(gc,"Unit")
+      }
+    }
 
-    filepath <- file.path(output_dir, paste0(workbook_name, ".xlsx"))
-    openxlsx::saveWorkbook(wb, filepath, overwrite = TRUE)
-    message("Table exported to: ", filepath)
+    if (!is.null(component_exclude) && length(component_exclude)>0 && piv %in% names(df)) {
+      old_n<-nrow(df)
+      df<-df[!(df[[piv]] %in% component_exclude), ]
+      removed<-old_n-nrow(df)
+      if (removed>0) message(sprintf("Removed %d excluded in '%s'", removed, hd))
+    }
+
+    if ("Variable"%in%names(df) && "Description"%in%names(df) && nrow(df)>0) {
+      if (var_name_by_description || add_var_info) {
+        for (i in seq_len(nrow(df))) {
+          var_ <- df$Variable[i]
+          des_ <- df$Description[i]
+          if (!nzchar(des_)) des_<-NA_character_
+          if (is.na(des_)) des_<-var_
+          if (var_name_by_description && add_var_info) {
+            df$Variable[i] <- paste0(des_," (",var_,")")
+          } else if (var_name_by_description && !add_var_info) {
+            df$Variable[i]<-des_
+          } else if (!var_name_by_description && add_var_info) {
+            if (des_==var_) {
+              df$Variable[i]<-var_
+            } else {
+              df$Variable[i]<-paste0(var_," (",des_,")")
+            }
+          } else {
+            df$Variable[i]<-var_
+          }
+        }
+      }
+    }
+
+    ssc<-separate_sheet_by
+
+    if (!is.null(ssc) && ssc %in% names(df)) {
+      uv<-unique(df[[ssc]])
+      partres<-list()
+      for (xx in uv) {
+        subdf<-df[df[[ssc]]==xx, ]
+        newdf<- .process_detail_data(
+          subdf,piv,gc,rename_mapping,
+          total_column, decimal
+        )
+        partres[[paste(hd,xx,sep="_")]]<-newdf
+      }
+      out_list<-c(out_list, partres)
+    } else {
+      newdf<- .process_detail_data(
+        df,piv,gc,rename_mapping,
+        total_column, decimal
+      )
+      out_list[[hd]]<-newdf
+    }
   }
 
-  return(invisible(result))
+  if (export_table && length(out_list)>0) {
+    .export_detail_tables(
+      out_list,
+      output_dir,
+      separate_file,
+      sheet_names,
+      repeat_label,
+      workbook_name,
+      add_group_line
+    )
+  }
+  invisible(out_list)
 }
 
 
-#' @title Create Decomposition Table with Multi-Data Support
+#' @title Prepare Detail Data for Wide-Format Report (Internal)
 #'
-#' @description Processes decomposition data, allowing multiple data frames as input.
-#' Converts specified columns into wide format per dataset while supporting multiple
-#' headers, independent column selections, and optional total calculations.
+#' @description
+#' Converts a long-format data frame into a wide-format structure, optionally calculating
+#' totals, renaming columns, handling descriptions, and sorting the final table.
+#' **Also supports the special case** where `Variable` is *not* pivoted and remains in the row
+#' dimension (e.g. `group_by = "Variable"`). In that scenario, if `col_name_by_description = TRUE`,
+#' it replaces the actual values of `"Variable"` with a more descriptive label (and optionally
+#' adds the original variable name in parentheses if `sub_column_name = TRUE`).
 #'
-#' @param data_list A named list of data frames. Each data frame must contain an "Experiment" column.
-#' @param header A character vector specifying which dataset names from `data_list` should be processed.
-#' @param wide_cols A named list specifying the column to be transformed into wide format for each dataset.
-#'        Example: `list(A = "COLUMN", E1 = "PRICES")`.
-#' @param total_column Logical. If `TRUE`, calculates a total column for each dataset by summing numeric columns. Default is `FALSE`.
-#' @param export_table Logical. If `TRUE`, exports the result to an Excel file. Default is `FALSE`.
-#' @param multi_sheet Logical. If `TRUE`, each dataset is written to a separate sheet in the Excel file. Default is `FALSE`.
-#' @param output_dir Optional character string specifying the directory where the Excel file should be saved.
-#' @param sheet_names Optional named list providing custom names for sheets in the exported Excel file.
-#' @param include_units Logical. If `TRUE` and a "Unit" column exists in the data, unit information is merged into the final output. Default is `FALSE`.
+#' @param df A data frame to be transformed.
+#' @param wide_col Character. The column to pivot into wide format.
+#' @param group_cols Character vector. The grouping columns to retain.
+#' @param rename_mapping Named list for renaming grouping columns.
+#' @param total_column Logical. If `TRUE`, adds a "Total" column. Default is `FALSE`.
+#' @param decimal Numeric. Number of decimal places to round numeric columns. Default is `2`.
+#' @param col_name_by_description Logical. If `TRUE`, uses the "Description" column for naming
+#'   pivoted columns. Also, if `"Variable"` stays in rows, we replace its values with description.
+#' @param sub_column_name Logical. If `TRUE`, appends original variable names in parentheses. Default is `FALSE`.
 #'
-#' @details
-#' - If `data` is a single data frame, `header` is ignored, and `wide_cols` should be a single column name.
-#' - If `data` is a list of data frames, `header` must be specified to select relevant subsets of each dataset.
-#' - `wide_cols` must be a named list matching the names of `data` (e.g., `"A"`, `"E1"`).
-#' - When `total_column = TRUE`, numerical values in each row are summed into a "Total" column.
-#' - If `export_table = TRUE`, the function saves the result to an Excel file, either as a single sheet or multiple sheets (if `multi_sheet = TRUE`).
+#' @return A data frame in wide format, with optionally added totals, renamed columns,
+#' sorted grouping columns, and numeric columns rounded to the specified decimal places.
 #'
-#' @return A list of data frames, each containing wide-format decomposition data.
-#' If `export_table = TRUE`, the results are also saved to an Excel file.
-#'
-#' @export
+#' @keywords internal
 #' @author Pattawee Puangchit
 #'
-#' @examples
-#' \dontrun{
-#' # Example list of data frames
-#' har.plot.data <- list(
-#'   A = data.frame(Experiment = c("Base", "Policy"),
-#'                  Header = "A", COLUMN = c("Tariff", "NTM"), Value = c(10, 5)),
-#'   E1 = data.frame(Experiment = c("Base", "Policy"),
-#'                   Header = "E1", PRICES = c("GDP", "Consumption"), Value = c(105, 55))
-#' )
-#'
-#' # Convert decomposition tables for both datasets
-#' result <- decomp_table(data_list = har.plot.data, header = c("A", "E1"),
-#'                        wide_cols = list(A = "COLUMN", E1 = "PRICES"), total_column = TRUE)
-#'
-#' # Export as an Excel file with multiple sheets
-#' decomp_table(data_list = har.plot.data, header = c("A", "E1"),
-#'              wide_cols = list(A = "COLUMN", E1 = "PRICES"),
-#'              total_column = TRUE, export_table = TRUE, multi_sheet = TRUE,
-#'              output_dir = "results", sheet_names = list(A = "Welfare", E1 = "Prices"))
-#' }
-decomp_table <- function(data_list, header, wide_cols, total_column = FALSE,
-                         export_table = FALSE, multi_sheet = FALSE, output_dir = NULL,
-                         sheet_names = NULL, include_units = FALSE) {
+.process_detail_data <- function(df, wide_col, group_cols,
+                                 rename_mapping, total_column, decimal) {
 
-  if (!is.list(data_list)) stop("Data must be a list of dataframes.")
-  if (!all(header %in% names(data_list))) stop("Some headers do not match dataset names.")
-  if (!all(header %in% names(wide_cols))) stop("Missing 'wide_cols' mapping for some datasets.")
+  keep_ <- c(group_cols, wide_col, "Value")
+  df <- df[, intersect(names(df), keep_), drop=FALSE]
+  df$Value<-as.numeric(df$Value)
+  id_cols <- setdiff(keep_, c(wide_col,"Value"))
+  if (nrow(df)>0) {
+    check_ <- df[, c(id_cols, wide_col), drop=FALSE]
+    dup_ <- duplicated(check_)|duplicated(check_,fromLast=TRUE)
+    if (any(dup_)) {
+      ex_ <- df[dup_,]
+      msg<-sprintf("Found %d duplicates in pivot_wider:\n", sum(dup_))
+      for (z in seq_len(min(3,nrow(ex_)))) {
+        line<-paste(names(ex_), ex_[z,], sep=":", collapse=",")
+        msg<-paste(msg," -",line,"\n")
+      }
+      stop(msg)
+    }
+  }
 
-  process_df <- function(df, wide_col) {
-    if (!"Experiment" %in% names(df)) stop("Data must contain an 'Experiment' column")
-    if (!wide_col %in% names(df)) stop(sprintf("Column '%s' not found in dataset", wide_col))
+  wdata<-tidyr::pivot_wider(df, id_cols=id_cols,names_from=wide_col,values_from="Value")
 
-    keep_cols <- setdiff(names(df), c(wide_col, "Value"))
+  if (total_column) {
+    idx <- which(sapply(wdata,is.numeric))
+    if (length(idx)>0) wdata$Total<-rowSums(wdata[, idx, drop=FALSE], na.rm=TRUE)
+  }
 
-    # Replacing reshape() with tidyr::pivot_wider()
-    wide_data <- tidyr::pivot_wider(df, names_from = wide_col, values_from = "Value")
-
-    if (total_column) {
-      numeric_cols <- which(sapply(wide_data, is.numeric))
-      if (length(numeric_cols) > 0) {
-        wide_data$Total <- rowSums(wide_data[, numeric_cols, drop = FALSE], na.rm = TRUE)
+  if (length(rename_mapping)>0) {
+    for (rnm in names(rename_mapping)) {
+      if (rnm %in% names(wdata)) {
+        names(wdata)[names(wdata)==rnm]<-rename_mapping[[rnm]]
       }
     }
+  }
 
-    # Add unit information if requested and available
-    if (include_units && "Unit" %in% names(df)) {
-      unit_info <- unique(df$Unit)
-      attr(wide_data, "units") <- unit_info
+  numc <- which(sapply(wdata,is.numeric))
+  if (length(numc)>0) {
+    wdata[,numc]<-lapply(wdata[,numc,drop=FALSE], function(x) round(x, decimal))
+  }
+
+  sc<-character(0)
+  if ("Unit"%in%names(wdata)) sc<-c(sc,"Unit")
+  for (g_ in group_cols) {
+    if (g_!="Unit") {
+      rename_ <- if (g_ %in% names(rename_mapping)) rename_mapping[[g_]] else g_
+      sc<-c(sc, rename_)
     }
-
-    return(wide_data)
+  }
+  sc <- intersect(sc,names(wdata))
+  if (length(sc)>0) {
+    wdata <- wdata[do.call(order, lapply(sc, function(z) wdata[[z]])),]
   }
 
-  result_list <- list()
-  for (hdr in header) {
-    df <- data_list[[hdr]]
-    result_list[[hdr]] <- process_df(df, wide_cols[[hdr]])
+  final_col<-character(0)
+  for (g_ in group_cols) {
+    rn_ <- if (g_ %in% names(rename_mapping)) rename_mapping[[g_]] else g_
+    if (rn_ %in% names(wdata) && !(rn_ %in% final_col)) final_col<-c(final_col, rn_)
+  }
+  nonnum<-setdiff(names(wdata)[!sapply(wdata,is.numeric)],final_col)
+  final_col<-c(final_col,nonnum)
+  dd_ <- names(wdata)[sapply(wdata,is.numeric)]
+  if ("Total"%in%dd_) dd_<-c(setdiff(dd_,"Total"),"Total")
+  final_col<-c(final_col, dd_)
+  if (all(final_col%in%names(wdata))) {
+    wdata<-wdata[, final_col, drop=FALSE]
+  }
+  wdata
+}
+
+
+#' @title Export Detailed Tables (Internal)
+#'
+#' @description
+#' Creates Excel workbooks from a list of data frames, applying styling, merging
+#' repeated grouping values, and optionally generating separate files or multiple
+#' sheets in a single file. This version also supports an optional black border
+#' after each group in the first column if `add_group_line = TRUE`.
+#'
+#' @param result_list A named list of data frames to export.
+#' @param output_dir Character. The output directory path for saving the Excel file(s).
+#' @param separate_file Logical. If `TRUE`, each data frame is exported as a separate Excel file.
+#'   Otherwise, all data frames go into a single workbook.
+#' @param sheet_names Optional named list for custom sheet or file naming.
+#' @param repeat_label Logical. If `TRUE`, repeats merging in the first grouping column.
+#' @param workbook_name Character. The base file name for the single-workbook option.
+#' @param add_group_line Logical. If `TRUE`, places a black border to separate each group in the first column.
+#'
+#' @keywords internal
+#' @author Pattawee Puangchit
+#'
+.export_detail_tables <- function(result_list, output_dir, separate_file, sheet_names,
+                                  repeat_label, workbook_name,
+                                  add_group_line = FALSE) {
+  if (is.null(output_dir)) stop("Output directory must be specified for exporting.")
+  if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
+
+  # Define styles
+  header_style_left <- openxlsx::createStyle(
+    textDecoration = "bold",
+    border = "TopBottom",
+    borderStyle = "medium",
+    halign = "left",
+    valign = "top"
+  )
+  header_style_right <- openxlsx::createStyle(
+    textDecoration = "bold",
+    border = "TopBottom",
+    borderStyle = "medium",
+    halign = "right",
+    valign = "top"
+  )
+  number_style <- openxlsx::createStyle(
+    numFmt = "0.00",
+    halign = "right",
+    valign = "top"
+  )
+  text_style <- openxlsx::createStyle(
+    halign = "left",
+    valign = "top"
+  )
+
+  # Optional style to add a bottom border for each group in the first column
+  group_line_style <- openxlsx::createStyle(
+    border = "bottom",
+    borderStyle = "thin",
+    borderColour = "black"
+  )
+
+  # Helper for merging cells + optionally adding group line
+  merge_and_add_line <- function(wb, sheet, df, group_cols, is_numeric, add_group_line, start_col) {
+    # This is identical logic for merging repeated values
+    # We'll focus on the first column for group lines
+    if (nrow(df) > 1) {
+      if (length(group_cols) > 0) {
+        for (col_idx in seq_along(group_cols)) {
+          col_name <- group_cols[col_idx]
+          if (col_idx == 1 && repeat_label) next
+          if (col_name %in% c("Description", "SheetSeparator", "Subtotal")) next
+
+          if (col_idx == 1) {
+            # For the very first group column
+            col_values <- df[[col_name]]
+            group_runs <- rle(as.character(col_values))
+            current_row <- 2
+            for (i in seq_along(group_runs$lengths)) {
+              run_length <- group_runs$lengths[i]
+              if (run_length > 1) {
+                openxlsx::mergeCells(
+                  wb, sheet,
+                  rows = current_row:(current_row + run_length - 1),
+                  cols = col_idx
+                )
+              }
+              if (add_group_line) {
+                # apply bottom border style to the last row of this group
+                last_row <- current_row + run_length - 1
+                openxlsx::addStyle(
+                  wb, sheet, group_line_style,
+                  rows = last_row,
+                  cols = seq_len(ncol(df)),
+                  gridExpand = TRUE,
+                  stack = TRUE
+                )
+              }
+              current_row <- current_row + run_length
+            }
+          } else {
+            # For subsequent columns
+            preceding_cols <- group_cols[1:col_idx]
+            combined_values <- do.call(paste, c(lapply(preceding_cols, function(cc) df[[cc]]), sep = "_"))
+            group_runs <- rle(combined_values)
+            current_row <- 2
+            for (j in seq_along(group_runs$lengths)) {
+              run_length <- group_runs$lengths[j]
+              if (run_length > 1) {
+                openxlsx::mergeCells(
+                  wb, sheet,
+                  rows = current_row:(current_row + run_length - 1),
+                  cols = col_idx
+                )
+              }
+              current_row <- current_row + run_length
+            }
+          }
+        }
+      }
+    }
   }
 
-  if (export_table) {
-    if (is.null(output_dir)) stop("Output directory must be specified for exporting.")
-    if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-
-    file_path <- file.path(output_dir, "decomp_results.xlsx")
-    wb <- openxlsx::createWorkbook()
-
-    for (hdr in names(result_list)) {
-      sheet_name <- if (!is.null(sheet_names) && hdr %in% names(sheet_names)) {
-        sheet_names[[hdr]]
+  # Handle separate_file vs. single workbook
+  if (separate_file) {
+    for (sheet_key in names(result_list)) {
+      df <- result_list[[sheet_key]]
+      file_name <- if (!is.null(sheet_names) && sheet_key %in% names(sheet_names)) {
+        sheet_names[[sheet_key]]
       } else {
-        hdr
+        gsub("[^[:alnum:]_]", "_", sheet_key)
+      }
+      wb <- openxlsx::createWorkbook()
+      file_path <- file.path(output_dir, paste0(file_name, ".xlsx"))
+      openxlsx::addWorksheet(wb, "Sheet1")
+      openxlsx::writeData(wb, "Sheet1", df)
+
+      is_numeric <- sapply(df, is.numeric)
+      numeric_cols <- which(is_numeric)
+      text_cols <- which(!is_numeric)
+
+      # Header styling
+      for (col in text_cols) {
+        openxlsx::addStyle(wb, "Sheet1", header_style_left, rows = 1, cols = col)
+      }
+      for (col in numeric_cols) {
+        openxlsx::addStyle(wb, "Sheet1", header_style_right, rows = 1, cols = col)
+      }
+      # Body styling
+      if (length(text_cols) > 0) {
+        for (col in text_cols) {
+          openxlsx::addStyle(wb, "Sheet1", text_style, rows = 2:(nrow(df) + 1), cols = col)
+        }
+      }
+      if (length(numeric_cols) > 0) {
+        for (col in numeric_cols) {
+          openxlsx::addStyle(wb, "Sheet1", number_style, rows = 2:(nrow(df) + 1), cols = col)
+        }
       }
 
-      openxlsx::addWorksheet(wb, sheet_name)
-      openxlsx::writeData(wb, sheet_name, result_list[[hdr]])
-    }
+      # Merge repeated grouping values + add optional group line
+      group_cols <- names(df)[!is_numeric]
+      merge_and_add_line(
+        wb = wb, sheet = "Sheet1",
+        df = df, group_cols = group_cols,
+        is_numeric = is_numeric,
+        add_group_line = add_group_line,
+        start_col = 1
+      )
 
+      openxlsx::setColWidths(wb, "Sheet1", cols = 1:ncol(df), widths = c(15, 12, rep(15, ncol(df) - 2)))
+      openxlsx::saveWorkbook(wb, file_path, overwrite = TRUE)
+      message("Table exported to: ", file_path)
+    }
+  } else {
+    wb <- openxlsx::createWorkbook()
+    file_path <- file.path(output_dir, paste0(workbook_name, ".xlsx"))
+    for (sheet_key in names(result_list)) {
+      df <- result_list[[sheet_key]]
+      sheet_name <- if (!is.null(sheet_names) && sheet_key %in% names(sheet_names)) {
+        sheet_names[[sheet_key]]
+      } else {
+        substr(gsub("[^[:alnum:]_]", "_", sheet_key), 1, 31)
+      }
+      openxlsx::addWorksheet(wb, sheet_name)
+      openxlsx::writeData(wb, sheet_name, df)
+
+      is_numeric <- sapply(df, is.numeric)
+      numeric_cols <- which(is_numeric)
+      text_cols <- which(!is_numeric)
+
+      # Header styling
+      for (col in text_cols) {
+        openxlsx::addStyle(wb, sheet_name, header_style_left, rows = 1, cols = col)
+      }
+      for (col in numeric_cols) {
+        openxlsx::addStyle(wb, sheet_name, header_style_right, rows = 1, cols = col)
+      }
+      # Body styling
+      if (length(text_cols) > 0) {
+        for (col in text_cols) {
+          openxlsx::addStyle(wb, sheet_name, text_style, rows = 2:(nrow(df) + 1), cols = col)
+        }
+      }
+      if (length(numeric_cols) > 0) {
+        for (col in numeric_cols) {
+          openxlsx::addStyle(wb, sheet_name, number_style, rows = 2:(nrow(df) + 1), cols = col)
+        }
+      }
+
+      # Merge repeated grouping values + add optional group line
+      group_cols <- names(df)[!is_numeric]
+      merge_and_add_line(
+        wb = wb, sheet = sheet_name,
+        df = df, group_cols = group_cols,
+        is_numeric = is_numeric,
+        add_group_line = add_group_line,
+        start_col = 1
+      )
+
+      openxlsx::setColWidths(wb, sheet_name, cols = 1:ncol(df), widths = c(15, 12, rep(15, ncol(df) - 2)))
+    }
     openxlsx::saveWorkbook(wb, file_path, overwrite = TRUE)
     message("Table exported to: ", file_path)
   }
-
-  return(invisible(result_list))
 }
+

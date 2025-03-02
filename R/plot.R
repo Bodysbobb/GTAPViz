@@ -176,7 +176,12 @@
 #'
 #' @return A list of ggplot objects or a single ggplot object depending on settings
 #' @author Pattawee Puangchit
+#'
+#' @seealso \code{\link{detail_plot}}, \code{\link{macro_plot}}, , \code{\link{macro_plot}},
+#' \code{\link{stack_plot}}
+#'
 #' @export
+#'
 #' @examples
 #' \dontrun{
 #' # Generate comparison plot
@@ -259,41 +264,19 @@ comparison_plot <- function(data, plot_var = NULL,
     for (unit_name in names(unit_groups)) {
       unit_data <- unit_groups[[unit_name]]
 
-      # Calculate panel layout
-      if (!is.null(panel_rows) && !is.null(panel_cols)) {
-        panel_layout <- list(rows = as.numeric(panel_rows), cols = as.numeric(panel_cols))
+      # Calculate panel layout using the updated helper function
+      if (separate_figure) {
+        # For separate figures, use 1x1 layout
+        panel_layout <- list(rows = 1, cols = 1)
       } else {
-        # Count the number of panels needed
-        n_panels <- length(unique(unit_data[[panel_var]]))
-
-        # Calculate layout based on the number of panels
-        if (is.null(panel_rows) && is.null(panel_cols)) {
-          # Auto calculate both dimensions
-          if (n_panels <= 1) {
-            panel_layout <- list(rows = 1, cols = 1)
-          } else if (n_panels <= 3) {
-            panel_layout <- list(rows = 1, cols = n_panels)
-          } else if (n_panels <= 4) {
-            panel_layout <- list(rows = 2, cols = 2)
-          } else if (n_panels <= 6) {
-            panel_layout <- list(rows = 2, cols = 3)
-          } else if (n_panels <= 9) {
-            panel_layout <- list(rows = 3, cols = 3)
-          } else if (n_panels <= 12) {
-            panel_layout <- list(rows = 3, cols = 4)
-          } else {
-            # For larger numbers, try to keep the grid roughly square
-            cols <- ceiling(sqrt(n_panels))
-            rows <- ceiling(n_panels / cols)
-            panel_layout <- list(rows = rows, cols = cols)
-          }
-        } else if (is.null(panel_rows)) {
-          # Calculate rows based on columns
-          panel_layout <- list(rows = ceiling(n_panels / panel_cols), cols = panel_cols)
-        } else {
-          # Calculate columns based on rows
-          panel_layout <- list(cols = ceiling(n_panels / panel_rows), rows = panel_rows)
-        }
+        # Use the helper function to calculate the panel layout
+        panel_layout <- .calculate_panel_layout(
+          unit_data,
+          panel_rows = panel_rows,
+          panel_cols = panel_cols,
+          compare_by_x_axis = compare_by_experiment,
+          x_axis_from = panel_var
+        )
       }
 
       # Auto-calculate dimensions
@@ -316,7 +299,7 @@ comparison_plot <- function(data, plot_var = NULL,
 
           # Format title
           if (invert_panel) {
-            # For inverted panels: "Experiment - Region"
+            # For inverted panels:
             plot_title <- paste0(
               if (nchar(title_prefix) > 0) paste0(title_prefix, " ") else "",
               sep_value, " - ", panel_val,
