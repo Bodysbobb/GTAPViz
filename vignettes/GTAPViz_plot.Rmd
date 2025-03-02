@@ -9,7 +9,6 @@ vignette: >
   %/VignetteEncoding{UTF-8}
 ---
 
-
 ```{r, include = FALSE}
 rm(list=ls())
 
@@ -53,57 +52,88 @@ devtools::load_all()
 #devtools::install_github("Bodysbobb/GTAPViz")
 ```
 
-
 # Introduction {#sec:introduction}
 
-This vignette demonstrates how to generate structured, publication-ready figures using GTAPViz’s built-in visualization tools.  
+This vignette demonstrates how to generate structured,
+publication-ready figures using GTAPViz’s built-in visualization
+tools.
 
-The visualization framework is based on the **`SL4File`** and **`HARFile`** sheets, which define the variables and figure titles used for plotting. Users can specify these directly within an external mapping file or generate them dynamically in the R environment.
+The visualization framework is based on the **`SL4File`** and
+**`HARFile`** sheets, which define the variables and figure titles
+used for plotting. Users can specify these directly within an external
+mapping file or generate them dynamically in the R environment.
 
 # Loading Package
-Before proceeding, ensure that `GTAPViz` and `HARplus` are installed and loaded:
+
+Before proceeding, ensure that `GTAPViz` and `HARplus` are installed
+and loaded:
+
 ```{r package, eval = FALSE}
 library(GTAPViz)
 ```
-**Note:** If the required packages are not yet installed, please refer to:
 
-- [GTAPViz](https://github.com/Bodysbobb/GTAPViz)
+**Note:** If the required packages are not yet installed, please refer
+to:
 
-- [HARplus](https://github.com/Bodysbobb/HARplus)
+-   [GTAPViz](https://github.com/Bodysbobb/GTAPViz)
 
+-   [HARplus](https://github.com/Bodysbobb/HARplus)
 
 # Package Overview {#sec:package-overview}
 
-This package facilitates the reporting of CGE model outputs, particularly for GTAP users, but it can also be applied to other results based on `.har` and `.sl4` files. Its primary function is to generate [Figures](#sec:figure-type) and [Tables](#sec:report-table). Additionally, several [useful tools](#sec:additional-utilities) are available for data manipulation to enhance figure illustration.  
+This package facilitates the reporting of CGE model outputs,
+particularly for GTAP users, but it can also be applied to other
+results based on `.har` and `.sl4` files. Its primary function is to
+generate [Figures](#sec:figure-type) and [Tables](#sec:report-table).
+Additionally, several [useful tools](#sec:additional-utilities) are
+available for data manipulation to enhance figure illustration.
 
-# Figure Types {sec:figure-type}  
+# Figure Types {#sec:figure-type}
 
-This package introduces four different plot commands that can generate more than 10 different plots:
+This package introduces four different plot commands that can generate
+more than 10 different plots:
 
-1. [`comparison_plot`](#sec:comparisonplot): Compares a single variable across all experiments for a **selected dimension** (e.g., region, sector). For example, `qgdp`, `ppriv`, and `EV` can be compared across **selected regions** (`REG`).
+1.  [`comparison_plot`](#sec:comparisonplot): Compares a single
+    variable across all experiments for a **selected dimension**
+    (e.g., region, sector). For example, `qgdp`, `ppriv`, and `EV` can
+    be compared across **selected regions** (`REG`).
 
-2. [`detail_plot`](#sec:detailplot): Provides a comprehensive visualization of a variable across **all regions or all sectors** within each experiment. For example, `qgdp` can be plotted across **all regions**, or `qo` across **all sectors** within each country.
+2.  [`detail_plot`](#sec:detailplot): Provides a comprehensive
+    visualization of a variable across **all regions or all sectors**
+    within each experiment. For example, `qgdp` can be plotted across
+    **all regions**, or `qo` across **all sectors** within each
+    country.
 
-3. [`macro_plot`](#sec:macroplot): Presents global macroeconomic indicators without dimensions, where each experiment is represented by **a single aggregated value**. Examples include `pgdpwld`, `qgdpwld`, and `vgdpwld`.
+3.  [`macro_plot`](#sec:macroplot): Presents global macroeconomic
+    indicators without dimensions, where each experiment is
+    represented by **a single aggregated value**. Examples include
+    `pgdpwld`, `qgdpwld`, and `vgdpwld`.
 
-4. [`stack_plot`](#sec:stackplot): Displays the composition of a variable by **stacking its components** within each experiment, facilitating decomposition analysis. Examples include `EV decomposition` from GTAP results.
-
+4.  [`stack_plot`](#sec:stackplot): Displays the composition of a
+    variable by **stacking its components** within each experiment,
+    facilitating decomposition analysis. Examples include
+    `EV decomposition` from GTAP results.
 
 # Report Tables {#sec:report-table}
 
-This package provides a single command for generating several pivot tables designed for academic presentations. This vignette provides some examples in [Creating Report Table](#sec:report-table-creating).
+This package provides a single command for generating several pivot
+tables designed for academic presentations. This vignette provides
+some examples in [Creating Report Table](#sec:report-table-creating).
 
-1. [`Comparison Table`](#sec:comparison-table)  
-2. [`GTAP Macro Table`](#sec:macro-table)  
-3. [`Detail Table`](#sec:detail-table)  
-4. [`Decomposition Table`](#sec:decomp-table)  
-
+1.  [`Comparison Table`](#sec:comparison-table)\
+2.  [`GTAP Macro Table`](#sec:macro-table)\
+3.  [`Detail Table`](#sec:detail-table)\
+4.  [`Decomposition Table`](#sec:decomp-table)
 
 # Project Directory {#sec:project-setting}
 
-To use this R code, all solution files, including `.sl4` and `.har`, must be saved from RUNGTAP or CMD and placed in the same folder.
+To use this R code, all solution files, including `.sl4` and `.har`,
+must be saved from RUNGTAP or CMD and placed in the same folder.
 
-Adjust the `<project.folder>` directory to your desired path. If you maintain the same folder structure as in this code, you may not need to modify the input (`<input.folder>`), output (`<output.folder>`), or mapping (`<map.folder>`) directories.
+Adjust the `<project.folder>` directory to your desired path. If you
+maintain the same folder structure as in this code, you may not need
+to modify the input (`<input.folder>`), output (`<output.folder>`), or
+mapping (`<map.folder>`) directories.
 
 ```{r Project Folder, eval = FALSE}
 project.folder <- "your/folder/path"
@@ -114,91 +144,134 @@ map.folder <- paste0(project.folder, "/map")
 output.folder <- paste0(project.folder, "/out")   
 ```
 
-By default, this R code assumes that `<project.folder>` contains the following three main folders:
+By default, this R code assumes that `<project.folder>` contains the
+following three main folders:
 
--   **in** – Stores all input files (i.e., `.sl4` and `.har`). See [how to name input files](#sec:experiment-name) for details.
--   **map** – Stores the mapping `.xlsx` file (**critical for processing**). See [mapping file](sec:mapping-folder)
--   **out** – Stores all exported output files (optional; the function can create it automatically).
+-   **in** – Stores all input files (i.e., `.sl4` and `.har`). See
+    [how to name input files](#sec:experiment-name) for details.
+-   **map** – Stores the mapping `.xlsx` file (**critical for
+    processing**). See [mapping file](sec:mapping-folder)
+-   **out** – Stores all exported output files (optional; the function
+    can create it automatically).
 
 <figure>
-  <div style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;">
-    📂 project.folder/ <br>
-    ├── 📂 in/  <span style="color: #0000FF;"># Stores input files (<code>.sl4</code>, <code>.har</code>)</span> <br>
-    ├── 📂 out/ <span style="color: #008000;"># Stores output files</span> <br>
-    ├── 📂 map/ <span style="color: #DAA520;"># Stores the mapping file (<code>OutputMapping.xlsx</code>)</span> <br>
-  </div>
-  <figcaption style="text-align: center; font-style: italic;">Example of Project Folder</figcaption>
-</figure>
 
+::: {style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;"}
+```         
+📂 project.folder/ <br>
+├── 📂 in/  <span style="color: #0000FF;"># Stores input files (<code>.sl4</code>, <code>.har</code>)</span> <br>
+├── 📂 out/ <span style="color: #008000;"># Stores output files</span> <br>
+├── 📂 map/ <span style="color: #DAA520;"># Stores the mapping file (<code>OutputMapping.xlsx</code>)</span> <br>
+```
+:::
+
+<figcaption style="text-align: center; font-style: italic;">
+
+Example of Project Folder
+
+</figcaption>
+
+</figure>
 
 # Input Folder {#sec:input-folder}
 
-All input files must be stored in `<input.folder>` (default: `"/in"` inside `<project.folder>`). To ensure consistency, each `.sl4` and `.har` file must follow the naming format `<experiment_name>.sl4` and `<experiment_name>-WEL.har`. See [Input setup](#sec:inputsetup) for details on "Experiment Names."
+All input files must be stored in `<input.folder>` (default: `"/in"`
+inside `<project.folder>`). To ensure consistency, each `.sl4` and
+`.har` file must follow the naming format `<experiment_name>.sl4` and
+`<experiment_name>-WEL.har`. See [Input setup](#sec:inputsetup) for
+details on "Experiment Names."
 
 Below is an example of `<input.folder>`:
 
 <figure>
-  <div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
-    📂 in/ <br>
-    ├── 📄 EXP1.sl4 <br>
-    ├── 📄 EXP1-WEL.har <br>
-    ├── 📄 EXP2.sl4 <br>
-    ├── 📄 EXP2-WEL.har <br>
-  </div>
-  <figcaption style="text-align: center; font-style: italic;">Example of Input Files within the Input Folder</figcaption>
+
+::: {style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;"}
+```         
+📂 in/ <br>
+├── 📄 EXP1.sl4 <br>
+├── 📄 EXP1-WEL.har <br>
+├── 📄 EXP2.sl4 <br>
+├── 📄 EXP2-WEL.har <br>
+```
+:::
+
+<figcaption style="text-align: center; font-style: italic;">
+
+Example of Input Files within the Input Folder
+
+</figcaption>
+
 </figure>
 
-**Note:** You can include as many experiments as needed, but a higher number will increase processing time.
+**Note:** You can include as many experiments as needed, but a higher
+number will increase processing time.
 
 # Mapping Folder {#sec:mapping-folder}
 
-The template for the mapping XLSX file is available here: [OutputMapping.xlsx](https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map). You can specify the variables to extract from solution files in the **"SL4File"** and HAR file in the **"HARFile"** sheet. All required variables must be listed in the **"Variable"** column.
+The template for the mapping XLSX file is available here:
+[OutputMapping.xlsx](https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map).
+You can specify the variables to extract from solution files in the
+**"SL4File"** and HAR file in the **"HARFile"** sheet. All required
+variables must be listed in the **"Variable"** column.
 
-For **"Description"** and **"Unit"**, you can define them manually or leave them blank to use GTAPv7 defaults. Note that GTAP defaults apply only to variables included in the GTAPv7 set. If you introduce additional variables, you must define them manually, as no default exists.  
+For **"Description"** and **"Unit"**, you can define them manually or
+leave them blank to use GTAPv7 defaults. Note that GTAP defaults apply
+only to variables included in the GTAPv7 set. If you introduce
+additional variables, you must define them manually, as no default
+exists.
 
+**Important:** **"Unit"** column is required for **all figure
+commands**; without it, the command will not run. **"Description"**
+column is optional and can be used as the plot title—concise
+descriptions are recommended.
 
-**Important:** **"Unit"** column is required for **all figure commands**; without it, the command will not run. **"Description"** column is optional and can be used as the plot title—concise descriptions are recommended.  
+<div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
+  <table style="border-collapse: collapse; width: 100%;">
+    <tr>
+      <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Variable</th>
+      <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Description</th>
+      <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Unit</th>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">qgdp</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">Real GDP Index (%)</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">percent</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">EV</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">Welfare Equivalents</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">million USD</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">pprive</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">Consumer Price Index</td>
+      <td style="border: 1px solid #ABB2BF; padding: 8px;">percent</td>
+    </tr>
+  </table>
+</div>
 
-<figure>
-  <div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
-    <table style="border-collapse: collapse; width: 100%;">
-      <tr>
-        <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Variable</th>
-        <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Description</th>
-        <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Unit</th>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ABB2BF; padding: 8px;">qgdp</td>
-        <td style="border: 1px solid #ABB2BF; padding: 8px;">Real GDP Index</td>
-        <td style="border: 1px solid #ABB2BF; padding: 8px;">percent</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ABB2BF; padding: 8px;">EV</td>
-        <td style="border: 1px solid #ABB2BF; padding: 8px;">Welfare Equivalents</td>
-        <td style="border: 1px solid #ABB2BF; padding: 8px;">million USD</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ABB2BF; padding: 8px;">ppriv</td>
-        <td style="border: 1px solid #ABB2BF; padding: 8px;">Consumer Price Index</td>
-        <td style="border: 1px solid #ABB2BF; padding: 8px;">percent</td>
-      </tr>
-    </table>
-  </div>
-  <figcaption style="text-align: center; font-style: italic;">Example of SL4File and HARFile sheet</figcaption>
-</figure>
-
-You can import your external mapping file into R using the following method:
+You can import your external mapping file into R using the following
+method:
 
 ```{r Mapping File, eval = FALSE}
 sl4map <- readxl::read_xlsx(map.folder, sheet = "SL4File")
 harmap <- readxl::read_xlsx(map.folder, sheet = "HARFile")
 ```
 
-**Note:**  You can name the file whatever you like, but you must adjust the function accordingly. In this vignette, I name the mappings for `.sl4` and `.har` as "sl4map" and "harmap," respectively.
+**Note:** You can name the file whatever you like, but you must adjust
+the function accordingly. In this vignette, I name the mappings for
+`.sl4` and `.har` as "sl4map" and "harmap," respectively.
 
-💡 **Tip:** The [mapping file](https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map) can also be manually created in R as a dataframe, provided that it follows the exact structure, including column names. The dataframe must contain at least the **"Variable"** column, while **"Description"** and **"Unit"** columns are optional depending on the selected [info.mode](#sec:info.mode).  
+💡 **Tip:** The [mapping
+file](https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map)
+can also be manually created in R as a dataframe, provided that it
+follows the exact structure, including column names. The dataframe
+must contain at least the **"Variable"** column, while
+**"Description"** and **"Unit"** columns are optional depending on the
+selected [info.mode](#sec:info.mode).
 
-For example, the following R code creates an equivalent mapping dataframe:
+For example, the following R code creates an equivalent mapping
+dataframe:
 
 ```{r, eval=FALSE}
 mapping_df <- data.frame(
@@ -209,34 +282,47 @@ mapping_df <- data.frame(
 )
 ```
 
-
 # Input Setup {#sec:inputsetup}
 
-This section defines **experiment names**, **handling of description and unit columns**, and **output formats** for processing GTAP model results.
+This section defines **experiment names**, **handling of description
+and unit columns**, and **output formats** for processing GTAP model
+results.
 
 ## Experiment Names (`<experiment>`) {#sec:experiment-name}
 
-Define the name of your **input** file in `<experiment>` to specify the experiment name in the output. While renaming files within R is possible, I highly recommend doing so manually (i.e., aligning with your simulation) before generating plots in R.  
+Define the name of your **input** file in `<experiment>` to specify
+the experiment name in the output. While renaming files within R is
+possible, I highly recommend doing so manually (i.e., aligning with
+your simulation) before generating plots in R.
 
-For example, specifying the following will automatically process:  
-  - `EXP1.sl4` and `EXP1-WEL.har`  
-  - `EXP2.sl4` and `EXP2-WEL.har`  
+For example, specifying the following will automatically process:\
+- `EXP1.sl4` and `EXP1-WEL.har`\
+- `EXP2.sl4` and `EXP2-WEL.har`
 
 ```{r Experiment Name, eval = FALSE}
 experiment <- c("EXP1", "EXP2")
 ```
 
-💡 **Tip:** All figures and tables will be sorted based on the order of your input in `<experiment>`. If you want a specific experiment to appear first, place its name at the beginning when defining `<experiment>`. See [Input Data Preparation](#sec:input-preparation) for more details.  
+💡 **Tip:** All figures and tables will be sorted based on the order
+of your input in `<experiment>`. If you want a specific experiment to
+appear first, place its name at the beginning when defining
+`<experiment>`. See [Input Data Preparation](#sec:input-preparation)
+for more details.
 
-**Important:** `.har` input files must include "-WEL" in their names. See the [input folder figure](#sec:input-folder) if you are unsure.
+**Important:** `.har` input files must include "-WEL" in their names.
+See the [input folder figure](#sec:input-folder) if you are unsure.
 
 ## Description and Unit Handling (`<info.mode>`) {#sec:info.mode}
 
-Determines how the `"Description"` and `"Unit"` columns are included in the output:  
-- `"Yes"` → Uses manually defined descriptions and units from the mapping file.  
-- `"No"` → Excludes the `"Description"` and `"Unit"` columns.  
-- `"GTAPv7"` → Uses default definitions and units from **GTAP Model Version 7**.  
-- `"Mix"` → Uses manually defined values where available and GTAP defaults for the rest.  
+Determines how the `"Description"` and `"Unit"` columns are included
+in the output:\
+- `"Yes"` → Uses manually defined descriptions and units from the
+mapping file.\
+- `"No"` → Excludes the `"Description"` and `"Unit"` columns.\
+- `"GTAPv7"` → Uses default definitions and units from **GTAP Model
+Version 7**.\
+- `"Mix"` → Uses manually defined values where available and GTAP
+defaults for the rest.
 
 ```{r Information Structure, eval = FALSE}
 info.mode <- "Mix"
@@ -244,32 +330,48 @@ info.mode <- "Mix"
 
 # Input Data Preparation {#sec:input-preparation}
 
-## Filtering Data  
+## Filtering Data
 
-While all data may be imported, only a subset is typically needed for plotting. Figures cannot display all regions and sectors at once, so this process filters the data to be plotted.  
+While all data may be imported, only a subset is typically needed for
+plotting. Figures cannot display all regions and sectors at once, so
+this process filters the data to be plotted.
 
-This filtering automation is designed specifically for the GTAP model and works only with the `"REG"` (Region) and `"COMM / ACTS"` (Sector) column names. To filter other columns, use `data.frame` or the `dplyr` package manually before proceeding with the plot.  
+This filtering automation is designed specifically for the GTAP model
+and works only with the `"REG"` (Region) and `"COMM / ACTS"` (Sector)
+column names. To filter other columns, use `data.frame` or the `dplyr`
+package manually before proceeding with the plot.
 
-GTAP users can specify the regions and sectors to include in the plot below:
+GTAP users can specify the regions and sectors to include in the plot
+below:
 
 ```{r Filtering Data, eval = FALSE}
 selected_regions <- c("USA", "CHN", "CAN", "ASEAN", "ROW")
 selected_sector <- NULL
 ```
 
-**Note:** By default, `"NULL"` includes all, but this may impact plot aesthetics. If the plot appears too dense or visually unclear, consider refining the selection here.  
+**Note:** By default, `"NULL"` includes all, but this may impact plot
+aesthetics. If the plot appears too dense or visually unclear,
+consider refining the selection here.
 
-💡 **Tip:** All figures and tables will be sorted according to the order of your input in `<experiment>`, `<selected_regions>`, and `<selected_sector>`.  
-For example:  
-- If `selected_regions <- c("USA", "CHN")`, the plot for **USA** will appear before **CHN**.  
-- If `experiment <- c(EXP2, EXP1)`, the figure panel for **EXP2** will appear before **EXP1** (i.e., from left to right).  
-
+💡 **Tip:** All figures and tables will be sorted according to the
+order of your input in `<experiment>`, `<selected_regions>`, and
+`<selected_sector>`.\
+For example:\
+- If `selected_regions <- c("USA", "CHN")`, the plot for **USA** will
+appear before **CHN**.\
+- If `experiment <- c(EXP2, EXP1)`, the figure panel for **EXP2** will
+appear before **EXP1** (i.e., from left to right).
 
 ## Automated GTAP Data Processing {#sec:automategtap}
 
-To automate the process of generating figures from GTAP results for GTAP users, I have developed a streamlined data extraction method using the `HARplus` package.  
+To automate the process of generating figures from GTAP results for
+GTAP users, I have developed a streamlined data extraction method
+using the `HARplus` package.
 
-This automation may not work well for non-GTAP models, so you may need to manually extract and manipulate the data before using the figure code provided in this vignette. Refer to [manual data processing](#sec:manualdata) for more details.
+This automation may not work well for non-GTAP models, so you may need
+to manually extract and manipulate the data before using the figure
+code provided in this vignette. Refer to [manual data
+processing](#sec:manualdata) for more details.
 
 ```{r Preparing Data for Plot, eval = FALSE}
 process_gtap_data(
@@ -291,18 +393,28 @@ process_gtap_data(
     "txt" = "No"))
 ```
 
-💡 **Tip:** This automation uses the `"HARplus::group_data_by_dims"` command. However, other formats, such as `"HARplus::get_data_by_var"`, `"HARplus::get_data_by_dims"`, or your own data format, can also work with the figure code. Keep in mind that these alternatives may require additional data preparation to ensure compatibility with the figure command.
-
+💡 **Tip:** This automation uses the `"HARplus::group_data_by_dims"`
+command. However, other formats, such as `"HARplus::get_data_by_var"`,
+`"HARplus::get_data_by_dims"`, or your own data format, can also work
+with the figure code. Keep in mind that these alternatives may require
+additional data preparation to ensure compatibility with the figure
+command.
 
 ## Manual Data Processing {#sec:manualdata}
 
-For other models or additional variables that users may want to include in the default model, data can still be prepared in the same format using the following steps:
+For other models or additional variables that users may want to
+include in the default model, data can still be prepared in the same
+format using the following steps:
 
-1. Use `"HARplus::load_sl4x"` or `"HARplus::load_harx"`, followed by `"HARplus::group_data_by_dims"`, to obtain the data in the exact same format.
+1.  Use `"HARplus::load_sl4x"` or `"HARplus::load_harx"`, followed by
+    `"HARplus::group_data_by_dims"`, to obtain the data in the exact
+    same format.
 
-2. Filter each dataframe using standard R `data.frame` operations.
+2.  Filter each dataframe using standard R `data.frame` operations.
 
-3. Add the `"Unit"` and `"Description"` columns (the `"Unit"` column is required for processing) using the `"add_mapping_info"` command from this package.
+3.  Add the `"Unit"` and `"Description"` columns (the `"Unit"` column
+    is required for processing) using the `"add_mapping_info"` command
+    from this package.
 
 ```{r Manual Data Filtering, eval = FALSE}
 # Step 1: Extracting Data
@@ -327,15 +439,22 @@ manual.data <- add_mapping_info(manual.data, external_map = "/your/mapping.xlsx"
 ```
 
 ## Customizing Units and Labels (Optional) {#sec:custom-unit}
-The following two optional processes are recommended for better figure illustration. While they are not mandatory, they are highly recommended.  
 
-**Note:** These processes are not automatically applied in the automation step and must be performed manually.
+The following two optional processes are recommended for better figure
+illustration. While they are not mandatory, they are highly
+recommended.
 
-1. **Converting the default unit column** based on your input. For more details, see `"?convert_units"`.  
-   - **Note:** You must define the `"adjustment"` method using `/`, `*`, `+`, or `-`.  
-   - **Example:** To convert values from million USD to billion USD, set `adjustment = c("/1000")`.
+**Note:** These processes are not automatically applied in the
+automation step and must be performed manually.
 
-2. **Renaming column names** for figure generation (e.g., renaming `REG` to `Region`) using `<HARplus::rename_dims>`.
+1.  **Converting the default unit column** based on your input. For
+    more details, see `"?convert_units"`.
+    -   **Note:** You must define the `"adjustment"` method using `/`,
+        `*`, `+`, or `-`.\
+    -   **Example:** To convert values from million USD to billion
+        USD, set `adjustment = c("/1000")`.
+2.  **Renaming column names** for figure generation (e.g., renaming
+    `REG` to `Region`) using `<HARplus::rename_dims>`.
 
 ```{r Optional Convert Unit and Rename Columns, eval = FALSE}
 datasets <- list(sl4.plot.data, har.plot.data)
@@ -352,80 +471,112 @@ har.plot.data <- datasets[[2]]
 rm(datasets)
 ```
 
-:::{.alert}
+::: alert
+# **Important: Before Starting the Plot**
 
-# **Important: Before Starting the Plot**  
+## **Rule of Thumb**
 
-## **Rule of Thumb**  
-You can modify and rename most columns in the dataframe **as long as you adjust the corresponding code accordingly**.  
+You can modify and rename most columns in the dataframe **as long as
+you adjust the corresponding code accordingly**.
 
-**However, do NOT rename the columns** `"Experiment"`, `"Value"`, or `"Variable"`. While the values inside these columns can be modified freely, their names must remain unchanged.  
+**However, do NOT rename the columns** `"Experiment"`, `"Value"`, or
+`"Variable"`. While the values inside these columns can be modified
+freely, their names must remain unchanged.
 
-## **Key Features to Explore**  
+## **Key Features to Explore**
 
-I **highly recommend** reviewing the help documentation for each plot command using `?`, e.g., `?comparison_plot`.  
+I **highly recommend** reviewing the help documentation for each plot
+command using `?`, e.g., `?comparison_plot`.
 
-Each function offers **multiple customization options** and **various export methods**. Understanding these features will help you fully utilize their capabilities.  
+Each function offers **multiple customization options** and **various
+export methods**. Understanding these features will help you fully
+utilize their capabilities.
 
-Adjusting the following options allows for **greater flexibility in visualization**:  
+Adjusting the following options allows for **greater flexibility in
+visualization**:
 
-- **`split_by`** – Specifies the column used to separate plots.  
-  - Example: Setting `"split_by" = "Region"` while plotting `"x_axis_from" = "Variable"` creates a figure for each region containing all variables. Swapping them results in plots for each variable across all regions.  
+-   **`split_by`** – Specifies the column used to separate plots.
 
-- **`separate_figure`** – Generates **individual figures** instead of displaying all panels in a single figure. Experimenting with `compare_by_experiment` and `invert_panel` can produce various plot styles.  
+    -   Example: Setting `"split_by" = "Region"` while plotting
+        `"x_axis_from" = "Variable"` creates a figure for each region
+        containing all variables. Swapping them results in plots for
+        each variable across all regions.
 
-- **`color_tone`** – Controls the **base color** of the plot for aesthetic consistency. You can specify a color (e.g., `"red"`, `"green"`) or use pre-defined themes included in the package, such as `"academic"`, `"economic"`, `"colorblind"`, `"trade"`, and `"purdue"`.  
+-   **`separate_figure`** – Generates **individual figures** instead
+    of displaying all panels in a single figure. Experimenting with
+    `compare_by_experiment` and `invert_panel` can produce various
+    plot styles.
 
-- **`compare_by_experiment`** – By default, plots are separated by `"Experiment"`. This option allows automatic swapping between `"Experiment"` and `"x_axis_from"`.  
+-   **`color_tone`** – Controls the **base color** of the plot for
+    aesthetic consistency. You can specify a color (e.g., `"red"`,
+    `"green"`) or use pre-defined themes included in the package, such
+    as `"academic"`, `"economic"`, `"colorblind"`, `"trade"`, and
+    `"purdue"`.
 
-- **`invert_panel`** – Determines which variable is used to create separate panels versus separate plots.  
+-   **`compare_by_experiment`** – By default, plots are separated by
+    `"Experiment"`. This option allows automatic swapping between
+    `"Experiment"` and `"x_axis_from"`.
 
-## **Practical Example**  
+-   **`invert_panel`** – Determines which variable is used to create
+    separate panels versus separate plots.
 
-If you have:  
+## **Practical Example**
 
-- **3 experiments**: `Base`, `Policy1`, `Policy2`  
-- **5 regions**: `USA`, `EU`, `China`, `Japan`, `Brazil`  
-- `x_axis_from = "Region"`  
-- `split_by = "Variable"` (e.g., `GDP`, `Consumption`)  
+If you have:
 
-Different combinations yield the following results:  
+-   **3 experiments**: `Base`, `Policy1`, `Policy2`\
+-   **5 regions**: `USA`, `EU`, `China`, `Japan`, `Brazil`\
+-   `x_axis_from = "Region"`\
+-   `split_by = "Variable"` (e.g., `GDP`, `Consumption`)
 
-### `compare_by_experiment = FALSE, invert_panel = FALSE`  
+Different combinations yield the following results:
 
-- Each variable (`GDP`, `Consumption`) has a **separate plot**.  
-- Each plot contains **3 panels** (one per experiment).  
-- The **X-axis** represents the **5 regions** in each panel.  
+### `compare_by_experiment = FALSE, invert_panel = FALSE`
 
-### `compare_by_experiment = TRUE, invert_panel = FALSE`  
+-   Each variable (`GDP`, `Consumption`) has a **separate plot**.\
+-   Each plot contains **3 panels** (one per experiment).\
+-   The **X-axis** represents the **5 regions** in each panel.
 
-- Each variable (`GDP`, `Consumption`) has a **separate plot**.  
-- Each plot contains **5 panels** (one per region).  
-- The **X-axis** represents the **3 experiments** in each panel.  
+### `compare_by_experiment = TRUE, invert_panel = FALSE`
 
-### `compare_by_experiment = FALSE, invert_panel = TRUE`  
+-   Each variable (`GDP`, `Consumption`) has a **separate plot**.\
+-   Each plot contains **5 panels** (one per region).\
+-   The **X-axis** represents the **3 experiments** in each panel.
 
-- Each experiment (`Base`, `Policy1`, `Policy2`) has a **separate plot**.  
-- Each plot contains **panels for each variable** (`GDP`, `Consumption`).  
-- The **X-axis** represents the **regions** in each panel.  
+### `compare_by_experiment = FALSE, invert_panel = TRUE`
 
-### `compare_by_experiment = TRUE, invert_panel = TRUE`  
+-   Each experiment (`Base`, `Policy1`, `Policy2`) has a **separate
+    plot**.\
+-   Each plot contains **panels for each variable** (`GDP`,
+    `Consumption`).\
+-   The **X-axis** represents the **regions** in each panel.
 
-- Each experiment (`Base`, `Policy1`, `Policy2`) has a **separate plot**.  
-- Each plot contains **panels for each region**.  
-- The **X-axis** represents the **variables** in each panel.  
+### `compare_by_experiment = TRUE, invert_panel = TRUE`
 
+-   Each experiment (`Base`, `Policy1`, `Policy2`) has a **separate
+    plot**.\
+-   Each plot contains **panels for each region**.\
+-   The **X-axis** represents the **variables** in each panel.
 :::
 
 # Comparison Plot {#sec:comparisonplot}
 
-This figure is designed to compare **a single dimension** across experiments, making it unsuitable for multi-dimensional data. It is primarily used to illustrate comparisons of `"Region"` across experiments.  
+This figure is designed to compare **a single dimension** across
+experiments, making it unsuitable for multi-dimensional data. It is
+primarily used to illustrate comparisons of `"Region"` across
+experiments.
 
-You can also use this figure for other **single-dimensional comparisons**, as long as only one dimension is displayed (e.g., `REG`, `COMM`, `ACTS`).  
+You can also use this figure for other **single-dimensional
+comparisons**, as long as only one dimension is displayed (e.g.,
+`REG`, `COMM`, `ACTS`).
 
-💡 **Tip:** To check which data is compatible with this figure, use: `"HARplus::group_data_by_dims"`. Variables listed under the `"1D"` sublist are suitable for this figure.
+💡 **Tip:** To check which data is compatible with this figure, use:
+`"HARplus::group_data_by_dims"`. Variables listed under the `"1D"`
+sublist are suitable for this figure.
 
-For example, plotting `qgdp`, `ppriv`, `EV`, `tot`, and `u` will automatically generate six separate figures using the following command:
+For example, plotting `qgdp`, `ppriv`, `EV`, `tot`, and `u` will
+automatically generate six separate figures using the following
+command:
 
 ```{r Comparison Plot, eval = FALSE}
 region.dta <- sl4.plot.data[["1D"]][["Region"]]
@@ -448,21 +599,30 @@ comparison_plot(region.dta,
                 legend_position = "bottom")
 ```
 
-💡 **Tip:** Since the plot does not allow direct font size adjustments, the key to achieving the best figure format is to modify **panel_rows**/**panel_cols** and **width**/**height** for optimal output. By default, the command automatically calculates a balanced square layout, but I highly recommend experimenting with these settings to refine the result.  
-
+💡 **Tip:** Since the plot does not allow direct font size
+adjustments, the key to achieving the best figure format is to modify
+**panel_rows**/**panel_cols** and **width**/**height** for optimal
+output. By default, the command automatically calculates a balanced
+square layout, but I highly recommend experimenting with these
+settings to refine the result.
 
 ```{r, echo=FALSE, out.width="600px"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/cpsplot.png")
 ```
 
+# GTAP Macro Variable Plot {#sec:macroplot}
 
-# GTAP Macro Variable Plot {#sec:macroplot}  
+This figure is designed to display aggregated values for comparison
+across all experiments, such as global economic impacts. It is
+specifically intended for GTAP Macro variables extracted from the
+`"Macros"` header in `<.sl4>` files.
 
-This figure is designed to display aggregated values for comparison across all experiments, such as global economic impacts. It is specifically intended for GTAP Macro variables extracted from the `"Macros"` header in `<.sl4>` files. 
+**Tip:** This figure can also be used for other types of aggregated
+data.
 
-**Tip:** This figure can also be used for other types of aggregated data.  
-
-To generate this figure, users must first extract the relevant GTAP Macro variables, if it's not yet imported, using the `<gtap_macros_data>` command:  
+To generate this figure, users must first extract the relevant GTAP
+Macro variables, if it's not yet imported, using the
+`<gtap_macros_data>` command:
 
 ```{r GTAP Macro Plot Data, eval = FALSE}
 Macros <- gtap_macros_data(
@@ -472,9 +632,14 @@ Macros <- gtap_macros_data(
 )
 ```
 
-While it's quite similar process to other variables, the process is a little trickier for GTAP Macros variable since those variables are nested in a single header `"Macros"` and did not follow your mapping external file automatically.
+While it's quite similar process to other variables, the process is a
+little trickier for GTAP Macros variable since those variables are
+nested in a single header `"Macros"` and did not follow your mapping
+external file automatically.
 
-If you want to specifically only some variables within the GTAP Macros to be plotted as well as to rename those variable, you can do as the follows in R environment:
+If you want to specifically only some variables within the GTAP Macros
+to be plotted as well as to rename those variable, you can do as the
+follows in R environment:
 
 ```{r GTAP Macro Plot Data Rename, eval = FALSE}
 # Selecting Variables
@@ -488,7 +653,11 @@ macro.map <- data.frame(
   stringsAsFactors = FALSE
 )
 ```
-**Tip:** This mapping process can also be skipped and used the same .xlsx file to construct like other variables. However, you must define each variable in the `"Macros"` header manually in the "Variable" column. 
+
+**Tip:** This mapping process can also be skipped and used the same
+.xlsx file to construct like other variables. However, you must define
+each variable in the `"Macros"` header manually in the "Variable"
+column.
 
 To plot this figure, you can use the following command
 
@@ -509,20 +678,34 @@ macro_plot(Macros,
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/GTAPMacros.png")
 ```
 
+# Detail Plot {#sec:detailplot}
 
+This plot is designed for large-scale data visualization, as implied
+by its name, `<detail_plot>`. It illustrates all sectors (`COMM` or
+`ACTS`) or all regions (`REG`) for each experiment.
 
+This differs from `<comparison_plot>`, which only visualizes
+**selected regions**. Some GTAPv7 variables suitable for this figure
+include `qo`, `qxw`, `qmw`, `pmw`, `pxw`, and `qgdp`, plotted across
+**all regions** within the same experiment.
 
-# Detail Plot {#sec:detailplot}  
+Since the variable you want to plot may come from different dataframes
+(i.e., different dimension names), I have developed a function to
+simplify this process. By selecting `"split_by"` as the primary column
+shared across all variables to be plotted, you can specify
+`"y_axis_from"` with multiple columns. The function will automatically
+identify the corresponding column in each dataset.
 
-This plot is designed for large-scale data visualization, as implied by its name, `<detail_plot>`. It illustrates all sectors (`COMM` or `ACTS`) or all regions (`REG`) for each experiment.  
+Another powerful tool is the `top_impact` option that allows for
+**automatic filtering** by selecting only the **most affected
+variables**. For example, setting `top_impact = 10` will include the
+**top 5 positive** and **top 5 negative** values. If fewer than 5
+exist in either category, additional values will be included to meet
+the specified limit.
 
-This differs from `<comparison_plot>`, which only visualizes **selected regions**. Some GTAPv7 variables suitable for this figure include `qo`, `qxw`, `qmw`, `pmw`, `pxw`, and `qgdp`, plotted across **all regions** within the same experiment.  
-
-Since the variable you want to plot may come from different dataframes (i.e., different dimension names), I have developed a function to simplify this process. By selecting `"split_by"` as the primary column shared across all variables to be plotted, you can specify `"y_axis_from"` with multiple columns. The function will automatically identify the corresponding column in each dataset.  
-
-Another powerful tool is the `top_impact` option that allows for **automatic filtering** by selecting only the **most affected variables**. For example, setting `top_impact = 10` will include the **top 5 positive** and **top 5 negative** values. If fewer than 5 exist in either category, additional values will be included to meet the specified limit.  
-
-For example, in the following code snippet, the function will locate all variables within the dimensions `COMM*REG`, `REG*COMM`, `ACTS*REG`, and `REG*ACTS` for plotting:  
+For example, in the following code snippet, the function will locate
+all variables within the dimensions `COMM*REG`, `REG*COMM`,
+`ACTS*REG`, and `REG*ACTS` for plotting:
 
 ```{r Detail Plot, eval = FALSE}
 lapply(sl4.plot.data, function(df) {
@@ -548,18 +731,33 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot_top10.png")
 ```
 
-**Tip:** This figure can include multiple variables on the y-axis, but you may need to manually define the `"width"` and `"height"` of the output accordingly.
-
+**Tip:** This figure can include multiple variables on the y-axis, but
+you may need to manually define the `"width"` and `"height"` of the
+output accordingly.
 
 # Decomposition (Stack) Plot {#sec:stackplot}
 
-This plot is designed for **visualizing decomposition results**, allowing users to analyze the contribution of different components to a total value. Unlike `<detail_plot>`, which visualizes all regions or sectors, `<stack_plot>` represents **the breakdown of a variable across selected categories**.  
+This plot is designed for **visualizing decomposition results**,
+allowing users to analyze the contribution of different components to
+a total value. Unlike `<detail_plot>`, which visualizes all regions or
+sectors, `<stack_plot>` represents **the breakdown of a variable
+across selected categories**.
 
-Additionally, this plot provides an option to **further decompose the results** by **unstacking** the components instead of displaying them as a stacked bar. This flexibility makes it suitable for analyzing **welfare decomposition, trade decomposition, or other GTAP structural breakdowns**.  
+Additionally, this plot provides an option to **further decompose the
+results** by **unstacking** the components instead of displaying them
+as a stacked bar. This flexibility makes it suitable for analyzing
+**welfare decomposition, trade decomposition, or other GTAP structural
+breakdowns**.
 
-Some GTAPv7 variables that are well-suited for this plot include **welfare decomposition components (`A`), terms of trade decomposition (`E1`), and other breakdown analyses**.  
+Some GTAPv7 variables that are well-suited for this plot include
+**welfare decomposition components (`A`), terms of trade decomposition
+(`E1`), and other breakdown analyses**.
 
-Since decomposition data often involves multiple components, **renaming and restructuring the data** may be necessary before plotting. For example, the following command renames the `"COLUMN"` values in the `har.plot.data` dataframe to provide more meaningful labels for visualization:  
+Since decomposition data often involves multiple components,
+**renaming and restructuring the data** may be necessary before
+plotting. For example, the following command renames the `"COLUMN"`
+values in the `har.plot.data` dataframe to provide more meaningful
+labels for visualization:
 
 ```{r Decomposition Plot, eval = FALSE}
 # Rename Value if needed
@@ -616,47 +814,62 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 
 # Creating Report Table {#sec:report-table-creating}
 
-This single command generates multiple table formats suitable for academic presentations with minimal adjustments. You can process several data frames in the same code session, even if they require different pivot formats, but each data frame must be defined separately. See the sample code for details.
+This single command generates multiple table formats suitable for
+academic presentations with minimal adjustments. You can process
+several data frames in the same code session, even if they require
+different pivot formats, but each data frame must be defined
+separately. See the sample code for details.
 
-This vignette shows only a few examples, but for complete usage, consult `<?report_table>`. Below are key arguments to highlight:
+This vignette shows only a few examples, but for complete usage,
+consult `<?report_table>`. Below are key arguments to highlight:
 
-- **`pivot_col`**  
-  A named list specifying the column to pivot into wide format.  
-- **`group_by`**  
-  A list or character vector defining grouping columns.  
-- **`total_column`**  
-  If `TRUE`, adds a “Total” column that sums all numeric columns row-wise.  
-- **`separate_file`**  
-  If `TRUE`, exports each data frame to its own Excel file; otherwise, all go into one workbook.
-- **`include_units`**  
-  If `TRUE`, retains the “Unit” column in the grouping (recommended).  
-- **`component_exclude`**  
-  A vector of component names to exclude (i.e., values in `pivot_col` that should be omitted).  
-- **`rename_cols`**  
-  A named list mapping old column names to new names.  
-- **`var_name_by_description`**  
-  If `TRUE`, names pivoted columns using “Description” (if available).  
-- **`add_var_info`**  
-  If `TRUE`, appends the variable name to its description in parentheses.  
-- **`decimal`**  
-  Sets the number of decimal places in output.  
-- **`unit_select`**  
-  Keeps only rows matching the specified unit.  
-- **`separate_sheet_by`**  
-  Splits the output into multiple sheets by this column.  
-- **`subtotal_level`**  
-  If `TRUE`, applies subtotal-based filtering where applicable.  
-- **`repeat_label`**  
-  If `TRUE`, repeats all labels in every row (i.e., raw dataset style).  
-- **`add_group_line`**  
-  Places a border line to separate groups based on the first column.
+-   **`pivot_col`**\
+    A named list specifying the column to pivot into wide format.\
+-   **`group_by`**\
+    A list or character vector defining grouping columns.\
+-   **`total_column`**\
+    If `TRUE`, adds a “Total” column that sums all numeric columns
+    row-wise.\
+-   **`separate_file`**\
+    If `TRUE`, exports each data frame to its own Excel file;
+    otherwise, all go into one workbook.
+-   **`include_units`**\
+    If `TRUE`, retains the “Unit” column in the grouping
+    (recommended).\
+-   **`component_exclude`**\
+    A vector of component names to exclude (i.e., values in
+    `pivot_col` that should be omitted).\
+-   **`rename_cols`**\
+    A named list mapping old column names to new names.\
+-   **`var_name_by_description`**\
+    If `TRUE`, names pivoted columns using “Description” (if
+    available).\
+-   **`add_var_info`**\
+    If `TRUE`, appends the variable name to its description in
+    parentheses.\
+-   **`decimal`**\
+    Sets the number of decimal places in output.\
+-   **`unit_select`**\
+    Keeps only rows matching the specified unit.\
+-   **`separate_sheet_by`**\
+    Splits the output into multiple sheets by this column.\
+-   **`subtotal_level`**\
+    If `TRUE`, applies subtotal-based filtering where applicable.\
+-   **`repeat_label`**\
+    If `TRUE`, repeats all labels in every row (i.e., raw dataset
+    style).\
+-   **`add_group_line`**\
+    Places a border line to separate groups based on the first column.
 
-**Note:**  
-- This command works only with the **data list** format. For instance, you must first convert “GTAPMacro” or any other data frame to a data list (see [GTAP Macro Table](#sec:macro-table)).  
-- Variable names in the columns cannot be changed here. To rename them (e.g., country names), do so before invoking this function (see [Renaming Values in a Dataframe](#sec:rename-value)).  
+**Note:**\
+- This command works only with the **data list** format. For instance,
+you must first convert “GTAPMacro” or any other data frame to a data
+list (see [GTAP Macro Table](#sec:macro-table)).\
+- Variable names in the columns cannot be changed here. To rename them
+(e.g., country names), do so before invoking this function (see
+[Renaming Values in a Dataframe](#sec:rename-value)).
 
-
-## 1. Comparison Table {#sec:comparison-table}   
+## 1. Comparison Table {#sec:comparison-table}
 
 ```{r Comparison Table, eval = FALSE}
 report_table(
@@ -778,12 +991,12 @@ report_table(
 )
 ```
 
+# Additional Utilities {#sec:additional-utilities}
 
-# Additional Utilities {#sec:additional-utilities}  
+## 1. Adding Unit and Description Columns {#sec:add-info}
 
-## 1. Adding Unit and Description Columns {#sec:add-info}  
-
-If you manually import data or need to adjust the `"Description"` and `"Unit"` columns, you can use the following command:  
+If you manually import data or need to adjust the `"Description"` and
+`"Unit"` columns, you can use the following command:
 
 ```{r Add Info, eval = FALSE}
 mapping_df <- data.frame(
@@ -796,20 +1009,30 @@ mapping_df <- data.frame(
 datasets <- add_mapping_info(mapping_df, external_map = mapping_df, mapping = "Yes")
 ```
 
-**Note:** Use `<?add_mapping_info>` to understand the meaning of `mapping = "Yes"`, or see [Description and Unit Handling](#sec:info.mode) for details.  
+**Note:** Use `<?add_mapping_info>` to understand the meaning of
+`mapping = "Yes"`, or see [Description and Unit
+Handling](#sec:info.mode) for details.
 
-## 2. Converting Units and Values {#sec:converting-unit}  
+## 2. Converting Units and Values {#sec:converting-unit}
 
-GTAP default values are typically reported in million USD, which may be too large for aesthetic plotting. You can use this command to convert units across all variables and data frames.  
+GTAP default values are typically reported in million USD, which may
+be too large for aesthetic plotting. You can use this command to
+convert units across all variables and data frames.
 
-You can convert all units in the data frame at once, but you must define the **order correctly**:  
-- `change_unit_from` – The original unit name in the `"Unit"` column that you want to change.  
-- `change_unit_to` – The new unit name to be reported in the `"Unit"` column.  
-- `adjustment` – The mathematical operation to convert the old unit to the new one using `/`, `*`, `+`, or `-`.  
+You can convert all units in the data frame at once, but you must
+define the **order correctly**:\
+- `change_unit_from` – The original unit name in the `"Unit"` column
+that you want to change.\
+- `change_unit_to` – The new unit name to be reported in the `"Unit"`
+column.\
+- `adjustment` – The mathematical operation to convert the old unit to
+the new one using `/`, `*`, `+`, or `-`.
 
-For example, you can automate the following conversions:  
-- Convert `million USD` to `billion USD` by dividing the original value by 1,000.  
-- Convert `percent` to `proportion` by dividing the original value by 100.  
+For example, you can automate the following conversions:\
+- Convert `million USD` to `billion USD` by dividing the original
+value by 1,000.\
+- Convert `percent` to `proportion` by dividing the original value by
+100.
 
 ```{r Converting Unit, eval = FALSE}
 datasets <- convert_units(change_unit_from = c("million USD", "percent"),
@@ -817,13 +1040,21 @@ datasets <- convert_units(change_unit_from = c("million USD", "percent"),
                           adjustment = c("/1000", "/100"))
 ```
 
-**Note:** This command has the following limitations:  
-- The `"Unit"` column must exist and be named exactly as `"Unit"`. If not, you may need to check the [`<add_mapping_info>`](sec:add-info) command.  
-- While the command is **case-insensitive** (e.g., `USD` = `usd`), the spacing structure in unit names must be consistent. For example, the code will not convert `"millionUSD"` if it is defined as `"million USD"` with a space.  
+**Note:** This command has the following limitations:\
+- The `"Unit"` column must exist and be named exactly as `"Unit"`. If
+not, you may need to check the [`<add_mapping_info>`](sec:add-info)
+command.\
+- While the command is **case-insensitive** (e.g., `USD` = `usd`), the
+spacing structure in unit names must be consistent. For example, the
+code will not convert `"millionUSD"` if it is defined as
+`"million USD"` with a space.
 
-## 3. Renaming Columns and Data List Names {#sec:rename-column}    
+## 3. Renaming Columns and Data List Names {#sec:rename-column}
 
-If you need to automatically modify column names across all datasets and/or rename data list names simultaneously—such as changing the column name `REG` to `Region` or `COMM` to `Commodity`—the following command will be useful:
+If you need to automatically modify column names across all datasets
+and/or rename data list names simultaneously—such as changing the
+column name `REG` to `Region` or `COMM` to `Commodity`—the following
+command will be useful:
 
 ```{r Rename Column, eval = FALSE}
 # Creating Mapping File
@@ -835,13 +1066,17 @@ rename_col <- data.frame(
 har.plot.data <- HARplus::rename_col(har.plot.data, rename_col)
 ```
 
-**Tip:** You can also create this dataframe for mapping in Excel and import it into the R environment.  
-**Note:** The column names must be `"old"` and `"new"`. See `<?HARplus::rename_col>` for more details.
+**Tip:** You can also create this dataframe for mapping in Excel and
+import it into the R environment.\
+**Note:** The column names must be `"old"` and `"new"`. See
+`<?HARplus::rename_col>` for more details.
 
+## 4. Renaming Values in a Dataframe {#sec:rename-value}
 
-## 4. Renaming Values in a Dataframe {#sec:rename-value}  
-
-If you need to automatically modify values in any column across the entire dataframe before plotting—such as renaming country names in the `REG` column (e.g., changing `"USA"` to `"United States"` or `"CHN"` to `"China"`)—the following command will be useful:
+If you need to automatically modify values in any column across the
+entire dataframe before plotting—such as renaming country names in the
+`REG` column (e.g., changing `"USA"` to `"United States"` or `"CHN"`
+to `"China"`)—the following command will be useful:
 
 ```{r Rename Value, eval = FALSE}
 rename.region <- data.frame(
@@ -854,12 +1089,18 @@ rename.region <- data.frame(
 har.plot.data.rename <- rename_value(har.plot.data, mapping.file = rename.region)
 ```
 
-**Tip:** You can also create this dataframe for mapping in Excel and import it into the R environment.  
-**Note:** The column names must be `"OldName"` and `"NewName"`. The `"ColumnName"` can be specified directly in the `<rename_value>` command, as shown in the example: `rename_value(data, "REG", mapping.file = "/your/file.xlsx")`
-
+**Tip:** You can also create this dataframe for mapping in Excel and
+import it into the R environment.\
+**Note:** The column names must be `"OldName"` and `"NewName"`. The
+`"ColumnName"` can be specified directly in the `<rename_value>`
+command, as shown in the example:
+`rename_value(data, "REG", mapping.file = "/your/file.xlsx")`
 
 # Sample Data
-Sample data used in this vignette is obtained from the GTAPv7 model and utilizes publicly available data from the GTAP 9 database. For more details, refer to the [GTAP Database Archive](https://www.gtap.agecon.purdue.edu/databases/archives.asp).
+
+Sample data used in this vignette is obtained from the GTAPv7 model
+and utilizes publicly available data from the GTAP 9 database. For
+more details, refer to the [GTAP Database
+Archive](https://www.gtap.agecon.purdue.edu/databases/archives.asp).
 
 # Reference
-
