@@ -32,9 +32,9 @@ lapply(required_pkgs, function(pkg) {
 # Directory
 project.folder <- "D:/GitHub/GTAPViz/inst/extdata"
 input.folder <- paste0(project.folder, "/in")
-mapping.output <- paste0(project.folder, "/map/OutputMapping.xlsx")
-sl4map <- readxl::read_xlsx(mapping.output, sheet = "SL4File")
-harmap <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
+#mapping.output <- paste0(project.folder, "/map/OutputMapping.xlsx")
+#sl4map <- readxl::read_xlsx(mapping.output, sheet = "SL4File")
+#harmap <- readxl::read_xlsx(mapping.output, sheet = "HARFile")
 setwd <- "D:/GitHub/GTAPViz/R"
 devtools::load_all()
 
@@ -225,8 +225,8 @@ txt.output <- "YES"
 process_gtap_data(
   sl4var = NULL, 
   harvar = NULL,
-  sl4map = sl4map,
-  harmap = harmap,
+  sl4map = NULL,
+  harmap = NULL,
   region_select = NULL,
   sector_select = NULL,
   subtotal = FALSE,
