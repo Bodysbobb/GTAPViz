@@ -158,10 +158,10 @@ following three main folders:
 
 ::: {style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;"}
 ```         
-📂 project.folder/ <br>
-├── 📂 in/  <span style="color: #0000FF;"># Stores input files (<code>.sl4</code>, <code>.har</code>)</span> <br>
-├── 📂 out/ <span style="color: #008000;"># Stores output files</span> <br>
-├── 📂 map/ <span style="color: #DAA520;"># Stores the mapping file (<code>OutputMapping.xlsx</code>)</span> <br>
+📂 project.folder/ 
+├── 📂 in/  
+├── 📂 map/ 
+├── 📂 out/ 
 ```
 :::
 
@@ -187,19 +187,13 @@ Below is an example of `<input.folder>`:
 
 ::: {style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;"}
 ```         
-📂 in/ <br>
-├── 📄 EXP1.sl4 <br>
-├── 📄 EXP1-WEL.har <br>
-├── 📄 EXP2.sl4 <br>
-├── 📄 EXP2-WEL.har <br>
+📂 in/ 
+├── 📄 EXP1.sl4 
+├── 📄 EXP1-WEL.har 
+├── 📄 EXP2.sl4 
+├── 📄 EXP2-WEL.har 
 ```
 :::
-
-<figcaption style="text-align: center; font-style: italic;">
-
-Example of Input Files within the Input Folder
-
-</figcaption>
 
 </figure>
 

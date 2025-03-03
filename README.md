@@ -1,8 +1,7 @@
 # GTAPViz: Automating GTAP Data Processing and Visualization
 
 **This package is currently under development.** 
-GTAPViz is designed to streamline the **processing and visualization of GTAP model results** using **HARplus**. It enables users to efficiently extract, transform, and visualize data from `.sl4` and `.har` files, reducing the need for manual data handling in GTAP model simulations.
-
+GTAPViz simplifies the **processing and visualization of HAR/SL4 results**, extending the **HARplus** package. It enables users to efficiently extract, transform, and visualize data from `.sl4` and `.har` files, minimizing manual processing, particularly for **GTAP model simulations**.
 # Installation
 
 GTAPViz is currently work-in-progress, but you may install and try it using the following command:
