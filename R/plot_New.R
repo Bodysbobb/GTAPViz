@@ -209,6 +209,7 @@ comparison_plot <- function(data, plot_var = NULL,
                             separate_figure = FALSE,
                             invert_panel = FALSE,
                             var_name_by_description = FALSE,
+                            add_var_info = FALSE,
                             output_dir = NULL,
                             panel_rows = NULL, panel_cols = NULL,
                             color_tone = NULL,
@@ -232,13 +233,16 @@ comparison_plot <- function(data, plot_var = NULL,
     if (nrow(data) == 0) stop("No matching variables found in the data")
   }
 
+  # Format variable names based on parameters
+  data <- .format_variable_names(data, var_name_by_description, add_var_info)
+
   # Validate split_by column exists
   if (!split_by %in% names(data)) {
     stop(paste0('Missing "', split_by, '" column in the data frame'))
   }
 
   # Get title mapping
-  title_mapping <- .get_title_mapping(data, var_name_by_description)
+  title_mapping <- .get_title_mapping(data, var_name_by_description, add_var_info)
 
   # Determine panel and separation variables based on invert_panel
   if (invert_panel) {
@@ -536,7 +540,8 @@ comparison_plot <- function(data, plot_var = NULL,
 detail_plot <- function(data, plot_var = NULL,
                         y_axis_from, split_by,
                         title_prefix = "", title_suffix = "",
-                        var_name_by_description = TRUE,
+                        var_name_by_description = FALSE,
+                        add_var_info = FALSE,
                         panel_rows = NULL, panel_cols = NULL,
                         positive_color = "#2E8B57", negative_color = "#CD5C5C",
                         output_dir = NULL, top_impact = NULL,
@@ -568,8 +573,11 @@ detail_plot <- function(data, plot_var = NULL,
     if (nrow(data) == 0) return(NULL)
   }
 
+  # Format variable names based on parameters
+  data <- .format_variable_names(data, var_name_by_description, add_var_info)
+
   # Get title mapping directly from the data
-  title_mapping <- .get_title_mapping(data)
+  title_mapping <- .get_title_mapping(data, var_name_by_description, add_var_info)
 
   available_y_axis <- intersect(y_axis_from, names(data))
   if (length(available_y_axis) == 0) {
@@ -1118,8 +1126,7 @@ macro_plot <- function(data, plot_var = NULL,
 
 
 # Stack Plot --------------------------------------------------------------
-
-#' @title Generate Color Palette for Stacked Plots (Internal)
+#' @title Generate Stack Colors (Internal)
 #'
 #' @description Generates a diverse color palette for stacked bar components, ensuring good contrast between items.
 #'
@@ -1140,85 +1147,28 @@ macro_plot <- function(data, plot_var = NULL,
     return(setNames(c("#4477AA"), components))
   }
 
-  # Academic color palettes by theme
-  academic_palettes <- list(
-    # Blues theme (default)
-    "blue" = c("#1F77B4", "#AEC7E8", "#3A8FB7", "#6BAED6", "#08519C", "#B6D0E8", "#4292C6", "#C6DBEF"),
+  # Check if we can use the themed color palette
+  themed_palette <- .create_color_palette(color_tone = color_tone, n_colors = n_components,
+                                          palette_type = "qualitative")
 
-    # Greens theme
-    "green" = c("#2CA02C", "#98DF8A", "#578B45", "#74C476", "#005A32", "#A1D99B", "#41AB5D", "#C7E9C0"),
-
-    # Reds theme
-    "red" = c("#D62728", "#FF9896", "#B82E2E", "#FC8D59", "#7F0000", "#FCBBA1", "#FB6A4A", "#FEE0D2"),
-
-    # Purples theme
-    "purple" = c("#9467BD", "#C5B0D5", "#8C6BB1", "#9E9AC8", "#54278F", "#DADAEB", "#807DBA", "#BCBDDC"),
-
-    # Grays theme (professional/neutral)
-    "gray" = c("#7F7F7F", "#C7C7C7", "#525252", "#969696", "#252525", "#D9D9D9", "#737373", "#F7F7F7"),
-
-    # Mixed (highly distinguishable)
-    "mixed" = c("#4C78A8", "#F58518", "#E45756", "#72B7B2", "#54A24B", "#EECA3B", "#B279A2", "#FF9DA6")
-  )
-
-  # Select palette based on color_tone
-  selected_palette <- "mixed"  # Default to mixed if no color_tone
-
-  if (!is.null(color_tone)) {
-    # Convert color to lowercase for matching
-    color_lower <- tolower(color_tone)
-
-    # Match color_tone to a palette theme
-    if (grepl("blue|azure|navy|teal|cyan", color_lower)) {
-      selected_palette <- "blue"
-    } else if (grepl("green|olive|lime|emerald", color_lower)) {
-      selected_palette <- "green"
-    } else if (grepl("red|crimson|maroon|orange|pink", color_lower)) {
-      selected_palette <- "red"
-    } else if (grepl("purple|violet|magenta|lavender", color_lower)) {
-      selected_palette <- "purple"
-    } else if (grepl("gr[ae]y|black|silver", color_lower)) {
-      selected_palette <- "gray"
-    }
-
-    # If the color is given as hex, try to match to closest palette
-    if (startsWith(color_tone, "#")) {
-      # Convert hex to RGB
-      rgb_col <- grDevices::col2rgb(color_tone) / 255
-
-      # Simple logic to determine the dominant color
-      r <- rgb_col[1]
-      g <- rgb_col[2]
-      b <- rgb_col[3]
-
-      if (max(r, g, b) == r) {
-        selected_palette <- "red"
-      } else if (max(r, g, b) == g) {
-        selected_palette <- "green"
-      } else if (max(r, g, b) == b) {
-        selected_palette <- "blue"
-      }
-
-      # Check for gray (when R, G, B are close to each other)
-      if (max(abs(r - g), abs(r - b), abs(g - b)) < 0.1) {
-        selected_palette <- "gray"
-      }
-    }
+  if (!is.null(themed_palette)) {
+    # Use the themed palette generated by .create_color_palette
+    return(setNames(themed_palette, components))
   }
 
-  # Get the selected palette
-  palette <- academic_palettes[[selected_palette]]
+  # Fallback to the original logic if themed palette is not available
+  # (This shouldn't happen since .create_color_palette should always return a palette)
+  default_palette <- c("#4C78A8", "#F58518", "#E45756", "#72B7B2", "#54A24B", "#EECA3B", "#B279A2", "#FF9DA6")
 
   # Ensure we have enough colors by recycling if needed
-  if (n_components > length(palette)) {
-    palette <- rep(palette, ceiling(n_components / length(palette)))
+  if (n_components > length(default_palette)) {
+    default_palette <- rep(default_palette, ceiling(n_components / length(default_palette)))
   }
 
   # Trim to the number needed and assign names
-  palette <- palette[1:n_components]
-  return(setNames(palette, components))
+  default_palette <- default_palette[1:n_components]
+  return(setNames(default_palette, components))
 }
-
 
 
 #' @title Create Single Stack Plot (Internal)
@@ -1256,7 +1206,7 @@ macro_plot <- function(data, plot_var = NULL,
     length(unique(data$Experiment))
   }
 
-  # Generate better differentiated colors for stacks
+  # Generate better differentiated colors for stacks using the updated function
   color_palette <- .generate_stack_colors(data, stack_value_from, color_tone)
 
   # Calculate y limits if not provided
@@ -1369,7 +1319,7 @@ macro_plot <- function(data, plot_var = NULL,
     length(unique(data$Experiment))
   }
 
-  # Generate better differentiated colors
+  # Generate better differentiated colors using the updated function
   color_palette <- .generate_stack_colors(data, stack_value_from, color_tone)
 
   # Calculate y limits if not provided
@@ -1498,6 +1448,7 @@ stack_plot <- function(data, plot_var = NULL,
                        color_tone = NULL,
                        show_total = TRUE,
                        var_name_by_description = TRUE,
+                       add_var_info = FALSE,
                        legend_position = "bottom",
                        y_limit = NULL,
                        width = NULL,
@@ -1515,7 +1466,25 @@ stack_plot <- function(data, plot_var = NULL,
     stop('Missing "Variable" column in the data frame')
   }
 
-  title_mapping <- .get_title_mapping(data, var_name_by_description)
+  # Filter by variables in plot_var if provided
+  if (!is.null(plot_var)) {
+    if (!is.data.frame(plot_var)) {
+      # If plot_var is a character vector of variables
+      plot_var <- data.frame(Variable = plot_var, stringsAsFactors = FALSE)
+    }
+
+    if (!"Variable" %in% names(plot_var))
+      stop('plot_var data frame must contain "Variable" column')
+
+    data <- data[data$Variable %in% plot_var$Variable, ]
+    if (nrow(data) == 0) stop("No matching variables found in the data")
+  }
+
+  # Format variable names based on parameters
+  data <- .format_variable_names(data, var_name_by_description, add_var_info)
+
+  # Get title mapping using helper function
+  title_mapping <- .get_title_mapping(data, var_name_by_description, add_var_info)
 
   variables_to_plot <- unique(data$Variable)
   plot_list <- list()

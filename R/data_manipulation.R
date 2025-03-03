@@ -121,13 +121,32 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 }
 
 
-#' @title Convert Multiple Units in Nested Data Structures
+#' Convert Multiple Units in Nested Data Structures
+#'
 #' @param data A data structure (list, data.frame, or nested combination)
-#' @param change_unit_from Character vector of units to change (case-insensitive)
-#' @param change_unit_to Character vector of new units (same length as change_unit_from)
+#' @param change_unit_from Character vector of units to change (case-insensitive, space-insensitive, and parentheses-insensitive)
+#' @param change_unit_to Character vector of new units (same length as change_unit_from, preserves exactly as entered)
 #' @param adjustment Character vector of operations or numeric vector (same length as change_unit_from)
 #' @param value_col Column name containing values to adjust (default: "Value")
 #' @param unit_col Column name containing unit information (default: "Unit")
+#' @param variable_select Optional character vector of variable names to process. If NULL, all variables are processed.
+#' @param variable_col Column name containing variable identifiers (default: "Variable")
+#' @param scale_auto Optional character vector of predefined conversion rules: "mil2bil", "bil2mil", "pct2frac", "frac2pct"
+#'
+#' @details
+#' The function supports both manual and automatic unit conversion:
+#'
+#' For manual conversion, provide:
+#' - change_unit_from: Units to convert from (case-insensitive)
+#' - change_unit_to: Target units (preserved exactly as entered)
+#' - adjustment: Conversion operations (e.g., "/1000", "*100")
+#'
+#' For automatic conversion, use scale_auto with these options:
+#' - "mil2bil": Convert million USD to billion USD (divides by 1000)
+#' - "bil2mil": Convert billion USD to million USD (multiplies by 1000)
+#' - "pct2frac": Convert percent to fraction (divides by 100)
+#' - "frac2pct": Convert fraction to percent (multiplies by 100)
+#'
 #' @return Data structure with same format as input but with adjusted values and units
 #'
 #' @author Pattawee Puangchit
@@ -139,14 +158,93 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 #' har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
 #'                                           package = "GTAPViz"))
 #'
+#' # Manual conversion: million USD to billion USD
 #' har_data <- convert_units(har_data,
-#' change_unit_from = c("million USD"),
-#' change_unit_to = c("billion USD"),
-#' adjustment = c("/1000"))
+#'   change_unit_from = c("million USD"),
+#'   change_unit_to = c("billion USD"),
+#'   adjustment = c("/1000"))
+#'
+#' # Automatic conversion
+#' har_data <- convert_units(har_data, scale_auto = c("mil2bil", "pct2frac"))
+#'
+#' # Convert units only for specific variables
+#' har_data <- convert_units(har_data,
+#'   change_unit_from = c("million USD"),
+#'   change_unit_to = c("billion USD"),
+#'   adjustment = c("/1000"),
+#'   variable_select = c("qgdp", "pop"))
 #' }
 #'
-convert_units <- function(data, change_unit_from, change_unit_to,
-                          adjustment, value_col = "Value", unit_col = "Unit") {
+convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
+                          adjustment = NULL, value_col = "Value", unit_col = "Unit",
+                          variable_select = NULL, variable_col = "Variable",
+                          scale_auto = NULL) {
+  if (is.null(change_unit_from) && is.null(scale_auto)) {
+    stop("Either change_unit_from or scale_auto must be provided")
+  }
+
+  if (!is.null(scale_auto)) {
+    valid_scales <- c("mil2bil", "bil2mil", "pct2frac", "frac2pct")
+    invalid_scales <- setdiff(scale_auto, valid_scales)
+
+    if (length(invalid_scales) > 0) {
+      stop("Invalid scale_auto values: ", paste(invalid_scales, collapse = ", "),
+           ". Valid options are: ", paste(valid_scales, collapse = ", "))
+    }
+
+    has_mil2bil <- "mil2bil" %in% scale_auto
+    has_bil2mil <- "bil2mil" %in% scale_auto
+    has_pct2frac <- "pct2frac" %in% scale_auto
+    has_frac2pct <- "frac2pct" %in% scale_auto
+
+    if ((has_mil2bil && has_bil2mil) || (has_pct2frac && has_frac2pct)) {
+      stop("Conflicting scale_auto options. Cannot use 'mil2bil' with 'bil2mil' or 'pct2frac' with 'frac2pct'")
+    }
+
+    if (!is.null(change_unit_from)) {
+      use_auto <- .ask_confirmation(
+        "Both manual conversion (change_unit_from/to) and automatic conversion (scale_auto) are provided. Use automatic conversion? (Y/N): ")
+
+      if (use_auto) {
+        change_unit_from <- NULL
+        change_unit_to <- NULL
+        adjustment <- NULL
+      } else {
+        scale_auto <- NULL
+      }
+    }
+
+    if (!is.null(scale_auto)) {
+      change_unit_from <- character(0)
+      change_unit_to <- character(0)
+      adjustment <- character(0)
+
+      if ("mil2bil" %in% scale_auto) {
+        change_unit_from <- c(change_unit_from, "million USD")
+        change_unit_to <- c(change_unit_to, "billion USD")
+        adjustment <- c(adjustment, "/1000")
+      }
+
+      if ("bil2mil" %in% scale_auto) {
+        change_unit_from <- c(change_unit_from, "billion USD")
+        change_unit_to <- c(change_unit_to, "million USD")
+        adjustment <- c(adjustment, "*1000")
+      }
+
+      if ("pct2frac" %in% scale_auto) {
+        change_unit_from <- c(change_unit_from, "percent")
+        change_unit_to <- c(change_unit_to, "Fraction")
+        adjustment <- c(adjustment, "/100")
+      }
+
+      if ("frac2pct" %in% scale_auto) {
+        change_unit_from <- c(change_unit_from, "fraction")
+        change_unit_to <- c(change_unit_to, "Percent")
+        adjustment <- c(adjustment, "*100")
+      }
+    }
+  }
+
   if (length(change_unit_from) != length(change_unit_to) ||
       length(change_unit_from) != length(adjustment)) {
     stop("change_unit_from, change_unit_to, and adjustment must all have the same length")
@@ -157,6 +255,16 @@ convert_units <- function(data, change_unit_from, change_unit_to,
       return(df)
     }
 
+    if (!is.null(variable_select) && variable_col %in% names(df)) {
+      variables_match <- df[[variable_col]] %in% variable_select
+      if (sum(variables_match) == 0) {
+        return(df)
+      }
+      process_rows <- variables_match
+    } else {
+      process_rows <- rep(TRUE, nrow(df))
+    }
+
     result <- df
 
     for (i in seq_along(change_unit_from)) {
@@ -164,7 +272,10 @@ convert_units <- function(data, change_unit_from, change_unit_to,
       new_unit <- change_unit_to[i]
       adjust_operation <- adjustment[i]
 
-      matching_rows <- tolower(result[[unit_col]]) == tolower(current_unit)
+      normalized_current_unit <- gsub("[\\s()]", "", tolower(current_unit))
+      normalized_df_units <- gsub("[\\s()]", "", tolower(result[[unit_col]]))
+
+      matching_rows <- normalized_df_units == normalized_current_unit & process_rows
       if (sum(matching_rows) == 0) {
         next
       }

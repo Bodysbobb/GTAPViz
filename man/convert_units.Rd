@@ -6,25 +6,34 @@
 \usage{
 convert_units(
   data,
-  change_unit_from,
-  change_unit_to,
-  adjustment,
+  change_unit_from = NULL,
+  change_unit_to = NULL,
+  adjustment = NULL,
   value_col = "Value",
-  unit_col = "Unit"
+  unit_col = "Unit",
+  variable_select = NULL,
+  variable_col = "Variable",
+  scale_auto = NULL
 )
 }
 \arguments{
 \item{data}{A data structure (list, data.frame, or nested combination)}
 
-\item{change_unit_from}{Character vector of units to change (case-insensitive)}
+\item{change_unit_from}{Character vector of units to change (case-insensitive, space-insensitive, and parentheses-insensitive)}
 
-\item{change_unit_to}{Character vector of new units (same length as change_unit_from)}
+\item{change_unit_to}{Character vector of new units (same length as change_unit_from, preserves exactly as entered)}
 
 \item{adjustment}{Character vector of operations or numeric vector (same length as change_unit_from)}
 
 \item{value_col}{Column name containing values to adjust (default: "Value")}
 
 \item{unit_col}{Column name containing unit information (default: "Unit")}
+
+\item{variable_select}{Optional character vector of variable names to process. If NULL, all variables are processed.}
+
+\item{variable_col}{Column name containing variable identifiers (default: "Variable")}
+
+\item{scale_auto}{Optional character vector of predefined conversion rules: "mil2bil", "bil2mil", "pct2frac", "frac2pct"}
 }
 \value{
 Data structure with same format as input but with adjusted values and units
@@ -32,16 +41,45 @@ Data structure with same format as input but with adjusted values and units
 \description{
 Convert Multiple Units in Nested Data Structures
 }
+\details{
+The function supports both manual and automatic unit conversion:
+
+For manual conversion, provide:
+\itemize{
+\item change_unit_from: Units to convert from (case-insensitive)
+\item change_unit_to: Target units (preserved exactly as entered)
+\item adjustment: Conversion operations (e.g., "/1000", "*100")
+}
+
+For automatic conversion, use scale_auto with these options:
+\itemize{
+\item "mil2bil": Convert million USD to billion USD (divides by 1000)
+\item "bil2mil": Convert billion USD to million USD (multiplies by 1000)
+\item "pct2frac": Convert percent to fraction (divides by 100)
+\item "frac2pct": Convert fraction to percent (multiplies by 100)
+}
+}
 \examples{
 \dontrun{
 # Load example data
 har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
                                           package = "GTAPViz"))
 
+# Manual conversion: million USD to billion USD
 har_data <- convert_units(har_data,
-change_unit_from = c("million USD"),
-change_unit_to = c("billion USD"),
-adjustment = c("/1000"))
+  change_unit_from = c("million USD"),
+  change_unit_to = c("billion USD"),
+  adjustment = c("/1000"))
+
+# Automatic conversion
+har_data <- convert_units(har_data, scale_auto = c("mil2bil", "pct2frac"))
+
+# Convert units only for specific variables
+har_data <- convert_units(har_data,
+  change_unit_from = c("million USD"),
+  change_unit_to = c("billion USD"),
+  adjustment = c("/1000"),
+  variable_select = c("qgdp", "pop"))
 }
 
 }

@@ -2,23 +2,23 @@
 % Please edit documentation in R/help_plot.R
 \name{.get_title_mapping}
 \alias{.get_title_mapping}
-\title{Generate Title Mapping for Plot Labels (Internal)}
+\title{Get Title Mapping for Plot Labels (Internal)}
 \usage{
-.get_title_mapping(data, description_as_title = TRUE)
+.get_title_mapping(data, var_name_by_description = TRUE, add_var_info = FALSE)
 }
 \arguments{
-\item{data}{A data frame or a list of data frames containing the dataset.}
+\item{data}{A data frame or a list of data frames containing the dataset}
 
-\item{description_as_title}{Logical. If \code{TRUE}, prioritizes the \code{Description} column for titles.
-If \code{FALSE}, using \code{Variable} as title name.}
+\item{var_name_by_description}{Logical. If TRUE, uses Description instead of Variable names}
+
+\item{add_var_info}{Logical. If TRUE, includes original name in parentheses}
 }
 \value{
-A named vector where variable names map to their corresponding titles.
+A named vector where variable names map to their display names
 }
 \description{
-Determines appropriate title names for plotting based on available columns in the dataset.
-If a \code{Description} column exists and \code{description_as_title} is \code{TRUE}, it uses \code{Description} as titles.
-Otherwise, it checks for \code{PlotTitle} or falls back to using \code{Variable} names.
+Determines appropriate title names for plotting based on available columns
+in the dataset. Uses the .format_variable_names logic for consistency with table generation.
 }
 \author{
 Pattawee Puangchit
