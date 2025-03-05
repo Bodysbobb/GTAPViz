@@ -17,3 +17,9 @@ GTAPViz is a work in progress, but you can install and test it using:
 ```r
 devtools::install_github("Bodysbobb/GTAPViz")
 ```
+
+# Vignette  
+
+For full details on how to use this package and explore practical examples, see the [GTAPViz Vignette](https://bodysbobb.github.io/GTAPViz/articles/GTAPViz_plot.html).
+For the R reference manual, see the [GTAPViz Reference Manual](https://github.com/Bodysbobb/GTAPViz/blob/main/inst/docs/GTAPViz_0.0.0.9000.pdf).
+
