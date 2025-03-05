@@ -113,7 +113,7 @@ loaded:</p>
 <span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Bodysbobb/GTAPViz"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://bodysbobb.github.io/GTAPViz/">GTAPViz</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/bodysbobb/HARplus" class="external-link">GTAPViz</a></span><span class="op">)</span></span></code></pre></div>
 <p><strong>Note:</strong> If the required packages are not yet
 installed, please refer to:</p>
 <ul>
@@ -198,7 +198,7 @@ folders:</p>
 <code>.har</code> file must follow the naming conventions outlined in <a href="#sec:experiment-name">how to name input files</a> to ensure
 consistency.</p>
 <p>Below is an example of <code>&lt;input.folder&gt;</code>:</p>
-<figure><div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
+<figure><div style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;">
 <pre><code>📂 in/ 
 ├── 📄 EXP1.sl4 
 ├── 📄 EXP1-WEL.har 
@@ -297,9 +297,9 @@ file</a> can be manually created in R as a dataframe as follows:</p>
 contains two columns for <em>filtering data from the dataframe</em>.
 Leave it empty to include all entries.</p>
 <p>• <strong>“Region”</strong> excludes specified regions by filtering
-the “REG” column in all dataframes.<br>
-• <strong>“Sector”</strong> excludes specified sectors by filtering the
-“COMM” and “ACTS” columns in all dataframes.</p>
+the “REG” column in all dataframes.</p>
+<p>• <strong>“Sector”</strong> excludes specified sectors by filtering
+the “COMM” and “ACTS” columns in all dataframes.</p>
 <p>💡 <strong>Tip:</strong> These columns also determine the sorting
 order. See <a href="#sec:sorting-output">Sorting Output</a> for
 details.</p>
@@ -329,13 +329,15 @@ file name is recommended.</p>
 <p>The following command processes the files and sorts the output with
 EXP1 before EXP2:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">experiment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EXP1"</span>, <span class="st">"EXP2"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">experiment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TAR10"</span>, <span class="st">"SUBT10"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Automatically Processing</span></span>
-<span><span class="co"># - `EXP1.sl4` and `EXP1-WEL.har`  </span></span>
-<span><span class="co"># - `EXP2.sl4` and `EXP2-WEL.har`  </span></span></code></pre></div>
-<p><strong>Important:</strong> <code>.har</code> input files must
-include “-WEL” in their names. If unsure, refer to the <a href="#sec:input-folder">input folder figure</a>.</p>
+<span><span class="co"># Automatically Processing These Inputs in the Input Folder </span></span>
+<span><span class="co"># - TAR10.sl4 and TAR10-WEL.har  </span></span>
+<span><span class="co"># - SUBT10.sl4 and SUBT10-WEL.har  </span></span></code></pre></div>
+<p><span style="color: #D62728;"><strong>Important:</strong></span>
+<code>.har</code> input files must include “-WEL” in their names. If
+unsure, refer to the <a href="#sec:input-folder">input folder
+figure</a>.</p>
 <p><strong>Note:</strong> You can include as many experiments (inputs)
 as needed, but a higher number will increase processing time.</p>
 </div>
@@ -403,10 +405,16 @@ plotting:</p>
 <span><span class="va">txt.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span>   </span>
 <span></span>
 <span><span class="va">plot_data</span> <span class="op">=</span> <span class="cn">TRUE</span></span></code></pre></div>
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
+
 </div>
-<div class="section level3">
-<h3 id="sec:r-config-summary">R Configuration Summary<a class="anchor" aria-label="anchor" href="#sec:r-config-summary"></a>
-</h3>
+</div>
+</div>
+<div class="section level2">
+<h2 id="sec:r-config-summary">
+<span style="color:#003366; font-weight: bold;">R Configuration
+Summary</span><a class="anchor" aria-label="anchor" href="#sec:r-config-summary"></a>
+</h2>
 <p>In summary, the entire R setup is captured in the following
 chunk:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -414,7 +422,7 @@ chunk:</p>
 <span><span class="va">project.folder</span> <span class="op">&lt;-</span> <span class="st">"your/project/folder"</span></span>
 <span></span>
 <span><span class="co"># 2. Define the Input Names </span></span>
-<span><span class="va">experiment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"US_All"</span>, <span class="st">"US_All_RetalTar"</span><span class="op">)</span></span>
+<span><span class="va">experiment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TAR10"</span>, <span class="st">"SUBT10"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 3. Adding Description / Unit (Yes/No/GTAPv7/Mix)</span></span>
 <span><span class="va">info.mode</span> <span class="op">&lt;-</span> <span class="st">"Mix"</span></span>
@@ -430,51 +438,9 @@ chunk:</p>
 <p>💡 <strong>Tip:</strong> Once this process is complete, no further
 modifications are needed—provided the project folder and mapping file
 format remain unchanged.</p>
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
-
-</div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="sec:sorting-output">
-<span style="color:#003366; font-weight: bold;">Output Sorting
-Rules</span><a class="anchor" aria-label="anchor" href="#sec:sorting-output"></a>
-</h2>
-<p>This automated process determines the display order of three datasets
-based on predefined lists:</p>
-<p>• <strong>Experiment</strong> is sorted according to the order in
-<code>&lt;experiment&gt;</code>, affecting the sequence of experiment
-panels in plots.</p>
-<p>• <strong>Region</strong> is sorted based on the “Region” column in
-the <em>FilterData</em> sheet, determining the order of regions in
-figures and tables.</p>
-<p>• <strong>Sector</strong> is sorted according to the “Sector” column
-in the <em>FilterData</em> sheet, controlling the arrangement of sectors
-in outputs.</p>
-<p>To customize sorting for additional columns, manual adjustments may
-be required.</p>
 <div class="section level4">
-<h4 id="example">Example:<a class="anchor" aria-label="anchor" href="#example"></a>
+<h4 id="sec:subdirectory">Setting Up Sub-Directorie<a class="anchor" aria-label="anchor" href="#sec:subdirectory"></a>
 </h4>
-<ul>
-<li><p>selected_regions &lt;- c(“USA”, “CHN”), USA will appear before
-CHN in the comparison figure.</p></li>
-<li><p>experiment &lt;- c(“EXP2”, “EXP1”), the EXP2 panel will appear
-before EXP1 (e.g., from left to right in a figure).</p></li>
-</ul>
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
-
-</div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="sec:input-preparation">
-<span style="color:#003366; font-weight: bold;">Input Data
-Preparation</span><a class="anchor" aria-label="anchor" href="#sec:input-preparation"></a>
-</h2>
-<div class="section level3">
-<h3 id="sec:subdirectory">1. Setting Up Sub-Directorie<a class="anchor" aria-label="anchor" href="#sec:subdirectory"></a>
-</h3>
 <p>You can simply run the following code without modification if you
 followed all the previous instructions:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -491,21 +457,66 @@ followed all the previous instructions:</p>
 flexible directory structure, you can customize any of these. However,
 you must also define them in the function.</p>
 </div>
-<div class="section level3">
-<h3 id="sec:filtering-data">2. Data Filtering Setup<a class="anchor" aria-label="anchor" href="#sec:filtering-data"></a>
-</h3>
+<div class="section level4">
+<h4 id="sec:filtering-data">Data Filtering Setup<a class="anchor" aria-label="anchor" href="#sec:filtering-data"></a>
+</h4>
 <p>This filtering process runs automatically when the mapping file is
 used as instructed. However, experienced users can define it manually in
 the R environment:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
-<span><span class="va">selected_sector</span>  <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span> <span class="kw">else</span> <span class="cn">NULL</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Using a Default Mapping File: </span></span>
+<span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
+<span><span class="va">selected_sector</span>  <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
+<span></span>
+<span><span class="co"># Manually Defining:  </span></span>
+<span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EastAsia"</span>, <span class="st">"SEAsia"</span>, <span class="st">"Oceania"</span><span class="op">)</span></span>
+<span><span class="va">selected_sector</span>  <span class="op">&lt;-</span> <span class="cn">NULL</span></span></code></pre></div>
 <p>💡 <strong>Tip:</strong> If the plot is too dense or unclear, try
 filtering more data!</p>
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
+
 </div>
-<div class="section level3">
-<h3 id="sec:automategtap">3. GTAP Data Extraction<a class="anchor" aria-label="anchor" href="#sec:automategtap"></a>
-</h3>
+</div>
+</div>
+<div class="section level2">
+<h2 id="sec:sorting-output">
+<span style="color:#003366; font-weight: bold;">Output Sorting
+Rules</span><a class="anchor" aria-label="anchor" href="#sec:sorting-output"></a>
+</h2>
+<p>These predefined lists determine the display order of outputs, i.e.,
+figures and tables:</p>
+<ul>
+<li><p><code>&lt;experiment&gt;</code> sorts the column
+<code>"Experiment"</code>, i.e., your input files.</p></li>
+<li><p><code>&lt;selected_region&gt;</code> sorts the column for defined
+countries by GTAP; the default is <code>"REG"</code>.</p></li>
+<li><p><code>&lt;selected_sectors&gt;</code> sorts the column for
+defined sectors by GTAP; the default is <code>"COMM"</code> and
+<code>"ACTS"</code>.</p></li>
+</ul>
+<p>To customize sorting for additional columns, manual adjustments may
+be required.</p>
+<div class="section level4">
+<h4 id="example">Example:<a class="anchor" aria-label="anchor" href="#example"></a>
+</h4>
+<p>This setup with will display the figure as shown below:</p>
+<ul>
+<li>
+<code>experiment &lt;- c("TAR10", "SUBT10")</code><br>
+</li>
+<li><code>selected_regions &lt;- c("EastAsia", "SEAsia", "Oceania")</code></li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/sort_example.png" width="600px"></p>
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
+
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="sec:automategtap">
+<span style="color:#003366; font-weight: bold;">Automated Data
+Extraction</span><a class="anchor" aria-label="anchor" href="#sec:automategtap"></a>
+</h2>
 <p>To streamline figure generation from GTAP results, I developed an
 automated data extraction method using the following command:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -533,9 +544,8 @@ For non-GTAP models or manual data extraction, see <a href="#sec:manualdata">Man
 formats, such as <code>"HARplus::get_data_by_var"</code>,
 <code>"HARplus::get_data_by_dims"</code>, or custom data formats, can
 also be used with the figure code with some modifications.</p>
-</div>
 <div class="section level3">
-<h3 id="sec:custom-unit">4. Converting Units and Labels (Optional)<a class="anchor" aria-label="anchor" href="#sec:custom-unit"></a>
+<h3 id="sec:custom-unit">Converting Units and Labels (Optional)<a class="anchor" aria-label="anchor" href="#sec:custom-unit"></a>
 </h3>
 <p>These optional but recommended steps improve figure clarity. Use the
 following code to convert million USD to billion USD after data
@@ -648,24 +658,23 @@ using the following command:</p>
 <span>                    type <span class="op">=</span> <span class="st">"prefix"</span>,  </span>
 <span>                    text <span class="op">=</span> <span class="st">"Impact On"</span></span>
 <span>                  <span class="op">)</span>,</span>
-<span>                  panel_rows <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                  panel_rows <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                  panel_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                  show_x_axis_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                  show_y_axis_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                  show_axis_titles_on_all_facets <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>                <span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>💡 <strong>Tip:</strong> By default you might not need to define as
-much as the previous sample code assumed that you follow all the
-previous instruction, you may use the following commade to get the exact
-same output:</p>
+<p>💡 <strong>Tip:</strong><br>
+By default, you might not need to define as much, as the previous sample
+code assumes that you follow all the previous instructions. You may use
+the following command to get the exact same output:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/comparison_plot.html">comparison_plot</a></span><span class="op">(</span><span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Region"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>                x_axis_from <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span>                split_by <span class="op">=</span> <span class="st">"Variable"</span>,</span>
 <span>                var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                invert_pane <span class="op">=</span> <span class="cn">FALSE</span>,                </span>
-<span>                separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                output_dir <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>                </span>
 <span>                plot_style_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>                  color_tone <span class="op">=</span> <span class="st">"purdue"</span>,</span>
 <span>                  title_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>

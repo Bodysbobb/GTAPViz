@@ -71,9 +71,6 @@ plot_data = TRUE
 setwd <- "D:/GitHub/GTAPViz/R"
 devtools::load_all()
 
-# OR
-devtools::install_github("Bodysbobb/GTAPViz")
-
 # Extracting Data
 process_gtap_data(
   sl4var = sl4map, 
@@ -225,7 +222,7 @@ Below is an example of `<input.folder>`:
 
 <figure>
 
-::: {style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;"}
+::: {style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;"}
 ```         
 📂 in/ 
 ├── 📄 EXP1.sl4 
@@ -310,6 +307,7 @@ mapping_df <- data.frame(
 This sheet is optional and can also be defined in R instead. It contains two columns for *filtering data from the dataframe*. Leave it empty to include all entries.
 
 • **"Region"** excludes specified regions by filtering the "REG" column in all dataframes.  
+
 • **"Sector"** excludes specified sectors by filtering the "COMM" and "ACTS" columns in all dataframes.  
 
 
@@ -333,14 +331,16 @@ Define `<experiment>` to specify **input file names**. The experiment name:
 The following command processes the files and sorts the output with EXP1 before EXP2:
 
 ```{r Experiment Name, eval = FALSE}
-experiment <- c("EXP1", "EXP2")
+experiment <- c("TAR10", "SUBT10")
 
-# Automatically Processing
-# - `EXP1.sl4` and `EXP1-WEL.har`  
-# - `EXP2.sl4` and `EXP2-WEL.har`  
+# Automatically Processing These Inputs in the Input Folder 
+# - TAR10.sl4 and TAR10-WEL.har  
+# - SUBT10.sl4 and SUBT10-WEL.har  
 ```
 
-**Important:** `.har` input files must include "-WEL" in their names. If unsure, refer to the [input folder figure](#sec:input-folder). 
+<span style="color: #D62728;"><strong>Important:</strong></span> 
+`.har` input files must include "-WEL" in their names. If unsure, refer to the [input folder figure](#sec:input-folder).
+
 
 **Note:** You can include as many experiments (inputs) as needed, but a higher
 number will increase processing time.
@@ -384,7 +384,11 @@ txt.output <- "YES"
 plot_data = TRUE
 ```
 
-## R Configuration Summary {#sec:r-config-summary}
+
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
+
+# <span style="color:#003366; font-weight: bold;">R Configuration Summary</span> {#sec:r-config-summary}
+
 
 In summary, the entire R setup is captured in the following chunk:  
 
@@ -393,7 +397,7 @@ In summary, the entire R setup is captured in the following chunk:
 project.folder <- "your/project/folder"
 
 # 2. Define the Input Names 
-experiment <- c("US_All", "US_All_RetalTar")
+experiment <- c("TAR10", "SUBT10")
 
 # 3. Adding Description / Unit (Yes/No/GTAPv7/Mix)
 info.mode <- "Mix"
@@ -410,33 +414,7 @@ plot_data = TRUE
 
 💡 **Tip:** Once this process is complete, no further modifications are needed—provided the project folder and mapping file format remain unchanged.  
 
-
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
-
-# <span style="color:#003366; font-weight: bold;">Output Sorting Rules</span> {#sec:sorting-output}
-
-This automated process determines the display order of three datasets based on predefined lists:  
-
-• **Experiment** is sorted according to the order in `<experiment>`, affecting the sequence of experiment panels in plots.  
-
-• **Region** is sorted based on the "Region" column in the *FilterData* sheet, determining the order of regions in figures and tables.
-
-• **Sector** is sorted according to the "Sector" column in the *FilterData* sheet, controlling the arrangement of sectors in outputs.  
-
-To customize sorting for additional columns, manual adjustments may be required.  
-
-### Example:  
-- selected_regions <- c("USA", "CHN"), USA will appear before CHN in the comparison figure. 
-
-- experiment <- c("EXP2", "EXP1"), the EXP2 panel will appear before EXP1 (e.g., from left to right in a figure).  
-
-
-
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
-
-# <span style="color:#003366; font-weight: bold;">Input Data Preparation</span> {#sec:input-preparation}
-
-## 1. Setting Up Sub-Directorie {#sec:subdirectory}
+### Setting Up Sub-Directorie {#sec:subdirectory}
 
 You can simply run the following code without modification if you followed all the previous instructions:
 
@@ -452,22 +430,56 @@ harmap <- readxl::read_xlsx(paste0(map.folder, "/OutputMapping.xlsx"), sheet = "
 filter.map <- readxl::read_xlsx(paste0(map.folder, "/OutputMapping.xlsx"), sheet = "FilterData")
 ```
 
-**Note:** If you're familiar with R and prefer a more flexible directory structure, you can customize any of these. However, you must also define them in the function.  
+**Note:** If you're familiar with R and prefer a more flexible directory structure, you can customize any of these. However, you must also define them in the function. 
 
 
-## 2. Data Filtering Setup {#sec:filtering-data}
+### Data Filtering Setup {#sec:filtering-data}
 
 This filtering process runs automatically when the mapping file is used as instructed. However, experienced users can define it manually in the R environment:  
 
 ```{r Filtering Data, eval = FALSE}
+# Using a Default Mapping File: 
 selected_regions <- if(length(filter.map$Region) > 0) filter.map$Region else NULL
 selected_sector  <- if(length(filter.map$Sector) > 0) filter.map$Sector else NULL
+
+# Manually Defining:  
+selected_regions <- c("EastAsia", "SEAsia", "Oceania")
+selected_sector  <- NULL
 ```
 
-💡 **Tip:** If the plot is too dense or unclear, try filtering more data!  
+💡 **Tip:** If the plot is too dense or unclear, try filtering more data! 
 
 
-## 3. GTAP Data Extraction {#sec:automategtap}
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
+
+# <span style="color:#003366; font-weight: bold;">Output Sorting Rules</span> {#sec:sorting-output}
+
+These predefined lists determine the display order of outputs, i.e., figures and tables:  
+
+- `<experiment>` sorts the column `"Experiment"`, i.e., your input files.  
+
+- `<selected_region>` sorts the column for defined countries by GTAP; the default is `"REG"`.  
+
+- `<selected_sectors>` sorts the column for defined sectors by GTAP; the default is `"COMM"` and `"ACTS"`.  
+
+
+To customize sorting for additional columns, manual adjustments may be required.  
+
+### Example:  
+
+This setup with will display the figure as shown below:  
+
+- `experiment <- c("TAR10", "SUBT10")`  
+- `selected_regions <- c("EastAsia", "SEAsia", "Oceania")`  
+
+```{r, echo=FALSE, out.width="600px"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/sort_example.png")
+```
+
+
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
+
+# <span style="color:#003366; font-weight: bold;">Automated Data Extraction</span> {#sec:automategtap}
 
 To streamline figure generation from GTAP results, I developed an automated data extraction method using the following command:  
 
@@ -498,7 +510,7 @@ For non-GTAP models or manual data extraction, see [Manual Data Processing](#sec
 This automation uses the `"HARplus::group_data_by_dims"` command. However, other formats, such as `"HARplus::get_data_by_var"`, `"HARplus::get_data_by_dims"`, or custom data formats, can also be used with the figure code with some modifications.  
 
 
-## 4. Converting Units and Labels (Optional) {#sec:custom-unit}
+## Converting Units and Labels (Optional) {#sec:custom-unit}
 
 These optional but recommended steps improve figure clarity. Use the following code to convert million USD to billion USD after data extraction:  
 
@@ -511,6 +523,7 @@ har.plot.data <- convert_units(har.plot.data,
 ```
 
 **Note:** This function supports various unit conversions, while `scale_auto` simplifies common conversions such as mil2bil, bil2mil, pct2frac, and frac2pct. You can define custom conversions manually—see [Converting Units](#sec:converting-unit) or `?convert_units` for details. 
+
 
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -585,7 +598,7 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                     type = "prefix",  
                     text = "Impact On"
                   ),
-                  panel_rows = 2,
+                  panel_rows = 1,
                   panel_cols = NULL,
                   show_x_axis_title = TRUE,
                   show_y_axis_title = TRUE,
@@ -593,17 +606,16 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                 ))
 ```
 
-💡 **Tip:**
-By default you might not need to define as much as the previous sample code assumed that you follow all the previous instruction, you may use the following commade to get the exact same output:
+💡 **Tip:**  
+By default, you might not need to define as much, as the previous sample code assumes that you follow all the previous instructions. You may use the following command to get the exact same output:  
 
 ```{r Comparison Plot - Short Version, eval = FALSE}
 comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                 x_axis_from = "Region",
                 split_by = "Variable",
                 var_name_by_description = TRUE,
-                invert_pane = FALSE,                
-                separate_figure = FALSE,
                 output_dir = output.folder,
+                
                 plot_style_config = list(
                   color_tone = "purdue",
                   title_format = list(
