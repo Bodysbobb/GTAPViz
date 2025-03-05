@@ -518,32 +518,24 @@ har.plot.data <- convert_units(har.plot.data,
 
 ## **<span style="color:#D62728;">Understanding the Function</span>**  
 
-Before generating any figures, it is useful to review the function arguments to ensure you take full advantage of the available customization options. See:
-
-```{r Before Plotting, eval = FALSE}
-?comparison_plot
-
-?detail_plot
-
-?stack_plot  
-```
+Before generating any figures, it is useful to review the function arguments to ensure you take full advantage of the available customization options. See: `?comparison_plot`, `?detail_plot`, `?stack_plot`  
 
 
 ## **<span style="color:#D62728;">Customizing the Plot</span>**
+
 
 This package builds on **ggplot2**, making nearly all of its customization options easily adjustable within its plotting functions.  
 
 Elements like font sizes, titles, value labels, and positioning can be modified using simple numeric or logical values (`TRUE`/`FALSE`).  
 
-To view all customization options, run:
+To view all customization options (`?get_plot_style_config`), run:
 
 ```{r, eval = FALSE}
-?get_plot_style_config
-
 config_comparison <- get_plot_style_config("comparison", as_dataframe = TRUE)
 config_detail <- get_plot_style_config("detail", as_dataframe = TRUE)
 config_stack <- get_plot_style_config("stack", as_dataframe = TRUE)
 ```
+
 
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
