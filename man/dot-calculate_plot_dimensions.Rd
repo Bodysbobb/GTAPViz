@@ -2,22 +2,23 @@
 % Please edit documentation in R/help_plot.R
 \name{.calculate_plot_dimensions}
 \alias{.calculate_plot_dimensions}
-\title{Calculate Plot Dimensions (Internal)}
+\title{Calculate Plot Dimensions}
 \usage{
-.calculate_plot_dimensions(data, panel_layout, compare_by_x_axis = FALSE)
+.calculate_plot_dimensions(data, panel_layout)
 }
 \arguments{
 \item{data}{A data frame containing the relevant plotting data.}
 
-\item{panel_layout}{A list containing \code{rows} and \code{cols} specifying the panel layout.}
-
-\item{compare_by_x_axis}{Logical. If \code{TRUE}, adjusts dimensions based on comparison type.}
+\item{panel_layout}{A list containing 'rows' and 'cols' specifying the panel layout.}
 }
 \value{
-A list with \code{width} and \code{height} specifying the calculated plot dimensions.
+A list with 'width' and 'height' specifying the calculated plot dimensions in inches.
 }
 \description{
-Determines the appropriate width and height for a plot based on the panel layout.
+Determines appropriate width and height for a plot based on the panel layout.
+}
+\seealso{
+\code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 }
 \author{
 Pattawee Puangchit

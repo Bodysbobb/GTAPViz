@@ -2,33 +2,47 @@
 #'
 #' @description
 #' Transforms one or more datasets into a wide-format table based on specified
-#' grouping columns and pivot column(s), with optional subtotal filtering and export.
+#' grouping columns and pivot column(s). Supports subtotal filtering, renaming,
+#' and exporting to Excel.
 #'
-#' @param data_list A named list of data frames.
-#' @param pivot_col A named list indicating which column is pivoted into wide format for each dataset.
-#' @param total_column Logical. Adds a "Total" column summing numeric columns if `TRUE`.
-#' @param export_table Logical. Exports the tables to Excel if `TRUE`.
-#' @param separate_file Logical. If `TRUE`, each data frame is saved in a separate Excel file.
-#' @param output_dir Character. Directory where Excel files are written if `export_table=TRUE`.
+#' @param data_list A named list of data frames to be processed.
+#' @param pivot_col A named list specifying which column is pivoted into wide format for each dataset.
+#' @param total_column Logical. If `TRUE`, includes a "Total" column summing numeric values.
+#' @param export_table Logical. If `TRUE`, exports the tables to an Excel file.
+#' @param separate_file Logical. If `TRUE`, saves each dataset in a separate Excel file.
+#' @param output_dir Character. Directory where Excel files are written if `export_table = TRUE`.
 #' @param sheet_names Optional named list for custom sheet names.
 #' @param include_units Logical. If `TRUE`, includes the "Unit" column in grouping.
-#' @param component_exclude Optional character vector of pivoted values to exclude.
-#' @param group_by A list or character vector of grouping columns, or `NULL`.
+#' @param component_exclude Optional character vector specifying pivoted values to exclude.
+#' @param group_by A list or character vector of grouping columns, or `NULL` for automatic detection.
 #' @param rename_cols A named list for renaming columns.
-#' @param var_name_by_description Logical. If `TRUE`, replaces Variable names with Description or vice versa.
-#' @param add_var_info Logical. If `TRUE`, appends the other part in parentheses.
-#' @param decimal Numeric. Decimal places for rounding.
-#' @param unit_select Optional. Filters rows to this unit.
-#' @param separate_sheet_by Optional column name to split sheets.
-#' @param subtotal_level Logical. If `TRUE`, includes all Subtotal values; otherwise keeps only Subtotal="TOTAL".
-#' @param repeat_label Logical. If `TRUE`, repeats the first group column in exports.
-#' @param workbook_name Character. Name of the Excel workbook (no extension).
-#' @param add_group_line Logical. If `TRUE`, draws a thin line after each group.
+#' @param var_name_by_description Logical. If `TRUE`, replaces Variable names with their Description.
+#' @param add_var_info Logical. If `TRUE`, appends the Variable code in parentheses after the Description.
+#' @param decimal Numeric. Number of decimal places for rounding values.
+#' @param unit_select Optional. Filters rows based on the specified unit.
+#' @param separate_sheet_by Optional column name to split sheets in Excel.
+#' @param subtotal_level Logical. If `TRUE`, includes all subtotal values; otherwise, keeps only Subtotal = "TOTAL".
+#' @param repeat_label Logical. If `TRUE`, repeats the first group column in exports for clarity.
+#' @param workbook_name Character. Name of the Excel workbook (without extension).
+#' @param add_group_line Logical. If `TRUE`, adds a thin line after each group in the exported table.
 #'
-#' @return A named list of data frames, each transformed into wide format, optionally exported to Excel.
+#' @return A named list of transformed data frames. If `export_table = TRUE`, tables are saved as Excel files.
 #'
 #' @author Pattawee Puangchit
 #' @export
+#'
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_value}}
+#'
+#' @examples
+#' \dontrun{
+#' # Create a detailed report table with wide-format pivoting
+#' report_data <- report_table(
+#'   data_list = my_data,
+#'   pivot_col = list("Variable" = "Value"),
+#'   export_table = TRUE,
+#'   output_dir = "results/"
+#' )
+#' }
 #'
 report_table <- function(data_list,
                          pivot_col,
@@ -231,28 +245,33 @@ report_table <- function(data_list,
 }
 
 
-#' @title Prepare Detail Data for Wide-Format Report (Internal)
+#' @title Convert Long-Format Data into Wide-Format for Reporting (Internal)
 #'
 #' @description
-#' Converts a long-format data frame into a wide-format structure, optionally calculating
-#' totals, renaming columns, handling descriptions, and sorting the final table.
-#' **Also supports the special case** where `Variable` is *not* pivoted and remains in the row
-#' dimension (e.g. `group_by = "Variable"`). In that scenario, if `col_name_by_description = TRUE`,
-#' it replaces the actual values of `"Variable"` with a more descriptive label (and optionally
-#' adds the original variable name in parentheses if `sub_column_name = TRUE`).
+#' Converts a long-format data frame into a wide-format structure, applying optional transformations
+#' such as calculating totals, renaming columns, and rounding numeric values. It ensures grouping columns
+#' are preserved while transforming the data into a structured table for reporting.
 #'
 #' @param df A data frame to be transformed.
-#' @param wide_col Character. The column to pivot into wide format.
-#' @param group_cols Character vector. The grouping columns to retain.
-#' @param rename_mapping Named list for renaming grouping columns.
-#' @param total_column Logical. If `TRUE`, adds a "Total" column. Default is `FALSE`.
+#' @param wide_col Character. The column whose unique values will become new column headers in the wide-format table.
+#' @param group_cols Character vector. Column(s) to retain as row identifiers in the wide-format structure.
+#' @param rename_mapping Named list. Specifies mapping for renaming grouping columns, where names are
+#' existing column names, and values are new column names.
+#' @param total_column Logical. If `TRUE`, adds a "Total" column that sums all numeric columns. Default is `FALSE`.
 #' @param decimal Numeric. Number of decimal places to round numeric columns. Default is `2`.
-#' @param col_name_by_description Logical. If `TRUE`, uses the "Description" column for naming
-#'   pivoted columns. Also, if `"Variable"` stays in rows, we replace its values with description.
-#' @param sub_column_name Logical. If `TRUE`, appends original variable names in parentheses. Default is `FALSE`.
 #'
-#' @return A data frame in wide format, with optionally added totals, renamed columns,
-#' sorted grouping columns, and numeric columns rounded to the specified decimal places.
+#' @return A wide-format data frame with transformed column headers, optional total values,
+#' renamed columns, and rounded numeric values.
+#'
+#' @details
+#' This function preserves important grouping columns while converting a data frame into wide format.
+#' It also ensures numeric columns are properly rounded and formatted, and allows renaming of specific
+#' grouping variables for clearer reporting.
+#'
+#' - If `total_column = TRUE`, the function calculates the total of all numeric columns and
+#'   adds a `"Total"` column.
+#' - If `rename_mapping` is provided, the function renames matching columns.
+#' - Sorting is applied to ensure proper column arrangement.
 #'
 #' @keywords internal
 #' @author Pattawee Puangchit

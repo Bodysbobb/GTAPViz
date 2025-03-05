@@ -448,12 +448,6 @@
 #' @return Invisibly returns TRUE if consolidation is successful, or FALSE if no files are found.
 #' @author Pattawee Puangchit
 #' @keywords internal
-#' @importFrom readxl excel_sheets read_excel
-#' @importFrom purrr safely
-#' @importFrom dplyr bind_rows
-#' @importFrom writexl write_xlsx
-#' @author Pattawee Puangchit
-#' @keywords internal
 #' @seealso \code{\link{process_gtap_data}}
 #'
 .consolidate_reports <- function(output_folder, pattern = "\\.xlsx$",
@@ -624,7 +618,7 @@
 }
 
 
-#' Apply Function to Nested Data Structures (Internal)
+#' @title Apply Function to Nested Data Structures (Internal)
 #'
 #' @description Recursively applies a function to all data frames within a potentially
 #' nested data structure while preserving the original structure and attributes.

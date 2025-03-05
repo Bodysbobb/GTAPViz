@@ -2,7 +2,7 @@
 % Please edit documentation in R/table.R
 \name{.process_detail_data}
 \alias{.process_detail_data}
-\title{Prepare Detail Data for Wide-Format Report (Internal)}
+\title{Convert Long-Format Data into Wide-Format for Reporting (Internal)}
 \usage{
 .process_detail_data(
   df,
@@ -16,32 +16,36 @@
 \arguments{
 \item{df}{A data frame to be transformed.}
 
-\item{wide_col}{Character. The column to pivot into wide format.}
+\item{wide_col}{Character. The column whose unique values will become new column headers in the wide-format table.}
 
-\item{group_cols}{Character vector. The grouping columns to retain.}
+\item{group_cols}{Character vector. Column(s) to retain as row identifiers in the wide-format structure.}
 
-\item{rename_mapping}{Named list for renaming grouping columns.}
+\item{rename_mapping}{Named list. Specifies mapping for renaming grouping columns, where names are
+existing column names, and values are new column names.}
 
-\item{total_column}{Logical. If \code{TRUE}, adds a "Total" column. Default is \code{FALSE}.}
+\item{total_column}{Logical. If \code{TRUE}, adds a "Total" column that sums all numeric columns. Default is \code{FALSE}.}
 
 \item{decimal}{Numeric. Number of decimal places to round numeric columns. Default is \code{2}.}
-
-\item{col_name_by_description}{Logical. If \code{TRUE}, uses the "Description" column for naming
-pivoted columns. Also, if \code{"Variable"} stays in rows, we replace its values with description.}
-
-\item{sub_column_name}{Logical. If \code{TRUE}, appends original variable names in parentheses. Default is \code{FALSE}.}
 }
 \value{
-A data frame in wide format, with optionally added totals, renamed columns,
-sorted grouping columns, and numeric columns rounded to the specified decimal places.
+A wide-format data frame with transformed column headers, optional total values,
+renamed columns, and rounded numeric values.
 }
 \description{
-Converts a long-format data frame into a wide-format structure, optionally calculating
-totals, renaming columns, handling descriptions, and sorting the final table.
-\strong{Also supports the special case} where \code{Variable} is \emph{not} pivoted and remains in the row
-dimension (e.g. \code{group_by = "Variable"}). In that scenario, if \code{col_name_by_description = TRUE},
-it replaces the actual values of \code{"Variable"} with a more descriptive label (and optionally
-adds the original variable name in parentheses if \code{sub_column_name = TRUE}).
+Converts a long-format data frame into a wide-format structure, applying optional transformations
+such as calculating totals, renaming columns, and rounding numeric values. It ensures grouping columns
+are preserved while transforming the data into a structured table for reporting.
+}
+\details{
+This function preserves important grouping columns while converting a data frame into wide format.
+It also ensures numeric columns are properly rounded and formatted, and allows renaming of specific
+grouping variables for clearer reporting.
+\itemize{
+\item If \code{total_column = TRUE}, the function calculates the total of all numeric columns and
+adds a \code{"Total"} column.
+\item If \code{rename_mapping} is provided, the function renames matching columns.
+\item Sorting is applied to ensure proper column arrangement.
+}
 }
 \author{
 Pattawee Puangchit

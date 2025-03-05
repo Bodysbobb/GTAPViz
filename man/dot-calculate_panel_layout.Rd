@@ -2,14 +2,13 @@
 % Please edit documentation in R/help_plot.R
 \name{.calculate_panel_layout}
 \alias{.calculate_panel_layout}
-\title{Calculate Panel Layout (Internal)}
+\title{Calculate Optimal Panel Layout}
 \usage{
 .calculate_panel_layout(
   data,
   panel_rows = NULL,
   panel_cols = NULL,
-  compare_by_x_axis = FALSE,
-  x_axis_from = NULL
+  panel_var = "Experiment"
 )
 }
 \arguments{
@@ -19,15 +18,16 @@
 
 \item{panel_cols}{Optional. Number of columns for the panel layout.}
 
-\item{compare_by_x_axis}{Logical. If \code{TRUE}, layout is based on unique values of \code{x_axis_from} instead of \code{Experiment}.}
-
-\item{x_axis_from}{Character. Column name to use when \code{compare_by_x_axis = TRUE}.}
+\item{panel_var}{Column name to use for determining unique panels.}
 }
 \value{
-A list with \code{rows} and \code{cols} specifying the calculated panel layout.
+A list with 'rows' and 'cols' specifying the calculated panel layout.
 }
 \description{
-Determines the optimal panel layout for plotting based on the number of panels needed.
+Determines the optimal panel layout (rows and columns) for plotting based on the number of panels needed.
+}
+\seealso{
+\code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 }
 \author{
 Pattawee Puangchit

@@ -2,20 +2,23 @@
 % Please edit documentation in R/help_plot.R
 \name{.generate_color_palette}
 \alias{.generate_color_palette}
-\title{Generate Color Palette for Positive/Negative Comparison (Internal)}
+\title{Generate Color Palette for Positive/Negative Comparison}
 \usage{
 .generate_color_palette(positive_color = "#2E8B57", negative_color = "#CD5C5C")
 }
 \arguments{
-\item{positive_color}{Character. Hex code for the positive color.}
+\item{positive_color}{Character. Hex code or color name for the positive color (default: "#2E8B57", sea green).}
 
-\item{negative_color}{Character. Hex code for the negative color.}
+\item{negative_color}{Character. Hex code or color name for the negative color (default: "#CD5C5C", indian red).}
 }
 \value{
-A named vector containing hex codes for different shades.
+A named vector containing hex codes for different value categories.
 }
 \description{
 Generates a color palette with shades for positive, negative, and neutral values.
+}
+\seealso{
+\code{\link{detail_plot}}
 }
 \author{
 Pattawee Puangchit

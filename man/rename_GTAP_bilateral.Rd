@@ -7,22 +7,24 @@
 rename_GTAP_bilateral(data)
 }
 \arguments{
-\item{data}{Data structure containing GTAP bilateral trade data}
+\item{data}{Data structure containing GTAP bilateral trade data.}
 }
 \value{
-Data structure with renamed bilateral trade columns
+The same data structure with renamed bilateral trade columns.
 }
 \description{
-Renames bilateral trade columns in GTAP data output
+Renames bilateral trade columns in GTAP data to standardized names,
+ensuring consistency in regional trade flows.
 }
 \examples{
 \dontrun{
-# Load Sample Data
-sl4_data <- HARplus::load_sl4x(system.file("extdata/in", "EXP1-WEL.sl4",
-                                          package = "GTAPViz"))
-sl4_data <- rename_GTAP_bilateral(df)
+# Rename bilateral trade columns in a GTAP dataset
+gtap_data <- rename_GTAP_bilateral(gtap_data)
 }
 
+}
+\seealso{
+\code{\link{add_mapping_info}}, \code{\link{convert_units}}
 }
 \author{
 Pattawee Puangchit

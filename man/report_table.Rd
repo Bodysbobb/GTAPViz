@@ -28,52 +28,68 @@ report_table(
 )
 }
 \arguments{
-\item{data_list}{A named list of data frames.}
+\item{data_list}{A named list of data frames to be processed.}
 
-\item{pivot_col}{A named list indicating which column is pivoted into wide format for each dataset.}
+\item{pivot_col}{A named list specifying which column is pivoted into wide format for each dataset.}
 
-\item{total_column}{Logical. Adds a "Total" column summing numeric columns if \code{TRUE}.}
+\item{total_column}{Logical. If \code{TRUE}, includes a "Total" column summing numeric values.}
 
-\item{export_table}{Logical. Exports the tables to Excel if \code{TRUE}.}
+\item{export_table}{Logical. If \code{TRUE}, exports the tables to an Excel file.}
 
-\item{separate_file}{Logical. If \code{TRUE}, each data frame is saved in a separate Excel file.}
+\item{separate_file}{Logical. If \code{TRUE}, saves each dataset in a separate Excel file.}
 
-\item{output_dir}{Character. Directory where Excel files are written if \code{export_table=TRUE}.}
+\item{output_dir}{Character. Directory where Excel files are written if \code{export_table = TRUE}.}
 
 \item{sheet_names}{Optional named list for custom sheet names.}
 
 \item{include_units}{Logical. If \code{TRUE}, includes the "Unit" column in grouping.}
 
-\item{component_exclude}{Optional character vector of pivoted values to exclude.}
+\item{component_exclude}{Optional character vector specifying pivoted values to exclude.}
 
-\item{group_by}{A list or character vector of grouping columns, or \code{NULL}.}
+\item{group_by}{A list or character vector of grouping columns, or \code{NULL} for automatic detection.}
 
 \item{rename_cols}{A named list for renaming columns.}
 
-\item{var_name_by_description}{Logical. If \code{TRUE}, replaces Variable names with Description or vice versa.}
+\item{var_name_by_description}{Logical. If \code{TRUE}, replaces Variable names with their Description.}
 
-\item{add_var_info}{Logical. If \code{TRUE}, appends the other part in parentheses.}
+\item{add_var_info}{Logical. If \code{TRUE}, appends the Variable code in parentheses after the Description.}
 
-\item{decimal}{Numeric. Decimal places for rounding.}
+\item{decimal}{Numeric. Number of decimal places for rounding values.}
 
-\item{unit_select}{Optional. Filters rows to this unit.}
+\item{unit_select}{Optional. Filters rows based on the specified unit.}
 
-\item{separate_sheet_by}{Optional column name to split sheets.}
+\item{separate_sheet_by}{Optional column name to split sheets in Excel.}
 
-\item{subtotal_level}{Logical. If \code{TRUE}, includes all Subtotal values; otherwise keeps only Subtotal="TOTAL".}
+\item{subtotal_level}{Logical. If \code{TRUE}, includes all subtotal values; otherwise, keeps only Subtotal = "TOTAL".}
 
-\item{repeat_label}{Logical. If \code{TRUE}, repeats the first group column in exports.}
+\item{repeat_label}{Logical. If \code{TRUE}, repeats the first group column in exports for clarity.}
 
-\item{workbook_name}{Character. Name of the Excel workbook (no extension).}
+\item{workbook_name}{Character. Name of the Excel workbook (without extension).}
 
-\item{add_group_line}{Logical. If \code{TRUE}, draws a thin line after each group.}
+\item{add_group_line}{Logical. If \code{TRUE}, adds a thin line after each group in the exported table.}
 }
 \value{
-A named list of data frames, each transformed into wide format, optionally exported to Excel.
+A named list of transformed data frames. If \code{export_table = TRUE}, tables are saved as Excel files.
 }
 \description{
 Transforms one or more datasets into a wide-format table based on specified
-grouping columns and pivot column(s), with optional subtotal filtering and export.
+grouping columns and pivot column(s). Supports subtotal filtering, renaming,
+and exporting to Excel.
+}
+\examples{
+\dontrun{
+# Create a detailed report table with wide-format pivoting
+report_data <- report_table(
+  data_list = my_data,
+  pivot_col = list("Variable" = "Value"),
+  export_table = TRUE,
+  output_dir = "results/"
+)
+}
+
+}
+\seealso{
+\code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_value}}
 }
 \author{
 Pattawee Puangchit

@@ -1,25 +1,35 @@
-#' Add Mapping Information to GTAP Data
+#' @title Add Mapping Information to GTAP Data
 #'
-#' @description Adds description and unit information to GTAP data based on specified mapping.
+#' @description
+#' Adds descriptions and unit information to GTAP data based on a specified mapping mode.
+#' Supports external mappings or default GTAPv7 mappings, allowing users to enrich datasets with
+#' standardized metadata.
 #'
-#' @param data_list Data structure containing GTAP variables
-#' @param external_map Optional data frame with mapping information
-#' @param mapping Mapping mode: "GTAPv7" (default), "No", "Yes", or "Mix"
-#' @param description_info Logical. If TRUE, adds description information
-#' @param unit_info Logical. If TRUE, adds unit information
+#' @param data_list A data structure containing GTAP variables.
+#' @param external_map Optional data frame with mapping information (must include "Variable", "Description", and "Unit" columns).
+#' @param mapping Character. Mapping mode:
+#'   - `"GTAPv7"` (default): Uses standard GTAPv7 definitions.
+#'   - `"Yes"`: Uses only the supplied descriptions and units from `external_map`.
+#'   - `"No"`: Does not add any descriptions or units.
+#'   - `"Mix"`: Prioritizes `external_map`, but falls back to GTAPv7 for missing values.
+#' @param description_info Logical. If `TRUE`, adds description information to the data.
+#' @param unit_info Logical. If `TRUE`, adds unit information to the data.
 #'
-#' @return Data structure with added mapping information, preserving original structure
+#' @return
+#' A data structure with added mapping information, preserving the original structure.
+#'
 #' @author Pattawee Puangchit
 #' @export
 #'
+#' @seealso \code{\link{convert_units}}, \code{\link{rename_value}}
+#'
 #' @examples
 #' \dontrun{
-#' # Load example data
-#' har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
-#'                                           package = "GTAPViz"))
+#' # Add mapping using GTAPv7 defaults
+#' gtap_data <- add_mapping_info(gtap_data, mapping = "GTAPv7")
 #'
-#' # Corrected example with closing quotation
-#' har_data <- add_mapping_info(har_data, mapping = "GTAPv7")
+#' # Use an external mapping file
+#' gtap_data <- add_mapping_info(gtap_data, external_map = my_mapping, mapping = "Mix")
 #' }
 #'
 add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
@@ -121,58 +131,48 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 }
 
 
-#' Convert Multiple Units in Nested Data Structures
+#' @title Convert Units in GTAP Data
 #'
-#' @param data A data structure (list, data.frame, or nested combination)
-#' @param change_unit_from Character vector of units to change (case-insensitive, space-insensitive, and parentheses-insensitive)
-#' @param change_unit_to Character vector of new units (same length as change_unit_from, preserves exactly as entered)
-#' @param adjustment Character vector of operations or numeric vector (same length as change_unit_from)
-#' @param value_col Column name containing values to adjust (default: "Value")
-#' @param unit_col Column name containing unit information (default: "Unit")
-#' @param variable_select Optional character vector of variable names to process. If NULL, all variables are processed.
-#' @param variable_col Column name containing variable identifiers (default: "Variable")
-#' @param scale_auto Optional character vector of predefined conversion rules: "mil2bil", "bil2mil", "pct2frac", "frac2pct"
+#' @description
+#' Converts values in a dataset to different units based on predefined transformations or custom scaling.
+#' Supports manual and automatic conversions for economic and trade-related metrics.
+#'
+#' @param data A data structure (list, data frame, or nested combination).
+#' @param change_unit_from Character vector. Units to be converted (case-insensitive).
+#' @param change_unit_to Character vector. Target units corresponding to `change_unit_from`.
+#' @param adjustment Character or numeric vector. Specifies conversion operations (e.g., `"/1000"` to convert million to billion).
+#' @param value_col Character. Column name containing values to adjust (default: `"Value"`).
+#' @param unit_col Character. Column name containing unit information (default: `"Unit"`).
+#' @param variable_select Optional character vector. If provided, only these variables are converted.
+#' @param variable_col Character. Column name containing variable identifiers (default: `"Variable"`).
+#' @param scale_auto Optional character vector of predefined conversion rules:
+#'   - `"mil2bil"`: Converts million USD to billion USD (divides by 1000).
+#'   - `"bil2mil"`: Converts billion USD to million USD (multiplies by 1000).
+#'   - `"pct2frac"`: Converts percent to fraction (divides by 100).
+#'   - `"frac2pct"`: Converts fraction to percent (multiplies by 100).
 #'
 #' @details
-#' The function supports both manual and automatic unit conversion:
+#' If both `change_unit_from` and `scale_auto` are provided, the function prompts the user
+#' to choose between manual and automatic conversion.
 #'
-#' For manual conversion, provide:
-#' - change_unit_from: Units to convert from (case-insensitive)
-#' - change_unit_to: Target units (preserved exactly as entered)
-#' - adjustment: Conversion operations (e.g., "/1000", "*100")
-#'
-#' For automatic conversion, use scale_auto with these options:
-#' - "mil2bil": Convert million USD to billion USD (divides by 1000)
-#' - "bil2mil": Convert billion USD to million USD (multiplies by 1000)
-#' - "pct2frac": Convert percent to fraction (divides by 100)
-#' - "frac2pct": Convert fraction to percent (multiplies by 100)
-#'
-#' @return Data structure with same format as input but with adjusted values and units
+#' @return A data structure with values converted to the specified units.
 #'
 #' @author Pattawee Puangchit
 #' @export
 #'
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{rename_value}}
+#'
 #' @examples
 #' \dontrun{
-#' # Load example data
-#' har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
-#'                                           package = "GTAPViz"))
+#' # Convert million USD to billion USD
+#' gtap_data <- convert_units(gtap_data,
+#'   change_unit_from = "million USD",
+#'   change_unit_to = "billion USD",
+#'   adjustment = "/1000"
+#' )
 #'
-#' # Manual conversion: million USD to billion USD
-#' har_data <- convert_units(har_data,
-#'   change_unit_from = c("million USD"),
-#'   change_unit_to = c("billion USD"),
-#'   adjustment = c("/1000"))
-#'
-#' # Automatic conversion
-#' har_data <- convert_units(har_data, scale_auto = c("mil2bil", "pct2frac"))
-#'
-#' # Convert units only for specific variables
-#' har_data <- convert_units(har_data,
-#'   change_unit_from = c("million USD"),
-#'   change_unit_to = c("billion USD"),
-#'   adjustment = c("/1000"),
-#'   variable_select = c("qgdp", "pop"))
+#' # Automatic conversion from percent to fraction
+#' gtap_data <- convert_units(gtap_data, scale_auto = "pct2frac")
 #' }
 #'
 convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
@@ -266,6 +266,7 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
     }
 
     result <- df
+    conversions_made <- 0
 
     for (i in seq_along(change_unit_from)) {
       current_unit <- change_unit_from[i]
@@ -311,6 +312,11 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
       }
 
       result[matching_rows, unit_col] <- new_unit
+      conversions_made <- conversions_made + sum(matching_rows)
+    }
+
+    if (conversions_made > 0) {
+      message(conversions_made, " observations converted to new unit")
     }
 
     return(result)
@@ -320,34 +326,28 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
 }
 
 
-#' Rename Values in Data Structures
+#' @title Rename Values in a Column
 #'
-#' @description Replaces specified values in a column across nested data structures
+#' @description
+#' Replaces specific values in a column based on a provided mapping file.
+#' Supports renaming across nested data structures and preserves factor levels.
 #'
-#' @param data Data structure containing data to rename
-#' @param column_name Column name to modify. If NULL, extracted from mapping file
-#' @param mapping.file Data frame with OldName and NewName columns for renaming
+#' @param data Data structure (data frame, list, or nested combination).
+#' @param column_name Character. Column to modify. If `NULL`, the function extracts it from `mapping.file`.
+#' @param mapping.file Data frame with `"OldName"` and `"NewName"` columns for renaming.
 #'
-#' @return A modified data frame or list of data frames with specified values replaced.
+#' @return The same data structure with specified values replaced.
+#'
 #' @author Pattawee Puangchit
 #' @export
 #'
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}
+#'
 #' @examples
 #' \dontrun{
-#' # Example mapping file
-#' wefare.decomp.rename <- data.frame(
-#'   OldName = c("alloc_A1", "ENDWB1", "tech_C1"),
-#'   NewName = c("Allocation", "Endowment", "Technology"),
-#'   ColumnName = "Variable",
-#'   stringsAsFactors = FALSE
-#' )
-#'
-#' # Load example data
-#' har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
-#'                                           package = "GTAPViz"))
-#'
-#' # Apply renaming
-#' modified_data <- rename_value(har_data, mapping.file = wefare.decomp.rename)
+#' # Rename variables in a dataset
+#' rename_map <- data.frame(OldName = c("old_var1", "old_var2"), NewName = c("new_var1", "new_var2"))
+#' gtap_data <- rename_value(gtap_data, column_name = "Variable", mapping.file = rename_map)
 #' }
 #'
 rename_value <- function(data, column_name = NULL, mapping.file) {
@@ -391,22 +391,25 @@ rename_value <- function(data, column_name = NULL, mapping.file) {
 }
 
 
-#' Rename GTAP Bilateral Trade Columns
+#' @title Rename GTAP Bilateral Trade Columns
 #'
-#' @description Renames bilateral trade columns in GTAP data output
+#' @description
+#' Renames bilateral trade columns in GTAP data to standardized names,
+#' ensuring consistency in regional trade flows.
 #'
-#' @param data Data structure containing GTAP bilateral trade data
+#' @param data Data structure containing GTAP bilateral trade data.
 #'
-#' @return Data structure with renamed bilateral trade columns
+#' @return The same data structure with renamed bilateral trade columns.
+#'
 #' @author Pattawee Puangchit
 #' @export
 #'
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}
+#'
 #' @examples
 #' \dontrun{
-#' # Load Sample Data
-#' sl4_data <- HARplus::load_sl4x(system.file("extdata/in", "EXP1-WEL.sl4",
-#'                                           package = "GTAPViz"))
-#' sl4_data <- rename_GTAP_bilateral(df)
+#' # Rename bilateral trade columns in a GTAP dataset
+#' gtap_data <- rename_GTAP_bilateral(gtap_data)
 #' }
 #'
 rename_GTAP_bilateral <- function(data) {

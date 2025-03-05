@@ -114,7 +114,6 @@ process_gtap_data(
     "rds" = "No",
     "txt" = "No"))
 }
-
 }
 \seealso{
 \code{\link{add_mapping_info}}, \code{\link{gtap_macros_data}}

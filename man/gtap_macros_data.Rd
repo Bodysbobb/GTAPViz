@@ -44,6 +44,7 @@ subtotal_level = FALSE)
 Macros <- gtap_macros_data(input_dir, experiment_names = experiment,
                           select_var = c("qgdp", "pop", "gdpexp"))
 }
+
 }
 \seealso{
 \code{\link{add_mapping_info}}, \code{\link{process_gtap_data}}

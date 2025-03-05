@@ -2,27 +2,35 @@
 % Please edit documentation in R/help_plot.R
 \name{.format_variable_names}
 \alias{.format_variable_names}
-\title{Format Variable Names for Display (Internal)}
+\title{Format Variable Names Using Descriptions}
 \usage{
 .format_variable_names(
   data,
+  variable_col,
+  desc_col,
   var_name_by_description = TRUE,
   add_var_info = FALSE
 )
 }
 \arguments{
-\item{data}{A data frame containing "Variable" and optionally "Description" columns}
+\item{data}{A data frame containing variable and description columns.}
 
-\item{var_name_by_description}{Logical. If TRUE, replaces Variable names with Description}
+\item{variable_col}{Name of the column containing variable identifiers.}
 
-\item{add_var_info}{Logical. If TRUE, appends the other part in parentheses}
+\item{desc_col}{Name of the column containing descriptions.}
+
+\item{var_name_by_description}{Logical. If TRUE, replaces variable names with descriptions.}
+
+\item{add_var_info}{Logical. If TRUE, adds additional information in parentheses.}
 }
 \value{
-A data frame with formatted Variable column
+A data frame with formatted variable names.
 }
 \description{
-Standardizes how variables are displayed in plots, with options to use description
-text instead of variable names and optionally include both.
+Formats variable names using available descriptions for better readability.
+}
+\seealso{
+\code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 }
 \author{
 Pattawee Puangchit

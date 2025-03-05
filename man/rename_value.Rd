@@ -2,41 +2,34 @@
 % Please edit documentation in R/data_manipulation.R
 \name{rename_value}
 \alias{rename_value}
-\title{Rename Values in Data Structures}
+\title{Rename Values in a Column}
 \usage{
 rename_value(data, column_name = NULL, mapping.file)
 }
 \arguments{
-\item{data}{Data structure containing data to rename}
+\item{data}{Data structure (data frame, list, or nested combination).}
 
-\item{column_name}{Column name to modify. If NULL, extracted from mapping file}
+\item{column_name}{Character. Column to modify. If \code{NULL}, the function extracts it from \code{mapping.file}.}
 
-\item{mapping.file}{Data frame with OldName and NewName columns for renaming}
+\item{mapping.file}{Data frame with \code{"OldName"} and \code{"NewName"} columns for renaming.}
 }
 \value{
-A modified data frame or list of data frames with specified values replaced.
+The same data structure with specified values replaced.
 }
 \description{
-Replaces specified values in a column across nested data structures
+Replaces specific values in a column based on a provided mapping file.
+Supports renaming across nested data structures and preserves factor levels.
 }
 \examples{
 \dontrun{
-# Example mapping file
-wefare.decomp.rename <- data.frame(
-  OldName = c("alloc_A1", "ENDWB1", "tech_C1"),
-  NewName = c("Allocation", "Endowment", "Technology"),
-  ColumnName = "Variable",
-  stringsAsFactors = FALSE
-)
-
-# Load example data
-har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
-                                          package = "GTAPViz"))
-
-# Apply renaming
-modified_data <- rename_value(har_data, mapping.file = wefare.decomp.rename)
+# Rename variables in a dataset
+rename_map <- data.frame(OldName = c("old_var1", "old_var2"), NewName = c("new_var1", "new_var2"))
+gtap_data <- rename_value(gtap_data, column_name = "Variable", mapping.file = rename_map)
 }
 
+}
+\seealso{
+\code{\link{add_mapping_info}}, \code{\link{convert_units}}
 }
 \author{
 Pattawee Puangchit

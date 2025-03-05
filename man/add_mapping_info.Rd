@@ -13,32 +13,42 @@ add_mapping_info(
 )
 }
 \arguments{
-\item{data_list}{Data structure containing GTAP variables}
+\item{data_list}{A data structure containing GTAP variables.}
 
-\item{external_map}{Optional data frame with mapping information}
+\item{external_map}{Optional data frame with mapping information (must include "Variable", "Description", and "Unit" columns).}
 
-\item{mapping}{Mapping mode: "GTAPv7" (default), "No", "Yes", or "Mix"}
+\item{mapping}{Character. Mapping mode:
+\itemize{
+\item \code{"GTAPv7"} (default): Uses standard GTAPv7 definitions.
+\item \code{"Yes"}: Uses only the supplied descriptions and units from \code{external_map}.
+\item \code{"No"}: Does not add any descriptions or units.
+\item \code{"Mix"}: Prioritizes \code{external_map}, but falls back to GTAPv7 for missing values.
+}}
 
-\item{description_info}{Logical. If TRUE, adds description information}
+\item{description_info}{Logical. If \code{TRUE}, adds description information to the data.}
 
-\item{unit_info}{Logical. If TRUE, adds unit information}
+\item{unit_info}{Logical. If \code{TRUE}, adds unit information to the data.}
 }
 \value{
-Data structure with added mapping information, preserving original structure
+A data structure with added mapping information, preserving the original structure.
 }
 \description{
-Adds description and unit information to GTAP data based on specified mapping.
+Adds descriptions and unit information to GTAP data based on a specified mapping mode.
+Supports external mappings or default GTAPv7 mappings, allowing users to enrich datasets with
+standardized metadata.
 }
 \examples{
 \dontrun{
-# Load example data
-har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
-                                          package = "GTAPViz"))
+# Add mapping using GTAPv7 defaults
+gtap_data <- add_mapping_info(gtap_data, mapping = "GTAPv7")
 
-# Corrected example with closing quotation
-har_data <- add_mapping_info(har_data, mapping = "GTAPv7")
+# Use an external mapping file
+gtap_data <- add_mapping_info(gtap_data, external_map = my_mapping, mapping = "Mix")
 }
 
+}
+\seealso{
+\code{\link{convert_units}}, \code{\link{rename_value}}
 }
 \author{
 Pattawee Puangchit

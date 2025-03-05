@@ -20,7 +20,6 @@ BugReports: https://github.com/bodysbobb/GTAPViz/issues
 URL: https://bodysbobb.github.io/GTAPViz/
 Imports:
     HARplus,
-    stats,
     ggplot2,
     dplyr,
     tidyr,
@@ -33,7 +32,9 @@ Imports:
     readxl,
     writexl,
     utils,
-    methods
+    methods,
+    stringdist,
+    stats
 Remotes: 
     github::Bodysbobb/HARplus
 Suggests: 
@@ -41,23 +42,5 @@ Suggests:
     rmarkdown,
     devtools
 VignetteBuilder: knitr
-Exports:
-    add_unit_col,
-    comparison_plot,
-    detail_plot,
-    macro_plot,
-    gtap_macros_data,
-    add_mapping_info
-ImportFrom:
-    HARplus get_data_by_var load_sl4x
-    stats setNames
-    ggplot2 ggplot aes aes_string geom_bar geom_text geom_vline geom_col geom_hline facet_wrap 
-        theme_minimal theme element_text element_rect element_blank unit margin labs 
-        scale_fill_manual scale_y_continuous position_dodge expansion
-    dplyr filter mutate case_when
-    colorspace hex2RGB hex polarLUV sRGB
-    grDevices col2rgb rgb
-    rlang sym
-    scales squish
 Depends: 
     R (>= 3.5)

@@ -2,23 +2,35 @@
 % Please edit documentation in R/help_plot.R
 \name{.get_title_mapping}
 \alias{.get_title_mapping}
-\title{Get Title Mapping for Plot Labels (Internal)}
+\title{Get Title Mapping From Variable Names and Descriptions}
 \usage{
-.get_title_mapping(data, var_name_by_description = TRUE, add_var_info = FALSE)
+.get_title_mapping(
+  data,
+  variable_col,
+  desc_col,
+  var_name_by_description = TRUE,
+  add_var_info = FALSE
+)
 }
 \arguments{
-\item{data}{A data frame or a list of data frames containing the dataset}
+\item{data}{A data frame or list of data frames containing variable and description columns.}
 
-\item{var_name_by_description}{Logical. If TRUE, uses Description instead of Variable names}
+\item{variable_col}{Name of the column containing variable identifiers.}
 
-\item{add_var_info}{Logical. If TRUE, includes original name in parentheses}
+\item{desc_col}{Name of the column containing descriptions.}
+
+\item{var_name_by_description}{Logical. If TRUE, uses descriptions instead of variable names.}
+
+\item{add_var_info}{Logical. If TRUE, adds additional information in parentheses.}
 }
 \value{
-A named vector where variable names map to their display names
+A named list mapping original variable names to formatted display names.
 }
 \description{
-Determines appropriate title names for plotting based on available columns
-in the dataset. Uses the .format_variable_names logic for consistency with table generation.
+Creates a mapping from original variable names to formatted display names.
+}
+\seealso{
+\code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 }
 \author{
 Pattawee Puangchit

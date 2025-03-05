@@ -1,5 +1,7 @@
 #' @title Extract and Aggregate Scalar Macroeconomic Variables
-#' @description Extracts scalar macroeconomic variables from multiple SL4 datasets and aggregates them into a structured data frame.
+#'
+#' @description
+#' Extracts scalar macroeconomic variables from multiple SL4 datasets and aggregates them into a structured data frame.
 #'
 #' @param input_dir Character. Directory containing SL4 files.
 #' @param experiment_names Character vector. List of experiment names corresponding to SL4 files.
@@ -11,8 +13,9 @@
 #' @return A sorted dataframe containing processed GTAP macro data.
 #'
 #' @author Pattawee Puangchit
-#' @seealso \code{\link{add_mapping_info}}, \code{\link{process_gtap_data}}
 #' @export
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{process_gtap_data}}
+#'
 #' @examples
 #' \dontrun{
 #' # Method 1: Extract all variables
@@ -25,6 +28,7 @@
 #' Macros <- gtap_macros_data(input_dir, experiment_names = experiment,
 #'                           select_var = c("qgdp", "pop", "gdpexp"))
 #' }
+#'
 gtap_macros_data <- function(input_dir = NULL,
                              experiment_names = NULL,
                              output_dir = NULL,
@@ -105,8 +109,11 @@ gtap_macros_data <- function(input_dir = NULL,
   return(GTAPMacros_final)
 }
 
+
 #' @title Process GTAP Data Automation with Flexible Output Options
-#' @description Processes GTAP data from SL4 and HAR files with options for exporting and preparing plot-ready data.
+#'
+#' @description
+#' Processes GTAP data from SL4 and HAR files with options for exporting and preparing plot-ready data.
 #'
 #' @details
 #' This function provides a complete automation workflow for processing GTAP model outputs,
@@ -151,6 +158,7 @@ gtap_macros_data <- function(input_dir = NULL,
 #' @param harmap Data frame or NULL. Mapping information for HAR variables (with "Variable", "Description", and "Unit" columns).
 #'
 #' @return Returns the processed data invisibly, which will not be printed to the console.
+#'
 #' @author Pattawee Puangchit
 #' @export
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{gtap_macros_data}}
@@ -176,7 +184,6 @@ gtap_macros_data <- function(input_dir = NULL,
 #'     "rds" = "No",
 #'     "txt" = "No"))
 #' }
-#'
 process_gtap_data <- function(experiment, mapping_info = "GTAPv7",
                               project_dir = NULL, input_dir = NULL, output_dir = NULL,
                               output_formats = NULL, plot_data = FALSE, region_select = NULL,

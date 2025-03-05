@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_manipulation.R
 \name{convert_units}
 \alias{convert_units}
-\title{Convert Multiple Units in Nested Data Structures}
+\title{Convert Units in GTAP Data}
 \usage{
 convert_units(
   data,
@@ -17,71 +17,57 @@ convert_units(
 )
 }
 \arguments{
-\item{data}{A data structure (list, data.frame, or nested combination)}
+\item{data}{A data structure (list, data frame, or nested combination).}
 
-\item{change_unit_from}{Character vector of units to change (case-insensitive, space-insensitive, and parentheses-insensitive)}
+\item{change_unit_from}{Character vector. Units to be converted (case-insensitive).}
 
-\item{change_unit_to}{Character vector of new units (same length as change_unit_from, preserves exactly as entered)}
+\item{change_unit_to}{Character vector. Target units corresponding to \code{change_unit_from}.}
 
-\item{adjustment}{Character vector of operations or numeric vector (same length as change_unit_from)}
+\item{adjustment}{Character or numeric vector. Specifies conversion operations (e.g., \code{"/1000"} to convert million to billion).}
 
-\item{value_col}{Column name containing values to adjust (default: "Value")}
+\item{value_col}{Character. Column name containing values to adjust (default: \code{"Value"}).}
 
-\item{unit_col}{Column name containing unit information (default: "Unit")}
+\item{unit_col}{Character. Column name containing unit information (default: \code{"Unit"}).}
 
-\item{variable_select}{Optional character vector of variable names to process. If NULL, all variables are processed.}
+\item{variable_select}{Optional character vector. If provided, only these variables are converted.}
 
-\item{variable_col}{Column name containing variable identifiers (default: "Variable")}
+\item{variable_col}{Character. Column name containing variable identifiers (default: \code{"Variable"}).}
 
-\item{scale_auto}{Optional character vector of predefined conversion rules: "mil2bil", "bil2mil", "pct2frac", "frac2pct"}
+\item{scale_auto}{Optional character vector of predefined conversion rules:
+\itemize{
+\item \code{"mil2bil"}: Converts million USD to billion USD (divides by 1000).
+\item \code{"bil2mil"}: Converts billion USD to million USD (multiplies by 1000).
+\item \code{"pct2frac"}: Converts percent to fraction (divides by 100).
+\item \code{"frac2pct"}: Converts fraction to percent (multiplies by 100).
+}}
 }
 \value{
-Data structure with same format as input but with adjusted values and units
+A data structure with values converted to the specified units.
 }
 \description{
-Convert Multiple Units in Nested Data Structures
+Converts values in a dataset to different units based on predefined transformations or custom scaling.
+Supports manual and automatic conversions for economic and trade-related metrics.
 }
 \details{
-The function supports both manual and automatic unit conversion:
-
-For manual conversion, provide:
-\itemize{
-\item change_unit_from: Units to convert from (case-insensitive)
-\item change_unit_to: Target units (preserved exactly as entered)
-\item adjustment: Conversion operations (e.g., "/1000", "*100")
-}
-
-For automatic conversion, use scale_auto with these options:
-\itemize{
-\item "mil2bil": Convert million USD to billion USD (divides by 1000)
-\item "bil2mil": Convert billion USD to million USD (multiplies by 1000)
-\item "pct2frac": Convert percent to fraction (divides by 100)
-\item "frac2pct": Convert fraction to percent (multiplies by 100)
-}
+If both \code{change_unit_from} and \code{scale_auto} are provided, the function prompts the user
+to choose between manual and automatic conversion.
 }
 \examples{
 \dontrun{
-# Load example data
-har_data <- HARplus::load_harx(system.file("extdata/in", "EXP1.sl4",
-                                          package = "GTAPViz"))
+# Convert million USD to billion USD
+gtap_data <- convert_units(gtap_data,
+  change_unit_from = "million USD",
+  change_unit_to = "billion USD",
+  adjustment = "/1000"
+)
 
-# Manual conversion: million USD to billion USD
-har_data <- convert_units(har_data,
-  change_unit_from = c("million USD"),
-  change_unit_to = c("billion USD"),
-  adjustment = c("/1000"))
-
-# Automatic conversion
-har_data <- convert_units(har_data, scale_auto = c("mil2bil", "pct2frac"))
-
-# Convert units only for specific variables
-har_data <- convert_units(har_data,
-  change_unit_from = c("million USD"),
-  change_unit_to = c("billion USD"),
-  adjustment = c("/1000"),
-  variable_select = c("qgdp", "pop"))
+# Automatic conversion from percent to fraction
+gtap_data <- convert_units(gtap_data, scale_auto = "pct2frac")
 }
 
+}
+\seealso{
+\code{\link{add_mapping_info}}, \code{\link{rename_value}}
 }
 \author{
 Pattawee Puangchit

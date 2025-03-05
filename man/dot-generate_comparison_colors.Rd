@@ -2,29 +2,25 @@
 % Please edit documentation in R/help_plot.R
 \name{.generate_comparison_colors}
 \alias{.generate_comparison_colors}
-\title{Generate Comparison Colors (Internal)}
+\title{Generate Comparison Colors for Bar Charts}
 \usage{
-.generate_comparison_colors(
-  data,
-  color_tone = NULL,
-  compare_by_x_axis = FALSE,
-  x_axis_from = NULL
-)
+.generate_comparison_colors(data, color_tone = NULL, axis_col)
 }
 \arguments{
 \item{data}{A data frame containing the relevant plotting data.}
 
-\item{color_tone}{Character. Base color for generating shades.}
+\item{color_tone}{Character. Base color for generating shades, or a theme name.}
 
-\item{compare_by_x_axis}{Logical. If \code{TRUE}, colors are generated based on \code{Experiment} values.}
-
-\item{x_axis_from}{Character. Column name used when \code{compare_by_x_axis = TRUE}.}
+\item{axis_col}{Column name used for determining the number of unique colors needed.}
 }
 \value{
-A vector of colors in hexadecimal format.
+A vector of colors in hexadecimal format, or NULL if color_tone is NULL.
 }
 \description{
 Generates a color palette for comparison plots based on a base color tone.
+}
+\seealso{
+\code{\link{comparison_plot}}
 }
 \author{
 Pattawee Puangchit

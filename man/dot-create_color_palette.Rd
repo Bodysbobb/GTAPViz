@@ -2,7 +2,7 @@
 % Please edit documentation in R/help_plot.R
 \name{.create_color_palette}
 \alias{.create_color_palette}
-\title{Generate Academic and Themed Color Palettes}
+\title{Create Academic and Themed Color Palettes}
 \usage{
 .create_color_palette(
   color_tone = NULL,
@@ -11,17 +11,23 @@
 )
 }
 \arguments{
-\item{color_tone}{Character. Base color, palette name, or theme ("academic", "purdue", etc.)}
+\item{color_tone}{Character. Base color, palette name, or theme ("academic", "purdue", etc.).}
 
-\item{n_colors}{Numeric. Number of colors needed in the palette}
+\item{n_colors}{Numeric. Number of colors needed in the palette.}
 
-\item{palette_type}{Character. Type of palette to generate: "sequential", "diverging", or "qualitative"}
+\item{palette_type}{Character. Type of palette to generate: "sequential", "diverging", or "qualitative".}
 }
 \value{
-A character vector of colors in hexadecimal format
+A character vector of colors in hexadecimal format, or NULL if color_tone isn't a recognized theme.
 }
 \description{
 Creates professionally designed color palettes for various plot types
-based on the specified theme or color tone, while preserving the variation logic.
+based on the specified theme or color tone.
+}
+\seealso{
+\code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+}
+\author{
+Pattawee Puangchit
 }
 \keyword{internal}
