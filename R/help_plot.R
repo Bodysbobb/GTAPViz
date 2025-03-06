@@ -15,7 +15,6 @@
 #' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #'
 .calculate_plot_style_config <- function(config = NULL, plot_type = "comparison") {
-
   # Default configurations specific to each plot type
   comparison_defaults <- list(
     # Title settings
@@ -64,7 +63,7 @@
     # Legend settings
     show_legend = FALSE,
     show_legend_title = FALSE,
-    legend_position = "none",
+    legend_position = "bottom",
     legend_title_face = "bold",
     legend_text_face = "plain",
     legend_text_size = 14,
@@ -103,6 +102,10 @@
     bar_width = 0.9,
     bar_spacing = 0.9,
 
+    # Scale settings
+    scale_limit = NULL,
+    scale_increment = NULL,
+
     # Scale expansion settings
     expansion_y_mult = c(0.05, 0.1),
     expansion_x_mult = c(0.05, 0.05)
@@ -122,7 +125,7 @@
     show_x_axis_title = TRUE,
     x_axis_title_face = "bold",
     x_axis_title_size = 32,
-    x_axis_title_margin = ggplot2::margin(t = 0, r = 0, b = 0, l = 0),
+    x_axis_title_margin = ggplot2::margin(t = 20, r = 0, b = 0, l = 0),
     show_x_axis_labels = TRUE,
     x_axis_text_face = "plain",
     x_axis_text_size = 32,
@@ -155,7 +158,7 @@
     # Legend settings
     show_legend = FALSE,
     show_legend_title = FALSE,
-    legend_position = "none",
+    legend_position = "bottom",
     legend_title_face = "bold",
     legend_text_face = "plain",
     legend_text_size = 14,
@@ -194,9 +197,14 @@
     bar_width = 0.4,
     bar_spacing = 0.5,
 
+    # Scale settings
+    scale_limit = NULL,
+    scale_increment = NULL,
+
     # Scale expansion settings
     expansion_y_mult = c(0.2, 0.2),
     expansion_x_mult = c(0.05, 0.05)
+
   )
 
   stack_defaults <- list(
@@ -213,7 +221,7 @@
     show_x_axis_title = TRUE,
     x_axis_title_face = "bold",
     x_axis_title_size = 20,
-    x_axis_title_margin = ggplot2::margin(t = 0, r = 0, b = 0, l = 0),
+    x_axis_title_margin = ggplot2::margin(t = 20, r = 0, b = 0, l = 0),
     show_x_axis_labels = TRUE,
     x_axis_text_face = "bold",
     x_axis_text_size = 18,
@@ -225,7 +233,7 @@
     show_y_axis_title = TRUE,
     y_axis_title_face = "bold",
     y_axis_title_size = 20,
-    y_axis_title_margin = ggplot2::margin(t = 0, r = 0, b = 0, l = 0),
+    y_axis_title_margin = ggplot2::margin(t = 0, r = 20, b = 0, l = 0),
     show_y_axis_labels = TRUE,
     y_axis_text_face = "plain",
     y_axis_text_size = 18,
@@ -285,9 +293,14 @@
     bar_width = 0.7,
     bar_spacing = 0,
 
+    # Scale settings
+    scale_limit = NULL,
+    scale_increment = NULL,
+
     # Scale expansion settings
     expansion_y_mult = c(0.1, 0.1),
     expansion_x_mult = c(0.05, 0.05)
+
   )
 
   # Select the appropriate default based on plot type
@@ -295,7 +308,7 @@
                            "comparison" = comparison_defaults,
                            "detail" = detail_defaults,
                            "stack" = stack_defaults,
-                           comparison_defaults)  # Default to comparison if unspecified
+                           comparison_defaults)
 
   # If no config is provided, return the default
   if (is.null(config)) {
@@ -304,6 +317,7 @@
 
   # Merge user config with defaults (user settings take precedence)
   final_config <- modifyList(default_config, config)
+
   return(final_config)
 }
 
@@ -462,7 +476,112 @@
 }
 
 
+#' @title Calculate Dynamic Font Sizes Based on Plot Dimensions
+#'
+#' @description
+#' Calculates appropriate font sizes for different plot elements based on the overall plot dimensions.
+#' Font sizes scale proportionally to maintain readability across different plot sizes.
+#'
+#' @param width Numeric. Width of the plot in inches.
+#' @param height Numeric. Height of the plot in inches.
+#' @param scale_factor Numeric. Factor to increase or decrease all font sizes proportionally. Default is 1.0.
+#'
+#' @return A list containing font sizes for various plot elements (title, axis labels, etc.).
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+#'
+.calculate_font_sizes <- function(width, height, scale_factor = 1.0) {
+  plot_area <- width * height
+
+  # Scale base size logarithmically with plot area
+  base_size <- 8 + 4 * log10(plot_area/100) * scale_factor
+  base_size <- round(base_size)
+
+  # Calculate all font sizes proportionally to base size
+  font_sizes <- list(
+    title_size = base_size * 2.0,
+    x_axis_title_size = base_size * 1.4,
+    y_axis_title_size = base_size * 1.4,
+    strip_text_size = base_size * 1.5,
+    x_axis_text_size = base_size * 1.2,
+    y_axis_text_size = base_size * 1.2,
+    legend_title_size = base_size * 1.4,
+    legend_text_size = base_size * 0.9,
+    value_label_size = base_size * 0.45
+  )
+
+  # Round all font sizes to integers
+  font_sizes <- lapply(font_sizes, round)
+
+  return(font_sizes)
+}
+
 # COLUMN HANDLING HELPERS -----------------------------------------
+#' @title Validate Column Parameters in Data Frame
+#'
+#' @description
+#' Checks whether specified parameter values exist as column names in the given data frame.
+#' If a parameter refers to a non-existent column, a warning is issued.
+#'
+#' @param data A data frame or a named list of data frames to validate.
+#' @param params A named list where names are parameter names and values are expected column names (single or multiple).
+#'
+#' @return This function does not return a value but issues warnings for unmatched columns.
+#'
+#' @details
+#' This function ensures that user-specified parameter values correspond to existing columns in the given data structure.
+#' It supports both individual data frames and lists of data frames, recursively checking each data frame in the list.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+#'
+.validate_column_params <- function(data, params) {
+  if (is.list(data) && !is.data.frame(data)) {
+    for (df_name in names(data)) {
+      df <- data[[df_name]]
+      if (is.data.frame(df)) {
+        .validate_column_params(df, params)
+        return(invisible())
+      }
+    }
+    return(invisible())
+  }
+
+  if (!is.data.frame(data)) {
+    return(invisible())
+  }
+
+  for (param_name in names(params)) {
+    param_value <- params[[param_name]]
+
+    # Skip if NULL or logical
+    if (is.null(param_value) || is.logical(param_value)) {
+      next
+    }
+
+    # For list of values (like in split_by with multiple columns)
+    if (is.character(param_value) && length(param_value) > 1) {
+      for (single_value in param_value) {
+        if (!single_value %in% names(data)) {
+          warning(sprintf("Parameter '%s' value '%s' does not match any column in the data.",
+                          param_name, single_value))
+        }
+      }
+    } else {
+      # For single values
+      if (!param_value %in% names(data)) {
+        warning(sprintf("Parameter '%s' value '%s' does not match any column in the data.",
+                        param_name, param_value))
+      }
+    }
+  }
+
+  return(invisible())
+}
+
 
 #' @title Find Column in Data Frame
 #'
@@ -997,9 +1116,11 @@
 
 #' @title Calculate Plot Dimensions
 #'
-#' @description Determines appropriate width and height for a plot based on the panel layout.
+#' @description
+#' Calculates appropriate width and height for a plot based on the panel layout.
+#' Uses a simple formula that increases dimensions with the number of panels.
 #'
-#' @param data A data frame containing the relevant plotting data.
+#' @param data A data frame containing the plotting data (not used in dimension calculation).
 #' @param panel_layout A list containing 'rows' and 'cols' specifying the panel layout.
 #'
 #' @return A list with 'width' and 'height' specifying the calculated plot dimensions in inches.
@@ -1022,4 +1143,169 @@
   height <- base_height * 0.75
 
   return(list(width = width, height = height))
+}
+
+
+#  EXPORT -----------------------------------------------------------------
+
+#' @title Export Plots to Files
+#'
+#' @description
+#' Exports one or more ggplot objects to PNG and/or PDF files.
+#' Supports exporting to separate files or creating a single merged PDF with multiple pages.
+#'
+#' @param plots A ggplot object or a list of ggplot objects to export.
+#' @param output_path Character. Directory where the plots will be saved. Default is current working directory.
+#' @param export_picture Logical. If TRUE, exports the plots as PNG files. Default is TRUE.
+#' @param export_as_pdf Logical or character. If TRUE, exports the plots as PDF files.
+#'        If "merged", creates a single multi-page PDF. Default is FALSE.
+#' @param export_config List. Configuration parameters for export:
+#'        \itemize{
+#'          \item \code{width}: Plot width in inches.
+#'          \item \code{height}: Plot height in inches.
+#'          \item \code{dpi}: Resolution for PNG export (default: 300).
+#'          \item \code{bg}: Background color (default: "white").
+#'          \item \code{limitsize}: Whether to limit size (default: FALSE).
+#'          \item \code{file_name}: Base name for exported files (default: "gtap_plots").
+#'        }
+#' @param data A data frame used for automatic dimension calculation if not specified in export_config.
+#' @param panel_layout A list with 'rows' and 'cols' for automatic dimension calculation.
+#'
+#' @return Invisibly returns the input plots.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+#'
+.export_plot_output <- function(plots,
+                                output_path = NULL,
+                                export_picture = TRUE,
+                                export_as_pdf = FALSE,
+                                export_config = NULL,
+                                data = NULL,
+                                panel_layout = NULL) {
+
+  if (!export_picture) {
+    return(invisible(plots))
+  }
+
+  # Prepare export configuration
+  if (is.null(export_config)) {
+    export_config <- list()
+  }
+
+  # Default export settings if not specified
+  if (is.null(export_config$dpi)) export_config$dpi <- 300
+  if (is.null(export_config$bg)) export_config$bg <- "white"
+  if (is.null(export_config$limitsize)) export_config$limitsize <- FALSE
+  if (is.null(export_config$file_name)) export_config$file_name <- "gtap_plots"
+
+  # Handle custom dimensions if provided
+  if (is.null(export_config$width) || is.null(export_config$height)) {
+    dimensions <- .calculate_plot_dimensions(data, panel_layout)
+    export_config$width <- dimensions$width
+    export_config$height <- dimensions$height
+  }
+
+  # Create output directory if needed
+  if (is.null(output_path)) {
+    output_path <- getwd()
+  }
+
+  if (!dir.exists(output_path)) {
+    dir.create(output_path, recursive = TRUE)
+  }
+
+  is_single_plot <- inherits(plots, "gg")
+
+  if (is_single_plot) {
+    plots <- list(plot = plots)
+  }
+
+  if (!is.list(plots) || length(plots) == 0) {
+    stop("plots must be a ggplot object or a non-empty list of ggplot objects")
+  }
+
+  if (!all(sapply(plots, function(p) inherits(p, "gg")))) {
+    stop("All elements in plots must be ggplot objects")
+  }
+
+  n_plots <- length(plots)
+
+  if (all(names(plots) != "")) {
+    plot_names <- names(plots)
+  } else {
+    plot_names <- paste0("plot_", seq_len(n_plots))
+  }
+
+  is_merge_pdf <- FALSE
+  if (is.character(export_as_pdf)) {
+    if (tolower(export_as_pdf) == "merged") {
+      is_merge_pdf <- TRUE
+      export_as_pdf <- TRUE
+    }
+  }
+
+  if (export_as_pdf && is_merge_pdf && n_plots >= 1) {
+    pdf_path <- file.path(output_path, paste0(export_config$file_name, ".pdf"))
+
+    grDevices::pdf(
+      file = pdf_path,
+      width = export_config$width,
+      height = export_config$height,
+      useDingbats = FALSE,
+      title = export_config$file_name
+    )
+
+    on.exit(grDevices::dev.off())
+
+    for (i in seq_along(plots)) {
+      print(plots[[i]])
+    }
+
+    message("Combined PDF exported to: ", pdf_path)
+  }
+
+  if (export_picture || (export_as_pdf && !is_merge_pdf)) {
+    for (i in seq_along(plots)) {
+      p <- plots[[i]]
+      name <- gsub("[^[:alnum:]]", "_", plot_names[i])
+
+      if (export_picture) {
+        png_path <- file.path(output_path, paste0(name, ".png"))
+
+        ggplot2::ggsave(
+          filename = png_path,
+          plot = p,
+          device = "png",
+          width = export_config$width,
+          height = export_config$height,
+          dpi = export_config$dpi,
+          bg = export_config$bg,
+          limitsize = export_config$limitsize
+        )
+
+        message("PNG figure exported to: ", png_path)
+      }
+
+      if (export_as_pdf && !is_merge_pdf) {
+        pdf_path <- file.path(output_path, paste0(name, ".pdf"))
+
+        ggplot2::ggsave(
+          filename = pdf_path,
+          plot = p,
+          device = "pdf",
+          width = export_config$width,
+          height = export_config$height,
+          dpi = export_config$dpi,
+          bg = export_config$bg,
+          limitsize = export_config$limitsize
+        )
+
+        message("PDF figure exported to: ", pdf_path)
+      }
+    }
+  }
+
+  invisible(plots)
 }

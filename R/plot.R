@@ -105,6 +105,10 @@
 #' - `bar_width`: Numeric. Width of bars. Default: `0.9`
 #' - `bar_spacing`: Numeric. Spacing between bars. Default: `0.9`
 #'
+#' ## **Scale Settings**
+#' - `scale_limit`: Numeric vector of length 2. Manual limits for value axis. Example: `c(-10, 10)`
+#' - `scale_increment`: Numeric. Step size for axis tick marks. Example: `2`
+#'
 #' ## **Scale Expansion Settings**
 #' - `expansion_y_mult`: Numeric vector. Y-axis expansion. Default: `c(0.05, 0.1)`
 #' - `expansion_x_mult`: Numeric vector. X-axis expansion. Default: `c(0.05, 0.05)`
@@ -199,6 +203,8 @@ get_plot_style_config <- function(plot_type = "comparison",
     zero_line_position = "Numeric. Position of the zero line.",
     bar_width = "Numeric. Width of bars (0-1).",
     bar_spacing = "Numeric. Spacing between groups of bars.",
+    scale_limit = "Numeric vector of length 2. Manual limits for value axis (min, max).",
+    scale_increment = "Numeric. Step size for axis tick marks.",
     expansion_y_mult = "Numeric vector of length 2. Expansion multiplier for y-axis.",
     expansion_x_mult = "Numeric vector of length 2. Expansion multiplier for x-axis."
   )
@@ -309,6 +315,8 @@ get_plot_style_config <- function(plot_type = "comparison",
 
       "Bar Chart" = c("bar_width", "bar_spacing"),
 
+      "Scale Settings" = c("scale_limit", "scale_increment"),
+
       "Scale Expansion" = c("expansion_y_mult", "expansion_x_mult")
     )
 
@@ -377,6 +385,122 @@ get_plot_style_config <- function(plot_type = "comparison",
   return(c(list(plot_type = plot_type), config))
 }
 
+#' Get Export Configuration Options
+#'
+#' @description
+#' Returns documentation and default values for export configuration options used in plotting functions.
+#'
+#' @param as_dataframe Logical. Whether to return settings as a dataframe. Default is FALSE.
+#'
+#' @return
+#' If \code{as_dataframe} is TRUE, returns a dataframe with export configuration settings.
+#' Otherwise, returns a list with configuration settings.
+#'
+#' @details
+#' ## **Export Configuration Parameters**
+#' - `file_name`: Character. Base name for exported files. Default: `"gtap_plots"`
+#' - `width`: Numeric or `NULL`. Plot width in inches. Default: `NULL` (automatically calculated)
+#' - `height`: Numeric or `NULL`. Plot height in inches. Default: `NULL` (automatically calculated)
+#' - `dpi`: Numeric. Resolution for PNG export. Default: `300`
+#' - `bg`: Character. Background color. Default: `"white"`
+#' - `limitsize`: Logical. Whether to limit size. Default: `FALSE`
+#'
+#' @author Pattawee Puangchit
+#'
+#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+#' @export
+#'
+#' @examples
+#' # Get export configuration as list
+#' export_info <- get_export_config()
+#'
+#' # Get as a formatted dataframe
+#' export_df <- get_export_config(as_dataframe = TRUE)
+#'
+get_export_config <- function(as_dataframe = FALSE) {
+  # Export config parameters
+  export_config_params <- list(
+    file_name = "gtap_plots",
+    width = NULL,
+    height = NULL,
+    dpi = 300,
+    bg = "white",
+    limitsize = FALSE
+  )
+
+  # Documentation for export_config parameters
+  export_config_docs <- list(
+    file_name = "Character. Base name for exported files. Default is 'gtap_plots'.",
+    width = "Numeric. Plot width in inches. Default is automatically calculated.",
+    height = "Numeric. Plot height in inches. Default is automatically calculated.",
+    dpi = "Numeric. Resolution for PNG export. Default is 300.",
+    bg = "Character. Background color. Default is 'white'.",
+    limitsize = "Logical. Whether to limit size. Default is FALSE."
+  )
+
+  if (as_dataframe) {
+    # Create the dataframe
+    result <- data.frame(
+      Topic = character(),
+      Arguments = character(),
+      `Default Value` = character(),
+      `Input Format` = character(),
+      Description = character(),
+      Example = character(),
+      stringsAsFactors = FALSE
+    )
+
+    # Add export_config params
+    current_topic <- "Export Config"
+    for (param in names(export_config_params)) {
+      param_value <- export_config_params[[param]]
+      param_type <- if (is.null(param_value)) "numeric" else class(param_value)[1]
+
+      example <- if (param == "file_name") {
+        'export_config = list(file_name = "regional_impacts")'
+      } else if (param == "width") {
+        "export_config = list(width = 12)"
+      } else if (param == "height") {
+        "export_config = list(height = 8)"
+      } else if (param == "dpi") {
+        "export_config = list(dpi = 600)"
+      } else if (param == "bg") {
+        'export_config = list(bg = "white")'
+      } else if (param == "limitsize") {
+        "export_config = list(limitsize = FALSE)"
+      }
+
+      val_text <- if (is.null(param_value)) "NULL" else
+        if (is.logical(param_value)) ifelse(param_value, "TRUE", "FALSE") else
+          param_value
+
+      # Only show "Export Config" in the first row
+      display_topic <- if (param == names(export_config_params)[1]) current_topic else ""
+
+      result <- rbind(result, data.frame(
+        Topic = display_topic,
+        Arguments = param,
+        `Default Value` = val_text,
+        `Input Format` = param_type,
+        Description = export_config_docs[[param]],
+        Example = example,
+        stringsAsFactors = FALSE
+      ))
+    }
+
+    return(result)
+  }
+
+  # Return as list
+  full_config <- list(
+    export_config = export_config_params,
+    export_config_docs = export_config_docs
+  )
+
+  return(full_config)
+}
+
+
 # Comparison Plot ---------------------------------------------------------
 
 #' @title Create Comparative Bar Charts from HAR and SL4 Data
@@ -399,18 +523,26 @@ get_plot_style_config <- function(plot_type = "comparison",
 #' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
 #' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
 #' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
-#' @param output_dir Character. Directory path to save plots as `.png` files. If NULL, plots are only returned in R without saving.
-#' @param width Numeric. Width of the output figure in inches. If NULL, it is calculated automatically.
-#' @param height Numeric. Height of the output figure in inches. If NULL, it is calculated automatically.
+#' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
+#' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
+#' @param export_as_pdf Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).
+#' @param export_config List. Configuration options for exported plots, including file name, width, and height.
 #' @param plot_style_config List. Custom style configuration for plots. If NULL, defaults from `get_plot_style_config("comparison")` are applied.
 #'
 #' @return A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
 #'
 #' @details
 #' This function allows for extensive customization of plots through the `plot_style_config` parameter,
-#' which integrates ggplot2 configurations.
-#' To view and adjust available style options, use:
-#' `get_plot_style_config("comparison", as_dataframe = TRUE)`.
+#' which integrates ggplot2 configurations. The function now supports more flexible export options
+#' with the `export_picture`, `export_as_pdf`, and `export_config` parameters.
+#'
+#' The `export_config` parameter can include:
+#' \itemize{
+#'   \item `file_name`: Base name for the output files (default: "comparison_plots").
+#'   \item `width`: Width of the output files in inches.
+#'   \item `height`: Height of the output files in inches.
+#'   \item Additional export settings as needed.
+#' }
 #'
 #' @author Pattawee Puangchit
 #' @seealso \code{\link{detail_plot}}, \code{\link{stack_plot}}, \code{\link{get_plot_style_config}}
@@ -425,30 +557,27 @@ get_plot_style_config <- function(plot_type = "comparison",
 #'   panel_var = "Experiment"
 #' )
 #'
-#' # Split by commodity with custom styling
+#' # Split by commodity with custom styling and export options
 #' p2 <- comparison_plot(
 #'   data = gtap_results,
 #'   x_axis_from = "REG",
 #'   split_by = "COMM",
 #'   panel_var = "Experiment",
 #'   var_name_by_description = TRUE,
+#'   output_path = "results/plots",
+#'   export_as_pdf = TRUE,
+#'   export_config = list(
+#'     file_name = "commodity_impacts",
+#'     width = 12,
+#'     height = 8
+#'   ),
 #'   plot_style_config = list(
 #'     color_tone = "economic",
 #'     title_size = 16,
 #'     show_grid_major_y = TRUE
 #'   )
 #' )
-#'
-#' # Save plots to directory with inverted orientation
-#' plots <- comparison_plot(
-#'   data = gtap_results,
-#'   x_axis_from = "REG",
-#'   split_by = "COMM",
-#'   invert_pane = TRUE,
-#'   output_dir = "path/to/output/directory"
-#' )
 #' }
-#'
 comparison_plot <- function(data, filter_var = NULL,
                             x_axis_from,
                             split_by = NULL,
@@ -460,10 +589,21 @@ comparison_plot <- function(data, filter_var = NULL,
                             separate_figure = FALSE,
                             var_name_by_description = FALSE,
                             add_var_info = FALSE,
-                            output_dir = NULL,
-                            width = NULL,
-                            height = NULL,
+                            output_path = NULL,
+                            export_picture = TRUE,
+                            export_as_pdf = FALSE,
+                            export_config = NULL,
                             plot_style_config = NULL) {
+
+  # Validate the column parameters
+  .validate_column_params(data, list(
+    x_axis_from = x_axis_from,
+    split_by = split_by,
+    panel_var = panel_var,
+    variable_col = variable_col,
+    unit_col = unit_col,
+    desc_col = desc_col
+  ))
 
   # PREPARE DATA SOURCE
   if (is.list(data) && !is.data.frame(data)) {
@@ -557,11 +697,43 @@ comparison_plot <- function(data, filter_var = NULL,
     title_mapping <- setNames(as.list(unique(data[[variable_col]])), unique(data[[variable_col]]))
   }
 
-  # GET STYLE CONFIGURATION
-  style_config <- if (!is.null(plot_style_config)) {
-    .calculate_plot_style_config(plot_style_config, "comparison")
+  # Calculate panel layout before style configuration to inform sizing
+  panel_layout <- .calculate_panel_layout(data, NULL, NULL, panel_var)
+
+  # Check if custom dimensions are provided
+  if (!is.null(export_config) && !is.null(export_config$width) && !is.null(export_config$height)) {
+    dimensions <- list(
+      width = export_config$width,
+      height = export_config$height
+    )
   } else {
-    .calculate_plot_style_config(NULL, "comparison")
+    # Use standard dimension calculation
+    dimensions <- .calculate_plot_dimensions(data, panel_layout)
+  }
+
+  # Calculate font sizes with auto_font_scale
+  font_sizes <- .calculate_font_sizes(dimensions$width, dimensions$height, 1.0)
+
+  # Create base style config
+  base_style_config <- list(
+    title_size = font_sizes$title_size,
+    x_axis_title_size = font_sizes$x_axis_title_size,
+    y_axis_title_size = font_sizes$y_axis_title_size,
+    x_axis_text_size = font_sizes$x_axis_text_size,
+    y_axis_text_size = font_sizes$y_axis_text_size,
+    strip_text_size = font_sizes$strip_text_size,
+    legend_text_size = font_sizes$legend_text_size,
+    value_label_size = font_sizes$value_label_size,
+    panel_rows = panel_layout$rows,
+    panel_cols = panel_layout$cols
+  )
+
+  # Merge with user provided config (user settings take precedence)
+  if (!is.null(plot_style_config)) {
+    style_config <- modifyList(base_style_config, plot_style_config)
+    style_config <- .calculate_plot_style_config(style_config, "comparison")
+  } else {
+    style_config <- .calculate_plot_style_config(base_style_config, "comparison")
   }
 
   # PROCESS BY UNIT GROUPS (different units need separate plots)
@@ -582,18 +754,6 @@ comparison_plot <- function(data, filter_var = NULL,
 
         for (panel_name in names(panel_list)) {
           panel_data <- panel_list[[panel_name]]
-
-          # Calculate dimensions - use direct values from style_config
-          panel_layout <- .calculate_panel_layout(panel_data, style_config$panel_rows, style_config$panel_cols, panel_var)
-
-          if (is.null(width) || is.null(height)) {
-            dims <- .calculate_plot_dimensions(panel_data, panel_layout)
-            width_val <- ifelse(is.null(width), dims$width, width)
-            height_val <- ifelse(is.null(height), dims$height, height)
-          } else {
-            width_val <- width
-            height_val <- height
-          }
 
           # Format title
           panel_title <- if (variable_col %in% names(panel_data) && panel_name %in% names(title_mapping)) {
@@ -624,45 +784,22 @@ comparison_plot <- function(data, filter_var = NULL,
             }
           }
 
-          # Create plot - use panel_layout for dimensions
+          # Create plot
           p <- .create_single_comparison_plot(
             data = panel_data,
             x_axis_from = x_axis_from,
             plot_title = plot_title,
             unit = unit_name,
-            panel_rows = panel_layout$rows,
-            panel_cols = panel_layout$cols,
+            panel_rows = style_config$panel_rows,
+            panel_cols = style_config$panel_cols,
             panel_var = panel_var,
             invert_pane = invert_pane,
             plot_style_config = style_config
           )
 
-          # Save plot if output_dir provided
-          if (!is.null(output_dir)) {
-            if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-            clean_panel <- gsub("[^[:alnum:]]", "_", panel_name)
-            clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-            filename <- file.path(output_dir, paste0("macro_", clean_panel, "_", clean_unit, ".png"))
-            ggplot2::ggsave(filename, p, width = width_val, height = height_val, dpi = 300, bg = "white", limitsize = FALSE)
-            message("Saved plot: ", filename)
-          }
-
           plot_list[[paste("macro", panel_name, unit_name, sep = "_")]] <- p
         }
       } else {
-        # Calculate panel layout - use direct values from style_config
-        panel_layout <- .calculate_panel_layout(unit_data, style_config$panel_rows, style_config$panel_cols, panel_var)
-
-        # Auto-calculate dimensions
-        if (is.null(width) || is.null(height)) {
-          dims <- .calculate_plot_dimensions(unit_data, panel_layout)
-          width_val <- ifelse(is.null(width), dims$width, width)
-          height_val <- ifelse(is.null(height), dims$height, height)
-        } else {
-          width_val <- width
-          height_val <- height
-        }
-
         # Format title for combined plot
         plot_title <- "Global Economic Impacts"
 
@@ -686,27 +823,18 @@ comparison_plot <- function(data, filter_var = NULL,
           }
         }
 
-        # Create plot - use panel_layout for dimensions
+        # Create plot
         p <- .create_single_comparison_plot(
           data = unit_data,
           x_axis_from = x_axis_from,
           plot_title = plot_title,
           unit = unit_name,
-          panel_rows = panel_layout$rows,
-          panel_cols = panel_layout$cols,
+          panel_rows = style_config$panel_rows,
+          panel_cols = style_config$panel_cols,
           panel_var = panel_var,
           invert_pane = invert_pane,
           plot_style_config = style_config
         )
-
-        # Save plot if output_dir provided
-        if (!is.null(output_dir)) {
-          if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-          clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-          filename <- file.path(output_dir, paste0("GTAPMacros_", clean_unit, ".png"))
-          ggplot2::ggsave(filename, p, width = width_val, height = height_val, dpi = 300, bg = "white", limitsize = FALSE)
-          message("Saved plot: ", filename)
-        }
 
         plot_list[[paste("macro", unit_name, sep = "_")]] <- p
       }
@@ -731,25 +859,12 @@ comparison_plot <- function(data, filter_var = NULL,
           filtered_data <- unit_data[unit_data[[split_col]] == sep_value, ]
         }
 
-        # Calculate panel layout - use direct values from style_config
         if (separate_figure) {
           panel_values <- unique(filtered_data[[panel_var]])
 
           # Create separate figures for each panel value
           for (panel_val in panel_values) {
             panel_data <- filtered_data[filtered_data[[panel_var]] == panel_val, ]
-
-            # Calculate dimensions - use layout directly from style_config
-            panel_layout <- .calculate_panel_layout(panel_data, style_config$panel_rows, style_config$panel_cols, panel_var)
-
-            if (is.null(width) || is.null(height)) {
-              dims <- .calculate_plot_dimensions(panel_data, panel_layout)
-              width_val <- ifelse(is.null(width), dims$width, width)
-              height_val <- ifelse(is.null(height), dims$height, height)
-            } else {
-              width_val <- width
-              height_val <- height
-            }
 
             # Format title
             plot_title <- paste0(sep_value, " - ", panel_val)
@@ -780,40 +895,16 @@ comparison_plot <- function(data, filter_var = NULL,
               x_axis_from = x_axis_from,
               plot_title = plot_title,
               unit = unit_name,
-              panel_rows = panel_layout$rows,
-              panel_cols = panel_layout$cols,
+              panel_rows = style_config$panel_rows,
+              panel_cols = style_config$panel_cols,
               panel_var = panel_var,
               invert_pane = invert_pane,
               plot_style_config = style_config
             )
 
-            # Save plot if output_dir provided
-            if (!is.null(output_dir)) {
-              if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-              clean_sep <- gsub("[^[:alnum:]]", "_", sep_value)
-              clean_panel <- gsub("[^[:alnum:]]", "_", panel_val)
-              clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-              filename <- file.path(output_dir, paste0(clean_sep, "_", clean_panel, "_", clean_unit, ".png"))
-              ggplot2::ggsave(filename, p, width = width_val, height = height_val, dpi = 300, bg = "white", limitsize = FALSE)
-              message("Saved plot: ", filename)
-            }
-
             plot_list[[paste(sep_value, panel_val, unit_name, sep = "_")]] <- p
           }
         } else {
-          # Panel plot for all values in the group
-          panel_layout <- .calculate_panel_layout(filtered_data, style_config$panel_rows, style_config$panel_cols, panel_var)
-
-          # Calculate dimensions
-          if (is.null(width) || is.null(height)) {
-            dims <- .calculate_plot_dimensions(filtered_data, panel_layout)
-            width_val <- ifelse(is.null(width), dims$width, width)
-            height_val <- ifelse(is.null(height), dims$height, height)
-          } else {
-            width_val <- width
-            height_val <- height
-          }
-
           # Format title
           plot_title <- sep_value
 
@@ -843,28 +934,41 @@ comparison_plot <- function(data, filter_var = NULL,
             x_axis_from = x_axis_from,
             plot_title = plot_title,
             unit = unit_name,
-            panel_rows = panel_layout$rows,
-            panel_cols = panel_layout$cols,
+            panel_rows = style_config$panel_rows,
+            panel_cols = style_config$panel_cols,
             panel_var = panel_var,
             invert_pane = invert_pane,
             plot_style_config = style_config
           )
-
-          # Save plot if output_dir provided
-          if (!is.null(output_dir)) {
-            if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-            clean_sep <- gsub("[^[:alnum:]]", "_", sep_value)
-            clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-            filename <- file.path(output_dir, paste0(clean_sep, "_", clean_unit, ".png"))
-            ggplot2::ggsave(filename, p, width = width_val, height = height_val, dpi = 300, bg = "white", limitsize = FALSE)
-            message("Saved plot: ", filename)
-          }
 
           plot_list[[paste(sep_value, unit_name, sep = "_")]] <- p
         }
       }
     }
   }
+
+  # Set default file_name in export_config if not already set
+  if (is.null(export_config) || is.null(export_config$file_name)) {
+    if (is.null(export_config)) {
+      export_config <- list()
+    }
+    export_config$file_name <- "comparison_plots"
+  }
+
+  # Add calculated dimensions to export_config
+  export_config$width <- dimensions$width
+  export_config$height <- dimensions$height
+
+  # EXPORT PLOTS USING HELPER FUNCTION
+  .export_plot_output(
+    plots = plot_list,
+    output_path = output_path,
+    export_picture = export_picture,
+    export_as_pdf = export_as_pdf,
+    export_config = export_config,
+    data = data,
+    panel_layout = panel_layout
+  )
 
   # Return single plot or list of plots based on number of plots
   if (length(plot_list) == 1) {
@@ -916,25 +1020,29 @@ comparison_plot <- function(data, filter_var = NULL,
 
   n_panels <- length(unique(data[[facet_var]]))
 
-  # CALCULATE Y-AXIS LIMITS
-  value_range <- range(data$Value)
-  y_range <- diff(value_range)
-
-  # Add more padding to ensure no clipping of bars
-  y_limits <- if (tolower(unit) == "percent") {
-    max_abs_value <- max(abs(value_range))
-    c(-max_abs_value * 1.35, max_abs_value * 1.35)
+  # CALCULATE Y-AXIS LIMITS - Use scale_limit if provided, otherwise calculate automatically
+  if (!is.null(style_config$scale_limit) && length(style_config$scale_limit) == 2) {
+    y_limits <- style_config$scale_limit
   } else {
-    # More generous margins to avoid clipping
-    if (all(data$Value >= 0)) {
-      # For all positive values
-      c(0, value_range[2] * 1.3)
-    } else if (all(data$Value <= 0)) {
-      # For all negative values
-      c(value_range[1] * 1.3, 0)
+    value_range <- range(data$Value)
+    y_range <- diff(value_range)
+
+    # Add more padding to ensure no clipping of bars
+    y_limits <- if (tolower(unit) == "percent") {
+      max_abs_value <- max(abs(value_range))
+      c(-max_abs_value * 1.35, max_abs_value * 1.35)
     } else {
-      # For mixed values
-      c(value_range[1] * 1.3, value_range[2] * 1.3)
+      # More generous margins to avoid clipping
+      if (all(data$Value >= 0)) {
+        # For all positive values
+        c(0, value_range[2] * 1.3)
+      } else if (all(data$Value <= 0)) {
+        # For all negative values
+        c(value_range[1] * 1.3, 0)
+      } else {
+        # For mixed values
+        c(value_range[1] * 1.3, value_range[2] * 1.3)
+      }
     }
   }
 
@@ -1003,11 +1111,18 @@ comparison_plot <- function(data, filter_var = NULL,
     }
 
     # APPLY SCALE TO VALUE AXIS (X-AXIS)
-    p <- p + ggplot2::scale_x_continuous(
+    scale_args <- list(
       limits = y_limits,
       oob = scales::oob_keep,
       expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
     )
+
+    # Add breaks if scale_increment is specified
+    if (!is.null(style_config$scale_increment) && is.numeric(style_config$scale_increment)) {
+      scale_args$breaks <- seq(y_limits[1], y_limits[2], by = style_config$scale_increment)
+    }
+
+    p <- p + do.call(ggplot2::scale_x_continuous, scale_args)
 
     # ADD ZERO LINE IF CONFIGURED (VERTICAL LINE FOR HORIZONTAL BARS)
     if (style_config$show_zero_line) {
@@ -1043,11 +1158,18 @@ comparison_plot <- function(data, filter_var = NULL,
     }
 
     # APPLY SCALE TO VALUE AXIS (Y-AXIS)
-    p <- p + ggplot2::scale_y_continuous(
+    scale_args <- list(
       limits = y_limits,
       oob = scales::oob_keep,
       expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
     )
+
+    # Add breaks if scale_increment is specified
+    if (!is.null(style_config$scale_increment) && is.numeric(style_config$scale_increment)) {
+      scale_args$breaks <- seq(y_limits[1], y_limits[2], by = style_config$scale_increment)
+    }
+
+    p <- p + do.call(ggplot2::scale_y_continuous, scale_args)
 
     # ADD ZERO LINE IF CONFIGURED (HORIZONTAL LINE FOR VERTICAL BARS)
     if (style_config$show_zero_line) {
@@ -1197,10 +1319,11 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @param desc_col Character. Column containing variable descriptions (default: "Description").
 #' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
 #' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
-#' @param output_dir Character. Directory path to save plots as `.png` files. If NULL, plots are only returned in R without saving.
+#' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
+#' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
+#' @param export_as_pdf Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).
+#' @param export_config List. Configuration options for exported plots, including file name, width, and height.
 #' @param top_impact Numeric or NULL. If specified, filters to show only the top N impactful values. NULL shows all values.
-#' @param width Numeric. Width of the output figure in inches. If NULL, it is calculated automatically.
-#' @param height Numeric. Height of the output figure in inches. If NULL, it is calculated automatically.
 #' @param separate_figure Logical. If TRUE, creates a separate figure for each panel value (default: FALSE).
 #' @param invert_pane Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
 #' @param plot_style_config List. Custom style configuration for plots. If NULL, defaults from `get_plot_style_config("detail")` are applied.
@@ -1209,9 +1332,16 @@ comparison_plot <- function(data, filter_var = NULL,
 #'
 #' @details
 #' This function allows for extensive customization of plots through the `plot_style_config` parameter,
-#' which integrates ggplot2 configurations.
-#' To view and adjust available style options, use:
-#' `get_plot_style_config("detail", as_dataframe = TRUE)`.
+#' which integrates ggplot2 configurations. The function now supports more flexible export options
+#' with the `export_picture`, `export_as_pdf`, and `export_config` parameters.
+#'
+#' The `export_config` parameter can include:
+#' \itemize{
+#'   \item `file_name`: Base name for the output files (default: "detail_plots").
+#'   \item `width`: Width of the output files in inches.
+#'   \item `height`: Height of the output files in inches.
+#'   \item Additional export settings as needed.
+#' }
 #'
 #' @author Pattawee Puangchit
 #' @seealso \code{\link{comparison_plot}}, \code{\link{stack_plot}}, \code{\link{get_plot_style_config}}
@@ -1219,12 +1349,18 @@ comparison_plot <- function(data, filter_var = NULL,
 #'
 #' @examples
 #' \dontrun{
-#' # Basic usage showing all impacts
+#' # Basic usage showing all impacts with export options
 #' p1 <- detail_plot(
 #'   data = gtap_results,
 #'   x_axis_from = "REG",
 #'   variable_col = "Variable",
-#'   top_impact = NULL
+#'   top_impact = NULL,
+#'   output_path = "results/detail_plots",
+#'   export_config = list(
+#'     file_name = "regional_impacts",
+#'     width = 14,
+#'     height = 10
+#'   )
 #' )
 #'
 #' # Show only top 10 impacts (balanced between positive and negative)
@@ -1235,18 +1371,8 @@ comparison_plot <- function(data, filter_var = NULL,
 #'   panel_var = "Experiment",
 #'   variable_col = "Variable",
 #'   top_impact = 10,
-#'   invert_pane = TRUE
-#' )
-#'
-#' # Create detailed plots split by commodity
-#' plots <- detail_plot(
-#'   data = gtap_results,
-#'   x_axis_from = "REG",
-#'   split_by = "COMM",
-#'   variable_col = "Variable",
-#'   var_name_by_description = TRUE,
-#'   add_var_info = TRUE,
-#'   output_dir = "path/to/output/directory"
+#'   invert_pane = TRUE,
+#'   export_as_pdf = TRUE
 #' )
 #' }
 #'
@@ -1259,13 +1385,24 @@ detail_plot <- function(data, filter_var = NULL,
                         desc_col = "Description",
                         var_name_by_description = FALSE,
                         add_var_info = FALSE,
-                        output_dir = NULL,
+                        output_path = NULL,
+                        export_picture = TRUE,
+                        export_as_pdf = FALSE,
+                        export_config = NULL,
                         top_impact = NULL,
-                        width = NULL,
-                        height = NULL,
                         separate_figure = FALSE,
                         invert_pane = FALSE,
                         plot_style_config = NULL) {
+
+  # Validate the column parameters
+  .validate_column_params(data, list(
+    x_axis_from = x_axis_from,
+    split_by = split_by,
+    panel_var = panel_var,
+    variable_col = variable_col,
+    unit_col = unit_col,
+    desc_col = desc_col
+  ))
 
   # PREPARE DATA SOURCE
   if (is.list(data) && !is.data.frame(data)) {
@@ -1327,49 +1464,6 @@ detail_plot <- function(data, filter_var = NULL,
     }
   }
 
-  # FORMAT VARIABLE NAMES
-  if (variable_col %in% names(data) && desc_col %in% names(data)) {
-    if (var_name_by_description || add_var_info) {
-      result <- data
-
-      for (i in seq_len(nrow(result))) {
-        var_ <- result[[variable_col]][i]
-        des_ <- result[[desc_col]][i]
-
-        if (is.na(des_) || !nzchar(des_))
-          des_ <- var_
-
-        if (var_name_by_description && add_var_info) {
-          result[[variable_col]][i] <- paste0(des_, " (", var_, ")")
-        } else if (var_name_by_description && !add_var_info) {
-          result[[variable_col]][i] <- des_
-        } else if (!var_name_by_description && add_var_info) {
-          if (des_ != var_) {
-            result[[variable_col]][i] <- paste0(var_, " (", des_, ")")
-          }
-        }
-      }
-
-      data <- result
-    }
-
-    # Create mapping from original Variable to formatted Variable for titles
-    unique_vars <- unique(data.frame(
-      OrigVar = data[[variable_col]],
-      stringsAsFactors = FALSE
-    ))
-    title_mapping <- setNames(as.list(unique_vars$OrigVar), unique_vars$OrigVar)
-  } else {
-    title_mapping <- setNames(as.list(unique(data[[variable_col]])), unique(data[[variable_col]]))
-  }
-
-  # GET STYLE CONFIGURATION
-  style_config <- if (!is.null(plot_style_config)) {
-    .calculate_plot_style_config(plot_style_config, "detail")
-  } else {
-    .calculate_plot_style_config(NULL, "detail")
-  }
-
   # APPLY TOP_IMPACT FILTER
   if (!is.null(top_impact)) {
     if (!is_macro_mode && length(split_by) > 1) {
@@ -1398,6 +1492,80 @@ detail_plot <- function(data, filter_var = NULL,
     }
   }
 
+  # FORMAT VARIABLE NAMES
+  if (variable_col %in% names(data) && desc_col %in% names(data)) {
+    if (var_name_by_description || add_var_info) {
+      result <- data
+
+      for (i in seq_len(nrow(result))) {
+        var_ <- result[[variable_col]][i]
+        des_ <- result[[desc_col]][i]
+
+        if (is.na(des_) || !nzchar(des_))
+          des_ <- var_
+
+        if (var_name_by_description && add_var_info) {
+          result[[variable_col]][i] <- paste0(des_, " (", var_, ")")
+        } else if (var_name_by_description && !add_var_info) {
+          result[[variable_col]][i] <- des_
+        } else if (!var_name_by_description && add_var_info) {
+          if (des_ != var_) {
+            result[[variable_col]][i] <- paste0(var_, " (", des_, ")")
+          }
+        }
+      }
+
+      data <- result
+    }
+
+    unique_vars <- unique(data.frame(
+      OrigVar = data[[variable_col]],
+      stringsAsFactors = FALSE
+    ))
+    title_mapping <- setNames(as.list(unique_vars$OrigVar), unique_vars$OrigVar)
+  } else {
+    title_mapping <- setNames(as.list(unique(data[[variable_col]])), unique(data[[variable_col]]))
+  }
+
+  # Calculate panel layout
+  panel_layout <- .calculate_panel_layout(data, NULL, NULL, panel_var)
+
+  # Check if custom dimensions are provided
+  if (!is.null(export_config) && !is.null(export_config$width) && !is.null(export_config$height)) {
+    dimensions <- list(
+      width = export_config$width,
+      height = export_config$height
+    )
+  } else {
+    # Use standard dimension calculation
+    dimensions <- .calculate_plot_dimensions(data, panel_layout)
+  }
+
+  # Calculate font sizes with auto_font_scale
+  font_sizes <- .calculate_font_sizes(dimensions$width, dimensions$height, 1.0)
+
+  # Create base style config
+  base_style_config <- list(
+    title_size = font_sizes$title_size,
+    x_axis_title_size = font_sizes$x_axis_title_size,
+    y_axis_title_size = font_sizes$y_axis_title_size,
+    x_axis_text_size = font_sizes$x_axis_text_size,
+    y_axis_text_size = font_sizes$y_axis_text_size,
+    strip_text_size = font_sizes$strip_text_size,
+    legend_text_size = font_sizes$legend_text_size,
+    value_label_size = font_sizes$value_label_size,
+    panel_rows = panel_layout$rows,
+    panel_cols = panel_layout$cols
+  )
+
+  # Merge with user provided config (user settings take precedence)
+  if (!is.null(plot_style_config)) {
+    style_config <- modifyList(base_style_config, plot_style_config)
+    style_config <- .calculate_plot_style_config(style_config, "detail")
+  } else {
+    style_config <- .calculate_plot_style_config(base_style_config, "detail")
+  }
+
   # PROCESS BY UNIT GROUPS (different units need separate plots)
   unit_groups <- split(data, data[[unit_col]])
   plot_list <- list()
@@ -1416,18 +1584,6 @@ detail_plot <- function(data, filter_var = NULL,
 
           for (panel_val in panel_values) {
             panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
-
-            # Calculate panel layout using direct style_config values
-            panel_layout <- .calculate_panel_layout(panel_data, style_config$panel_rows, style_config$panel_cols, panel_var)
-
-            if (is.null(width) || is.null(height)) {
-              dims <- .calculate_plot_dimensions(panel_data, panel_layout)
-              width_val <- ifelse(is.null(width), dims$width, width)
-              height_val <- ifelse(is.null(height), dims$height, height)
-            } else {
-              width_val <- width
-              height_val <- height
-            }
 
             # Format title
             plot_title <- paste0(var_name, " (", panel_val, ")")
@@ -1458,28 +1614,13 @@ detail_plot <- function(data, filter_var = NULL,
               x_axis_from = x_axis_from,
               plot_title = plot_title,
               unit = unit_name,
-              panel_rows = panel_layout$rows,
-              panel_cols = panel_layout$cols,
+              panel_rows = style_config$panel_rows,
+              panel_cols = style_config$panel_cols,
               panel_var = panel_var,
               invert_pane = invert_pane,
               top_impact = top_impact,
               plot_style_config = style_config
             )
-
-            # Save plot if output_dir provided
-            if (!is.null(output_dir)) {
-              if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-              clean_var <- gsub("[^[:alnum:]]", "_", var_name)
-              clean_panel <- gsub("[^[:alnum:]]", "_", panel_val)
-              clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-              top_n_suffix <- if (!is.null(top_impact)) paste0("_top", top_impact) else ""
-
-              filename <- file.path(output_dir, paste0("detail_", clean_var, "_", clean_panel, "_",
-                                                       clean_unit, top_n_suffix, ".png"))
-              ggplot2::ggsave(filename, p, width = width_val, height = height_val,
-                              dpi = 300, bg = "white", limitsize = FALSE)
-              message("Saved plot: ", filename)
-            }
 
             plot_list[[paste("detail", var_name, panel_val, unit_name, sep = "_")]] <- p
           }
@@ -1489,18 +1630,6 @@ detail_plot <- function(data, filter_var = NULL,
 
         for (var_name in var_combinations) {
           var_data <- unit_data[unit_data[[variable_col]] == var_name, ]
-
-          # Calculate panel layout using direct style_config values
-          panel_layout <- .calculate_panel_layout(var_data, style_config$panel_rows, style_config$panel_cols, panel_var)
-
-          if (is.null(width) || is.null(height)) {
-            dims <- .calculate_plot_dimensions(var_data, panel_layout)
-            width_val <- ifelse(is.null(width), dims$width, width)
-            height_val <- ifelse(is.null(height), dims$height, height)
-          } else {
-            width_val <- width
-            height_val <- height
-          }
 
           # Format title
           plot_title <- var_name
@@ -1531,27 +1660,13 @@ detail_plot <- function(data, filter_var = NULL,
             x_axis_from = x_axis_from,
             plot_title = plot_title,
             unit = unit_name,
-            panel_rows = panel_layout$rows,
-            panel_cols = panel_layout$cols,
+            panel_rows = style_config$panel_rows,
+            panel_cols = style_config$panel_cols,
             panel_var = panel_var,
             invert_pane = invert_pane,
             top_impact = top_impact,
             plot_style_config = style_config
           )
-
-          # Save plot if output_dir provided
-          if (!is.null(output_dir)) {
-            if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-            clean_var <- gsub("[^[:alnum:]]", "_", var_name)
-            clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-            top_n_suffix <- if (!is.null(top_impact)) paste0("_top", top_impact) else ""
-
-            filename <- file.path(output_dir, paste0("detail_", clean_var, "_",
-                                                     clean_unit, top_n_suffix, ".png"))
-            ggplot2::ggsave(filename, p, width = width_val, height = height_val,
-                            dpi = 300, bg = "white", limitsize = FALSE)
-            message("Saved plot: ", filename)
-          }
 
           plot_list[[paste("detail", var_name, unit_name, sep = "_")]] <- p
         }
@@ -1568,6 +1683,7 @@ detail_plot <- function(data, filter_var = NULL,
       }
 
       for (sep_value in separate_values) {
+        # Filter data for current separate value
         if (split_col == "split_display") {
           filtered_data <- unit_data[unit_data$split_display == sep_value, ]
         } else {
@@ -1584,18 +1700,6 @@ detail_plot <- function(data, filter_var = NULL,
 
             for (panel_val in panel_values) {
               panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
-
-              # Calculate panel layout using direct style_config values
-              panel_layout <- .calculate_panel_layout(panel_data, style_config$panel_rows, style_config$panel_cols, panel_var)
-
-              if (is.null(width) || is.null(height)) {
-                dims <- .calculate_plot_dimensions(panel_data, panel_layout)
-                width_val <- ifelse(is.null(width), dims$width, width)
-                height_val <- ifelse(is.null(height), dims$height, height)
-              } else {
-                width_val <- width
-                height_val <- height
-              }
 
               # Format title
               plot_title <- paste0(sep_value, " - ", var_name, " - ", panel_val)
@@ -1626,48 +1730,20 @@ detail_plot <- function(data, filter_var = NULL,
                 x_axis_from = x_axis_from,
                 plot_title = plot_title,
                 unit = unit_name,
-                panel_rows = panel_layout$rows,
-                panel_cols = panel_layout$cols,
+                panel_rows = style_config$panel_rows,
+                panel_cols = style_config$panel_cols,
                 panel_var = panel_var,
                 invert_pane = invert_pane,
                 top_impact = top_impact,
                 plot_style_config = style_config
               )
 
-              # Save plot if output_dir provided
-              if (!is.null(output_dir)) {
-                if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-                clean_sep <- gsub("[^[:alnum:]]", "_", sep_value)
-                clean_var <- gsub("[^[:alnum:]]", "_", var_name)
-                clean_panel <- gsub("[^[:alnum:]]", "_", panel_val)
-                clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-                top_n_suffix <- if (!is.null(top_impact)) paste0("_top", top_impact) else ""
-
-                filename <- file.path(output_dir, paste0(clean_sep, "_", clean_var, "_",
-                                                         clean_panel, "_", clean_unit, top_n_suffix, ".png"))
-                ggplot2::ggsave(filename, p, width = width_val, height = height_val,
-                                dpi = 300, bg = "white", limitsize = FALSE)
-                message("Saved plot: ", filename)
-              }
-
               plot_list[[paste(sep_value, var_name, panel_val, unit_name, sep = "_")]] <- p
             }
           } else {
-            # Calculate panel layout using direct style_config values
-            panel_layout <- .calculate_panel_layout(var_data, style_config$panel_rows, style_config$panel_cols, panel_var)
-
-            if (is.null(width) || is.null(height)) {
-              dims <- .calculate_plot_dimensions(var_data, panel_layout)
-              width_val <- ifelse(is.null(width), dims$width, width)
-              height_val <- ifelse(is.null(height), dims$height, height)
-            } else {
-              width_val <- width
-              height_val <- height
-            }
-
+            # Panel plot for all values in the group
             # Format title
             plot_title <- paste0(sep_value, " - ", var_name)
-
             # Apply title format if specified
             if (!is.null(style_config$title_format)) {
               if (style_config$title_format$type == "prefix") {
@@ -1694,28 +1770,13 @@ detail_plot <- function(data, filter_var = NULL,
               x_axis_from = x_axis_from,
               plot_title = plot_title,
               unit = unit_name,
-              panel_rows = panel_layout$rows,
-              panel_cols = panel_layout$cols,
+              panel_rows = style_config$panel_rows,
+              panel_cols = style_config$panel_cols,
               panel_var = panel_var,
               invert_pane = invert_pane,
               top_impact = top_impact,
               plot_style_config = style_config
             )
-
-            # Save plot if output_dir provided
-            if (!is.null(output_dir)) {
-              if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-              clean_sep <- gsub("[^[:alnum:]]", "_", sep_value)
-              clean_var <- gsub("[^[:alnum:]]", "_", var_name)
-              clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-              top_n_suffix <- if (!is.null(top_impact)) paste0("_top", top_impact) else ""
-
-              filename <- file.path(output_dir, paste0(clean_sep, "_", clean_var, "_",
-                                                       clean_unit, top_n_suffix, ".png"))
-              ggplot2::ggsave(filename, p, width = width_val, height = height_val,
-                              dpi = 300, bg = "white", limitsize = FALSE)
-              message("Saved plot: ", filename)
-            }
 
             plot_list[[paste(sep_value, var_name, unit_name, sep = "_")]] <- p
           }
@@ -1724,7 +1785,34 @@ detail_plot <- function(data, filter_var = NULL,
     }
   }
 
-  # Return single plot or list of plots based on number of plots
+  # SET DEFAULT FILE_NAME IN EXPORT_CONFIG
+  if (is.null(export_config) || is.null(export_config$file_name)) {
+    if (is.null(export_config)) {
+      export_config <- list()
+    }
+    if (!is.null(top_impact)) {
+      export_config$file_name <- paste0("detail_plots_top", top_impact)
+    } else {
+      export_config$file_name <- "detail_plots"
+    }
+  }
+
+  # Add calculated dimensions to export_config
+  export_config$width <- dimensions$width
+  export_config$height <- dimensions$height
+
+  # EXPORT PLOTS USING HELPER FUNCTION
+  .export_plot_output(
+    plots = plot_list,
+    output_path = output_path,
+    export_picture = export_picture,
+    export_as_pdf = export_as_pdf,
+    export_config = export_config,
+    data = data,
+    panel_layout = panel_layout
+  )
+
+  # RETURN SINGLE PLOT OR LIST OF PLOTS
   if (length(plot_list) == 1) {
     return(plot_list[[1]])
   } else {
@@ -1793,17 +1881,22 @@ detail_plot <- function(data, filter_var = NULL,
   data$Label <- sprintf(paste0("%.", decimal_places, "f"), data$Value)
 
   n_vars <- length(unique(data[[x_axis_from]]))
+  n_panels <- length(unique(data[[panel_var]]))
 
   # CALCULATE Y-AXIS LIMITS
-  if (all(data$Value >= 0)) {
-    # All positive values
-    y_limits <- c(0, max_abs_value * 1.5)
-  } else if (all(data$Value <= 0)) {
-    # All negative values
-    y_limits <- c(-max_abs_value * 1.5, 0)
+  if (!is.null(style_config$scale_limit) && length(style_config$scale_limit) == 2) {
+    y_limits <- style_config$scale_limit
   } else {
-    # Mixed values
-    y_limits <- c(-max_abs_value * 1.5, max_abs_value * 1.5)
+    if (all(data$Value >= 0)) {
+      # All positive values
+      y_limits <- c(0, max_abs_value * 1.5)
+    } else if (all(data$Value <= 0)) {
+      # All negative values
+      y_limits <- c(-max_abs_value * 1.5, 0)
+    } else {
+      # Mixed values
+      y_limits <- c(-max_abs_value * 1.5, max_abs_value * 1.5)
+    }
   }
 
   # FORMAT AXIS LABELS
@@ -1856,6 +1949,22 @@ detail_plot <- function(data, filter_var = NULL,
         size = style_config$value_label_size
       )
     }
+
+    # Create scale arguments for x-axis (value axis when horizontal)
+    scale_args <- list(
+      limits = y_limits,
+      oob = scales::oob_keep,
+      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
+    )
+
+    # Add breaks if scale_increment is specified
+    if (!is.null(style_config$scale_increment) && is.numeric(style_config$scale_increment)) {
+      scale_args$breaks <- seq(y_limits[1], y_limits[2], by = style_config$scale_increment)
+    }
+
+    # Apply scale to x-axis (value axis when horizontal)
+    p <- p + do.call(ggplot2::scale_x_continuous, scale_args)
+
   } else {
     # For vertical bars (normal coordinates)
     p <- ggplot2::ggplot() +
@@ -1883,6 +1992,21 @@ detail_plot <- function(data, filter_var = NULL,
         size = style_config$value_label_size
       )
     }
+
+    # Create scale arguments for y-axis (value axis when vertical)
+    scale_args <- list(
+      limits = y_limits,
+      oob = scales::oob_keep,
+      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
+    )
+
+    # Add breaks if scale_increment is specified
+    if (!is.null(style_config$scale_increment) && is.numeric(style_config$scale_increment)) {
+      scale_args$breaks <- seq(y_limits[1], y_limits[2], by = style_config$scale_increment)
+    }
+
+    # Apply scale to y-axis (value axis when vertical)
+    p <- p + do.call(ggplot2::scale_y_continuous, scale_args)
   }
 
   # SETUP PLOT APPEARANCE
@@ -1911,25 +2035,20 @@ detail_plot <- function(data, filter_var = NULL,
     }
   }
 
-  # APPLY APPROPRIATE AXIS SCALES - need to handle differently based on orientation
-  if (invert_pane) {
-    # For horizontal bars, we scale the x-axis (value)
-    p <- p + ggplot2::scale_x_continuous(
-      limits = y_limits,
-      oob = scales::oob_keep,
-      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
-    )
-  } else {
-    # For vertical bars, we scale the y-axis (value)
-    p <- p + ggplot2::scale_y_continuous(
-      limits = y_limits,
-      oob = scales::oob_keep,
-      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
-    )
-  }
-
   # ADD FACETS IF NEEDED
-  if (panel_rows > 1 || panel_cols > 1) {
+  if (n_panels > 1) {
+    # Panel rows/cols can be specified or calculated automatically
+    if (is.null(panel_rows) && !is.null(panel_cols)) {
+      panel_rows <- ceiling(n_panels / panel_cols)
+    } else if (!is.null(panel_rows) && is.null(panel_cols)) {
+      panel_cols <- ceiling(n_panels / panel_rows)
+    } else if (is.null(panel_rows) && is.null(panel_cols)) {
+      # Auto-calculate both if neither is provided
+      panel_cols <- ceiling(sqrt(n_panels))
+      panel_rows <- ceiling(n_panels / panel_cols)
+    }
+
+    # Now apply faceting with calculated dimensions
     if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
       p <- p + ggplot2::facet_wrap(
         as.formula(paste("~", panel_var)),
@@ -2155,22 +2274,30 @@ detail_plot <- function(data, filter_var = NULL,
 #' @param invert_pane Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
 #' @param separate_figure Logical. If TRUE, creates a separate figure for each panel value (default: FALSE).
 #' @param unstack_plot Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).
-#' @param output_dir Character. Directory path to save plots as `.png` files. If NULL, plots are only returned in R without saving.
+#' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
+#' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
+#' @param export_as_pdf Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).
+#' @param export_config List. Configuration options for exported plots, including file name, width, and height.
 #' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
 #' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
 #' @param show_total Logical. If TRUE, displays total values above stacked bars (default: TRUE).
-#' @param y_limit Numeric vector. Manual limits for the y-axis. If NULL, it is calculated automatically.
-#' @param width Numeric. Width of the output figure in inches. If NULL, it is calculated automatically.
-#' @param height Numeric. Height of the output figure in inches. If NULL, it is calculated automatically.
 #' @param top_impact Numeric or NULL. If specified, filters to show only the top N impactful values. NULL shows all values.
 #' @param plot_style_config List. Custom style configuration for plots. If NULL, defaults from `get_plot_style_config("stack")` are applied.
 #'
 #' @return A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
 #'
 #' @details
-#' This function allows for extensive customization of plots through the `plot_style_config` parameter, which integrates ggplot2 configurations.
-#' To view and adjust available style options, use:
-#' `get_plot_style_config("stack", as_dataframe = TRUE)`.
+#' This function allows for extensive customization of plots through the `plot_style_config` parameter,
+#' which integrates ggplot2 configurations. The function now supports more flexible export options
+#' with the `export_picture`, `export_as_pdf`, and `export_config` parameters.
+#'
+#' The `export_config` parameter can include:
+#' \itemize{
+#'   \item `file_name`: Base name for the output files (default: "stack_plots").
+#'   \item `width`: Width of the output files in inches.
+#'   \item `height`: Height of the output files in inches.
+#'   \item Additional export settings as needed.
+#' }
 #'
 #' @author Pattawee Puangchit
 #' @seealso \code{\link{detail_plot}}, \code{\link{comparison_plot}}, \code{\link{get_plot_style_config}}
@@ -2178,14 +2305,20 @@ detail_plot <- function(data, filter_var = NULL,
 #'
 #' @examples
 #' \dontrun{
-#' # Basic stacked bar chart by commodity
+#' # Basic stacked bar chart by commodity with export options
 #' p1 <- stack_plot(
 #'   data = gtap_results,
 #'   x_axis_from = "REG",
-#'   stack_value_from = "COMM"
+#'   stack_value_from = "COMM",
+#'   output_path = "results/stacked",
+#'   export_config = list(
+#'     file_name = "commodity_stacks",
+#'     width = 12,
+#'     height = 9
+#'   )
 #' )
 #'
-#' # Welfare Decomposition
+#' # Welfare Decomposition with PDF export
 #' p2 <- stack_plot(
 #'   data = headerA,
 #'   x_axis_from = "Region",
@@ -2193,26 +2326,12 @@ detail_plot <- function(data, filter_var = NULL,
 #'   split_by = FALSE,
 #'   unstack_plot = TRUE,
 #'   show_total = TRUE,
-#'
-#' )
-#'
-#' # Terms of trade decomposition
-#' plots <- stack_plot(
-#'   data = headerE1,
-#'   x_axis_from = "Commodity",
-#'   stack_value_from = "PRICES",
-#'   split_by = "Region",
-#'   top_impact = 10,
-#'   invert_pane = TRUE,
-#'   output_dir = "path/to/output/directory",
-#'   plot_style_config = list(
-#'     color_tone = "economic",
-#'     show_legend = TRUE,
-#'     legend_position = "bottom"
+#'   export_as_pdf = TRUE,
+#'   export_config = list(
+#'     file_name = "welfare_decomposition"
 #'   )
 #' )
 #' }
-#'
 stack_plot <- function(data, filter_var = NULL,
                        x_axis_from,
                        stack_value_from,
@@ -2224,15 +2343,26 @@ stack_plot <- function(data, filter_var = NULL,
                        invert_pane = FALSE,
                        separate_figure = FALSE,
                        unstack_plot = FALSE,
-                       output_dir = NULL,
+                       output_path = NULL,
+                       export_picture = TRUE,
+                       export_as_pdf = FALSE,
+                       export_config = NULL,
                        var_name_by_description = FALSE,
                        add_var_info = FALSE,
                        show_total = TRUE,
-                       y_limit = NULL,
-                       width = NULL,
-                       height = NULL,
                        top_impact = NULL,
                        plot_style_config = NULL) {
+
+  # Validate the column parameters
+  .validate_column_params(data, list(
+    x_axis_from = x_axis_from,
+    stack_value_from = stack_value_from,
+    split_by = split_by,
+    panel_var = panel_var,
+    variable_col = variable_col,
+    unit_col = unit_col,
+    desc_col = desc_col
+  ))
 
   # PREPARE DATA SOURCE
   if (is.list(data) && !is.data.frame(data)) {
@@ -2252,15 +2382,6 @@ stack_plot <- function(data, filter_var = NULL,
       stop(paste("No suitable dataframe found with required columns:",
                  x_axis_from, "and", stack_value_from))
     }
-  }
-
-  # CHECK FOR REQUIRED COLUMNS
-  if (!(unit_col %in% names(data))) {
-    stop("Missing 'Unit' column in data frame. See add_mapping_info for help.")
-  }
-
-  if (!("Value" %in% names(data))) {
-    stop("Missing 'Value' column in data frame.")
   }
 
   # PROCESS SPLIT_BY PARAMETER
@@ -2324,11 +2445,49 @@ stack_plot <- function(data, filter_var = NULL,
     }
   }
 
-  # GET STYLE CONFIGURATION
-  style_config <- if (!is.null(plot_style_config)) {
-    .calculate_plot_style_config(plot_style_config, "stack")
+  # Create title mapping from variable names
+  title_mapping <- NULL
+  if (variable_col %in% names(data)) {
+    unique_vars <- unique(data[[variable_col]])
+    title_mapping <- setNames(as.list(unique_vars), unique_vars)
+  }
+
+  panel_layout <- .calculate_panel_layout(data, NULL, NULL, panel_var)
+
+  # Check if custom dimensions are provided
+  if (!is.null(export_config) && !is.null(export_config$width) && !is.null(export_config$height)) {
+    dimensions <- list(
+      width = export_config$width,
+      height = export_config$height
+    )
   } else {
-    .calculate_plot_style_config(NULL, "stack")
+    # Use standard dimension calculation
+    dimensions <- .calculate_plot_dimensions(data, panel_layout)
+  }
+
+  # Calculate font sizes with auto_font_scale
+  font_sizes <- .calculate_font_sizes(dimensions$width, dimensions$height, 1.0)
+
+  # Create base style config
+  base_style_config <- list(
+    title_size = font_sizes$title_size,
+    x_axis_title_size = font_sizes$x_axis_title_size,
+    y_axis_title_size = font_sizes$y_axis_title_size,
+    x_axis_text_size = font_sizes$x_axis_text_size,
+    y_axis_text_size = font_sizes$y_axis_text_size,
+    strip_text_size = font_sizes$strip_text_size,
+    legend_text_size = font_sizes$legend_text_size,
+    value_label_size = font_sizes$value_label_size,
+    panel_rows = panel_layout$rows,
+    panel_cols = panel_layout$cols
+  )
+
+  # Merge with user provided config (user settings take precedence)
+  if (!is.null(plot_style_config)) {
+    style_config <- modifyList(base_style_config, plot_style_config)
+    style_config <- .calculate_plot_style_config(style_config, "stack")
+  } else {
+    style_config <- .calculate_plot_style_config(base_style_config, "stack")
   }
 
   # PROCESS BY UNIT GROUPS (different units need separate plots)
@@ -2340,7 +2499,18 @@ stack_plot <- function(data, filter_var = NULL,
 
     # DETERMINE SEPARATE VALUES
     if (is_macro_mode) {
-      separate_values <- "All Data"
+      # Get a proper title using the variable information if available
+      if (!is.null(title_mapping) && variable_col %in% names(unit_data)) {
+        # Use the first variable encountered as default title in macro mode
+        unique_vars <- unique(unit_data[[variable_col]])
+        if (length(unique_vars) > 0) {
+          separate_values <- unique_vars[1]
+        } else {
+          separate_values <- "All Data"
+        }
+      } else {
+        separate_values <- "All Data"
+      }
     } else if (length(split_by) > 1) {
       unit_data$split_display <- apply(unit_data[, split_by, drop = FALSE], 1, paste, collapse = "-")
       separate_values <- unique(unit_data$split_display)
@@ -2358,19 +2528,6 @@ stack_plot <- function(data, filter_var = NULL,
         filtered_data <- unit_data[unit_data$split_display == sep_value, ]
       } else {
         filtered_data <- unit_data[unit_data[[split_col]] == sep_value, ]
-      }
-
-      # CALCULATE PANEL LAYOUT
-      panel_layout <- .calculate_panel_layout(filtered_data, style_config$panel_rows, style_config$panel_cols, panel_var)
-
-      # CALCULATE DIMENSIONS
-      if (is.null(width) || is.null(height)) {
-        dims <- .calculate_plot_dimensions(filtered_data, panel_layout)
-        width_val <- ifelse(is.null(width), dims$width, width)
-        height_val <- ifelse(is.null(height), dims$height, height)
-      } else {
-        width_val <- width
-        height_val <- height
       }
 
       # FORMAT TITLE
@@ -2419,7 +2576,6 @@ stack_plot <- function(data, filter_var = NULL,
           top_impact_filter_col <- x_axis_from
         }
 
-        # USE STACK-SPECIFIC FILTER FUNCTION
         filtered_data <- .filter_top_impact_values_stack(
           data = filtered_data,
           total_data = total_data,
@@ -2432,10 +2588,8 @@ stack_plot <- function(data, filter_var = NULL,
           stack_value_from = stack_value_from
         )
 
-        # RE-CALCULATE TOTALS WITH FILTERED DATA
         total_data <- .calculate_stack_totals(filtered_data, x_axis_from, panel_var)
 
-        # CLEAN UP TEMPORARY COLUMN IF CREATED
         if ("._split_group_" %in% names(filtered_data)) {
           filtered_data$._split_group_ <- NULL
         }
@@ -2458,29 +2612,13 @@ stack_plot <- function(data, filter_var = NULL,
             stack_value_from = stack_value_from,
             plot_title = x_plot_title,
             unit = y_axis_label,
-            panel_rows = panel_layout$rows,
-            panel_cols = panel_layout$cols,
+            panel_rows = style_config$panel_rows,
+            panel_cols = style_config$panel_cols,
             panel_var = panel_var,
-            y_limit = y_limit,
             invert_pane = invert_pane,
             top_impact = top_impact,
             plot_style_config = style_config
           )
-
-          # SAVE PLOT IF OUTPUT_DIR PROVIDED
-          if (!is.null(output_dir)) {
-            if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-            clean_sep <- gsub("[^[:alnum:]]", "_", sep_value)
-            clean_x_val <- gsub("[^[:alnum:]]", "_", as.character(x_val))
-            clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-            top_n_suffix <- if (!is.null(top_impact)) paste0("_top", top_impact) else ""
-
-            filename <- file.path(output_dir, paste0(clean_sep, "_unstack_", clean_x_val,
-                                                     "_", clean_unit, top_n_suffix, ".png"))
-            ggplot2::ggsave(filename, p, width = width_val, height = height_val,
-                            dpi = 300, bg = "white", limitsize = FALSE)
-            message("Saved plot: ", filename)
-          }
 
           plot_list[[paste(sep_value, "unstack", x_val, unit_name, sep = "_")]] <- p
         }
@@ -2493,34 +2631,46 @@ stack_plot <- function(data, filter_var = NULL,
           stack_value_from = stack_value_from,
           plot_title = plot_title,
           unit = y_axis_label,
-          panel_rows = panel_layout$rows,
-          panel_cols = panel_layout$cols,
+          panel_rows = style_config$panel_rows,
+          panel_cols = style_config$panel_cols,
           panel_var = panel_var,
           show_total = show_total,
-          y_limit = y_limit,
           invert_pane = invert_pane,
           top_impact = top_impact,
           plot_style_config = style_config
         )
 
-        # SAVE PLOT IF OUTPUT_DIR PROVIDED
-        if (!is.null(output_dir)) {
-          if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-          clean_sep <- gsub("[^[:alnum:]]", "_", sep_value)
-          clean_unit <- gsub("[^[:alnum:]]", "_", unit_name)
-          top_n_suffix <- if (!is.null(top_impact)) paste0("_top", top_impact) else ""
-
-          filename <- file.path(output_dir, paste0(clean_sep, "_stack_",
-                                                   clean_unit, top_n_suffix, ".png"))
-          ggplot2::ggsave(filename, p, width = width_val, height = height_val,
-                          dpi = 300, bg = "white", limitsize = FALSE)
-          message("Saved plot: ", filename)
-        }
-
         plot_list[[paste(sep_value, "stack", unit_name, sep = "_")]] <- p
       }
     }
   }
+
+  # SET DEFAULT FILE_NAME IN EXPORT_CONFIG
+  if (is.null(export_config) || is.null(export_config$file_name)) {
+    if (is.null(export_config)) {
+      export_config <- list()
+    }
+    if (!is.null(top_impact)) {
+      export_config$file_name <- paste0("stack_plots_top", top_impact)
+    } else {
+      export_config$file_name <- "stack_plots"
+    }
+  }
+
+  # Add calculated dimensions to export_config
+  export_config$width <- dimensions$width
+  export_config$height <- dimensions$height
+
+  # EXPORT PLOTS USING HELPER FUNCTION
+  .export_plot_output(
+    plots = plot_list,
+    output_path = output_path,
+    export_picture = export_picture,
+    export_as_pdf = export_as_pdf,
+    export_config = export_config,
+    data = data,
+    panel_layout = panel_layout
+  )
 
   # RETURN SINGLE PLOT OR LIST OF PLOTS
   if (length(plot_list) == 1) {
@@ -2529,6 +2679,672 @@ stack_plot <- function(data, filter_var = NULL,
     return(plot_list)
   }
 }
+
+
+#' @title Create Single Stacked Plot (Internal)
+#'
+#' @description
+#' Create a single stacked plot from GTAP data for internal use.
+#'
+#' @param data A data frame containing plotting data.
+#' @param total_data A data frame with total values.
+#' @param x_axis_from Character. Column used for x-axis categories.
+#' @param stack_value_from Character. Column for stack components.
+#' @param plot_title Character. Title of the plot.
+#' @param unit Character. Unit of measurement.
+#' @param panel_rows Numeric. Number of rows in panel layout.
+#' @param panel_cols Numeric. Number of columns in panel layout.
+#' @param panel_var Character. Column for panel facets. Default is "Experiment".
+#' @param show_total Logical. Whether to display total values. Default is TRUE.
+#' @param invert_pane Logical. Whether to flip plot orientation. Default is FALSE.
+#' @param top_impact Numeric. Number of top impacts to display. Default is NULL.
+#' @param plot_style_config List. Custom plot styling configuration.
+#'
+#' @return A ggplot2 object representing the stacked plot.
+#'
+#' @author Pattawee Puangchit
+#'
+#' @keywords internal
+#' @seealso \code{\link{stack_plot}}
+#'
+.create_single_stacked_plot <- function(data, total_data, x_axis_from, stack_value_from,
+                                        plot_title, unit,
+                                        panel_rows, panel_cols,
+                                        panel_var = "Experiment",
+                                        show_total = TRUE,
+                                        invert_pane = FALSE,
+                                        top_impact = NULL,
+                                        plot_style_config = NULL) {
+
+  # GET STYLE CONFIGURATION
+  style_config <- if (!is.null(plot_style_config)) {
+    plot_style_config
+  } else {
+    .calculate_plot_style_config(NULL, "stack")
+  }
+
+  # SETUP VARIABLES
+  color_tone <- style_config$color_tone
+  n_panels <- length(unique(data[[panel_var]]))
+
+  # GENERATE COLOR PALETTE
+  color_palette <- .generate_stack_colors(data, stack_value_from, color_tone)
+
+  # CALCULATE Y LIMITS
+  if (!is.null(style_config$scale_limit) && length(style_config$scale_limit) == 2) {
+    y_limit <- style_config$scale_limit
+  } else {
+    # Calculate more generous limits for stacked plot
+    max_total <- max(abs(total_data$Total), na.rm = TRUE)
+
+    # Determine if we have all positive, all negative, or mixed values
+    if (all(total_data$Total >= 0, na.rm = TRUE)) {
+      # All positive
+      y_limit <- c(0, max_total * 1.4)
+    } else if (all(total_data$Total <= 0, na.rm = TRUE)) {
+      # All negative
+      y_limit <- c(-max_total * 1.4, 0)
+    } else {
+      # Mixed values - symmetrical with extra padding
+      y_limit <- c(-max_total * 1.4, max_total * 1.4)
+    }
+  }
+
+  # FORMAT AXIS LABELS
+  # y-axis label shows the unit
+  y_axis_label <- if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
+    style_config$y_axis_description
+  } else if (tolower(unit) == "percent") {
+    "Percentage (%)"
+  } else {
+    unit
+  }
+
+  # x-axis label uses column name if no description provided
+  x_axis_label <- if (!is.null(style_config$x_axis_description) && nzchar(style_config$x_axis_description)) {
+    style_config$x_axis_description
+  } else {
+    x_axis_from
+  }
+
+  # CREATE BASE PLOT BASED ON ORIENTATION
+  if (invert_pane) {
+    # For horizontal bars (categories on y-axis, values on x-axis)
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_col(
+        data = data,
+        ggplot2::aes_string(
+          y = x_axis_from,
+          x = "Value",
+          fill = stack_value_from
+        ),
+        position = "stack",
+        width = style_config$bar_width
+      )
+
+    # ADD TOTAL LABELS IF CONFIGURED
+    if (show_total) {
+      decimal_places <- style_config$value_label_decimal_places
+      value_size <- style_config$value_label_size
+
+      p <- p + ggplot2::geom_text(
+        data = total_data,
+        ggplot2::aes(
+          y = !!rlang::sym(x_axis_from),
+          x = ifelse(Total >= 0,
+                     PositiveTotal + abs(Total) * 0.15,
+                     NegativeTotal - abs(Total) * 0.15),
+          label = sprintf(paste0("Total\n%.", decimal_places, "f"), Total)
+        ),
+        hjust = ifelse(total_data$Total >= 0, 0, 1),
+        vjust = 0.5,
+        size = value_size,
+        fontface = "bold"
+      )
+    }
+
+    # ADD ZERO LINE IF CONFIGURED (VERTICAL FOR HORIZONTAL BARS)
+    if (style_config$show_zero_line) {
+      p <- p + ggplot2::geom_vline(
+        xintercept = style_config$zero_line_position,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        size = style_config$zero_line_size
+      )
+    }
+
+    # APPLY SCALE TO VALUE AXIS (X-AXIS)
+    scale_args <- list(
+      limits = y_limit,
+      oob = scales::oob_keep,
+      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
+    )
+
+    # Add breaks if scale_increment is specified
+    if (!is.null(style_config$scale_increment) && is.numeric(style_config$scale_increment)) {
+      scale_args$breaks <- seq(y_limit[1], y_limit[2], by = style_config$scale_increment)
+    }
+
+    p <- p + do.call(ggplot2::scale_x_continuous, scale_args)
+
+  } else {
+    # For vertical bars (categories on x-axis, values on y-axis)
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_col(
+        data = data,
+        ggplot2::aes_string(
+          x = x_axis_from,
+          y = "Value",
+          fill = stack_value_from
+        ),
+        position = "stack",
+        width = style_config$bar_width
+      )
+
+    # ADD TOTAL LABELS IF CONFIGURED
+    if (show_total) {
+      decimal_places <- style_config$value_label_decimal_places
+      value_size <- style_config$value_label_size
+
+      p <- p + ggplot2::geom_text(
+        data = total_data,
+        ggplot2::aes(
+          x = !!rlang::sym(x_axis_from),
+          y = ifelse(Total >= 0,
+                     PositiveTotal + abs(Total) * 0.05,
+                     NegativeTotal - abs(Total) * 0.05),
+          label = sprintf(paste0("Total\n%.", decimal_places, "f"), Total)
+        ),
+        vjust = ifelse(total_data$Total >= 0, 0, 1.5),
+        size = value_size,
+        fontface = "bold"
+      )
+    }
+
+    # ADD ZERO LINE IF CONFIGURED (HORIZONTAL FOR VERTICAL BARS)
+    if (style_config$show_zero_line) {
+      p <- p + ggplot2::geom_hline(
+        yintercept = style_config$zero_line_position,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        size = style_config$zero_line_size
+      )
+    }
+
+    # APPLY SCALE TO VALUE AXIS (Y-AXIS)
+    scale_args <- list(
+      limits = y_limit,
+      oob = scales::oob_keep,
+      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
+    )
+
+    # Add breaks if scale_increment is specified
+    if (!is.null(style_config$scale_increment) && is.numeric(style_config$scale_increment)) {
+      scale_args$breaks <- seq(y_limit[1], y_limit[2], by = style_config$scale_increment)
+    }
+
+    p <- p + do.call(ggplot2::scale_y_continuous, scale_args)
+  }
+
+  # ADD FACETS IF NEEDED
+  # ADD FACETS IF NEEDED
+  if (n_panels > 1) {
+    if (!is.null(panel_rows) && !is.null(panel_cols)) {
+      if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
+        p <- p + ggplot2::facet_wrap(
+          as.formula(paste("~", panel_var)),
+          scales = "free",
+          nrow = panel_rows,
+          ncol = panel_cols
+        )
+      } else {
+        p <- p + ggplot2::facet_wrap(
+          as.formula(paste("~", panel_var)),
+          scales = "fixed",
+          nrow = panel_rows,
+          ncol = panel_cols
+        )
+      }
+    } else {
+      # Auto-determine layout if dimensions aren't specified
+      if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
+        p <- p + ggplot2::facet_wrap(
+          as.formula(paste("~", panel_var)),
+          scales = "free"
+        )
+      } else {
+        p <- p + ggplot2::facet_wrap(
+          as.formula(paste("~", panel_var)),
+          scales = "fixed"
+        )
+      }
+    }
+  }
+
+  # SETUP APPEARANCE
+  p <- p + ggplot2::scale_fill_manual(values = color_palette) +
+    ggplot2::theme_minimal()
+
+  # APPLY THEME STYLING
+  p <- .apply_plot_style_config(p, style_config)
+
+  # HANDLE AXIS LABELS BASED ON ORIENTATION
+  if (invert_pane) {
+    # For horizontal bars, x is Value axis and y is Categories axis
+    if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
+      # Both axis titles visible
+      p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = x_axis_label)
+
+      # Force both axis titles to be visible
+      p <- p + ggplot2::theme(
+        axis.title.x = ggplot2::element_text(
+          size = style_config$y_axis_title_size,
+          face = style_config$y_axis_title_face,
+          margin = style_config$y_axis_title_margin
+        ),
+        axis.title.y = ggplot2::element_text(
+          size = style_config$x_axis_title_size,
+          face = style_config$x_axis_title_face,
+          margin = style_config$x_axis_title_margin
+        )
+      )
+    } else if (style_config$show_y_axis_title) {
+      # Only categories axis title visible
+      p <- p + ggplot2::labs(title = plot_title, x = "", y = x_axis_label)
+
+      p <- p + ggplot2::theme(
+        axis.title.y = ggplot2::element_text(
+          size = style_config$x_axis_title_size,
+          face = style_config$x_axis_title_face,
+          margin = style_config$x_axis_title_margin
+        )
+      )
+    } else if (style_config$show_x_axis_title) {
+      # Only value axis title visible
+      p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = "")
+
+      p <- p + ggplot2::theme(
+        axis.title.x = ggplot2::element_text(
+          size = style_config$y_axis_title_size,
+          face = style_config$y_axis_title_face,
+          margin = style_config$y_axis_title_margin
+        )
+      )
+    } else {
+      # No axis titles
+      p <- p + ggplot2::labs(title = plot_title, x = "", y = "")
+    }
+  } else {
+    # For vertical bars, x is Categories axis and y is Value axis
+    if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
+      # Both axis titles visible
+      p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = x_axis_label)
+
+      # Force both axis titles to be visible
+      p <- p + ggplot2::theme(
+        axis.title.y = ggplot2::element_text(
+          size = style_config$y_axis_title_size,
+          face = style_config$y_axis_title_face,
+          margin = style_config$y_axis_title_margin
+        ),
+        axis.title.x = ggplot2::element_text(
+          size = style_config$x_axis_title_size,
+          face = style_config$x_axis_title_face,
+          margin = style_config$x_axis_title_margin
+        )
+      )
+    } else if (style_config$show_x_axis_title) {
+      # Only categories axis title visible
+      p <- p + ggplot2::labs(title = plot_title, y = "", x = x_axis_label)
+
+      p <- p + ggplot2::theme(
+        axis.title.x = ggplot2::element_text(
+          size = style_config$x_axis_title_size,
+          face = style_config$x_axis_title_face,
+          margin = style_config$x_axis_title_margin
+        )
+      )
+    } else if (style_config$show_y_axis_title) {
+      # Only value axis title visible
+      p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = "")
+
+      p <- p + ggplot2::theme(
+        axis.title.y = ggplot2::element_text(
+          size = style_config$y_axis_title_size,
+          face = style_config$y_axis_title_face,
+          margin = style_config$y_axis_title_margin
+        )
+      )
+    } else {
+      # No axis titles
+      p <- p + ggplot2::labs(title = plot_title, y = "", x = "")
+    }
+  }
+
+  return(p)
+}
+
+
+#' @title Create Single Unstacked Plot (Internal)
+#'
+#' @description
+#' Create a single unstacked plot from GTAP data for internal use.
+#'
+#' @param data A data frame containing plotting data.
+#' @param total_data A data frame with total values.
+#' @param x_axis_from Character. Column used for x-axis categories.
+#' @param stack_value_from Character. Column for stack components.
+#' @param plot_title Character. Title of the plot.
+#' @param unit Character. Unit of measurement.
+#' @param panel_rows Numeric. Number of rows in panel layout.
+#' @param panel_cols Numeric. Number of columns in panel layout.
+#' @param panel_var Character. Column for panel facets. Default is "Experiment".
+#' @param invert_pane Logical. Whether to flip plot orientation. Default is FALSE.
+#' @param top_impact Numeric. Number of top impacts to display. Default is NULL.
+#' @param plot_style_config List. Custom plot styling configuration.
+#'
+#' @return A ggplot2 object representing the unstacked plot.
+#'
+#' @author Pattawee Puangchit
+#'
+#' @keywords internal
+#' @seealso \code{\link{stack_plot}}
+.create_single_unstacked_plot <- function(data, total_data, x_axis_from, stack_value_from,
+                                          plot_title, unit,
+                                          panel_rows, panel_cols,
+                                          panel_var = "Experiment",
+                                          invert_pane = FALSE,
+                                          top_impact = NULL,
+                                          plot_style_config = NULL) {
+
+  # GET STYLE CONFIGURATION
+  style_config <- if (!is.null(plot_style_config)) {
+    plot_style_config
+  } else {
+    .calculate_plot_style_config(NULL, "stack")
+  }
+
+  # SETUP VARIABLES
+  color_tone <- style_config$color_tone
+  n_panels <- length(unique(data[[panel_var]]))
+
+  # GENERATE COLOR PALETTE
+  color_palette <- .generate_stack_colors(data, stack_value_from, color_tone)
+
+  # CALCULATE Y LIMITS
+  if (!is.null(style_config$scale_limit) && length(style_config$scale_limit) == 2) {
+    y_limit <- style_config$scale_limit
+  } else {
+    # Calculate more generous limits for unstacked plot
+    value_range <- range(data$Value, na.rm = TRUE)
+    max_abs <- max(abs(value_range), na.rm = TRUE)
+
+    # Determine if we have all positive, all negative, or mixed values
+    if (all(data$Value >= 0, na.rm = TRUE)) {
+      # All positive values
+      y_limit <- c(0, max_abs * 1.3)
+    } else if (all(data$Value <= 0, na.rm = TRUE)) {
+      # All negative values
+      y_limit <- c(-max_abs * 1.3, 0)
+    } else {
+      # Mixed values - symmetrical with extra padding
+      y_limit <- c(-max_abs * 1.3, max_abs * 1.3)
+    }
+  }
+
+  # FORMAT AXIS LABELS
+  # y-axis label shows the unit
+  y_axis_label <- if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
+    style_config$y_axis_description
+  } else if (tolower(unit) == "percent") {
+    "Percentage (%)"
+  } else {
+    unit
+  }
+
+  # x-axis label uses column name if no description provided
+  x_axis_label <- if (!is.null(style_config$x_axis_description) && nzchar(style_config$x_axis_description)) {
+    style_config$x_axis_description
+  } else {
+    stack_value_from
+  }
+
+  # FORMAT VALUE LABELS
+  data$Label <- sprintf("%.2f", data$Value)
+
+  # CREATE BASE PLOT BASED ON ORIENTATION
+  if (invert_pane) {
+    # For horizontal bars (categories on y-axis, values on x-axis)
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_col(
+        data = data,
+        ggplot2::aes_string(
+          y = stack_value_from,
+          x = "Value",
+          fill = stack_value_from
+        ),
+        width = style_config$bar_width
+      ) +
+      ggplot2::geom_text(
+        data = data,
+        ggplot2::aes_string(
+          y = stack_value_from,
+          x = "Value",
+          label = "Label"
+        ),
+        hjust = ifelse(data$Value >= 0, -0.2, 1.2),
+        size = style_config$value_label_size
+      )
+
+    # ADD ZERO LINE IF CONFIGURED (VERTICAL FOR HORIZONTAL BARS)
+    if (style_config$show_zero_line) {
+      p <- p + ggplot2::geom_vline(
+        xintercept = style_config$zero_line_position,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        size = style_config$zero_line_size
+      )
+    }
+
+    # APPLY SCALE TO VALUE AXIS (X-AXIS)
+    scale_args <- list(
+      limits = y_limit,
+      oob = scales::oob_keep,
+      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
+    )
+
+    # Add breaks if scale_increment is specified
+    if (!is.null(style_config$scale_increment) && is.numeric(style_config$scale_increment)) {
+      scale_args$breaks <- seq(y_limit[1], y_limit[2], by = style_config$scale_increment)
+    }
+
+    p <- p + do.call(ggplot2::scale_x_continuous, scale_args)
+
+  } else {
+    # For vertical bars (categories on x-axis, values on y-axis)
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_col(
+        data = data,
+        ggplot2::aes_string(
+          x = stack_value_from,
+          y = "Value",
+          fill = stack_value_from
+        ),
+        width = style_config$bar_width
+      ) +
+      ggplot2::geom_text(
+        data = data,
+        ggplot2::aes_string(
+          x = stack_value_from,
+          y = "Value",
+          label = "Label"
+        ),
+        vjust = ifelse(data$Value >= 0, -0.5, 1.5),
+        size = style_config$value_label_size
+      )
+
+    # ADD ZERO LINE IF CONFIGURED (HORIZONTAL FOR VERTICAL BARS)
+    if (style_config$show_zero_line) {
+      p <- p + ggplot2::geom_hline(
+        yintercept = style_config$zero_line_position,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        size = style_config$zero_line_size
+      )
+    }
+
+    # APPLY SCALE TO VALUE AXIS (Y-AXIS)
+    scale_args <- list(
+      limits = y_limit,
+      oob = scales::oob_keep,
+      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
+    )
+
+    # Add breaks if scale_increment is specified
+    if (!is.null(style_config$scale_increment) && is.numeric(style_config$scale_increment)) {
+      scale_args$breaks <- seq(y_limit[1], y_limit[2], by = style_config$scale_increment)
+    }
+
+    p <- p + do.call(ggplot2::scale_y_continuous, scale_args)
+  }
+
+  # ADD FACETS IF NEEDED
+  if (n_panels > 1) {
+    if (!is.null(panel_rows) && !is.null(panel_cols)) {
+      if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
+        p <- p + ggplot2::facet_wrap(
+          as.formula(paste("~", panel_var)),
+          scales = "free",
+          nrow = panel_rows,
+          ncol = panel_cols
+        )
+      } else {
+        p <- p + ggplot2::facet_wrap(
+          as.formula(paste("~", panel_var)),
+          scales = "fixed",
+          nrow = panel_rows,
+          ncol = panel_cols
+        )
+      }
+    } else {
+      # Auto-determine layout if dimensions aren't specified
+      if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
+        p <- p + ggplot2::facet_wrap(
+          as.formula(paste("~", panel_var)),
+          scales = "free"
+        )
+      } else {
+        p <- p + ggplot2::facet_wrap(
+          as.formula(paste("~", panel_var)),
+          scales = "fixed"
+        )
+      }
+    }
+  }
+
+  # SETUP APPEARANCE
+  p <- p + ggplot2::scale_fill_manual(values = color_palette) +
+    ggplot2::theme_minimal()
+
+  # APPLY THEME STYLING
+  p <- .apply_plot_style_config(p, style_config)
+
+  # HANDLE AXIS LABELS BASED ON ORIENTATION
+  if (invert_pane) {
+    # For horizontal bars, x is Value axis and y is Categories axis
+    if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
+      # Both axis titles visible
+      p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = x_axis_label)
+
+      # Force both axis titles to be visible
+      p <- p + ggplot2::theme(
+        axis.title.x = ggplot2::element_text(
+          size = style_config$y_axis_title_size,
+          face = style_config$y_axis_title_face,
+          margin = style_config$y_axis_title_margin
+        ),
+        axis.title.y = ggplot2::element_text(
+          size = style_config$x_axis_title_size,
+          face = style_config$x_axis_title_face,
+          margin = style_config$x_axis_title_margin
+        )
+      )
+    } else if (style_config$show_y_axis_title) {
+      # Only categories axis title visible
+      p <- p + ggplot2::labs(title = plot_title, x = "", y = x_axis_label)
+
+      p <- p + ggplot2::theme(
+        axis.title.y = ggplot2::element_text(
+          size = style_config$x_axis_title_size,
+          face = style_config$x_axis_title_face,
+          margin = style_config$x_axis_title_margin
+        )
+      )
+    } else if (style_config$show_x_axis_title) {
+      # Only value axis title visible
+      p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = "")
+
+      p <- p + ggplot2::theme(
+        axis.title.x = ggplot2::element_text(
+          size = style_config$y_axis_title_size,
+          face = style_config$y_axis_title_face,
+          margin = style_config$y_axis_title_margin
+        )
+      )
+    } else {
+      # No axis titles
+      p <- p + ggplot2::labs(title = plot_title, x = "", y = "")
+    }
+  } else {
+    # For vertical bars, x is Categories axis and y is Value axis
+    if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
+      # Both axis titles visible
+      p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = x_axis_label)
+
+      # Force both axis titles to be visible
+      p <- p + ggplot2::theme(
+        axis.title.y = ggplot2::element_text(
+          size = style_config$y_axis_title_size,
+          face = style_config$y_axis_title_face,
+          margin = style_config$y_axis_title_margin
+        ),
+        axis.title.x = ggplot2::element_text(
+          size = style_config$x_axis_title_size,
+          face = style_config$x_axis_title_face,
+          margin = style_config$x_axis_title_margin
+        )
+      )
+    } else if (style_config$show_x_axis_title) {
+      # Only categories axis title visible
+      p <- p + ggplot2::labs(title = plot_title, y = "", x = x_axis_label)
+
+      p <- p + ggplot2::theme(
+        axis.title.x = ggplot2::element_text(
+          size = style_config$x_axis_title_size,
+          face = style_config$x_axis_title_face,
+          margin = style_config$x_axis_title_margin
+        )
+      )
+    } else if (style_config$show_y_axis_title) {
+      # Only value axis title visible
+      p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = "")
+
+      p <- p + ggplot2::theme(
+        axis.title.y = ggplot2::element_text(
+          size = style_config$y_axis_title_size,
+          face = style_config$y_axis_title_face,
+          margin = style_config$y_axis_title_margin
+        )
+      )
+    } else {
+      # No axis titles
+      p <- p + ggplot2::labs(title = plot_title, y = "", x = "")
+    }
+  }
+
+  return(p)
+}
+
 
 
 #' @title Calculate Stack Totals
@@ -2551,6 +3367,9 @@ stack_plot <- function(data, filter_var = NULL,
   # INPUT VALIDATION
   if (!is.data.frame(data)) return(NULL)
   if (!all(c(x_axis_from, panel_var, "Value") %in% names(data))) return(NULL)
+
+  # Ensure Value column is numeric
+  data$Value <- as.numeric(data$Value)
 
   # SETUP VARIABLES
   group_cols <- c(panel_var, x_axis_from)
@@ -2686,609 +3505,4 @@ stack_plot <- function(data, filter_var = NULL,
   }
 
   return(filtered_data)
-}
-
-
-#' @title Create Single Stacked Plot (Internal)
-#'
-#' @description
-#' Create a single stacked plot from GTAP data for internal use.
-#'
-#' @param data A data frame containing plotting data.
-#' @param total_data A data frame with total values.
-#' @param x_axis_from Character. Column used for x-axis categories.
-#' @param stack_value_from Character. Column for stack components.
-#' @param plot_title Character. Title of the plot.
-#' @param unit Character. Unit of measurement.
-#' @param panel_rows Numeric. Number of rows in panel layout.
-#' @param panel_cols Numeric. Number of columns in panel layout.
-#' @param panel_var Character. Column for panel facets. Default is "Experiment".
-#' @param show_total Logical. Whether to display total values. Default is TRUE.
-#' @param y_limit Numeric vector. Manual y-axis limits. Default is NULL.
-#' @param invert_pane Logical. Whether to flip plot orientation. Default is FALSE.
-#' @param top_impact Numeric. Number of top impacts to display. Default is NULL.
-#' @param plot_style_config List. Custom plot styling configuration.
-#'
-#' @return A ggplot2 object representing the stacked plot.
-#'
-#' @author Pattawee Puangchit
-#'
-#' @keywords internal
-#' @seealso \code{\link{stack_plot}}
-#'
-.create_single_stacked_plot <- function(data, total_data, x_axis_from, stack_value_from,
-                                        plot_title, unit,
-                                        panel_rows, panel_cols,
-                                        panel_var = "Experiment",
-                                        show_total = TRUE,
-                                        y_limit = NULL,
-                                        invert_pane = FALSE,
-                                        top_impact = NULL,
-                                        plot_style_config = NULL) {
-
-  # GET STYLE CONFIGURATION
-  style_config <- if (!is.null(plot_style_config)) {
-    plot_style_config
-  } else {
-    .calculate_plot_style_config(NULL, "stack")
-  }
-
-  # SETUP VARIABLES
-  color_tone <- style_config$color_tone
-  n_panels <- length(unique(data[[panel_var]]))
-
-  # GENERATE COLOR PALETTE
-  color_palette <- .generate_stack_colors(data, stack_value_from, color_tone)
-
-  # CALCULATE Y LIMITS
-  if (is.null(y_limit)) {
-    # Calculate more generous limits for stacked plot
-    max_total <- max(abs(total_data$Total), na.rm = TRUE)
-
-    # Determine if we have all positive, all negative, or mixed values
-    if (all(total_data$Total >= 0, na.rm = TRUE)) {
-      # All positive
-      y_limit <- c(0, max_total * 1.4)
-    } else if (all(total_data$Total <= 0, na.rm = TRUE)) {
-      # All negative
-      y_limit <- c(-max_total * 1.4, 0)
-    } else {
-      # Mixed values - symmetrical with extra padding
-      y_limit <- c(-max_total * 1.4, max_total * 1.4)
-    }
-  }
-
-  # FORMAT AXIS LABELS
-  # y-axis label shows the unit
-  y_axis_label <- if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
-    style_config$y_axis_description
-  } else if (tolower(unit) == "percent") {
-    "Percentage (%)"
-  } else {
-    unit
-  }
-
-  # x-axis label uses column name if no description provided
-  x_axis_label <- if (!is.null(style_config$x_axis_description) && nzchar(style_config$x_axis_description)) {
-    style_config$x_axis_description
-  } else {
-    x_axis_from
-  }
-
-  # CREATE BASE PLOT BASED ON ORIENTATION
-  if (invert_pane) {
-    # For horizontal bars (categories on y-axis, values on x-axis)
-    p <- ggplot2::ggplot() +
-      ggplot2::geom_col(
-        data = data,
-        ggplot2::aes_string(
-          y = x_axis_from,
-          x = "Value",
-          fill = stack_value_from
-        ),
-        position = "stack",
-        width = style_config$bar_width
-      )
-
-    # ADD TOTAL LABELS IF CONFIGURED
-    if (show_total) {
-      decimal_places <- style_config$value_label_decimal_places
-      value_size <- style_config$value_label_size
-
-      p <- p + ggplot2::geom_text(
-        data = total_data,
-        ggplot2::aes(
-          y = !!rlang::sym(x_axis_from),
-          x = ifelse(Total >= 0,
-                     PositiveTotal + abs(Total) * 0.15,
-                     NegativeTotal - abs(Total) * 0.15),
-          label = sprintf(paste0("Total\n%.", decimal_places, "f"), Total)
-        ),
-        hjust = ifelse(total_data$Total >= 0, 0, 1),
-        vjust = 0.5,
-        size = value_size,
-        fontface = "bold"
-      )
-    }
-
-    # ADD ZERO LINE IF CONFIGURED (VERTICAL FOR HORIZONTAL BARS)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_vline(
-        xintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        size = style_config$zero_line_size
-      )
-    }
-
-    # APPLY SCALE TO VALUE AXIS (X-AXIS)
-    p <- p + ggplot2::scale_x_continuous(
-      limits = y_limit,
-      oob = scales::oob_keep,
-      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
-    )
-  } else {
-    # For vertical bars (categories on x-axis, values on y-axis)
-    p <- ggplot2::ggplot() +
-      ggplot2::geom_col(
-        data = data,
-        ggplot2::aes_string(
-          x = x_axis_from,
-          y = "Value",
-          fill = stack_value_from
-        ),
-        position = "stack",
-        width = style_config$bar_width
-      )
-
-    # ADD TOTAL LABELS IF CONFIGURED
-    if (show_total) {
-      decimal_places <- style_config$value_label_decimal_places
-      value_size <- style_config$value_label_size
-
-      p <- p + ggplot2::geom_text(
-        data = total_data,
-        ggplot2::aes(
-          x = !!rlang::sym(x_axis_from),
-          y = ifelse(Total >= 0,
-                     PositiveTotal + abs(Total) * 0.05,
-                     NegativeTotal - abs(Total) * 0.05),
-          label = sprintf(paste0("Total\n%.", decimal_places, "f"), Total)
-        ),
-        vjust = ifelse(total_data$Total >= 0, 0, 1.5),
-        size = value_size,
-        fontface = "bold"
-      )
-    }
-
-    # ADD ZERO LINE IF CONFIGURED (HORIZONTAL FOR VERTICAL BARS)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_hline(
-        yintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        size = style_config$zero_line_size
-      )
-    }
-
-    # APPLY SCALE TO VALUE AXIS (Y-AXIS)
-    p <- p + ggplot2::scale_y_continuous(
-      limits = y_limit,
-      oob = scales::oob_keep,
-      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
-    )
-  }
-
-  # ADD FACETS IF NEEDED
-  if (n_panels > 1) {
-    if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
-      p <- p + ggplot2::facet_wrap(
-        as.formula(paste("~", panel_var)),
-        scales = "free",
-        nrow = panel_rows,
-        ncol = panel_cols
-      )
-    } else {
-      p <- p + ggplot2::facet_wrap(
-        as.formula(paste("~", panel_var)),
-        scales = "fixed",
-        nrow = panel_rows,
-        ncol = panel_cols
-      )
-    }
-  }
-
-  # SETUP APPEARANCE
-  p <- p + ggplot2::scale_fill_manual(values = color_palette) +
-    ggplot2::theme_minimal()
-
-  # APPLY THEME STYLING
-  p <- .apply_plot_style_config(p, style_config)
-
-  # HANDLE AXIS LABELS BASED ON ORIENTATION
-  if (invert_pane) {
-    # For horizontal bars, x is Value axis and y is Categories axis
-    if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
-      # Both axis titles visible
-      p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
-    } else if (style_config$show_y_axis_title) {
-      # Only categories axis title visible
-      p <- p + ggplot2::labs(title = plot_title, x = "", y = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
-    } else if (style_config$show_x_axis_title) {
-      # Only value axis title visible
-      p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
-    } else {
-      # No axis titles
-      p <- p + ggplot2::labs(title = plot_title, x = "", y = "")
-    }
-  } else {
-    # For vertical bars, x is Categories axis and y is Value axis
-    if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
-      # Both axis titles visible
-      p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
-    } else if (style_config$show_x_axis_title) {
-      # Only categories axis title visible
-      p <- p + ggplot2::labs(title = plot_title, y = "", x = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
-    } else if (style_config$show_y_axis_title) {
-      # Only value axis title visible
-      p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
-    } else {
-      # No axis titles
-      p <- p + ggplot2::labs(title = plot_title, y = "", x = "")
-    }
-  }
-
-  return(p)
-}
-
-
-#' @title Create Single Unstacked Plot (Internal)
-#'
-#' @description
-#' Create a single unstacked plot from GTAP data for internal use.
-#'
-#' @param data A data frame containing plotting data.
-#' @param total_data A data frame with total values.
-#' @param x_axis_from Character. Column used for x-axis categories.
-#' @param stack_value_from Character. Column for stack components.
-#' @param plot_title Character. Title of the plot.
-#' @param unit Character. Unit of measurement.
-#' @param panel_rows Numeric. Number of rows in panel layout.
-#' @param panel_cols Numeric. Number of columns in panel layout.
-#' @param panel_var Character. Column for panel facets. Default is "Experiment".
-#' @param y_limit Numeric vector. Manual y-axis limits. Default is NULL.
-#' @param invert_pane Logical. Whether to flip plot orientation. Default is FALSE.
-#' @param top_impact Numeric. Number of top impacts to display. Default is NULL.
-#' @param plot_style_config List. Custom plot styling configuration.
-#'
-#' @return A ggplot2 object representing the unstacked plot.
-#'
-#' @author Pattawee Puangchit
-#'
-#' @keywords internal
-#' @seealso \code{\link{stack_plot}}
-#'
-.create_single_unstacked_plot <- function(data, total_data, x_axis_from, stack_value_from,
-                                          plot_title, unit,
-                                          panel_rows, panel_cols,
-                                          panel_var = "Experiment",
-                                          y_limit = NULL,
-                                          invert_pane = FALSE,
-                                          top_impact = NULL,
-                                          plot_style_config = NULL) {
-
-  # GET STYLE CONFIGURATION
-  style_config <- if (!is.null(plot_style_config)) {
-    plot_style_config
-  } else {
-    .calculate_plot_style_config(NULL, "stack")
-  }
-
-  # SETUP VARIABLES
-  color_tone <- style_config$color_tone
-  n_panels <- length(unique(data[[panel_var]]))
-
-  # GENERATE COLOR PALETTE
-  color_palette <- .generate_stack_colors(data, stack_value_from, color_tone)
-
-  # CALCULATE Y LIMITS
-  if (is.null(y_limit)) {
-    # Calculate more generous limits for unstacked plot
-    value_range <- range(data$Value, na.rm = TRUE)
-    max_abs <- max(abs(value_range), na.rm = TRUE)
-
-    # Determine if we have all positive, all negative, or mixed values
-    if (all(data$Value >= 0, na.rm = TRUE)) {
-      # All positive values
-      y_limit <- c(0, max_abs * 1.5)
-    } else if (all(data$Value <= 0, na.rm = TRUE)) {
-      # All negative values
-      y_limit <- c(-max_abs * 1.5, 0)
-    } else {
-      # Mixed values - symmetrical with extra padding
-      y_limit <- c(-max_abs * 1.5, max_abs * 1.5)
-    }
-  }
-
-  # FORMAT AXIS LABELS
-  # y-axis label shows the unit
-  y_axis_label <- if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
-    style_config$y_axis_description
-  } else if (tolower(unit) == "percent") {
-    "Percentage (%)"
-  } else {
-    unit
-  }
-
-  # x-axis label uses column name if no description provided
-  x_axis_label <- if (!is.null(style_config$x_axis_description) && nzchar(style_config$x_axis_description)) {
-    style_config$x_axis_description
-  } else {
-    stack_value_from  # For unstacked plot, stack_value_from is the category column
-  }
-
-  # FORMAT VALUE LABELS
-  data$Label <- sprintf("%.2f", data$Value)
-
-  # CREATE BASE PLOT BASED ON ORIENTATION
-  if (invert_pane) {
-    # For horizontal bars (categories on y-axis, values on x-axis)
-    p <- ggplot2::ggplot() +
-      ggplot2::geom_col(
-        data = data,
-        ggplot2::aes_string(
-          y = stack_value_from,
-          x = "Value",
-          fill = stack_value_from
-        ),
-        width = style_config$bar_width
-      ) +
-      ggplot2::geom_text(
-        data = data,
-        ggplot2::aes_string(
-          y = stack_value_from,
-          x = "Value",
-          label = "Label"
-        ),
-        hjust = ifelse(data$Value >= 0, -0.2, 1.2),
-        size = style_config$value_label_size
-      )
-
-    # ADD ZERO LINE IF CONFIGURED (VERTICAL FOR HORIZONTAL BARS)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_vline(
-        xintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        size = style_config$zero_line_size
-      )
-    }
-
-    # APPLY SCALE TO VALUE AXIS (X-AXIS)
-    p <- p + ggplot2::scale_x_continuous(
-      limits = y_limit,
-      oob = scales::oob_keep,
-      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
-    )
-  } else {
-    # For vertical bars (categories on x-axis, values on y-axis)
-    p <- ggplot2::ggplot() +
-      ggplot2::geom_col(
-        data = data,
-        ggplot2::aes_string(
-          x = stack_value_from,
-          y = "Value",
-          fill = stack_value_from
-        ),
-        width = style_config$bar_width
-      ) +
-      ggplot2::geom_text(
-        data = data,
-        ggplot2::aes_string(
-          x = stack_value_from,
-          y = "Value",
-          label = "Label"
-        ),
-        vjust = ifelse(data$Value >= 0, -0.5, 1.5),
-        size = style_config$value_label_size
-      )
-
-    # ADD ZERO LINE IF CONFIGURED (HORIZONTAL FOR VERTICAL BARS)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_hline(
-        yintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        size = style_config$zero_line_size
-      )
-    }
-
-    # APPLY SCALE TO VALUE AXIS (Y-AXIS)
-    p <- p + ggplot2::scale_y_continuous(
-      limits = y_limit,
-      oob = scales::oob_keep,
-      expand = ggplot2::expansion(mult = style_config$expansion_y_mult)
-    )
-  }
-
-  # ADD FACETS IF NEEDED
-  if (n_panels > 1) {
-    if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
-      p <- p + ggplot2::facet_wrap(
-        as.formula(paste("~", panel_var)),
-        scales = "free",
-        nrow = panel_rows,
-        ncol = panel_cols
-      )
-    } else {
-      p <- p + ggplot2::facet_wrap(
-        as.formula(paste("~", panel_var)),
-        scales = "fixed",
-        nrow = panel_rows,
-        ncol = panel_cols
-      )
-    }
-  }
-
-  # SETUP APPEARANCE
-  p <- p + ggplot2::scale_fill_manual(values = color_palette) +
-    ggplot2::theme_minimal()
-
-  # APPLY THEME STYLING
-  p <- .apply_plot_style_config(p, style_config)
-
-  # HANDLE AXIS LABELS BASED ON ORIENTATION
-  if (invert_pane) {
-    # For horizontal bars, x is Value axis and y is Categories axis
-    if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
-      # Both axis titles visible
-      p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
-    } else if (style_config$show_y_axis_title) {
-      # Only categories axis title visible
-      p <- p + ggplot2::labs(title = plot_title, x = "", y = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
-    } else if (style_config$show_x_axis_title) {
-      # Only value axis title visible
-      p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
-    } else {
-      # No axis titles
-      p <- p + ggplot2::labs(title = plot_title, x = "", y = "")
-    }
-  } else {
-    # For vertical bars, x is Categories axis and y is Value axis
-    if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
-      # Both axis titles visible
-      p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
-    } else if (style_config$show_x_axis_title) {
-      # Only categories axis title visible
-      p <- p + ggplot2::labs(title = plot_title, y = "", x = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
-    } else if (style_config$show_y_axis_title) {
-      # Only value axis title visible
-      p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
-    } else {
-      # No axis titles
-      p <- p + ggplot2::labs(title = plot_title, y = "", x = "")
-    }
-  }
-
-  return(p)
 }

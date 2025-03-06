@@ -58,9 +58,10 @@ such as panel facets, split grouping, and customizable styles.</p>
 <span>  separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  var_name_by_description <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  add_var_info <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  width <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  height <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  export_picture <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  export_as_pdf <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  export_config <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot_style_config <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -119,16 +120,20 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 <dd><p>Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).</p></dd>
 
 
-<dt id="arg-output-dir">output_dir<a class="anchor" aria-label="anchor" href="#arg-output-dir"></a></dt>
-<dd><p>Character. Directory path to save plots as <code>.png</code> files. If NULL, plots are only returned in R without saving.</p></dd>
+<dt id="arg-output-path">output_path<a class="anchor" aria-label="anchor" href="#arg-output-path"></a></dt>
+<dd><p>Character. Directory path for saving output files. If NULL, plots are only returned in R.</p></dd>
 
 
-<dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
-<dd><p>Numeric. Width of the output figure in inches. If NULL, it is calculated automatically.</p></dd>
+<dt id="arg-export-picture">export_picture<a class="anchor" aria-label="anchor" href="#arg-export-picture"></a></dt>
+<dd><p>Logical. If TRUE, exports plots as image files (default: TRUE).</p></dd>
 
 
-<dt id="arg-height">height<a class="anchor" aria-label="anchor" href="#arg-height"></a></dt>
-<dd><p>Numeric. Height of the output figure in inches. If NULL, it is calculated automatically.</p></dd>
+<dt id="arg-export-as-pdf">export_as_pdf<a class="anchor" aria-label="anchor" href="#arg-export-as-pdf"></a></dt>
+<dd><p>Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).</p></dd>
+
+
+<dt id="arg-export-config">export_config<a class="anchor" aria-label="anchor" href="#arg-export-config"></a></dt>
+<dd><p>List. Configuration options for exported plots, including file name, width, and height.</p></dd>
 
 
 <dt id="arg-plot-style-config">plot_style_config<a class="anchor" aria-label="anchor" href="#arg-plot-style-config"></a></dt>
@@ -142,10 +147,13 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function allows for extensive customization of plots through the <code>plot_style_config</code> parameter,
-which integrates ggplot2 configurations.
-To view and adjust available style options, use:
-<code>get_plot_style_config("comparison", as_dataframe = TRUE)</code>.</p>
-    </div>
+which integrates ggplot2 configurations. The function now supports more flexible export options
+with the <code>export_picture</code>, <code>export_as_pdf</code>, and <code>export_config</code> parameters.</p>
+<p>The <code>export_config</code> parameter can include:</p><ul><li><p><code>file_name</code>: Base name for the output files (default: "comparison_plots").</p></li>
+<li><p><code>width</code>: Width of the output files in inches.</p></li>
+<li><p><code>height</code>: Height of the output files in inches.</p></li>
+<li><p>Additional export settings as needed.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="detail_plot.html">detail_plot</a></code>, <code><a href="stack_plot.html">stack_plot</a></code>, <code><a href="get_plot_style_config.html">get_plot_style_config</a></code></p></div>
@@ -165,30 +173,27 @@ To view and adjust available style options, use:
 <span class="r-in"><span>  panel_var <span class="op">=</span> <span class="st">"Experiment"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Split by commodity with custom styling</span></span></span>
+<span class="r-in"><span><span class="co"># Split by commodity with custom styling and export options</span></span></span>
 <span class="r-in"><span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">comparison_plot</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">gtap_results</span>,</span></span>
 <span class="r-in"><span>  x_axis_from <span class="op">=</span> <span class="st">"REG"</span>,</span></span>
 <span class="r-in"><span>  split_by <span class="op">=</span> <span class="st">"COMM"</span>,</span></span>
 <span class="r-in"><span>  panel_var <span class="op">=</span> <span class="st">"Experiment"</span>,</span></span>
 <span class="r-in"><span>  var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  output_path <span class="op">=</span> <span class="st">"results/plots"</span>,</span></span>
+<span class="r-in"><span>  export_as_pdf <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  export_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    file_name <span class="op">=</span> <span class="st">"commodity_impacts"</span>,</span></span>
+<span class="r-in"><span>    width <span class="op">=</span> <span class="fl">12</span>,</span></span>
+<span class="r-in"><span>    height <span class="op">=</span> <span class="fl">8</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
 <span class="r-in"><span>  plot_style_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    color_tone <span class="op">=</span> <span class="st">"economic"</span>,</span></span>
 <span class="r-in"><span>    title_size <span class="op">=</span> <span class="fl">16</span>,</span></span>
 <span class="r-in"><span>    show_grid_major_y <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Save plots to directory with inverted orientation</span></span></span>
-<span class="r-in"><span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu">comparison_plot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">gtap_results</span>,</span></span>
-<span class="r-in"><span>  x_axis_from <span class="op">=</span> <span class="st">"REG"</span>,</span></span>
-<span class="r-in"><span>  split_by <span class="op">=</span> <span class="st">"COMM"</span>,</span></span>
-<span class="r-in"><span>  invert_pane <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  output_dir <span class="op">=</span> <span class="st">"path/to/output/directory"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

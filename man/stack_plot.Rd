@@ -17,13 +17,13 @@ stack_plot(
   invert_pane = FALSE,
   separate_figure = FALSE,
   unstack_plot = FALSE,
-  output_dir = NULL,
+  output_path = NULL,
+  export_picture = TRUE,
+  export_as_pdf = FALSE,
+  export_config = NULL,
   var_name_by_description = FALSE,
   add_var_info = FALSE,
   show_total = TRUE,
-  y_limit = NULL,
-  width = NULL,
-  height = NULL,
   top_impact = NULL,
   plot_style_config = NULL
 )
@@ -55,19 +55,19 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 
 \item{unstack_plot}{Logical. If TRUE, creates separate bar plots for each \code{x_axis_from} value instead of stacked bars (default: FALSE).}
 
-\item{output_dir}{Character. Directory path to save plots as \code{.png} files. If NULL, plots are only returned in R without saving.}
+\item{output_path}{Character. Directory path for saving output files. If NULL, plots are only returned in R.}
+
+\item{export_picture}{Logical. If TRUE, exports plots as image files (default: TRUE).}
+
+\item{export_as_pdf}{Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).}
+
+\item{export_config}{List. Configuration options for exported plots, including file name, width, and height.}
 
 \item{var_name_by_description}{Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).}
 
 \item{add_var_info}{Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).}
 
 \item{show_total}{Logical. If TRUE, displays total values above stacked bars (default: TRUE).}
-
-\item{y_limit}{Numeric vector. Manual limits for the y-axis. If NULL, it is calculated automatically.}
-
-\item{width}{Numeric. Width of the output figure in inches. If NULL, it is calculated automatically.}
-
-\item{height}{Numeric. Height of the output figure in inches. If NULL, it is calculated automatically.}
 
 \item{top_impact}{Numeric or NULL. If specified, filters to show only the top N impactful values. NULL shows all values.}
 
@@ -82,20 +82,34 @@ automatically handling multi-dimensional data. The function supports both stacke
 presentations, making it particularly useful for decomposition analysis.
 }
 \details{
-This function allows for extensive customization of plots through the \code{plot_style_config} parameter, which integrates ggplot2 configurations.
-To view and adjust available style options, use:
-\code{get_plot_style_config("stack", as_dataframe = TRUE)}.
+This function allows for extensive customization of plots through the \code{plot_style_config} parameter,
+which integrates ggplot2 configurations. The function now supports more flexible export options
+with the \code{export_picture}, \code{export_as_pdf}, and \code{export_config} parameters.
+
+The \code{export_config} parameter can include:
+\itemize{
+\item \code{file_name}: Base name for the output files (default: "stack_plots").
+\item \code{width}: Width of the output files in inches.
+\item \code{height}: Height of the output files in inches.
+\item Additional export settings as needed.
+}
 }
 \examples{
 \dontrun{
-# Basic stacked bar chart by commodity
+# Basic stacked bar chart by commodity with export options
 p1 <- stack_plot(
   data = gtap_results,
   x_axis_from = "REG",
-  stack_value_from = "COMM"
+  stack_value_from = "COMM",
+  output_path = "results/stacked",
+  export_config = list(
+    file_name = "commodity_stacks",
+    width = 12,
+    height = 9
+  )
 )
 
-# Welfare Decomposition
+# Welfare Decomposition with PDF export
 p2 <- stack_plot(
   data = headerA,
   x_axis_from = "Region",
@@ -103,26 +117,12 @@ p2 <- stack_plot(
   split_by = FALSE,
   unstack_plot = TRUE,
   show_total = TRUE,
-
-)
-
-# Terms of trade decomposition
-plots <- stack_plot(
-  data = headerE1,
-  x_axis_from = "Commodity",
-  stack_value_from = "PRICES",
-  split_by = "Region",
-  top_impact = 10,
-  invert_pane = TRUE,
-  output_dir = "path/to/output/directory",
-  plot_style_config = list(
-    color_tone = "economic",
-    show_legend = TRUE,
-    legend_position = "bottom"
+  export_as_pdf = TRUE,
+  export_config = list(
+    file_name = "welfare_decomposition"
   )
 )
 }
-
 }
 \seealso{
 \code{\link{detail_plot}}, \code{\link{comparison_plot}}, \code{\link{get_plot_style_config}}

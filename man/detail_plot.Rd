@@ -15,10 +15,11 @@ detail_plot(
   desc_col = "Description",
   var_name_by_description = FALSE,
   add_var_info = FALSE,
-  output_dir = NULL,
+  output_path = NULL,
+  export_picture = TRUE,
+  export_as_pdf = FALSE,
+  export_config = NULL,
   top_impact = NULL,
-  width = NULL,
-  height = NULL,
   separate_figure = FALSE,
   invert_pane = FALSE,
   plot_style_config = NULL
@@ -47,13 +48,15 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 
 \item{add_var_info}{Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).}
 
-\item{output_dir}{Character. Directory path to save plots as \code{.png} files. If NULL, plots are only returned in R without saving.}
+\item{output_path}{Character. Directory path for saving output files. If NULL, plots are only returned in R.}
+
+\item{export_picture}{Logical. If TRUE, exports plots as image files (default: TRUE).}
+
+\item{export_as_pdf}{Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).}
+
+\item{export_config}{List. Configuration options for exported plots, including file name, width, and height.}
 
 \item{top_impact}{Numeric or NULL. If specified, filters to show only the top N impactful values. NULL shows all values.}
-
-\item{width}{Numeric. Width of the output figure in inches. If NULL, it is calculated automatically.}
-
-\item{height}{Numeric. Height of the output figure in inches. If NULL, it is calculated automatically.}
 
 \item{separate_figure}{Logical. If TRUE, creates a separate figure for each panel value (default: FALSE).}
 
@@ -71,18 +74,31 @@ color coding for positive and negative values, and flexible visualization settin
 }
 \details{
 This function allows for extensive customization of plots through the \code{plot_style_config} parameter,
-which integrates ggplot2 configurations.
-To view and adjust available style options, use:
-\code{get_plot_style_config("detail", as_dataframe = TRUE)}.
+which integrates ggplot2 configurations. The function now supports more flexible export options
+with the \code{export_picture}, \code{export_as_pdf}, and \code{export_config} parameters.
+
+The \code{export_config} parameter can include:
+\itemize{
+\item \code{file_name}: Base name for the output files (default: "detail_plots").
+\item \code{width}: Width of the output files in inches.
+\item \code{height}: Height of the output files in inches.
+\item Additional export settings as needed.
+}
 }
 \examples{
 \dontrun{
-# Basic usage showing all impacts
+# Basic usage showing all impacts with export options
 p1 <- detail_plot(
   data = gtap_results,
   x_axis_from = "REG",
   variable_col = "Variable",
-  top_impact = NULL
+  top_impact = NULL,
+  output_path = "results/detail_plots",
+  export_config = list(
+    file_name = "regional_impacts",
+    width = 14,
+    height = 10
+  )
 )
 
 # Show only top 10 impacts (balanced between positive and negative)
@@ -93,18 +109,8 @@ p2 <- detail_plot(
   panel_var = "Experiment",
   variable_col = "Variable",
   top_impact = 10,
-  invert_pane = TRUE
-)
-
-# Create detailed plots split by commodity
-plots <- detail_plot(
-  data = gtap_results,
-  x_axis_from = "REG",
-  split_by = "COMM",
-  variable_col = "Variable",
-  var_name_by_description = TRUE,
-  add_var_info = TRUE,
-  output_dir = "path/to/output/directory"
+  invert_pane = TRUE,
+  export_as_pdf = TRUE
 )
 }
 

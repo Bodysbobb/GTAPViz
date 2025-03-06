@@ -149,6 +149,13 @@ The parameters are grouped as follows:
 }
 }
 
+\subsection{\strong{Scale Settings}}{
+\itemize{
+\item \code{scale_limit}: Numeric vector of length 2. Manual limits for value axis. Example: \code{c(-10, 10)}
+\item \code{scale_increment}: Numeric. Step size for axis tick marks. Example: \code{2}
+}
+}
+
 \subsection{\strong{Scale Expansion Settings}}{
 \itemize{
 \item \code{expansion_y_mult}: Numeric vector. Y-axis expansion. Default: \code{c(0.05, 0.1)}

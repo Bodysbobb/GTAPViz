@@ -587,9 +587,14 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                 invert_pane = FALSE,                
                 separate_figure = FALSE,
                 
-                width = 20,
-                height = 12,
-                output_dir = output.folder,
+                export_picture = TRUE,
+                export_as_pdf = "merged",
+                export_config = list(
+                  width = 20,
+                  height = 12
+                  ),
+
+                output_path = output.folder,
                 
                 plot_style_config = list(
                   color_tone = "purdue",
@@ -598,11 +603,8 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                     type = "prefix",  
                     text = "Impact On"
                   ),
-                  panel_rows = 1,
-                  panel_cols = NULL,
-                  show_x_axis_title = TRUE,
-                  show_y_axis_title = TRUE,
-                  show_axis_titles_on_all_facets = FALSE
+                  panel_rows = 2,
+                  panel_cols = NULL
                 ))
 ```
 
@@ -614,7 +616,9 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                 x_axis_from = "Region",
                 split_by = "Variable",
                 var_name_by_description = TRUE,
-                output_dir = output.folder,
+                
+                export_picture = TRUE,
+                output_path = output.folder,
                 
                 plot_style_config = list(
                   color_tone = "purdue",
@@ -624,7 +628,8 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                   ),
                   panel_rows = 2,
                   panel_cols = NULL,
-                  show_axis_titles_on_all_facets = FALSE
+                  show_axis_titles_on_all_facets = FALSE,
+                  show_title = FALSE
                 ))
 ```
 
@@ -667,9 +672,13 @@ comparison_plot(Macros,
                 invert_pane = FALSE,                
                 separate_figure = FALSE,
                 
-                width = 20,
-                height = 12,
-                output_dir = output.folder,
+                export_picture = TRUE,
+                export_as_pdf = "merged",
+                export_config = list(
+                  width = 20,
+                  height = 15
+                  ),
+                output_path = output.folder,
                 
                 plot_style_config = list(
                   color_tone = "purdue",
@@ -707,28 +716,33 @@ This figure visualizes large-scale data, displaying all sectors (*COMM*, *ACTS*)
 For example, the following command plots all variables with sectors on the x-axis for each region:  
 
 ```{r Detail Plot, eval = FALSE}
-twod.dta <- sl4.plot.data[["2D"]]
+detail_plot(sl4.plot.data[["2D"]],
+            x_axis_from = "Sector",
+            split_by = "Region",
+            panel_var = "Experiment", 
 
-detail_plot(twod.dta,
-                x_axis_from = "Sector",
-                split_by = "Region",
-                panel_var = "Experiment", 
-                unit_col = "Unit",
-                filter_var = NULL,
-                top_impact = 10,
-                output_dir = output.folder,
-                var_name_by_description = TRUE,
-                invert_pane = TRUE,
-                separate_figure = FALSE,
-                width = 50,
-                height = 25,
-                plot_style_config = list(
-                  positive_color = "#2E8B57", 
-                  negative_color = "#CD5C5C",
-                  panel_rows = 1,
-                  panel_cols = NULL,
-                  show_axis_titles_on_all_facets = FALSE
-                ))
+            top_impact = NULL,
+            var_name_by_description = TRUE,
+            
+            invert_pane = TRUE,
+            separate_figure = FALSE,
+            
+            export_config = list(
+              width = 45,
+              height = 20
+            ),
+            
+            export_picture = TRUE,
+            export_as_pdf = "merged",   
+            output_path = output.folder,
+            
+            plot_style_config = list(
+              positive_color = "#2E8B57", 
+              negative_color = "#CD5C5C",
+              panel_rows = 1,
+              panel_cols = NULL,
+              show_axis_titles_on_all_facets = FALSE
+            ))
 ```
 
 ```{r detail plot, echo=FALSE, out.width="600px"}
@@ -781,7 +795,7 @@ stack_plot(data = har.plot.data[["A"]],
            x_axis_from = "Region",
            stack_value_from = "COLUMN",
            split_by = FALSE,
-          
+           
            show_total = TRUE,
            unstack_plot = FALSE,
            
@@ -789,22 +803,19 @@ stack_plot(data = har.plot.data[["A"]],
            
            invert_pane = FALSE,           
            separate_figure = FALSE,
-           
-           width = 30,
-           height = 15,
-           output_dir = output.folder,
+
+           export_picture = TRUE,
+           export_as_pdf = "merged",
+           export_config = list(
+             width = 28,
+             height = 15
+           ),
+           output_path = output.folder,
            
            plot_style_config = list(
-             title_format = list(
-               type = "full",
-               text = "Welfare"
-             ),
              color_tone = "purdue",
-             positive_color = "#2E8B57", 
-             negative_color = "#CD5C5C",
              panel_rows = 2,
-             panel_cols = 4,
-             legend_position = "bottom",
+             panel_cols = NULL,
              show_axis_titles_on_all_facets = FALSE
            ))
 ```
@@ -832,24 +843,27 @@ stack_plot(data = har.plot.data[["E1"]],
            
            invert_pane = TRUE,           
            separate_figure = FALSE,
-           
-           width = 50,
-           height = 20,
-           output_dir = output.folder,
+
+           export_picture = TRUE,
+           export_as_pdf = "merged",
+           export_config = list(
+             width = 50,
+             height = 20
+           ),
+           output_path = output.folder,
            
            plot_style_config = list(
              title_format = list(
                type = "full",
                text = "Terms of Trade Decomposition"
              ),
-             color_tone = "academic",
              positive_color = "#2E8B57", 
              negative_color = "#CD5C5C",
              panel_rows = 1,
-             panel_cols = 9,
+             panel_cols = NULL,
+             show_axis_titles_on_all_facets = FALSE,
              bar_width = 0.5,
-             bar_spacing = 0,
-             show_axis_titles_on_all_facets = FALSE
+             bar_spacing = 0
            ))
 
 ```

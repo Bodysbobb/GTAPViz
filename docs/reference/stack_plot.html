@@ -61,13 +61,13 @@ presentations, making it particularly useful for decomposition analysis.</p>
 <span>  invert_pane <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  unstack_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  export_picture <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  export_as_pdf <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  export_config <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  var_name_by_description <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  add_var_info <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  show_total <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  y_limit <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  width <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  height <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_impact <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot_style_config <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -127,8 +127,20 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 <dd><p>Logical. If TRUE, creates separate bar plots for each <code>x_axis_from</code> value instead of stacked bars (default: FALSE).</p></dd>
 
 
-<dt id="arg-output-dir">output_dir<a class="anchor" aria-label="anchor" href="#arg-output-dir"></a></dt>
-<dd><p>Character. Directory path to save plots as <code>.png</code> files. If NULL, plots are only returned in R without saving.</p></dd>
+<dt id="arg-output-path">output_path<a class="anchor" aria-label="anchor" href="#arg-output-path"></a></dt>
+<dd><p>Character. Directory path for saving output files. If NULL, plots are only returned in R.</p></dd>
+
+
+<dt id="arg-export-picture">export_picture<a class="anchor" aria-label="anchor" href="#arg-export-picture"></a></dt>
+<dd><p>Logical. If TRUE, exports plots as image files (default: TRUE).</p></dd>
+
+
+<dt id="arg-export-as-pdf">export_as_pdf<a class="anchor" aria-label="anchor" href="#arg-export-as-pdf"></a></dt>
+<dd><p>Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).</p></dd>
+
+
+<dt id="arg-export-config">export_config<a class="anchor" aria-label="anchor" href="#arg-export-config"></a></dt>
+<dd><p>List. Configuration options for exported plots, including file name, width, and height.</p></dd>
 
 
 <dt id="arg-var-name-by-description">var_name_by_description<a class="anchor" aria-label="anchor" href="#arg-var-name-by-description"></a></dt>
@@ -141,18 +153,6 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 
 <dt id="arg-show-total">show_total<a class="anchor" aria-label="anchor" href="#arg-show-total"></a></dt>
 <dd><p>Logical. If TRUE, displays total values above stacked bars (default: TRUE).</p></dd>
-
-
-<dt id="arg-y-limit">y_limit<a class="anchor" aria-label="anchor" href="#arg-y-limit"></a></dt>
-<dd><p>Numeric vector. Manual limits for the y-axis. If NULL, it is calculated automatically.</p></dd>
-
-
-<dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
-<dd><p>Numeric. Width of the output figure in inches. If NULL, it is calculated automatically.</p></dd>
-
-
-<dt id="arg-height">height<a class="anchor" aria-label="anchor" href="#arg-height"></a></dt>
-<dd><p>Numeric. Height of the output figure in inches. If NULL, it is calculated automatically.</p></dd>
 
 
 <dt id="arg-top-impact">top_impact<a class="anchor" aria-label="anchor" href="#arg-top-impact"></a></dt>
@@ -169,10 +169,14 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function allows for extensive customization of plots through the <code>plot_style_config</code> parameter, which integrates ggplot2 configurations.
-To view and adjust available style options, use:
-<code>get_plot_style_config("stack", as_dataframe = TRUE)</code>.</p>
-    </div>
+    <p>This function allows for extensive customization of plots through the <code>plot_style_config</code> parameter,
+which integrates ggplot2 configurations. The function now supports more flexible export options
+with the <code>export_picture</code>, <code>export_as_pdf</code>, and <code>export_config</code> parameters.</p>
+<p>The <code>export_config</code> parameter can include:</p><ul><li><p><code>file_name</code>: Base name for the output files (default: "stack_plots").</p></li>
+<li><p><code>width</code>: Width of the output files in inches.</p></li>
+<li><p><code>height</code>: Height of the output files in inches.</p></li>
+<li><p>Additional export settings as needed.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="detail_plot.html">detail_plot</a></code>, <code><a href="comparison_plot.html">comparison_plot</a></code>, <code><a href="get_plot_style_config.html">get_plot_style_config</a></code></p></div>
@@ -185,14 +189,20 @@ To view and adjust available style options, use:
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Basic stacked bar chart by commodity</span></span></span>
+<span class="r-in"><span><span class="co"># Basic stacked bar chart by commodity with export options</span></span></span>
 <span class="r-in"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">stack_plot</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">gtap_results</span>,</span></span>
 <span class="r-in"><span>  x_axis_from <span class="op">=</span> <span class="st">"REG"</span>,</span></span>
-<span class="r-in"><span>  stack_value_from <span class="op">=</span> <span class="st">"COMM"</span></span></span>
+<span class="r-in"><span>  stack_value_from <span class="op">=</span> <span class="st">"COMM"</span>,</span></span>
+<span class="r-in"><span>  output_path <span class="op">=</span> <span class="st">"results/stacked"</span>,</span></span>
+<span class="r-in"><span>  export_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    file_name <span class="op">=</span> <span class="st">"commodity_stacks"</span>,</span></span>
+<span class="r-in"><span>    width <span class="op">=</span> <span class="fl">12</span>,</span></span>
+<span class="r-in"><span>    height <span class="op">=</span> <span class="fl">9</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Welfare Decomposition</span></span></span>
+<span class="r-in"><span><span class="co"># Welfare Decomposition with PDF export</span></span></span>
 <span class="r-in"><span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">stack_plot</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">headerA</span>,</span></span>
 <span class="r-in"><span>  x_axis_from <span class="op">=</span> <span class="st">"Region"</span>,</span></span>
@@ -200,26 +210,12 @@ To view and adjust available style options, use:
 <span class="r-in"><span>  split_by <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  unstack_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  show_total <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Terms of trade decomposition</span></span></span>
-<span class="r-in"><span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu">stack_plot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">headerE1</span>,</span></span>
-<span class="r-in"><span>  x_axis_from <span class="op">=</span> <span class="st">"Commodity"</span>,</span></span>
-<span class="r-in"><span>  stack_value_from <span class="op">=</span> <span class="st">"PRICES"</span>,</span></span>
-<span class="r-in"><span>  split_by <span class="op">=</span> <span class="st">"Region"</span>,</span></span>
-<span class="r-in"><span>  top_impact <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>  invert_pane <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  output_dir <span class="op">=</span> <span class="st">"path/to/output/directory"</span>,</span></span>
-<span class="r-in"><span>  plot_style_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    color_tone <span class="op">=</span> <span class="st">"economic"</span>,</span></span>
-<span class="r-in"><span>    show_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>    legend_position <span class="op">=</span> <span class="st">"bottom"</span></span></span>
+<span class="r-in"><span>  export_as_pdf <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  export_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    file_name <span class="op">=</span> <span class="st">"welfare_decomposition"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -7,7 +7,7 @@
 .calculate_plot_dimensions(data, panel_layout)
 }
 \arguments{
-\item{data}{A data frame containing the relevant plotting data.}
+\item{data}{A data frame containing the plotting data (not used in dimension calculation).}
 
 \item{panel_layout}{A list containing 'rows' and 'cols' specifying the panel layout.}
 }
@@ -15,7 +15,8 @@
 A list with 'width' and 'height' specifying the calculated plot dimensions in inches.
 }
 \description{
-Determines appropriate width and height for a plot based on the panel layout.
+Calculates appropriate width and height for a plot based on the panel layout.
+Uses a simple formula that increases dimensions with the number of panels.
 }
 \seealso{
 \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}

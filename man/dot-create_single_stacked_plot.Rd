@@ -15,7 +15,6 @@
   panel_cols,
   panel_var = "Experiment",
   show_total = TRUE,
-  y_limit = NULL,
   invert_pane = FALSE,
   top_impact = NULL,
   plot_style_config = NULL
@@ -41,8 +40,6 @@
 \item{panel_var}{Character. Column for panel facets. Default is "Experiment".}
 
 \item{show_total}{Logical. Whether to display total values. Default is TRUE.}
-
-\item{y_limit}{Numeric vector. Manual y-axis limits. Default is NULL.}
 
 \item{invert_pane}{Logical. Whether to flip plot orientation. Default is FALSE.}
 

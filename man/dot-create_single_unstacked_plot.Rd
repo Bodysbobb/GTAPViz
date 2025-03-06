@@ -14,7 +14,6 @@
   panel_rows,
   panel_cols,
   panel_var = "Experiment",
-  y_limit = NULL,
   invert_pane = FALSE,
   top_impact = NULL,
   plot_style_config = NULL
@@ -38,8 +37,6 @@
 \item{panel_cols}{Numeric. Number of columns in panel layout.}
 
 \item{panel_var}{Character. Column for panel facets. Default is "Experiment".}
-
-\item{y_limit}{Numeric vector. Manual y-axis limits. Default is NULL.}
 
 \item{invert_pane}{Logical. Whether to flip plot orientation. Default is FALSE.}
 
