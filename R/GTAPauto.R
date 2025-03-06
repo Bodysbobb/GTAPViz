@@ -149,8 +149,6 @@ gtap_macros_data <- function(input_dir = NULL,
 #' @param subtotal Logical. If TRUE, includes subtotal data. Default is FALSE.
 #' @param sl4_list_name Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".
 #' @param har_list_name Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".
-#' @param sl4_structure_name Character. Variable name for SL4 structure if generating plot data. Default is "sl4.structure".
-#' @param har_structure_name Character. Variable name for HAR structure if generating plot data. Default is "har.structure".
 #' @param GTAPMacro_name Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".
 #' @param sl4var Data frame, NULL, or FALSE. Variables to extract from SL4 files. Set to NULL to extract all variables, or FALSE to skip SL4 processing.
 #' @param harvar Data frame, NULL, or FALSE. Variables to extract from HAR files. Set to NULL to extract all variables, or FALSE to skip HAR processing.
@@ -188,8 +186,7 @@ process_gtap_data <- function(experiment, mapping_info = "GTAPv7",
                               project_dir = NULL, input_dir = NULL, output_dir = NULL,
                               output_formats = NULL, plot_data = FALSE, region_select = NULL,
                               sector_select = NULL, subtotal = FALSE, sl4_list_name = "sl4.plot.data",
-                              har_list_name = "har.plot.data", sl4_structure_name = "sl4.structure",
-                              har_structure_name = "har.structure", GTAPMacro_name = "GTAPMacro",
+                              har_list_name = "har.plot.data", GTAPMacro_name = "GTAPMacro",
                               sl4var = NULL, harvar = NULL, sl4map = NULL, harmap = NULL) {
 
   # Setup directories and determine export settings
@@ -361,32 +358,9 @@ process_gtap_data <- function(experiment, mapping_info = "GTAPv7",
       if (length(sl4.data.raw) > 0) {
         # Create structure if plot_data is TRUE
         if (plot_data) {
-          sl4structure <- do.call(
-            HARplus::compare_var_structure,
-            c(list(NULL, keep_unique = TRUE), sl4.data.raw)
-          )[["match"]]
+          # Determine if we should use keep_unique based on number of experiments
+          keep_unique_flag <- length(sl4.data.raw) > 1
 
-          if (!is.null(sl4map) && is.data.frame(sl4map)) {
-            sl4structure_df <- dplyr::left_join(
-              sl4map, sl4structure[c("Variable", "Dimensions")], by = "Variable"
-            )
-            sl4structure_df <- sl4structure_df[order(sl4structure_df$Dimensions), ]
-
-            if ("Description" %in% names(sl4structure_df)) {
-              names(sl4structure_df)[names(sl4structure_df) == "Description"] <- "Description"
-            }
-
-            sl4structure_df$Unit <- NULL
-          } else {
-            sl4structure_df <- sl4structure[, c("Variable", "Dimensions")]
-            sl4structure_df$Description <- sl4structure_df$Variable
-          }
-
-          all_data$sl4structure <- sl4structure_df
-
-          if (!is.null(sl4_structure_name)) {
-            assign(sl4_structure_name, sl4structure_df, envir = parent.frame())
-          }
         }
 
         # Group data by dimensions
@@ -517,32 +491,8 @@ process_gtap_data <- function(experiment, mapping_info = "GTAPv7",
     if (length(har.data.raw) > 0) {
       # Create structure if plot_data is TRUE
       if (plot_data) {
-        harstructure <- do.call(
-          HARplus::compare_var_structure,
-          c(list(NULL, keep_unique = TRUE), har.data.raw)
-        )[["match"]]
-
-        if (!is.null(harmap) && is.data.frame(harmap)) {
-          harstructure_df <- dplyr::left_join(
-            harmap, harstructure[c("Variable", "Dimensions")], by = "Variable"
-          )
-          harstructure_df <- harstructure_df[order(harstructure_df$Dimensions), ]
-
-          if ("Description" %in% names(harstructure_df)) {
-            names(harstructure_df)[names(harstructure_df) == "Description"] <- "Description"
-          }
-
-          harstructure_df$Unit <- NULL
-        } else {
-          harstructure_df <- harstructure[, c("Variable", "Dimensions")]
-          harstructure_df$Description <- harstructure_df$Variable
-        }
-
-        all_data$harstructure <- harstructure_df
-
-        if (!is.null(har_structure_name)) {
-          assign(har_structure_name, harstructure_df, envir = parent.frame())
-        }
+        # Determine if we should use keep_unique based on number of experiments
+        keep_unique_flag <- length(har.data.raw) > 1
       }
 
       # Process HAR data

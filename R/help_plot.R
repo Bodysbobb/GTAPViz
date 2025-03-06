@@ -493,7 +493,7 @@
 #' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #'
 .calculate_font_sizes <- function(width, height, scale_factor = 1.0) {
-  plot_area <- width * height
+  plot_area <- 500
 
   # Scale base size logarithmically with plot area
   base_size <- 8 + 4 * log10(plot_area/100) * scale_factor

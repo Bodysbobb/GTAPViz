@@ -1455,7 +1455,7 @@ detail_plot <- function(data, filter_var = NULL,
     if (is.data.frame(filter_var) && variable_col %in% names(filter_var)) {
       data <- data[data[[variable_col]] %in% filter_var[[variable_col]], ]
     } else {
-      data <- data[data[[x_axis_from]] %in% filter_var, ]
+      data <- data[data[[variable_col]] %in% filter_var, ]
     }
 
     if (nrow(data) == 0) {
