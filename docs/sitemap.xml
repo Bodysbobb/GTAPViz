@@ -7,6 +7,7 @@
 <url><loc>https://bodysbobb.github.io/GTAPViz/LICENSE-text.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/LICENSE.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/add_mapping_info.html</loc></url>
+<url><loc>https://bodysbobb.github.io/GTAPViz/reference/auto_gtap_data.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/comparison_plot.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/convert_units.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/detail_plot.html</loc></url>
@@ -20,8 +21,8 @@
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-calculate_plot_style_config.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-calculate_stack_totals.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-check_unit_column.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-consolidate_reports.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-create_color_palette.html</loc></url>
+<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-create_gtap_report.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-create_single_comparison_plot.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-create_single_detail_plot.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-create_single_stacked_plot.html</loc></url>
@@ -38,16 +39,16 @@
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-get_title_mapping.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-output_format.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-prepare_data_source.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-process_bilateral_trade.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-process_detail_data.html</loc></url>
+<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-process_plot_title.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-process_split_by.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-validate_column_params.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-validate_gtap_files.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/get_export_config.html</loc></url>
+<url><loc>https://bodysbobb.github.io/GTAPViz/reference/get_plot_config.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/get_plot_style_config.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/gtap_macros_data.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/index.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/process_gtap_data.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/rename_GTAP_bilateral.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/rename_value.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/report_table.html</loc></url>

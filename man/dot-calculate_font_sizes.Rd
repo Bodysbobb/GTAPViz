@@ -2,23 +2,23 @@
 % Please edit documentation in R/help_plot.R
 \name{.calculate_font_sizes}
 \alias{.calculate_font_sizes}
-\title{Calculate Dynamic Font Sizes Based on Plot Dimensions}
+\title{Calculate Font Sizes Based on All Font Size Parameter}
 \usage{
-.calculate_font_sizes(width, height, scale_factor = 1)
+.calculate_font_sizes(width, height, all_font_size = 1)
 }
 \arguments{
-\item{width}{Numeric. Width of the plot in inches.}
+\item{width}{Numeric. Width of the plot in inches (maintained for compatibility).}
 
-\item{height}{Numeric. Height of the plot in inches.}
+\item{height}{Numeric. Height of the plot in inches (maintained for compatibility).}
 
-\item{scale_factor}{Numeric. Factor to increase or decrease all font sizes proportionally. Default is 1.0.}
+\item{all_font_size}{Numeric. Base value to adjust all font sizes proportionally. Default is 100.}
 }
 \value{
 A list containing font sizes for various plot elements (title, axis labels, etc.).
 }
 \description{
-Calculates appropriate font sizes for different plot elements based on the overall plot dimensions.
-Font sizes scale proportionally to maintain readability across different plot sizes.
+Calculates appropriate font sizes for different plot elements based on a single all_font_size parameter.
+All font sizes are scaled proportionally to maintain consistent relative sizes.
 }
 \seealso{
 \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}

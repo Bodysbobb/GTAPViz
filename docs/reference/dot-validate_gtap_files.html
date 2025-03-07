@@ -47,10 +47,14 @@
 <span>  <span class="va">output_dir</span>,</span>
 <span>  <span class="va">experiment</span>,</span>
 <span>  <span class="va">mapping_info</span>,</span>
-<span>  <span class="va">sl4file</span>,</span>
-<span>  <span class="va">harfile</span>,</span>
+<span>  <span class="va">sl4var</span>,</span>
+<span>  <span class="va">harvar</span>,</span>
+<span>  <span class="va">sl4map</span>,</span>
+<span>  <span class="va">harmap</span>,</span>
 <span>  <span class="va">output_formats</span>,</span>
-<span>  <span class="va">plot_data</span></span>
+<span>  <span class="va">plot_data</span>,</span>
+<span>  sl4_file_suffix <span class="op">=</span> <span class="st">".sl4"</span>,</span>
+<span>  har_file_suffix <span class="op">=</span> <span class="st">"-WEL.har"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -74,19 +78,36 @@
 <dd><p>Character. Mapping mode: "GTAPv7", "Yes", "No", or "Mix".</p></dd>
 
 
-<dt id="arg-sl-file">sl4file<a class="anchor" aria-label="anchor" href="#arg-sl-file"></a></dt>
+<dt id="arg-sl-var">sl4var<a class="anchor" aria-label="anchor" href="#arg-sl-var"></a></dt>
+<dd><p>Logical. Whether SL4 data should be processed.</p></dd>
+
+
+<dt id="arg-harvar">harvar<a class="anchor" aria-label="anchor" href="#arg-harvar"></a></dt>
+<dd><p>Logical. Whether HAR data should be processed.</p></dd>
+
+
+<dt id="arg-sl-map">sl4map<a class="anchor" aria-label="anchor" href="#arg-sl-map"></a></dt>
 <dd><p>Data frame, NULL, or FALSE. Mapping for SL4 variables.</p></dd>
 
 
-<dt id="arg-harfile">harfile<a class="anchor" aria-label="anchor" href="#arg-harfile"></a></dt>
+<dt id="arg-harmap">harmap<a class="anchor" aria-label="anchor" href="#arg-harmap"></a></dt>
 <dd><p>Data frame, NULL, or FALSE. Mapping for HAR variables.</p></dd>
 
 
 <dt id="arg-output-formats">output_formats<a class="anchor" aria-label="anchor" href="#arg-output-formats"></a></dt>
-<dd><p>Output format specification. Can be:
-- Character vector: Export formats (e.g., c("csv", "stata"))
-- "plot_data": For plotting data without export
-- List: Named list with "yes"/"no" values, can include plot_data</p></dd>
+<dd><p>Character vector. Export formats (e.g., c("csv", "stata")).</p></dd>
+
+
+<dt id="arg-plot-data">plot_data<a class="anchor" aria-label="anchor" href="#arg-plot-data"></a></dt>
+<dd><p>Logical. Whether to generate plots without exporting data.</p></dd>
+
+
+<dt id="arg-sl-file-suffix">sl4_file_suffix<a class="anchor" aria-label="anchor" href="#arg-sl-file-suffix"></a></dt>
+<dd><p>Character. Suffix for SL4 files (e.g., "" or "-custom").</p></dd>
+
+
+<dt id="arg-har-file-suffix">har_file_suffix<a class="anchor" aria-label="anchor" href="#arg-har-file-suffix"></a></dt>
+<dd><p>Character. Suffix for HAR files (e.g., "-WEL").</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -104,7 +125,7 @@
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="process_gtap_data.html">process_gtap_data</a></code></p></div>
+    <div class="dont-index"><p><code><a href="auto_gtap_data.html">auto_gtap_data</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

@@ -27,7 +27,7 @@ Filtered data in the same structure as input.
 Applies region, experiment, and sector filters to GTAP data structures.
 }
 \seealso{
-\code{\link{process_gtap_data}}
+\code{\link{auto_gtap_data}}
 }
 \author{
 Pattawee Puangchit

@@ -3,7 +3,6 @@
 #' @importFrom methods as
 #' @importFrom dplyr where
 #' @importFrom utils globalVariables
-#' @importFrom base modifyList
 #' @importFrom utils capture.output str
 # Declare global variables to avoid R CMD check notes
 utils::globalVariables(c(

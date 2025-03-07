@@ -1,506 +1,3 @@
-# Get Plot Style Help -----------------------------------------------------
-
-#' @title Get Plot Style Configuration
-#'
-#' @description
-#' Returns configuration settings for plot styles, with options to view as a structured dataframe
-#' or to look up specific parameters. Also provides parameter validation for custom configurations.
-#'
-#' @param plot_type Character. Type of plot: "comparison" (default), "detail", or "stack".
-#' @param parameter_name Character or NULL. Name of specific parameter to return information about.
-#' @param show_docs Logical. Whether to include documentation in the output.
-#' @param validate_custom List or NULL. Custom configuration settings to validate.
-#' @param as_dataframe Logical. Whether to return settings as a dataframe.
-#'
-#' @return
-#' If \code{parameter_name} is specified, returns a list with the value and documentation for that parameter.
-#' If \code{validate_custom} is specified, returns the validated configuration list.
-#' If \code{as_dataframe} is TRUE, returns a dataframe with configuration settings.
-#' Otherwise, returns a list with all configuration settings.
-#'
-#' @details
-#' This function applies default styling for different types of plots and allows users to customize the appearance.
-#' The parameters are grouped as follows:
-#'
-#' ## **Title Settings**
-#' - `show_title`: Logical. Show or hide the plot title. Default: `TRUE`
-#' - `title_face`: Character. Font face (`"bold"`, `"plain"`, `"italic"`). Default: `"bold"`
-#' - `title_size`: Numeric. Font size of title. Default: `20`
-#' - `title_hjust`: Numeric. Horizontal alignment (0 = left, 1 = right). Default: `0.5`
-#' - `add_unit_to_title`: Logical. Append unit to title if applicable. Default: `TRUE`
-#' - `title_margin`: ggplot2 `margin()` object. Default: `ggplot2::margin(10, 0, 10, 0)`
-#' - `title_format`: List. Defines title formatting options (`type = "standard"`, `text = ""`)
-#'
-#' ## **X-Axis Settings**
-#' - `show_x_axis_title`: Logical. Show or hide x-axis title. Default: `FALSE`
-#' - `x_axis_title_face`: Character. Font face for x-axis title. Default: `"bold"`
-#' - `x_axis_title_size`: Numeric. Font size of x-axis title. Default: `16`
-#' - `x_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(t = 20)`
-#' - `show_x_axis_labels`: Logical. Show or hide x-axis labels. Default: `TRUE`
-#' - `x_axis_text_face`: Character. Font face for x-axis labels. Default: `"bold"`
-#' - `x_axis_text_size`: Numeric. Font size of x-axis labels. Default: `14`
-#' - `x_axis_text_angle`: Numeric. Angle of x-axis labels. Default: `45`
-#' - `x_axis_text_hjust`: Numeric. Horizontal justification of x-axis labels. Default: `1`
-#' - `x_axis_description`: Character. Optional description for the x-axis. Default: `""`
-#'
-#' ## **Y-Axis Settings**
-#' - `show_y_axis_title`: Logical. Show or hide y-axis title. Default: `TRUE`
-#' - `y_axis_title_face`: Character. Font face for y-axis title. Default: `"bold"`
-#' - `y_axis_title_size`: Numeric. Font size of y-axis title. Default: `16`
-#' - `y_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(r = 20)`
-#' - `show_y_axis_labels`: Logical. Show or hide y-axis labels. Default: `TRUE`
-#' - `y_axis_text_face`: Character. Font face for y-axis labels. Default: `"plain"`
-#' - `y_axis_text_size`: Numeric. Font size of y-axis labels. Default: `14`
-#' - `y_axis_text_angle`: Numeric. Angle of y-axis labels. Default: `0`
-#' - `y_axis_text_hjust`: Numeric. Horizontal justification of y-axis labels. Default: `0`
-#' - `y_axis_description`: Character. Optional description for the y-axis. Default: `""`
-#' - `show_axis_titles_on_all_facets`: Logical. Show axis titles on all facets. Default: `TRUE`
-#'
-#' ## **Value Label Settings**
-#' - `show_value_labels`: Logical. Show or hide value labels. Default: `TRUE`
-#' - `value_label_face`: Character. Font face for value labels. Default: `"plain"`
-#' - `value_label_size`: Numeric. Font size of value labels. Default: `5`
-#' - `value_label_position`: Character. Position of value labels (`"above"`, `"outside"`, `"top"`). Default: `"above"`
-#' - `value_label_decimal_places`: Numeric. Number of decimal places in value labels. Default: `2`
-#'
-#' ## **Legend Settings**
-#' - `show_legend`: Logical. Show or hide legend. Default: `FALSE`
-#' - `show_legend_title`: Logical. Show or hide legend title. Default: `FALSE`
-#' - `legend_position`: Character. Legend position (`"none"`, `"bottom"`, `"right"`). Default: `"none"`
-#' - `legend_title_face`: Character. Font face for legend title. Default: `"bold"`
-#' - `legend_text_face`: Character. Font face for legend text. Default: `"plain"`
-#' - `legend_text_size`: Numeric. Font size for legend text. Default: `14`
-#'
-#' ## **Panel Strip Settings**
-#' - `strip_face`: Character. Font face for panel strip. Default: `"bold"`
-#' - `strip_text_size`: Numeric. Font size for panel strip. Default: `16`
-#' - `strip_background`: Character. Background color of strip. Default: `"lightgrey"`
-#' - `strip_text_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(10, 0, 10, 0)`
-#'
-#' ## **Panel Layout**
-#' - `panel_spacing`: Numeric. Spacing between panels. Default: `2`
-#' - `panel_rows`: Numeric or `NULL`. Number of rows in panel layout. Default: `NULL`
-#' - `panel_cols`: Numeric or `NULL`. Number of columns in panel layout. Default: `NULL`
-#' - `theme`: ggplot2 theme object or `NULL`. Custom ggplot theme. Default: `NULL`
-#'
-#' ## **Color Settings**
-#' - `color_tone`: Character or `NULL`. Base color theme. Default: `NULL`
-#' - `positive_color`: Character. Color for positive values. Default: `"#2E8B57"`
-#' - `negative_color`: Character. Color for negative values. Default: `"#CD5C5C"`
-#' - `background_color`: Character. Background color of plot. Default: `"white"`
-#' - `grid_color`: Character. Color of grid lines. Default: `"grey90"`
-#' - `show_grid_major_x`: Logical. Show major grid lines on x-axis. Default: `FALSE`
-#' - `show_grid_major_y`: Logical. Show major grid lines on y-axis. Default: `TRUE`
-#' - `show_grid_minor_x`: Logical. Show minor grid lines on x-axis. Default: `FALSE`
-#' - `show_grid_minor_y`: Logical. Show minor grid lines on y-axis. Default: `FALSE`
-#'
-#' ## **Zero Line Settings**
-#' - `show_zero_line`: Logical. Show or hide zero line. Default: `TRUE`
-#' - `zero_line_type`: Character. Line type (`"solid"`, `"dashed"`, `"dotted"`). Default: `"dashed"`
-#' - `zero_line_color`: Character. Color of zero line. Default: `"black"`
-#' - `zero_line_size`: Numeric. Line thickness of zero line. Default: `0.5`
-#' - `zero_line_position`: Numeric. Position of the zero line. Default: `0`
-#'
-#' ## **Bar Chart Settings**
-#' - `bar_width`: Numeric. Width of bars. Default: `0.9`
-#' - `bar_spacing`: Numeric. Spacing between bars. Default: `0.9`
-#'
-#' ## **Scale Settings**
-#' - `scale_limit`: Numeric vector of length 2. Manual limits for value axis. Example: `c(-10, 10)`
-#' - `scale_increment`: Numeric. Step size for axis tick marks. Example: `2`
-#'
-#' ## **Scale Expansion Settings**
-#' - `expansion_y_mult`: Numeric vector. Y-axis expansion. Default: `c(0.05, 0.1)`
-#' - `expansion_x_mult`: Numeric vector. X-axis expansion. Default: `c(0.05, 0.05)`
-#'
-#' @author Pattawee Puangchit
-#'
-#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
-#' @export
-#'
-#' @examples
-#' # Get default configuration
-#' config <- get_plot_style_config("comparison")
-#'
-#' # Get information about a specific parameter
-#' param_info <- get_plot_style_config("detail", "bar_width")
-#'
-#' # Get as structured dataframe
-#' config_df <- get_plot_style_config("stack", as_dataframe = TRUE)
-#'
-#' # Validate custom configuration
-#' custom_config <- list(title_size = 24, bar_width = 0.7)
-#' validated <- get_plot_style_config("comparison", validate_custom = custom_config)
-#'
-get_plot_style_config <- function(plot_type = "comparison",
-                                  parameter_name = NULL,
-                                  show_docs = FALSE,
-                                  validate_custom = NULL,
-                                  as_dataframe = FALSE) {
-  config <- .calculate_plot_style_config(NULL, plot_type)
-
-  param_docs <- list(
-    show_title = "Logical. Show or hide the plot title.",
-    title_face = "Character. Font face for title ('bold', 'plain', 'italic').",
-    title_size = "Numeric. Font size of title.",
-    title_hjust = "Numeric. Horizontal justification of title (0 = left, 1 = right).",
-    add_unit_to_title = "Logical. Add unit information to title.",
-    title_margin = "ggplot2 margin object. Margin around title.",
-    title_format = "List. Format of title, with elements 'type' and 'text'.",
-    show_x_axis_title = "Logical. Show or hide the x-axis title.",
-    x_axis_title_face = "Character. Font face for x-axis title.",
-    x_axis_title_size = "Numeric. Font size of x-axis title.",
-    x_axis_title_margin = "ggplot2 margin object. Margin around x-axis title.",
-    show_x_axis_labels = "Logical. Show or hide x-axis tick labels.",
-    x_axis_text_face = "Character. Font face for x-axis tick labels.",
-    x_axis_text_size = "Numeric. Font size of x-axis tick labels.",
-    x_axis_text_angle = "Numeric. Angle of x-axis tick labels in degrees.",
-    x_axis_text_hjust = "Numeric. Horizontal justification of x-axis tick labels.",
-    x_axis_description = "Character. Optional description for x-axis.",
-    show_y_axis_title = "Logical. Show or hide the y-axis title.",
-    y_axis_title_face = "Character. Font face for y-axis title.",
-    y_axis_title_size = "Numeric. Font size of y-axis title.",
-    y_axis_title_margin = "ggplot2 margin object. Margin around y-axis title.",
-    show_y_axis_labels = "Logical. Show or hide y-axis tick labels.",
-    y_axis_text_face = "Character. Font face for y-axis tick labels.",
-    y_axis_text_size = "Numeric. Font size of y-axis tick labels.",
-    y_axis_text_angle = "Numeric. Angle of y-axis tick labels in degrees.",
-    y_axis_text_hjust = "Numeric. Horizontal justification of y-axis tick labels.",
-    y_axis_description = "Character. Optional description for y-axis.",
-    show_axis_titles_on_all_facets = "Logical. Show axis titles on all facets.",
-    show_value_labels = "Logical. Show or hide value labels.",
-    value_label_face = "Character. Font face for value labels.",
-    value_label_size = "Numeric. Font size of value labels.",
-    value_label_position = "Character. Position of value labels ('above', 'outside', 'top').",
-    value_label_decimal_places = "Numeric. Number of decimal places in value labels.",
-    show_legend = "Logical. Show or hide the legend.",
-    show_legend_title = "Logical. Show or hide the legend title.",
-    legend_position = "Character. Position of the legend ('none', 'right', 'bottom', etc.).",
-    legend_title_face = "Character. Font face for legend title.",
-    legend_text_face = "Character. Font face for legend text.",
-    legend_text_size = "Numeric. Font size of legend text.",
-    strip_face = "Character. Font face for panel strip labels.",
-    strip_text_size = "Numeric. Font size of panel strip labels.",
-    strip_background = "Character. Background color of panel strips.",
-    strip_text_margin = "ggplot2 margin object. Margin around panel strip labels.",
-    panel_spacing = "Numeric. Spacing between panels in centimeters.",
-    panel_rows = "Numeric or NULL. Number of rows in panel layout.",
-    panel_cols = "Numeric or NULL. Number of columns in panel layout.",
-    theme = "ggplot2 theme object or NULL. Custom theme to apply.",
-    color_tone = "Character or NULL. Base color tone for the plot (e.g., 'academic', 'purdue').",
-    positive_color = "Character. Color for positive values.",
-    negative_color = "Character. Color for negative values.",
-    background_color = "Character. Background color of the plot.",
-    grid_color = "Character. Color of grid lines.",
-    show_grid_major_x = "Logical. Show major grid lines on x-axis.",
-    show_grid_major_y = "Logical. Show major grid lines on y-axis.",
-    show_grid_minor_x = "Logical. Show minor grid lines on x-axis.",
-    show_grid_minor_y = "Logical. Show minor grid lines on y-axis.",
-    show_zero_line = "Logical. Show or hide the zero line.",
-    zero_line_type = "Character. Line type for zero line ('solid', 'dashed', 'dotted').",
-    zero_line_color = "Character. Color of zero line.",
-    zero_line_size = "Numeric. Line thickness of zero line.",
-    zero_line_position = "Numeric. Position of the zero line.",
-    bar_width = "Numeric. Width of bars (0-1).",
-    bar_spacing = "Numeric. Spacing between groups of bars.",
-    scale_limit = "Numeric vector of length 2. Manual limits for value axis (min, max).",
-    scale_increment = "Numeric. Step size for axis tick marks.",
-    expansion_y_mult = "Numeric vector of length 2. Expansion multiplier for y-axis.",
-    expansion_x_mult = "Numeric vector of length 2. Expansion multiplier for x-axis."
-  )
-
-  if (!is.null(parameter_name)) {
-    if (parameter_name %in% names(config)) {
-      result <- list(value = config[[parameter_name]])
-
-      if (show_docs && parameter_name %in% names(param_docs)) {
-        result$documentation <- param_docs[[parameter_name]]
-      }
-
-      return(result)
-    } else {
-      all_params <- names(config)
-      distances <- stringdist::stringdist(parameter_name, all_params, method = "lv")
-      closest_matches <- all_params[order(distances)][1:3]
-
-      warning(sprintf("Parameter '%s' not found. Did you mean: %s?",
-                      parameter_name,
-                      paste(closest_matches, collapse = ", ")))
-
-      return(NULL)
-    }
-  }
-
-  if (!is.null(validate_custom)) {
-    if (!is.list(validate_custom)) {
-      warning("validate_custom must be a list. Ignoring validation.")
-    } else {
-      invalid_params <- setdiff(names(validate_custom), names(config))
-
-      if (length(invalid_params) > 0) {
-        suggestions <- lapply(invalid_params, function(param) {
-          distances <- stringdist::stringdist(param, names(config), method = "lv")
-          closest_matches <- names(config)[order(distances)][1:3]
-          list(
-            invalid = param,
-            suggestions = closest_matches
-          )
-        })
-
-        suggestion_msgs <- sapply(suggestions, function(sugg) {
-          sprintf("- '%s': Did you mean %s?",
-                  sugg$invalid,
-                  paste(sprintf("'%s'", sugg$suggestions), collapse = ", "))
-        })
-
-        warning(paste("Invalid parameters found in custom configuration:",
-                      paste(suggestion_msgs, collapse = "\n"), sep = "\n"))
-
-        valid_params <- intersect(names(validate_custom), names(config))
-        valid_custom <- validate_custom[valid_params]
-
-        return(valid_custom)
-      } else {
-        return(validate_custom)
-      }
-    }
-  }
-
-  if (show_docs) {
-    result <- lapply(names(config), function(param) {
-      param_info <- list(value = config[[param]])
-
-      if (param %in% names(param_docs)) {
-        param_info$documentation <- param_docs[[param]]
-      }
-
-      return(param_info)
-    })
-
-    names(result) <- names(config)
-    return(result)
-  }
-
-  if (as_dataframe) {
-    param_categories <- list(
-      "Title" = c("show_title", "title_face", "title_size", "title_hjust",
-                  "add_unit_to_title", "title_margin", "title_format"),
-
-      "X-Axis" = c("show_x_axis_title", "x_axis_title_face", "x_axis_title_size",
-                   "x_axis_title_margin", "show_x_axis_labels", "x_axis_text_face",
-                   "x_axis_text_size", "x_axis_text_angle", "x_axis_text_hjust",
-                   "x_axis_description"),
-
-      "Y-Axis" = c("show_y_axis_title", "y_axis_title_face", "y_axis_title_size",
-                   "y_axis_title_margin", "show_y_axis_labels", "y_axis_text_face",
-                   "y_axis_text_size", "y_axis_text_angle", "y_axis_text_hjust",
-                   "y_axis_description", "show_axis_titles_on_all_facets"),
-
-      "Value Labels" = c("show_value_labels", "value_label_face", "value_label_size",
-                         "value_label_position", "value_label_decimal_places"),
-
-      "Legend" = c("show_legend", "show_legend_title", "legend_position",
-                   "legend_title_face", "legend_text_face", "legend_text_size"),
-
-      "Panel Strip" = c("strip_face", "strip_text_size", "strip_background", "strip_text_margin"),
-
-      "Panel Layout" = c("panel_spacing", "panel_rows", "panel_cols", "theme"),
-
-      "Colors" = c("color_tone", "positive_color", "negative_color", "background_color",
-                   "grid_color", "show_grid_major_x", "show_grid_major_y",
-                   "show_grid_minor_x", "show_grid_minor_y"),
-
-      "Zero Line" = c("show_zero_line", "zero_line_type", "zero_line_color",
-                      "zero_line_size", "zero_line_position"),
-
-      "Bar Chart" = c("bar_width", "bar_spacing"),
-
-      "Scale Settings" = c("scale_limit", "scale_increment"),
-
-      "Scale Expansion" = c("expansion_y_mult", "expansion_x_mult")
-    )
-
-    result_cols <- c("Category", "Parameter", "Value", "Type", "Description", "Example")
-
-    result <- data.frame(matrix(ncol = length(result_cols), nrow = 0))
-    colnames(result) <- result_cols
-
-    for (category in names(param_categories)) {
-      params <- param_categories[[category]]
-
-      for (param in params) {
-        if (param %in% names(config)) {
-          param_value <- config[[param]]
-
-          if (inherits(param_value, "unit")) {
-            param_value <- paste("margin:", paste(as.numeric(param_value), collapse = ","))
-          } else if (is.list(param_value) && !is.data.frame(param_value)) {
-            param_value <- paste(utils::capture.output(utils::str(param_value, max.level = 1)), collapse = " ")
-          }
-
-          param_type <- class(config[[param]])[1]
-
-          description <- if (param %in% names(param_docs)) param_docs[[param]] else ""
-
-          example <- paste0(param, " = ", if(is.character(param_value)) {
-            paste0('"', param_value, '"')
-          } else if(is.logical(param_value)) {
-            ifelse(param_value, "TRUE", "FALSE")
-          } else if(is.numeric(param_value) && length(param_value) == 1) {
-            as.character(param_value)
-          } else if(is.numeric(param_value) && length(param_value) > 1) {
-            paste0("c(", paste(param_value, collapse = ", "), ")")
-          } else if(is.list(param_value)) {
-            "list(...)"
-          } else {
-            as.character(param_value)
-          })
-
-          row_data <- c(category, param, paste(param_value, collapse = ", "), param_type, description, example)
-          result <- rbind(result, row_data)
-        }
-      }
-    }
-
-    rownames(result) <- NULL
-
-    attr(result, "plot_type") <- plot_type
-
-    colnames(result) <- c("Topic", "Arguments", "Default Value", "Input Format", "Description", "Example")
-
-    if (nrow(result) > 0) {
-      current_topic <- result$Topic[1]
-      for (i in 2:nrow(result)) {
-        if (result$Topic[i] == current_topic) {
-          result$Topic[i] <- ""
-        } else {
-          current_topic <- result$Topic[i]
-        }
-      }
-    }
-
-    return(result)
-  }
-
-  return(c(list(plot_type = plot_type), config))
-}
-
-#' Get Export Configuration Options
-#'
-#' @description
-#' Returns documentation and default values for export configuration options used in plotting functions.
-#'
-#' @param as_dataframe Logical. Whether to return settings as a dataframe. Default is FALSE.
-#'
-#' @return
-#' If \code{as_dataframe} is TRUE, returns a dataframe with export configuration settings.
-#' Otherwise, returns a list with configuration settings.
-#'
-#' @details
-#' ## **Export Configuration Parameters**
-#' - `file_name`: Character. Base name for exported files. Default: `"gtap_plots"`
-#' - `width`: Numeric or `NULL`. Plot width in inches. Default: `NULL` (automatically calculated)
-#' - `height`: Numeric or `NULL`. Plot height in inches. Default: `NULL` (automatically calculated)
-#' - `dpi`: Numeric. Resolution for PNG export. Default: `300`
-#' - `bg`: Character. Background color. Default: `"white"`
-#' - `limitsize`: Logical. Whether to limit size. Default: `FALSE`
-#'
-#' @author Pattawee Puangchit
-#'
-#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
-#' @export
-#'
-#' @examples
-#' # Get export configuration as list
-#' export_info <- get_export_config()
-#'
-#' # Get as a formatted dataframe
-#' export_df <- get_export_config(as_dataframe = TRUE)
-#'
-get_export_config <- function(as_dataframe = FALSE) {
-  # Export config parameters
-  export_config_params <- list(
-    file_name = "gtap_plots",
-    width = NULL,
-    height = NULL,
-    dpi = 300,
-    bg = "white",
-    limitsize = FALSE
-  )
-
-  # Documentation for export_config parameters
-  export_config_docs <- list(
-    file_name = "Character. Base name for exported files. Default is 'gtap_plots'.",
-    width = "Numeric. Plot width in inches. Default is automatically calculated.",
-    height = "Numeric. Plot height in inches. Default is automatically calculated.",
-    dpi = "Numeric. Resolution for PNG export. Default is 300.",
-    bg = "Character. Background color. Default is 'white'.",
-    limitsize = "Logical. Whether to limit size. Default is FALSE."
-  )
-
-  if (as_dataframe) {
-    # Create the dataframe
-    result <- data.frame(
-      Topic = character(),
-      Arguments = character(),
-      `Default Value` = character(),
-      `Input Format` = character(),
-      Description = character(),
-      Example = character(),
-      stringsAsFactors = FALSE
-    )
-
-    # Add export_config params
-    current_topic <- "Export Config"
-    for (param in names(export_config_params)) {
-      param_value <- export_config_params[[param]]
-      param_type <- if (is.null(param_value)) "numeric" else class(param_value)[1]
-
-      example <- if (param == "file_name") {
-        'export_config = list(file_name = "regional_impacts")'
-      } else if (param == "width") {
-        "export_config = list(width = 12)"
-      } else if (param == "height") {
-        "export_config = list(height = 8)"
-      } else if (param == "dpi") {
-        "export_config = list(dpi = 600)"
-      } else if (param == "bg") {
-        'export_config = list(bg = "white")'
-      } else if (param == "limitsize") {
-        "export_config = list(limitsize = FALSE)"
-      }
-
-      val_text <- if (is.null(param_value)) "NULL" else
-        if (is.logical(param_value)) ifelse(param_value, "TRUE", "FALSE") else
-          param_value
-
-      # Only show "Export Config" in the first row
-      display_topic <- if (param == names(export_config_params)[1]) current_topic else ""
-
-      result <- rbind(result, data.frame(
-        Topic = display_topic,
-        Arguments = param,
-        `Default Value` = val_text,
-        `Input Format` = param_type,
-        Description = export_config_docs[[param]],
-        Example = example,
-        stringsAsFactors = FALSE
-      ))
-    }
-
-    return(result)
-  }
-
-  # Return as list
-  full_config <- list(
-    export_config = export_config_params,
-    export_config_docs = export_config_docs
-  )
-
-  return(full_config)
-}
-
-
 # Comparison Plot ---------------------------------------------------------
 
 #' @title Create Comparative Bar Charts from HAR and SL4 Data
@@ -711,21 +208,17 @@ comparison_plot <- function(data, filter_var = NULL,
     dimensions <- .calculate_plot_dimensions(data, panel_layout)
   }
 
-  # Calculate font sizes with auto_font_scale
-  font_sizes <- .calculate_font_sizes(dimensions$width, dimensions$height, 1.0)
+  # Create base style config with all_font_size if provided in plot_style_config
+  all_font_size <- 1  # Default value
+  if (!is.null(plot_style_config) && !is.null(plot_style_config$all_font_size)) {
+    all_font_size <- plot_style_config$all_font_size
+  }
 
-  # Create base style config
+  # Use simplified base style config with just panel layout and all_font_size
   base_style_config <- list(
-    title_size = font_sizes$title_size,
-    x_axis_title_size = font_sizes$x_axis_title_size,
-    y_axis_title_size = font_sizes$y_axis_title_size,
-    x_axis_text_size = font_sizes$x_axis_text_size,
-    y_axis_text_size = font_sizes$y_axis_text_size,
-    strip_text_size = font_sizes$strip_text_size,
-    legend_text_size = font_sizes$legend_text_size,
-    value_label_size = font_sizes$value_label_size,
     panel_rows = panel_layout$rows,
-    panel_cols = panel_layout$cols
+    panel_cols = panel_layout$cols,
+    all_font_size = all_font_size
   )
 
   # Merge with user provided config (user settings take precedence)
@@ -764,25 +257,17 @@ comparison_plot <- function(data, filter_var = NULL,
 
           plot_title <- panel_title
 
-          # Apply title format if specified
-          if (!is.null(style_config$title_format)) {
-            if (style_config$title_format$type == "prefix") {
-              plot_title <- paste0(style_config$title_format$text, " ", plot_title)
-            } else if (style_config$title_format$type == "suffix") {
-              plot_title <- paste0(plot_title, " ", style_config$title_format$text)
-            } else if (style_config$title_format$type == "full") {
-              plot_title <- style_config$title_format$text
-            }
-          }
+          # PLOT TITLE AND OUTPUT TITLE
+          title_info <- .process_plot_title(
+            default_title = plot_title,
+            title_format = style_config$title_format,
+            add_unit_to_title = style_config$add_unit_to_title,
+            unit_name = unit_name,
+            data = panel_data
+          )
 
-          # Add unit to title if configured
-          if (style_config$add_unit_to_title) {
-            if (tolower(unit_name) == "percent") {
-              plot_title <- paste0(plot_title, " (%)")
-            } else {
-              plot_title <- paste0(plot_title, " (", unit_name, ")")
-            }
-          }
+          # Extract the display title
+          plot_title <- title_info$title
 
           # Create plot
           p <- .create_single_comparison_plot(
@@ -797,31 +282,23 @@ comparison_plot <- function(data, filter_var = NULL,
             plot_style_config = style_config
           )
 
-          plot_list[[paste("macro", panel_name, unit_name, sep = "_")]] <- p
+          plot_list[[title_info$export_name]] <- p
         }
       } else {
         # Format title for combined plot
         plot_title <- "Global Economic Impacts"
 
-        # Apply title format if specified
-        if (!is.null(style_config$title_format)) {
-          if (style_config$title_format$type == "prefix") {
-            plot_title <- paste0(style_config$title_format$text, " ", plot_title)
-          } else if (style_config$title_format$type == "suffix") {
-            plot_title <- paste0(plot_title, " ", style_config$title_format$text)
-          } else if (style_config$title_format$type == "full") {
-            plot_title <- style_config$title_format$text
-          }
-        }
+        # PLOT TITLE AND OUTPUT TITLE
+        title_info  <- .process_plot_title(
+          default_title = plot_title,
+          title_format = style_config$title_format,
+          add_unit_to_title = style_config$add_unit_to_title,
+          unit_name = unit_name,
+          data = unit_data
+        )
 
-        # Add unit to title if configured
-        if (style_config$add_unit_to_title) {
-          if (tolower(unit_name) == "percent") {
-            plot_title <- paste0(plot_title, " (%)")
-          } else {
-            plot_title <- paste0(plot_title, " (", unit_name, ")")
-          }
-        }
+        # Extract the display title
+        plot_title <- title_info$title
 
         # Create plot
         p <- .create_single_comparison_plot(
@@ -836,7 +313,7 @@ comparison_plot <- function(data, filter_var = NULL,
           plot_style_config = style_config
         )
 
-        plot_list[[paste("macro", unit_name, sep = "_")]] <- p
+        plot_list[[title_info$export_name]] <- p
       }
     } else {
       # HANDLE SPLIT_BY MODE
@@ -869,25 +346,17 @@ comparison_plot <- function(data, filter_var = NULL,
             # Format title
             plot_title <- paste0(sep_value, " - ", panel_val)
 
-            # Apply title format if specified
-            if (!is.null(style_config$title_format)) {
-              if (style_config$title_format$type == "prefix") {
-                plot_title <- paste0(style_config$title_format$text, " ", plot_title)
-              } else if (style_config$title_format$type == "suffix") {
-                plot_title <- paste0(plot_title, " ", style_config$title_format$text)
-              } else if (style_config$title_format$type == "full") {
-                plot_title <- style_config$title_format$text
-              }
-            }
+            # PLOT TITLE AND OUTPUT TITLE
+            title_info  <- .process_plot_title(
+              default_title = plot_title,
+              title_format = style_config$title_format,
+              add_unit_to_title = style_config$add_unit_to_title,
+              unit_name = unit_name,
+              data = panel_data
+            )
 
-            # Add unit to title if configured
-            if (style_config$add_unit_to_title) {
-              if (tolower(unit_name) == "percent") {
-                plot_title <- paste0(plot_title, " (%)")
-              } else {
-                plot_title <- paste0(plot_title, " (", unit_name, ")")
-              }
-            }
+            # Extract the display title
+            plot_title <- title_info$title
 
             # Create plot
             p <- .create_single_comparison_plot(
@@ -902,31 +371,23 @@ comparison_plot <- function(data, filter_var = NULL,
               plot_style_config = style_config
             )
 
-            plot_list[[paste(sep_value, panel_val, unit_name, sep = "_")]] <- p
+            plot_list[[title_info$export_name]] <- p
           }
         } else {
           # Format title
           plot_title <- sep_value
 
-          # Apply title format if specified
-          if (!is.null(style_config$title_format)) {
-            if (style_config$title_format$type == "prefix") {
-              plot_title <- paste0(style_config$title_format$text, " ", plot_title)
-            } else if (style_config$title_format$type == "suffix") {
-              plot_title <- paste0(plot_title, " ", style_config$title_format$text)
-            } else if (style_config$title_format$type == "full") {
-              plot_title <- style_config$title_format$text
-            }
-          }
+          # PLOT TITLE AND OUTPUT TITLE
+          title_info  <- .process_plot_title(
+            default_title = plot_title,
+            title_format = style_config$title_format,
+            add_unit_to_title = style_config$add_unit_to_title,
+            unit_name = unit_name,
+            data = filtered_data
+          )
 
-          # Add unit to title if configured
-          if (style_config$add_unit_to_title) {
-            if (tolower(unit_name) == "percent") {
-              plot_title <- paste0(plot_title, " (%)")
-            } else {
-              plot_title <- paste0(plot_title, " (", unit_name, ")")
-            }
-          }
+          # Extract the display title
+          plot_title <- title_info$title
 
           # Create plot
           p <- .create_single_comparison_plot(
@@ -941,7 +402,7 @@ comparison_plot <- function(data, filter_var = NULL,
             plot_style_config = style_config
           )
 
-          plot_list[[paste(sep_value, unit_name, sep = "_")]] <- p
+          plot_list[[title_info$export_name]] <- p
         }
       }
     }
@@ -1017,6 +478,9 @@ comparison_plot <- function(data, filter_var = NULL,
   # SET UP VARIABLES FOR PLOTTING
   x_var <- x_axis_from
   facet_var <- panel_var
+
+  # Sort the Data of X_AXIS_FROM
+  data[[x_var]] <- factor(data[[x_var]], levels = unique(data[[x_var]]))
 
   n_panels <- length(unique(data[[facet_var]]))
 
@@ -1541,21 +1005,17 @@ detail_plot <- function(data, filter_var = NULL,
     dimensions <- .calculate_plot_dimensions(data, panel_layout)
   }
 
-  # Calculate font sizes with auto_font_scale
-  font_sizes <- .calculate_font_sizes(dimensions$width, dimensions$height, 1.0)
+  # Create base style config with all_font_size if provided in plot_style_config
+  all_font_size <- 1  # Default value
+  if (!is.null(plot_style_config) && !is.null(plot_style_config$all_font_size)) {
+    all_font_size <- plot_style_config$all_font_size
+  }
 
-  # Create base style config
+  # Use simplified base style config with just panel layout and all_font_size
   base_style_config <- list(
-    title_size = font_sizes$title_size,
-    x_axis_title_size = font_sizes$x_axis_title_size,
-    y_axis_title_size = font_sizes$y_axis_title_size,
-    x_axis_text_size = font_sizes$x_axis_text_size,
-    y_axis_text_size = font_sizes$y_axis_text_size,
-    strip_text_size = font_sizes$strip_text_size,
-    legend_text_size = font_sizes$legend_text_size,
-    value_label_size = font_sizes$value_label_size,
     panel_rows = panel_layout$rows,
-    panel_cols = panel_layout$cols
+    panel_cols = panel_layout$cols,
+    all_font_size = all_font_size
   )
 
   # Merge with user provided config (user settings take precedence)
@@ -1586,27 +1046,19 @@ detail_plot <- function(data, filter_var = NULL,
             panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
 
             # Format title
-            plot_title <- paste0(var_name, " (", panel_val, ")")
+            plot_title <- paste0(var_name, " - ", panel_val)
 
-            # Apply title format if specified
-            if (!is.null(style_config$title_format)) {
-              if (style_config$title_format$type == "prefix") {
-                plot_title <- paste0(style_config$title_format$text, " ", plot_title)
-              } else if (style_config$title_format$type == "suffix") {
-                plot_title <- paste0(plot_title, " ", style_config$title_format$text)
-              } else if (style_config$title_format$type == "full") {
-                plot_title <- style_config$title_format$text
-              }
-            }
+            # PLOT TITLE AND OUTPUT TITLE
+            title_info  <- .process_plot_title(
+              default_title = plot_title,
+              title_format = style_config$title_format,
+              add_unit_to_title = style_config$add_unit_to_title,
+              unit_name = unit_name,
+              data = panel_data
+            )
 
-            # Add unit to title if configured
-            if (style_config$add_unit_to_title) {
-              if (tolower(unit_name) == "percent") {
-                plot_title <- paste0(plot_title, " (%)")
-              } else {
-                plot_title <- paste0(plot_title, " (", unit_name, ")")
-              }
-            }
+            # Extract the display title
+            plot_title <- title_info$title
 
             # Create plot
             p <- .create_single_detail_plot(
@@ -1634,25 +1086,17 @@ detail_plot <- function(data, filter_var = NULL,
           # Format title
           plot_title <- var_name
 
-          # Apply title format if specified
-          if (!is.null(style_config$title_format)) {
-            if (style_config$title_format$type == "prefix") {
-              plot_title <- paste0(style_config$title_format$text, " ", plot_title)
-            } else if (style_config$title_format$type == "suffix") {
-              plot_title <- paste0(plot_title, " ", style_config$title_format$text)
-            } else if (style_config$title_format$type == "full") {
-              plot_title <- style_config$title_format$text
-            }
-          }
+          # PLOT TITLE AND OUTPUT TITLE
+          title_info  <- .process_plot_title(
+            default_title = plot_title,
+            title_format = style_config$title_format,
+            add_unit_to_title = style_config$add_unit_to_title,
+            unit_name = unit_name,
+            data = var_data
+          )
 
-          # Add unit to title if configured
-          if (style_config$add_unit_to_title) {
-            if (tolower(unit_name) == "percent") {
-              plot_title <- paste0(plot_title, " (%)")
-            } else {
-              plot_title <- paste0(plot_title, " (", unit_name, ")")
-            }
-          }
+          # Extract the display title
+          plot_title <- title_info$title
 
           # Create plot
           p <- .create_single_detail_plot(
@@ -1704,25 +1148,17 @@ detail_plot <- function(data, filter_var = NULL,
               # Format title
               plot_title <- paste0(sep_value, " - ", var_name, " - ", panel_val)
 
-              # Apply title format if specified
-              if (!is.null(style_config$title_format)) {
-                if (style_config$title_format$type == "prefix") {
-                  plot_title <- paste0(style_config$title_format$text, " ", plot_title)
-                } else if (style_config$title_format$type == "suffix") {
-                  plot_title <- paste0(plot_title, " ", style_config$title_format$text)
-                } else if (style_config$title_format$type == "full") {
-                  plot_title <- style_config$title_format$text
-                }
-              }
+              # PLOT TITLE AND OUTPUT TITLE
+              title_info  <- .process_plot_title(
+                default_title = plot_title,
+                title_format = style_config$title_format,
+                add_unit_to_title = style_config$add_unit_to_title,
+                unit_name = unit_name,
+                data = panel_data
+              )
 
-              # Add unit to title if configured
-              if (style_config$add_unit_to_title) {
-                if (tolower(unit_name) == "percent") {
-                  plot_title <- paste0(plot_title, " (%)")
-                } else {
-                  plot_title <- paste0(plot_title, " (", unit_name, ")")
-                }
-              }
+              # Extract the display title
+              plot_title <- title_info$title
 
               # Create plot
               p <- .create_single_detail_plot(
@@ -1741,28 +1177,20 @@ detail_plot <- function(data, filter_var = NULL,
               plot_list[[paste(sep_value, var_name, panel_val, unit_name, sep = "_")]] <- p
             }
           } else {
-            # Panel plot for all values in the group
-            # Format title
-            plot_title <- paste0(sep_value, " - ", var_name)
-            # Apply title format if specified
-            if (!is.null(style_config$title_format)) {
-              if (style_config$title_format$type == "prefix") {
-                plot_title <- paste0(style_config$title_format$text, " ", plot_title)
-              } else if (style_config$title_format$type == "suffix") {
-                plot_title <- paste0(plot_title, " ", style_config$title_format$text)
-              } else if (style_config$title_format$type == "full") {
-                plot_title <- style_config$title_format$text
-              }
-            }
 
-            # Add unit to title if configured
-            if (style_config$add_unit_to_title) {
-              if (tolower(unit_name) == "percent") {
-                plot_title <- paste0(plot_title, " (%)")
-              } else {
-                plot_title <- paste0(plot_title, " (", unit_name, ")")
-              }
-            }
+            plot_title <- paste0(sep_value, " - ", var_name)
+
+            # PLOT TITLE AND OUTPUT TITLE
+            title_info  <- .process_plot_title(
+              default_title = plot_title,
+              title_format = style_config$title_format,
+              add_unit_to_title = style_config$add_unit_to_title,
+              unit_name = unit_name,
+              data = var_data
+            )
+
+            # Extract the display title
+            plot_title <- title_info$title
 
             # Create plot
             p <- .create_single_detail_plot(
@@ -1889,13 +1317,13 @@ detail_plot <- function(data, filter_var = NULL,
   } else {
     if (all(data$Value >= 0)) {
       # All positive values
-      y_limits <- c(0, max_abs_value * 1.5)
+      y_limits <- c(0, max_abs_value * 1.3)
     } else if (all(data$Value <= 0)) {
       # All negative values
-      y_limits <- c(-max_abs_value * 1.5, 0)
+      y_limits <- c(-max_abs_value * 1.3, 0)
     } else {
       # Mixed values
-      y_limits <- c(-max_abs_value * 1.5, max_abs_value * 1.5)
+      y_limits <- c(-max_abs_value * 1.3, max_abs_value * 1.3)
     }
   }
 
@@ -2465,21 +1893,17 @@ stack_plot <- function(data, filter_var = NULL,
     dimensions <- .calculate_plot_dimensions(data, panel_layout)
   }
 
-  # Calculate font sizes with auto_font_scale
-  font_sizes <- .calculate_font_sizes(dimensions$width, dimensions$height, 1.0)
+  # Create base style config with all_font_size if provided in plot_style_config
+  all_font_size <- 1  # Default value
+  if (!is.null(plot_style_config) && !is.null(plot_style_config$all_font_size)) {
+    all_font_size <- plot_style_config$all_font_size
+  }
 
-  # Create base style config
+  # Use simplified base style config with just panel layout and all_font_size
   base_style_config <- list(
-    title_size = font_sizes$title_size,
-    x_axis_title_size = font_sizes$x_axis_title_size,
-    y_axis_title_size = font_sizes$y_axis_title_size,
-    x_axis_text_size = font_sizes$x_axis_text_size,
-    y_axis_text_size = font_sizes$y_axis_text_size,
-    strip_text_size = font_sizes$strip_text_size,
-    legend_text_size = font_sizes$legend_text_size,
-    value_label_size = font_sizes$value_label_size,
     panel_rows = panel_layout$rows,
-    panel_cols = panel_layout$cols
+    panel_cols = panel_layout$cols,
+    all_font_size = all_font_size
   )
 
   # Merge with user provided config (user settings take precedence)
@@ -2528,29 +1952,6 @@ stack_plot <- function(data, filter_var = NULL,
         filtered_data <- unit_data[unit_data$split_display == sep_value, ]
       } else {
         filtered_data <- unit_data[unit_data[[split_col]] == sep_value, ]
-      }
-
-      # FORMAT TITLE
-      plot_title <- sep_value
-
-      # APPLY TITLE FORMAT IF SPECIFIED
-      if (!is.null(style_config$title_format)) {
-        if (style_config$title_format$type == "prefix") {
-          plot_title <- paste0(style_config$title_format$text, " ", plot_title)
-        } else if (style_config$title_format$type == "suffix") {
-          plot_title <- paste0(plot_title, " ", style_config$title_format$text)
-        } else if (style_config$title_format$type == "full") {
-          plot_title <- style_config$title_format$text
-        }
-      }
-
-      # ADD UNIT TO TITLE IF CONFIGURED
-      if (style_config$add_unit_to_title) {
-        if (tolower(unit_name) == "percent") {
-          plot_title <- paste0(plot_title, " (%)")
-        } else {
-          plot_title <- paste0(plot_title, " (", unit_name, ")")
-        }
       }
 
       # FORMAT Y-AXIS LABEL
@@ -2603,14 +2004,27 @@ stack_plot <- function(data, filter_var = NULL,
           x_data <- filtered_data[filtered_data[[x_axis_from]] == x_val, ]
           x_totals <- total_data[total_data[[x_axis_from]] == x_val, ]
 
-          x_plot_title <- paste0(plot_title, " - ", x_val)
+          # FORMAT TITLE
+          plot_title <- sep_value
+
+          # PLOT TITLE AND OUTPUT TITLE
+          title_info  <- .process_plot_title(
+            default_title = plot_title,
+            title_format = style_config$title_format,
+            add_unit_to_title = style_config$add_unit_to_title,
+            unit_name = unit_name,
+            data = x_data
+          )
+
+          # Extract the display title
+          plot_title <- title_info$title
 
           p <- .create_single_unstacked_plot(
             data = x_data,
             total_data = x_totals,
             x_axis_from = x_axis_from,
             stack_value_from = stack_value_from,
-            plot_title = x_plot_title,
+            plot_title = plot_title,
             unit = y_axis_label,
             panel_rows = style_config$panel_rows,
             panel_cols = style_config$panel_cols,
@@ -2620,10 +2034,26 @@ stack_plot <- function(data, filter_var = NULL,
             plot_style_config = style_config
           )
 
-          plot_list[[paste(sep_value, "unstack", x_val, unit_name, sep = "_")]] <- p
+          plot_list[[title_info$export_name]] <- p
         }
       } else {
         # CREATE STACKED PLOT
+
+        # FORMAT TITLE
+        plot_title <- sep_value
+
+        # PLOT TITLE AND OUTPUT TITLE
+        title_info  <- .process_plot_title(
+          default_title = plot_title,
+          title_format = style_config$title_format,
+          add_unit_to_title = style_config$add_unit_to_title,
+          unit_name = unit_name,
+          data = filtered_data
+        )
+
+        # Extract the display title
+        plot_title <- title_info$title
+
         p <- .create_single_stacked_plot(
           data = filtered_data,
           total_data = total_data,
@@ -2640,7 +2070,7 @@ stack_plot <- function(data, filter_var = NULL,
           plot_style_config = style_config
         )
 
-        plot_list[[paste(sep_value, "stack", unit_name, sep = "_")]] <- p
+        plot_list[[title_info$export_name]] <- p
       }
     }
   }
@@ -2650,10 +2080,14 @@ stack_plot <- function(data, filter_var = NULL,
     if (is.null(export_config)) {
       export_config <- list()
     }
+
+    # Determine plot type suffix
+    plot_type_suffix <- if (unstack_plot) "_unstacked" else "_stacked"
+
     if (!is.null(top_impact)) {
-      export_config$file_name <- paste0("stack_plots_top", top_impact)
+      export_config$file_name <- paste0(title_info$export_name, plot_type_suffix, "_top", top_impact)
     } else {
-      export_config$file_name <- "stack_plots"
+      export_config$file_name <- paste0(title_info$export_name, plot_type_suffix)
     }
   }
 

@@ -60,10 +60,10 @@ selected_sector <- NULL
 info.mode <- "Mix"
 
 # 4. Choosing Output: (CSV, STATA, R, TEXT) 
-csv.output <- "No"    
-stata.output <- "No"  
-r.output <- "No"
-txt.output <- "No"   
+csv.output <- "no"    
+stata.output <- "no"  
+r.output <- "no"
+txt.output <- "no"   
 
 # 5. For Plotting: (TRUE/FALSE)
 plot_data = TRUE
@@ -72,17 +72,17 @@ setwd <- "D:/GitHub/GTAPViz/R"
 devtools::load_all()
 
 # Extracting Data
-process_gtap_data(
-  sl4var = sl4map, 
-  harvar = harmap,
-  sl4map = sl4map,
-  harmap = harmap,
+auto_gtap_data(
+  process_sl4_vars = sl4map, 
+  process_har_vars = harmap,
+  sl4_mapping_info = sl4map,
+  har_mapping_info = harmap,
   region_select = selected_regions,
   sector_select = selected_sector,
-  subtotal = FALSE,
+  subtotal_level = FALSE,
   experiment = experiment, 
   mapping_info = info.mode,
-  project_dir = project.folder,
+  project_path = project.folder,
   plot_data = plot_data,
   output_formats = list(
     "csv" = csv.output,
@@ -96,11 +96,6 @@ sl4.plot.data <- convert_units(sl4.plot.data,
 har.plot.data <- convert_units(har.plot.data, 
                                scale_auto = "mil2bil")
 
-Macros <- gtap_macros_data(
-  input_dir = input.folder,
-  experiment_names = experiment,
-  subtotal_level = FALSE
-)
 ```
 
 # Introduction {#sec:introduction}
@@ -484,17 +479,17 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 To streamline figure generation from GTAP results, I developed an automated data extraction method using the following command:  
 
 ```{r Preparing Data for Plot, eval = FALSE}
-process_gtap_data(
-  sl4var = sl4map, 
-  harvar = harmap,
-  sl4map = sl4map,
-  harmap = harmap,
+auto_gtap_data(
+  process_sl4_vars = sl4map, 
+  process_har_vars = harmap,
+  sl4_mapping_info = sl4map,
+  har_mapping_info = harmap,
   region_select = selected_regions,
   sector_select = selected_sector,
-  subtotal = FALSE,
+  subtotal_level = FALSE,
   experiment = experiment, 
   mapping_info = info.mode,
-  project_dir = project.folder,
+  project_path = project.folder,
   plot_data = plot_data,
   output_formats = list(
     "csv" = csv.output,
@@ -547,6 +542,8 @@ To view all customization options (`?get_plot_style_config`), run:
 config_comparison <- get_plot_style_config("comparison", as_dataframe = TRUE)
 config_detail <- get_plot_style_config("detail", as_dataframe = TRUE)
 config_stack <- get_plot_style_config("stack", as_dataframe = TRUE)
+
+all_configs <- get_plot_config()
 ```
 
 
@@ -659,18 +656,10 @@ This figure displays aggregated values across all experiments, typically for glo
 To plot this figure, you can use the following command:
 
 ```{r GTAP Macro Plot, eval = FALSE}
-comparison_plot(Macros,
+comparison_plot(GTAPMacro,
                 x_axis_from = "Variable",
                 split_by = FALSE,
-                panel_var = "Experiment", 
-                variable_col = "Variable",
                 filter_var = c("pgdpwld", "qgdpwld", "vgdpwld"),
-
-                var_name_by_description = FALSE,
-                add_var_info = FALSE,
-                
-                invert_pane = FALSE,                
-                separate_figure = FALSE,
                 
                 export_picture = TRUE,
                 export_as_pdf = "merged",
@@ -686,10 +675,7 @@ comparison_plot(Macros,
                     type = "full",  
                     text = "Global Economic Impacts"
                   ),
-                  panel_rows = NULL,
-                  panel_cols = NULL,
-                  legend_position = "bottom",
-                  show_axis_titles_on_all_facets = FALSE
+                  legend_position = "bottom"
                 ))
 ```
 
@@ -719,13 +705,12 @@ For example, the following command plots all variables with sectors on the x-axi
 detail_plot(sl4.plot.data[["2D"]],
             x_axis_from = "Sector",
             split_by = "Region",
-            panel_var = "Experiment", 
 
             top_impact = NULL,
             var_name_by_description = TRUE,
             
             invert_pane = TRUE,
-            separate_figure = FALSE,
+            separate_figure = TRUE,
             
             export_config = list(
               width = 45,
@@ -733,7 +718,7 @@ detail_plot(sl4.plot.data[["2D"]],
             ),
             
             export_picture = TRUE,
-            export_as_pdf = "merged",   
+            export_as_pdf = TRUE,   
             output_path = output.folder,
             
             plot_style_config = list(

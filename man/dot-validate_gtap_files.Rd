@@ -9,10 +9,14 @@
   output_dir,
   experiment,
   mapping_info,
-  sl4file,
-  harfile,
+  sl4var,
+  harvar,
+  sl4map,
+  harmap,
   output_formats,
-  plot_data
+  plot_data,
+  sl4_file_suffix = ".sl4",
+  har_file_suffix = "-WEL.har"
 )
 }
 \arguments{
@@ -24,14 +28,21 @@
 
 \item{mapping_info}{Character. Mapping mode: "GTAPv7", "Yes", "No", or "Mix".}
 
-\item{sl4file}{Data frame, NULL, or FALSE. Mapping for SL4 variables.}
+\item{sl4var}{Logical. Whether SL4 data should be processed.}
 
-\item{harfile}{Data frame, NULL, or FALSE. Mapping for HAR variables.}
+\item{harvar}{Logical. Whether HAR data should be processed.}
 
-\item{output_formats}{Output format specification. Can be:
-- Character vector: Export formats (e.g., c("csv", "stata"))
-- "plot_data": For plotting data without export
-- List: Named list with "yes"/"no" values, can include plot_data}
+\item{sl4map}{Data frame, NULL, or FALSE. Mapping for SL4 variables.}
+
+\item{harmap}{Data frame, NULL, or FALSE. Mapping for HAR variables.}
+
+\item{output_formats}{Character vector. Export formats (e.g., c("csv", "stata")).}
+
+\item{plot_data}{Logical. Whether to generate plots without exporting data.}
+
+\item{sl4_file_suffix}{Character. Suffix for SL4 files (e.g., "" or "-custom").}
+
+\item{har_file_suffix}{Character. Suffix for HAR files (e.g., "-WEL").}
 }
 \value{
 A list with three elements:
@@ -43,7 +54,7 @@ A list with three elements:
 Validates input files, mapping configurations, case names, and output formats for GTAP processing.
 }
 \seealso{
-\code{\link{process_gtap_data}}
+\code{\link{auto_gtap_data}}
 }
 \author{
 Pattawee Puangchit

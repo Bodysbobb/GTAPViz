@@ -19,7 +19,7 @@ A character vector of valid output format names.
 Returns a character vector of valid output formats based on the provided input.
 }
 \seealso{
-\code{\link{process_gtap_data}}
+\code{\link{auto_gtap_data}}
 }
 \author{
 Pattawee Puangchit

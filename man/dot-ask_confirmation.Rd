@@ -16,7 +16,7 @@ A logical value: TRUE if the user types "y" (case-insensitive), FALSE if "n".
 Prompts the user for confirmation by displaying a message and reading input from the console. Returns TRUE if the user confirms with 'y', otherwise FALSE.
 }
 \seealso{
-\code{\link{process_gtap_data}}
+\code{\link{auto_gtap_data}}
 }
 \author{
 Pattawee Puangchit

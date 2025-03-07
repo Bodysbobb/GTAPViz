@@ -21,7 +21,7 @@ Recursively applies a function to all data frames within a potentially
 nested data structure while preserving the original structure and attributes.
 }
 \seealso{
-\code{\link{process_gtap_data}}
+\code{\link{auto_gtap_data}}
 }
 \author{
 Pattawee Puangchit

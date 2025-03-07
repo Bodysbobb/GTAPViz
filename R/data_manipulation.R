@@ -251,21 +251,28 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
   }
 
   convert_dataframe <- function(df) {
-    if (!all(c(value_col, unit_col) %in% names(df))) {
+    # Skip if dataframe doesn't have required columns
+    if (!is.data.frame(df) || !all(c(value_col, unit_col) %in% names(df))) {
       return(df)
     }
 
+    # Make a copy of the dataframe to modify
+    result <- df
+
+    # Handle variable filtering
     if (!is.null(variable_select) && variable_col %in% names(df)) {
+      # Check if any variables match
       variables_match <- df[[variable_col]] %in% variable_select
-      if (sum(variables_match) == 0) {
+      if (all(is.na(variables_match)) || sum(variables_match, na.rm = TRUE) == 0) {
         return(df)
       }
+      # Handle NAs in filtering
       process_rows <- variables_match
+      process_rows[is.na(process_rows)] <- FALSE
     } else {
       process_rows <- rep(TRUE, nrow(df))
     }
 
-    result <- df
     conversions_made <- 0
 
     for (i in seq_along(change_unit_from)) {
@@ -273,16 +280,33 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
       new_unit <- change_unit_to[i]
       adjust_operation <- adjustment[i]
 
+      # Normalize units for consistent matching
       normalized_current_unit <- gsub("[\\s()]", "", tolower(current_unit))
-      normalized_df_units <- gsub("[\\s()]", "", tolower(result[[unit_col]]))
 
-      matching_rows <- normalized_df_units == normalized_current_unit & process_rows
-      if (sum(matching_rows) == 0) {
+      # Handle NAs in unit column
+      unit_values <- result[[unit_col]]
+      unit_values[is.na(unit_values)] <- ""
+      normalized_df_units <- gsub("[\\s()]", "", tolower(unit_values))
+
+      # Find matching rows with NA safety
+      matching_units <- normalized_df_units == normalized_current_unit
+      matching_rows <- matching_units & process_rows
+
+      # Skip if no matches found
+      if (sum(matching_rows, na.rm = TRUE) == 0) {
         next
       }
 
+      # Only proceed with non-NA values in value column
+      valid_values <- !is.na(result[matching_rows, value_col])
+      if (sum(valid_values) == 0) {
+        next
+      }
+
+      # Apply the conversion to matching rows with valid values
       current_values <- result[matching_rows, value_col]
 
+      # Handle different adjustment types
       if (is.function(adjust_operation)) {
         result[matching_rows, value_col] <- adjust_operation(current_values)
       } else if (is.character(adjust_operation)) {
@@ -299,10 +323,16 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
           subtrahend <- as.numeric(gsub("^-\\s*", "", adjust_operation))
           result[matching_rows, value_col] <- current_values - subtrahend
         } else if (grepl("^.+[+\\-*/].+", adjust_operation)) {
+          # Complex expression
           expr <- paste("current_values", adjust_operation)
-          result[matching_rows, value_col] <- eval(parse(text = expr))
+          tryCatch({
+            result[matching_rows, value_col] <- eval(parse(text = expr))
+          }, error = function(e) {
+            warning("Error in evaluating adjustment expression: ", e$message)
+          })
         } else {
-          divisor <- as.numeric(adjust_operation)
+          # Try to parse as a numeric divisor
+          divisor <- suppressWarnings(as.numeric(adjust_operation))
           if (!is.na(divisor)) {
             result[matching_rows, value_col] <- current_values / divisor
           }
@@ -311,8 +341,9 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
         result[matching_rows, value_col] <- current_values / adjust_operation
       }
 
+      # Update unit labels
       result[matching_rows, unit_col] <- new_unit
-      conversions_made <- conversions_made + sum(matching_rows)
+      conversions_made <- conversions_made + sum(matching_rows, na.rm = TRUE)
     }
 
     if (conversions_made > 0) {
@@ -322,6 +353,7 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
     return(result)
   }
 
+  # Apply the conversion function to all dataframes in the structure
   return(.apply_to_dataframes(data, convert_dataframe))
 }
 

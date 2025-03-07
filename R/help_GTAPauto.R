@@ -1,71 +1,3 @@
-#' @title Process Bilateral Trade Data from GTAP Output (Internal)
-#' @description Extracts and processes bilateral trade data (typically QXS variables) from
-#'   grouped GTAP data. Separates bilateral trade variables into a separate data structure
-#'   and applies region name standardization.
-#'
-#' @param grouped_data A list containing grouped GTAP data with 3D dimensions.
-#' @param output_path Character. Directory path where the extracted data will be saved if export=TRUE.
-#' @param formats Character vector. Export formats (e.g., "csv", "xlsx").
-#' @param var_pattern Character. Regular expression pattern to identify bilateral trade variables.
-#'   Default is "qxs" to match QXS (bilateral trade) variables.
-#' @param export Logical. If TRUE, exports the extracted data to specified formats.
-#'
-#' @return A list containing the extracted bilateral trade data with standardized region names
-#'   (REG/REG.1 renamed to Source/Destination), or NULL if no bilateral data is found.
-#'   The original grouped_data is modified by removing the extracted variables.
-#'
-#' @author Pattawee Puangchit
-#' @keywords internal
-#' @seealso \code{\link{process_gtap_data}}
-#'
-.process_bilateral_trade <- function(grouped_data, output_path, formats,
-                                     var_pattern = "qxs", export = TRUE) {
-  if (!("3D" %in% names(grouped_data))) {
-    message("No 3D data found for bilateral trade processing")
-    return(grouped_data)
-  }
-
-  bilateral_dim <- grep("COMM.*REG.*REG", names(grouped_data[["3D"]]), value = TRUE)
-
-  if (length(bilateral_dim) == 0) {
-    message("No bilateral trade dimensions found")
-    return(grouped_data)
-  }
-
-  bilateral_df <- grouped_data[["3D"]][[bilateral_dim]]
-  matched_data <- bilateral_df[grepl(var_pattern, bilateral_df$Variable, ignore.case = TRUE), ]
-
-  if (nrow(matched_data) > 0) {
-    message("Extracting bilateral trade data...")
-    grouped_data[["3D"]][[bilateral_dim]] <-
-      bilateral_df[!grepl(var_pattern, bilateral_df$Variable, ignore.case = TRUE), ]
-
-    matched_data <- rename_GTAP_bilateral(matched_data)
-
-    bilateral_list <- list(BilateralTrade = matched_data)
-
-    if (export) {
-      if (!dir.exists(output_path)) {
-        dir.create(output_path, recursive = TRUE)
-      }
-
-      HARplus::export_data(
-        data = bilateral_list,
-        output_path = output_path,
-        format = formats,
-        create_subfolder = TRUE,
-        multi_sheet_xlsx = TRUE,
-        report_output = TRUE
-      )
-    }
-
-    return(bilateral_list)
-  }
-
-  return(NULL)
-}
-
-
 #' @title Determine Output Formats for GTAP Data (Internal)
 #' @description Returns a character vector of valid output formats based on the provided input.
 #'
@@ -77,7 +9,7 @@
 #' @return A character vector of valid output format names.
 #' @author Pattawee Puangchit
 #' @keywords internal
-#' @seealso \code{\link{process_gtap_data}}
+#' @seealso \code{\link{auto_gtap_data}}
 #'
 .output_format <- function(formats = NULL) {
   valid_formats <- c("csv", "stata", "rds", "r", "txt")
@@ -124,12 +56,14 @@
 #' @param output_dir Character. Path where output files will be saved.
 #' @param experiment Character vector. Case names (experiment names) to validate.
 #' @param mapping_info Character. Mapping mode: "GTAPv7", "Yes", "No", or "Mix".
-#' @param sl4file Data frame, NULL, or FALSE. Mapping for SL4 variables.
-#' @param harfile Data frame, NULL, or FALSE. Mapping for HAR variables.
-#' @param output_formats Output format specification. Can be:
-#'        - Character vector: Export formats (e.g., c("csv", "stata"))
-#'        - "plot_data": For plotting data without export
-#'        - List: Named list with "yes"/"no" values, can include plot_data
+#' @param sl4var Logical. Whether SL4 data should be processed.
+#' @param harvar Logical. Whether HAR data should be processed.
+#' @param sl4map Data frame, NULL, or FALSE. Mapping for SL4 variables.
+#' @param harmap Data frame, NULL, or FALSE. Mapping for HAR variables.
+#' @param output_formats Character vector. Export formats (e.g., c("csv", "stata")).
+#' @param plot_data Logical. Whether to generate plots without exporting data.
+#' @param sl4_file_suffix Character. Suffix for SL4 files (e.g., "" or "-custom").
+#' @param har_file_suffix Character. Suffix for HAR files (e.g., "-WEL").
 #'
 #' @return A list with three elements:
 #' \item{status}{Character indicating validation status ("ok", "error", or "warning").}
@@ -138,280 +72,174 @@
 #'
 #' @author Pattawee Puangchit
 #' @keywords internal
-#' @seealso \code{\link{process_gtap_data}}
+#' @seealso \code{\link{auto_gtap_data}}
 #'
 .validate_gtap_files <- function(input_dir, output_dir,
-                                 experiment, mapping_info, sl4file, harfile, output_formats, plot_data) {
+                                 experiment, mapping_info, sl4var, harvar,
+                                 sl4map, harmap, output_formats, plot_data,
+                                 sl4_file_suffix = ".sl4", har_file_suffix = "-WEL.har") {
+
   validation_results <- list(
     status = "ok",
     messages = character(),
     proceed = TRUE
   )
 
-  process_sl4 <- !identical(sl4file, FALSE)
-  process_har <- !identical(harfile, FALSE)
+  # Directory Check
+  check_directory <- function(dir, dir_name) {
+    if (!dir.exists(dir)) {
+      validation_results$status <- "error"
+      validation_results$messages <- c(validation_results$messages,
+                                       sprintf("%s folder does not exist. Please check the path: %s", dir_name, dir))
+      validation_results$proceed <- FALSE
+      return(FALSE)
+    }
+    return(TRUE)
+  }
 
+  if (!check_directory(input_dir, "Input")) {
+    return(validation_results)
+  }
+
+  # Check output directory only if we're exporting data
+  if (!is.null(output_formats) && length(output_formats) > 0) {
+    if (!check_directory(output_dir, "Output")) {
+      # If output directory doesn't exist, create it
+      dir.create(output_dir, recursive = TRUE)
+      validation_results$messages <- c(validation_results$messages,
+                                       sprintf("Created output folder: %s", output_dir))
+    }
+  }
+
+  # Output Format Check
   if (!plot_data && (is.null(output_formats) || length(output_formats) == 0)) {
-    validation_results$status <- "error"
+    validation_results$status <- "warning"
     validation_results$messages <- c(validation_results$messages,
                                      "No outputs selected: both output_formats is empty and plot_data is FALSE.",
                                      "Please select at least one output option:",
                                      "  - Specify at least one output format (csv, stata, rds, txt)",
-                                     "  - Set plot_data = TRUE to prepare data for plotting"
-    )
-    validation_results$proceed <- FALSE
-    return(validation_results)
-  }
-
-  if (is.null(mapping_info)) {
-    mapping_info <- "GTAPv7"
-    message("  mapping_info not specified, using default: GTAPv7")
-  }
-
-  if (!dir.exists(input_dir)) {
-    validation_results$status <- "error"
-    validation_results$messages <- c(validation_results$messages,
-                                     "Input folder does not exist",
-                                     "Please check input_dir path and ensure it exists")
-    validation_results$proceed <- FALSE
-    return(validation_results)
-  }
-
-  if (process_sl4 && !is.null(sl4file)) {
-    if (!is.data.frame(sl4file) || !"Variable" %in% names(sl4file)) {
-      validation_results$status <- "error"
-      validation_results$messages <- c(validation_results$messages,
-                                       "Invalid SL4File structure",
-                                       "Required column: Variable")
-      validation_results$proceed <- FALSE
-      return(validation_results)
-    }
-
-    if (toupper(mapping_info) %in% c("YES", "MIX")) {
-      missing_cols <- setdiff(c("Description", "Unit"), names(sl4file))
-      if (length(missing_cols) > 0) {
-        validation_results$status <- "warning"
-        validation_results$messages <- c(validation_results$messages,
-                                         sprintf("sl4file is missing columns: %s",
-                                                 paste(missing_cols, collapse = ", ")))
-        validation_results$messages <- c(validation_results$messages,
-                                         "These are required for mapping_info = 'Yes' or 'Mix'")
-
-        cat(paste(validation_results$messages, collapse = "\n"), "\n")
-        use_gtapv7 <- .ask_confirmation(
-          "Do you want to proceed using GTAPv7 definitions for missing values? (Y/N): ")
-
-        if (!use_gtapv7) {
-          validation_results$proceed <- FALSE
-          return(validation_results)
-        }
-        validation_results$messages <- character()
-      }
-    }
-  }
-
-  if (process_har && !is.null(harfile)) {
-    if (!is.data.frame(harfile) || !"Variable" %in% names(harfile)) {
-      validation_results$status <- "error"
-      validation_results$messages <- c(validation_results$messages,
-                                       "Invalid HARFile structure",
-                                       "Required column: Variable")
-      validation_results$proceed <- FALSE
-      return(validation_results)
-    }
-
-    if (toupper(mapping_info) %in% c("YES", "MIX")) {
-      missing_cols <- setdiff(c("Description", "Unit"), names(harfile))
-      if (length(missing_cols) > 0) {
-        validation_results$status <- "warning"
-        validation_results$messages <- c(validation_results$messages,
-                                         sprintf("harfile is missing columns: %s",
-                                                 paste(missing_cols, collapse = ", ")))
-        validation_results$messages <- c(validation_results$messages,
-                                         "These are required for mapping_info = 'Yes' or 'Mix'")
-
-        cat(paste(validation_results$messages, collapse = "\n"), "\n")
-        use_gtapv7 <- .ask_confirmation(
-          "Do you want to proceed using GTAPv7 definitions for missing values? (Y/N): ")
-
-        if (!use_gtapv7) {
-          validation_results$proceed <- FALSE
-          return(validation_results)
-        }
-        validation_results$messages <- character()
-      }
-    }
-  }
-
-  if (process_sl4 && is.null(sl4file)) {
-    validation_results$messages <- c(validation_results$messages,
-                                     "sl4file is NULL - all SL4 variables will be extracted with GTAPv7 mapping")
-  }
-
-  if (process_har && is.null(harfile)) {
-    validation_results$messages <- c(validation_results$messages,
-                                     "harfile is NULL - all HAR variables will be extracted with GTAPv7 mapping")
-  }
-
-  if (!process_sl4) {
-    validation_results$messages <- c(validation_results$messages,
-                                     "sl4file is FALSE - SL4 processing will be skipped")
-  }
-
-  if (!process_har) {
-    validation_results$messages <- c(validation_results$messages,
-                                     "harfile is FALSE - HAR processing will be skipped")
-  }
-
-  if (length(experiment) == 0) {
-    validation_results$status <- "error"
-    validation_results$messages <- c(validation_results$messages,
-                                     "No case names provided",
-                                     "Please define experiment variable with experiment names")
-    validation_results$proceed <- FALSE
-    return(validation_results)
-  }
-
-  if (length(experiment) != length(unique(experiment))) {
-    duplicate_cases <- experiment[duplicated(experiment)]
-    validation_results$status <- "error"
-    validation_results$messages <- c(validation_results$messages,
-                                     "Duplicate case names found:",
-                                     paste("   -", duplicate_cases),
-                                     "Each case name must be unique")
-    validation_results$proceed <- FALSE
-    return(validation_results)
-  }
-
-  files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
-
-  files_lower <- tolower(files)
-  if (length(files_lower) != length(unique(files_lower))) {
-    duplicate_files <- files[duplicated(files_lower)]
-    validation_results$status <- "error"
-    validation_results$messages <- c(validation_results$messages,
-                                     "Duplicate file names found (case-insensitive):",
-                                     paste("   -", duplicate_files),
-                                     "File names must be unique (ignoring case)")
-    validation_results$proceed <- FALSE
-    return(validation_results)
-  }
-
-  sl4_files <- files[grepl("\\.sl4$", files, ignore.case = TRUE)]
-  har_files <- files[grepl("-wel\\.har$", files, ignore.case = TRUE)]
-
-  sl4_bases <- tolower(trimws(sub("\\.sl4$", "", sl4_files, ignore.case = TRUE)))
-  har_bases <- tolower(trimws(sub("-wel\\.har$", "", har_files, ignore.case = TRUE)))
-  case_names_lower <- tolower(trimws(experiment))
-
-  if (process_sl4 && length(sl4_files) == 0) {
-    validation_results$status <- "error"
-    validation_results$messages <- c(validation_results$messages,
-                                     "No .sl4 files found in the input folder but sl4file is specified")
-    validation_results$proceed <- FALSE
-    return(validation_results)
-  }
-
-  if (process_har && length(har_files) == 0) {
-    validation_results$status <- "error"
-    validation_results$messages <- c(validation_results$messages,
-                                     "No -WEL.har files found in the input folder but harfile is specified")
-    validation_results$proceed <- FALSE
-    return(validation_results)
-  }
-
-  available_bases <- c()
-  if (process_sl4) available_bases <- c(available_bases, sl4_bases)
-  if (process_har) available_bases <- c(available_bases, har_bases)
-
-  missing_cases <- setdiff(case_names_lower, available_bases)
-  if (length(missing_cases) == length(case_names_lower)) {
-    validation_results$status <- "error"
-    validation_results$messages <- c(validation_results$messages,
-                                     sprintf("None of the specified cases were found: %s",
-                                             paste(experiment[!case_names_lower %in% available_bases],
-                                                   collapse = ", ")))
-    validation_results$proceed <- FALSE
-    return(validation_results)
-  }
-
-  if (process_sl4 && process_har && length(sl4_files) != length(har_files)) {
-    validation_results$status <- "warning"
-    validation_results$messages <- c(validation_results$messages,
-                                     sprintf("Unequal number of files found: %d .sl4 files and %d -WEL.har files",
-                                             length(sl4_files), length(har_files)))
-
+                                     "  - Set plot_data = TRUE to prepare data for plotting")
     cat(paste(validation_results$messages, collapse = "\n"), "\n")
-    validation_results$proceed <- .ask_confirmation(
-      "Do you want to proceed with the available files? (Y/N): ")
+    proceed_without_output <- .ask_confirmation("Do you want to proceed without any output? (Y/N): ")
 
-    if (!validation_results$proceed) {
+    if (!proceed_without_output) {
+      validation_results$proceed <- FALSE
       return(validation_results)
     }
     validation_results$messages <- character()
   }
 
-  if (process_sl4 && process_har) {
-    matched_pairs <- intersect(sl4_bases, har_bases)
-    unmatched_sl4 <- setdiff(sl4_bases, har_bases)
-    unmatched_har <- setdiff(har_bases, sl4_bases)
+  # SL4 & HAR File Check
+  files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
+  sl4_files <- files[grepl(sl4_file_suffix, files, ignore.case = TRUE)]
+  har_files <- files[grepl(har_file_suffix, files, ignore.case = TRUE)]
 
-    if (length(unmatched_sl4) > 0 || length(unmatched_har) > 0) {
-      validation_results$status <- "warning"
-      if (length(unmatched_sl4) > 0) {
-        validation_results$messages <- c(validation_results$messages,
-                                         sprintf("SL4 files without matching HAR files: %s",
-                                                 paste(unmatched_sl4, collapse = ", ")))
-      }
-      if (length(unmatched_har) > 0) {
-        validation_results$messages <- c(validation_results$messages,
-                                         sprintf("HAR files without matching SL4 files: %s",
-                                                 paste(unmatched_har, collapse = ", ")))
-      }
+  sl4_bases <- tolower(trimws(sub(sl4_file_suffix, "", sl4_files, ignore.case = TRUE)))
+  har_bases <- tolower(trimws(sub(har_file_suffix, "", har_files, ignore.case = TRUE)))
 
+  matched_experiments <- intersect(tolower(experiment), sl4_bases)
+  missing_sl4 <- setdiff(tolower(experiment), sl4_bases)
+  missing_har <- setdiff(tolower(experiment), har_bases)
+  successful_cases <- length(matched_experiments)
+  total_requested <- length(experiment)
+
+  if (length(missing_sl4) > 0 || length(missing_har) > 0) {
+    validation_results$status <- "warning"
+
+    if (length(missing_sl4) > 0 && sl4var) {
+      validation_results$messages <- c(validation_results$messages,
+                                       sprintf("Missing SL4 files for: %s",
+                                               paste(experiment[tolower(experiment) %in% missing_sl4], collapse = ", ")))
+    }
+
+    if (length(missing_har) > 0 && harvar) {
+      validation_results$messages <- c(validation_results$messages,
+                                       sprintf("Missing HAR files for: %s",
+                                               paste(experiment[tolower(experiment) %in% missing_har], collapse = ", ")))
+    }
+
+    cat(paste(validation_results$messages, collapse = "\n"), "\n")
+    proceed_without_files <- .ask_confirmation("Do you want to proceed with missing files? (Y/N): ")
+
+    if (!proceed_without_files) {
+      validation_results$proceed <- FALSE
+      return(validation_results)
+    }
+
+    validation_results$messages <- character()
+  }
+
+  # Mapping Info & SL4/HAR Maps
+  process_sl4 <- sl4var
+  process_har <- harvar
+
+  if (is.null(mapping_info)) {
+    mapping_info <- "GTAPv7"
+    message("mapping_info not specified, using default: GTAPv7")
+  }
+
+  if (toupper(mapping_info) %in% c("YES", "MIX")) {
+
+    check_mapping <- function(map_data, map_name) {
+      required_cols <- c("Variable", "Description", "Unit")
+
+      if (!is.null(map_data)) {
+        if (!is.data.frame(map_data)) {
+          validation_results$status <- "error"
+          validation_results$messages <- c(validation_results$messages,
+                                           sprintf("%s must be a valid data frame.", map_name))
+          validation_results$proceed <- FALSE
+          return(FALSE)
+        }
+
+        missing_cols <- setdiff(required_cols, names(map_data))
+        if (length(missing_cols) > 0) {
+          validation_results$status <- "warning"
+          validation_results$messages <- c(validation_results$messages,
+                                           sprintf("%s is missing column(s): %s",
+                                                   map_name, paste(missing_cols, collapse = ", ")),
+                                           "These are required for mapping_info = 'Yes' or 'Mix'.")
+        }
+      }
+      return(TRUE)
+    }
+
+    check_mapping(sl4map, "sl4map")
+    check_mapping(harmap, "harmap")
+
+    if (validation_results$status == "warning") {
       cat(paste(validation_results$messages, collapse = "\n"), "\n")
-      validation_results$proceed <- .ask_confirmation(
-        "Do you want to proceed with only the matched pairs? (Y/N): ")
+      use_gtapv7 <- .ask_confirmation("Do you want to proceed using GTAPv7 definitions for missing values? (Y/N): ")
 
-      if (!validation_results$proceed) {
+      if (!use_gtapv7) {
+        validation_results$proceed <- FALSE
         return(validation_results)
       }
+
       validation_results$messages <- character()
     }
   }
 
-  available_bases <- c()
-  if (process_sl4) available_bases <- c(available_bases, sl4_bases)
-  if (process_har) available_bases <- c(available_bases, har_bases)
-
-  partial_cases <- intersect(case_names_lower, available_bases)
-  if (length(partial_cases) < length(case_names_lower) &&
-      length(partial_cases) > 0) {
-    missing_cases <- experiment[!case_names_lower %in% available_bases]
-    validation_results$status <- "warning"
+  # Final Summary Message
+  if (successful_cases == total_requested) {
     validation_results$messages <- c(validation_results$messages,
-                                     sprintf("Some specified cases were not found: %s",
-                                             paste(missing_cases, collapse = ", ")))
-
-    cat(paste(validation_results$messages, collapse = "\n"), "\n")
-    validation_results$proceed <- .ask_confirmation(
-      "Do you want to proceed with the available cases? (Y/N): ")
-
-    if (!validation_results$proceed) {
-      return(validation_results)
-    }
-    validation_results$messages <- character()
+                                     sprintf("All %d requested experiment files are found and successfully extracted.",
+                                             total_requested))
+  } else if (successful_cases > 0) {
+    validation_results$messages <- c(validation_results$messages,
+                                     sprintf("%d/%d experiment files found and extracted. Missing: %s",
+                                             successful_cases, total_requested,
+                                             paste(setdiff(experiment, matched_experiments), collapse = ", ")))
+  } else {
+    validation_results$status <- "error"
+    validation_results$messages <- c(validation_results$messages,
+                                     "No requested experiment files were found. Please check input files and paths.")
+    validation_results$proceed <- FALSE
+    return(validation_results)
   }
 
-  if (validation_results$status == "ok") {
-    validation_results$messages <- c(validation_results$messages,
-                                     sprintf("All files verified successfully."))
-    if (process_sl4 && process_har) {
-      matched_pairs <- intersect(sl4_bases, har_bases)
-      validation_results$messages <- c(validation_results$messages,
-                                       sprintf("Found %d matched pairs.", length(matched_pairs)))
-    }
-  }
+  validation_results$messages <- c(validation_results$messages,
+                                   sprintf("Mapping method used: %s", mapping_info))
 
   return(validation_results)
 }
@@ -423,7 +251,7 @@
 #' @return A logical value: TRUE if the user types "y" (case-insensitive), FALSE if "n".
 #' @author Pattawee Puangchit
 #' @keywords internal
-#' @seealso \code{\link{process_gtap_data}}
+#' @seealso \code{\link{auto_gtap_data}}
 #'
 .ask_confirmation <- function(prompt) {
   cat("\n", prompt)
@@ -435,102 +263,157 @@
   }
 }
 
-
-#' @title Consolidate Reports (Internal)
-#' @description Consolidates multiple Excel report files into a single report and optionally removes source files.
+#' @title Create Variable Report for GTAP Data
 #'
-#' @param output_folder Character. Directory where the Excel files are located.
-#' @param pattern Character. Pattern to match Excel files (default: "\\.xlsx$").
-#' @param final_name Character. Name for the final consolidated report file (default: "Report_Output.xlsx").
-#' @param remove_sources Logical. If TRUE, source files will be removed after consolidation (default: TRUE).
-#' @param chunk_size Numeric. Number of files to process in each chunk (default: 10).
+#' @description
+#' Generates a comprehensive report of all variables exported during GTAP data processing.
 #'
-#' @return Invisibly returns TRUE if consolidation is successful, or FALSE if no files are found.
-#' @author Pattawee Puangchit
+#' @param data_list A list containing different GTAP data types (e.g., macro, sl4, har)
+#' @param output_path Character. Directory to save the report.
+#' @param filename Character. Name of the report file.
+#'
+#' @return Invisible logical indicating success
+#'
 #' @keywords internal
-#' @seealso \code{\link{process_gtap_data}}
+#' @seealso \code{\link{auto_gtap_data}}
 #'
-.consolidate_reports <- function(output_folder, pattern = "\\.xlsx$",
-                                 final_name = "Report_Output.xlsx",
-                                 remove_sources = TRUE, chunk_size = 10) {
-  if (!dir.exists(output_folder)) {
-    stop("Output folder does not exist: ", output_folder)
-  }
-  xlsx_files <- list.files(
-    path = output_folder,
-    pattern = pattern,
-    full.names = TRUE
+.create_gtap_report <- function(data_list, output_path, filename = "Report_Table.xlsx") {
+  # Create data frame for tracking variables
+  report_data <- data.frame(
+    Variable = character(),
+    ExportFile = character(),
+    InputFile = character(),
+    stringsAsFactors = FALSE
   )
-  final_path <- file.path(output_folder, final_name)
-  xlsx_files <- xlsx_files[xlsx_files != final_path]
-  if (length(xlsx_files) == 0) {
-    message("No files found to consolidate.")
-    return(invisible(FALSE))
-  }
-  message(sprintf("Found %d files to consolidate...", length(xlsx_files)))
-  n_chunks <- ceiling(length(xlsx_files) / chunk_size)
-  chunk_results <- vector("list", n_chunks)
-  failed_files <- character()
-  for (i in seq_len(n_chunks)) {
-    chunk_start <- (i - 1) * chunk_size + 1
-    chunk_end <- min(i * chunk_size, length(xlsx_files))
-    current_files <- xlsx_files[chunk_start:chunk_end]
-    message(sprintf("Processing chunk %d of %d (%d files)...",
-                    i, n_chunks, length(current_files)))
-    chunk_data <- vector("list", length(current_files))
-    for (j in seq_along(current_files)) {
-      file_path <- current_files[j]
-      file_name <- basename(file_path)
-      tryCatch({
-        sheets <- readxl::excel_sheets(file_path)
-        sheet_data <- vector("list", length(sheets))
-        for (k in seq_along(sheets)) {
-          result <- purrr::safely(readxl::read_excel)(file_path, sheet = sheets[k])
-          if (!is.null(result$result)) {
-            sheet_df <- result$result
-            sheet_data[[k]] <- sheet_df
+
+  # Mapping for input file types
+  input_file_map <- c(
+    "GTAPMacros" = ".SL4",
+    "sl4_data" = ".SL4",
+    "bilateral_data" = ".SL4",
+    "decomposition_data" = ".HAR"
+  )
+
+  # Process each data type
+  for (type_name in names(data_list)) {
+    data <- data_list[[type_name]]
+
+    if (is.null(data)) next
+
+    input_file <- input_file_map[type_name]
+    if (is.na(input_file)) input_file <- ".SL4"  # Default to SL4 if not found
+
+    # Handle data frames with Variable column
+    if (is.data.frame(data) && "Variable" %in% names(data)) {
+      variables <- unique(data$Variable)
+      new_rows <- data.frame(
+        Variable = variables,
+        ExportFile = rep(type_name, length(variables)),
+        InputFile = rep(input_file, length(variables)),
+        stringsAsFactors = FALSE
+      )
+      report_data <- rbind(report_data, new_rows)
+      next
+    }
+
+    # Handle lists of data frames
+    if (is.list(data) && !is.data.frame(data)) {
+      process_list <- function(data_item, prefix = "") {
+        result <- data.frame(
+          Variable = character(),
+          ExportFile = character(),
+          InputFile = character(),
+          stringsAsFactors = FALSE
+        )
+
+        if (is.data.frame(data_item) && "Variable" %in% names(data_item)) {
+          variables <- unique(data_item$Variable)
+          # Extract just the last part of the path for ExportFile
+          export_file <- if (prefix == "") {
+            ""
           } else {
-            warning(sprintf("Failed to read sheet %s from %s: %s",
-                            sheets[k], file_name, result$error))
+            parts <- strsplit(prefix, "_")[[1]]
+            tail(parts, 1)
+          }
+
+          new_rows <- data.frame(
+            Variable = variables,
+            ExportFile = rep(export_file, length(variables)),
+            InputFile = rep(input_file, length(variables)),
+            stringsAsFactors = FALSE
+          )
+          result <- rbind(result, new_rows)
+        } else if (is.list(data_item) && !is.data.frame(data_item)) {
+          for (name in names(data_item)) {
+            sub_prefix <- if (prefix == "") name else paste(prefix, name, sep = "_")
+            sub_result <- process_list(data_item[[name]], sub_prefix)
+            result <- rbind(result, sub_result)
           }
         }
-        chunk_data[[j]] <- dplyr::bind_rows(sheet_data)
-      }, error = function(e) {
-        failed_files <- c(failed_files, file_path)
-        warning(sprintf("Failed to process %s: %s", file_name, e$message))
-        NULL
-      })
-    }
-    chunk_results[[i]] <- dplyr::bind_rows(chunk_data)
-    rm(chunk_data)
-    gc()
-  }
-  message("Combining all processed data...")
-  final_data <- dplyr::bind_rows(chunk_results)
-  message(sprintf("Writing consolidated report to %s...", final_name))
-  tryCatch({
-    writexl::write_xlsx(final_data, final_path)
-    if (remove_sources) {
-      message("Removing source files...")
-      successfully_removed <- file.remove(xlsx_files)
-      if (!all(successfully_removed)) {
-        warning(sprintf("Failed to remove %d source files",
-                        sum(!successfully_removed)))
-      }
-    }
-    message(sprintf("Successfully consolidated %d files into %s",
-                    length(xlsx_files), final_name))
-    if (length(failed_files) > 0) {
-      warning(sprintf("Failed to process %d files:\n%s",
-                      length(failed_files),
-                      paste(basename(failed_files), collapse = "\n")))
-    }
-  }, error = function(e) {
-    stop(sprintf("Failed to write consolidated report: %s", e$message))
-  })
-  invisible(TRUE)
-}
 
+        return(result)
+      }
+
+      list_results <- process_list(data, type_name)
+      report_data <- rbind(report_data, list_results)
+    }
+  }
+
+  # If no data, return early
+  if (nrow(report_data) == 0) {
+    message("No variables to report.")
+    return(invisible(FALSE))
+  }
+
+  # Create output directory if needed
+  if (!dir.exists(output_path)) {
+    dir.create(output_path, recursive = TRUE, showWarnings = FALSE)
+  }
+
+  # Clean and sort data
+  report_data <- unique(report_data[order(report_data$Variable), ])
+
+  # Replace empty export files with appropriate values
+  report_data$ExportFile[report_data$ExportFile == ""] <- "Main"
+
+  # Create Excel report
+  wb <- openxlsx::createWorkbook()
+
+  # Variables worksheet
+  openxlsx::addWorksheet(wb, "Variables")
+  openxlsx::writeData(wb, "Variables", report_data, startRow = 1, colNames = TRUE)
+
+  # Style header
+  header_style <- openxlsx::createStyle(
+    textDecoration = "bold",
+    border = "Bottom",
+    borderStyle = "medium"
+  )
+  openxlsx::addStyle(wb, "Variables", style = header_style,
+                     rows = 1, cols = 1:ncol(report_data))
+
+  # Summary worksheet
+  openxlsx::addWorksheet(wb, "Summary")
+
+  input_file_counts <- table(report_data$InputFile)
+  summary_data <- data.frame(
+    InputFile = names(input_file_counts),
+    VariableCount = as.numeric(input_file_counts),
+    stringsAsFactors = FALSE
+  )
+
+  openxlsx::writeData(wb, "Summary", summary_data, startRow = 1, colNames = TRUE)
+  openxlsx::addStyle(wb, "Summary", style = header_style,
+                     rows = 1, cols = 1:ncol(summary_data))
+
+  # Save workbook
+  report_path <- file.path(output_path, filename)
+  openxlsx::saveWorkbook(wb, report_path, overwrite = TRUE)
+
+  message(sprintf("Created GTAP variable report: %s", normalizePath(report_path)))
+
+  return(invisible(TRUE))
+}
 
 #' @title Apply Filters to GTAP Data (Internal)
 #' @description Applies region, experiment, and sector filters to GTAP data structures.
@@ -543,7 +426,7 @@
 #' @return Filtered data in the same structure as input.
 #' @author Pattawee Puangchit
 #' @keywords internal
-#' @seealso \code{\link{process_gtap_data}}
+#' @seealso \code{\link{auto_gtap_data}}
 #'
 .apply_filters <- function(data, region_select = NULL, experiment_select = NULL, sector_select = NULL) {
 
@@ -630,7 +513,7 @@
 #' @return A data structure with the same form as the input, with the function applied to all data frames
 #' @author Pattawee Puangchit
 #' @keywords internal
-#' @seealso \code{\link{process_gtap_data}}
+#' @seealso \code{\link{auto_gtap_data}}
 #'
 .apply_to_dataframes <- function(data, .f, ...) {
   if (is.data.frame(data)) {
@@ -656,5 +539,3 @@
 
   return(process_list(data))
 }
-
-
