@@ -1,4 +1,41 @@
 url: https://bodysbobb.github.io/GTAPViz/
 template:
   bootstrap: 5
+  bootswatch: flatly
+  params:
+    include_assets: ["mystyle.css"]
 
+navbar:
+  structure:
+    left:  [home, articles, reference]
+    right: [github]
+  components:
+    home:
+      text: "Home"
+      href: index.html
+    reference:
+      text: "Functions"
+      href: reference/index.html
+    articles:
+      text: "Vignettes"
+      href: articles/index.html
+    github:
+      icon: fab fa-github
+      href: https://github.com/Bodysbobb/GTAPViz
+      aria-label: "GitHub Repository"
+
+toc:
+  depth: 3
+  collapse: true
+  float: true
+  smooth_scroll: true
+
+articles:
+  - title: "GTAPViz Vignette"
+    contents:
+      - GTAPViz_vignette
+    toc: true
+    toc_float: true
+    toc_smooth_scroll: true
+    highlights: true
+    template: html_document

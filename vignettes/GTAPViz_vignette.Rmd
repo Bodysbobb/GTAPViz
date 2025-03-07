@@ -1,10 +1,17 @@
 ---
-title: "GTAPViz: Visualizing GTAP Model Results"
+title: 'GTAPViz: Visualizing GTAP Model Results'
 author: "Pattawee Puangchit"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette:
-    code_folding: "show"
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    css: mystyle.css
+    number_sections: true
+    code_folding: show
+    self_contained: true
 vignette: >
   %\VignetteIndexEntry{GTAPViz: Visualizing GTAP Model Results}
   %\VignetteEngine{knitr::rmarkdown}
@@ -110,17 +117,15 @@ available for data manipulation to enhance figure illustration.
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Package Overview</span> {#sec:package-overview}
-
-
-## **Simplified Figure and Table Creation for Academic Use**  
+# Package Overview {#sec:package-overview}
 
 This package streamlines the creation of figures and tables from **.HAR** and **.sl4** results, making academic presentations effortless. Some key features are:
 
 - **Automated adjustments** for plot dimensions, facet settings, and other elements, requiring minimal input.  
 - **Intuitive customization** of color tones, font sizes, and legend positions with simple, adaptable commands.  
-- **Full control without complexity**, allowing experienced users to modify every aspect within a single command—no need for lengthy coding or deep function exploration.  
-
+- **Full control without complexity**, allowing users to modify every aspect with a single command—no deep coding required.  
+- **PNG and PDF export**, enabling simultaneous saving in both formats for easy use in presentations and LaTeX.  
+- **Comprehensive documentation**, with an easy-to-follow vignette and a help function listing all plot modifications—adjust settings effortlessly without searching online.
 
 Before proceeding, ensure that `GTAPViz` is installed
 and loaded:
@@ -168,7 +173,7 @@ some examples in [Creating Report Table](#sec:report-table-creating).
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Project Directory</span> {#sec:project-setting}
+# Project Directory {#sec:project-setting}
 
 
 To use this R code, all solution files, including `.sl4` and `.har`,
@@ -209,7 +214,7 @@ Example of Project Folder
 </figure>
 
 
-## 1. Input Folder {#sec:input-folder}
+## Input Folder {#sec:input-folder}
 
 All input files must be stored in `<input.folder>` (default: `"/in"` within `<project.folder>`). Each `.sl4` and `.har` file must follow the naming conventions outlined in [how to name input files](#sec:experiment-name) to ensure consistency.
 
@@ -230,7 +235,7 @@ Below is an example of `<input.folder>`:
 </figure>
 
 
-## 2. Mapping Folder {#sec:mapping-folder}
+## Mapping Folder {#sec:mapping-folder}
 
 The mapping XLSX template is available here: [OutputMapping.xlsx](https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map). It contains three main sheets: 
 
@@ -239,7 +244,7 @@ The mapping XLSX template is available here: [OutputMapping.xlsx](https://github
 - [FilterData](#sec:filterdata-sheets)
 
 
-### 2.1 SL4File and HARFile Sheets {#sec:main-sheets}
+### SL4File and HARFile Sheets {#sec:main-sheets}
 
 • **"Variable"** specifies the required variable from each file.
 
@@ -249,7 +254,7 @@ The mapping XLSX template is available here: [OutputMapping.xlsx](https://github
 
 Below is an example of mapping file:
 
-<div style="font-family: monospace; background-color: #282C34; color: #ABB2BF; padding: 10px; border-radius: 5px; width: fit-content;">
+<div style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;">
   <table style="border-collapse: collapse; width: 100%;">
     <tr>
       <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Variable</th>
@@ -284,8 +289,9 @@ sl4map <- readxl::read_xlsx(map.folder, sheet = "SL4File")
 harmap <- readxl::read_xlsx(map.folder, sheet = "HARFile")
 ```
 
-
-💡 **Tip:** The [mapping file](https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map) can be manually created in R as a dataframe as follows: 
+<div class="tip-box">
+💡 <strong>Tip:</strong> The <a href="https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map">mapping file</a> is crucial to correctly format your outputs.
+</div>
 
 ```{r Munual Mapping File Create, eval=FALSE}
 mapping_df <- data.frame(
@@ -297,7 +303,7 @@ mapping_df <- data.frame(
 ```
 
 
-### 2.2 FilterData Sheet {#sec:filterdata-sheets}
+### FilterData Sheet {#sec:filterdata-sheets}
 
 This sheet is optional and can also be defined in R instead. It contains two columns for *filtering data from the dataframe*. Leave it empty to include all entries.
 
@@ -306,16 +312,18 @@ This sheet is optional and can also be defined in R instead. It contains two col
 • **"Sector"** excludes specified sectors by filtering the "COMM" and "ACTS" columns in all dataframes.  
 
 
-💡 **Tip:** These columns also determine the sorting order. See [Sorting Output](#sec:sorting-output) for details.  
+<div class="tip-box">
+💡 <strong>Tip:</strong> These columns also determine the sorting order. See <a href="#sec:sorting-output">Sorting Output</a> for details.
+</div>
 
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">R Environment Configuration</span> {#sec:r-setup}
+# R Environment Configuration {#sec:r-setup}
 
 This section configures experiment names, description and unit handling, and output formats for processing GTAP model results.
 
-## 1. Experiment Names {#sec:experiment-name}
+## Experiment Names {#sec:experiment-name}
 
 Define `<experiment>` to specify **input file names**. The experiment name:  
   
@@ -333,15 +341,11 @@ experiment <- c("TAR10", "SUBT10")
 # - SUBT10.sl4 and SUBT10-WEL.har  
 ```
 
-<span style="color: #D62728;"><strong>Important:</strong></span> 
-`.har` input files must include "-WEL" in their names. If unsure, refer to the [input folder figure](#sec:input-folder).
-
-
 **Note:** You can include as many experiments (inputs) as needed, but a higher
 number will increase processing time.
 
 
-## 2. Description and Unit {#sec:info.mode}
+## Description and Unit {#sec:info.mode}
 
 `<info.mode>` controls how the **"Description"** and **"Unit"** columns are included in the output:
 
@@ -357,7 +361,7 @@ info.mode <- "Mix"
 **Note:** GTAP defaults apply only to variables included in the GTAPv7 model. Any additional variables must be manually defined.
 
 
-## 3. Output Formats {#sec:output-formats}
+## Output Formats {#sec:output-formats}
 
 Select the required output formats (`"Yes"` = export, `"No"` = skip):  
 
@@ -382,8 +386,7 @@ plot_data = TRUE
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">R Configuration Summary</span> {#sec:r-config-summary}
-
+# R Configuration Summary {#sec:r-config-summary}
 
 In summary, the entire R setup is captured in the following chunk:  
 
@@ -407,9 +410,18 @@ txt.output <- "No"
 plot_data = TRUE
 ```
 
-💡 **Tip:** Once this process is complete, no further modifications are needed—provided the project folder and mapping file format remain unchanged.  
+<div style="
+    background-color: #E8F4FD; 
+    border-left: 5px solid #5B9BD5; 
+    padding: 10px 15px; 
+    border-radius: 5px;
+    margin: 15px 0;
+    ">
+💡 <strong>Tip:</strong> Once this process is complete, you can use the same format for future documents—saving you time and ensuring consistency.
+</div>
 
-### Setting Up Sub-Directorie {#sec:subdirectory}
+
+## Setting Up Sub-Directories {#sec:subdirectory}
 
 You can simply run the following code without modification if you followed all the previous instructions:
 
@@ -428,7 +440,7 @@ filter.map <- readxl::read_xlsx(paste0(map.folder, "/OutputMapping.xlsx"), sheet
 **Note:** If you're familiar with R and prefer a more flexible directory structure, you can customize any of these. However, you must also define them in the function. 
 
 
-### Data Filtering Setup {#sec:filtering-data}
+## Data Filtering Setup {#sec:filtering-data}
 
 This filtering process runs automatically when the mapping file is used as instructed. However, experienced users can define it manually in the R environment:  
 
@@ -442,12 +454,14 @@ selected_regions <- c("EastAsia", "SEAsia", "Oceania")
 selected_sector  <- NULL
 ```
 
-💡 **Tip:** If the plot is too dense or unclear, try filtering more data! 
+<div class="tip-box">
+💡 <strong>Tip:</strong> If the plot is too dense or unclear, try filtering more data!
+</div>
 
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Output Sorting Rules</span> {#sec:sorting-output}
+# Output Sorting Rules {#sec:sorting-output}
 
 These predefined lists determine the display order of outputs, i.e., figures and tables:  
 
@@ -460,11 +474,12 @@ These predefined lists determine the display order of outputs, i.e., figures and
 
 To customize sorting for additional columns, manual adjustments may be required.  
 
-### Example:  
+## Example:  
 
 This setup with will display the figure as shown below:  
 
 - `experiment <- c("TAR10", "SUBT10")`  
+
 - `selected_regions <- c("EastAsia", "SEAsia", "Oceania")`  
 
 ```{r, echo=FALSE, out.width="600px"}
@@ -474,7 +489,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Automated Data Extraction</span> {#sec:automategtap}
+# Automated Data Extraction {#sec:automategtap}
 
 To streamline figure generation from GTAP results, I developed an automated data extraction method using the following command:  
 
@@ -501,9 +516,9 @@ auto_gtap_data(
 **Note:**  
 For non-GTAP models or manual data extraction, see [Manual Data Processing](#sec:manualdata).  
 
-💡 **Tip:** 
-This automation uses the `"HARplus::group_data_by_dims"` command. However, other formats, such as `"HARplus::get_data_by_var"`, `"HARplus::get_data_by_dims"`, or custom data formats, can also be used with the figure code with some modifications.  
-
+<div class="tip-box">
+💡 <strong>Tip:</strong> The process of extracting data in automation can be modified freely. See <code>?auto_gtap_data</code>. Keep in mind that the plot function may require slight modifications to suit the new format.
+</div>
 
 ## Converting Units and Labels (Optional) {#sec:custom-unit}
 
@@ -522,14 +537,14 @@ har.plot.data <- convert_units(har.plot.data,
 
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# **<span style="color:#D62728;">RECOMMENDED: Before Starting the Plot</span>**
+# **<span style="color:#D62728;">Essential Info</span>** {.unnumbered}
 
-## **<span style="color:#D62728;">Understanding the Function</span>**  
+## **<span style="color:#D62728;">Understanding the Function</span>** {.unnumbered}  
 
 Before generating any figures, it is useful to review the function arguments to ensure you take full advantage of the available customization options. See: `?comparison_plot`, `?detail_plot`, `?stack_plot`  
 
 
-## **<span style="color:#D62728;">Customizing the Plot</span>**
+## **<span style="color:#D62728;">Customizing the Plot</span>** {.unnumbered}
 
 
 This package builds on **ggplot2**, making nearly all of its customization options easily adjustable within its plotting functions.  
@@ -549,8 +564,9 @@ all_configs <- get_plot_config()
 
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
+# Creating Figures {#sec:create-plot}
 
-# <span style="color:#003366; font-weight: bold;">Comparison Plot</span> {#sec:comparisonplot}
+## Comparison Plot {#sec:comparisonplot}
 
 
 This figure compares one or multiple variables across all experiments for selected observations from a chosen dimension (e.g., region, sector).  
@@ -560,8 +576,6 @@ This figure compares one or multiple variables across all experiments for select
 
 - Displays all selected variables in one plot, making it ideal for a few observations; too many can make it dense and unclear.  
 
-
-💡 **Tip:** To check which data is compatible, use `"HARplus::group_data_by_dims"`. Variables listed under the `"1D"` sublist are suitable.  
 
 ### Practical Examples  
 
@@ -605,7 +619,6 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                 ))
 ```
 
-💡 **Tip:**  
 By default, you might not need to define as much, as the previous sample code assumes that you follow all the previous instructions. You may use the following command to get the exact same output:  
 
 ```{r Comparison Plot - Short Version, eval = FALSE}
@@ -637,7 +650,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">GTAP Macro Variable Plot</span> {#sec:macroplot}
+## GTAP Macro Variable Plot {#sec:macroplot}
 
 
 This figure displays aggregated values across all experiments, typically for global economic impacts. It is designed for GTAP Macro variables extracted from the *"Macros"* header in `<.sl4>` files.  
@@ -650,9 +663,11 @@ This figure displays aggregated values across all experiments, typically for glo
 
 - Primarily used for GTAP Macro variables but can be applied to other aggregated datasets.  
 
-💡 *Tip:* If you have not imported the GTAP Macro data please see [GTAP Macro Data Extraction](#sec:gtapmacro-dataextract)
- 
- 
+<div class="tip-box">
+💡 <strong>Tip:</strong> If you have not imported the GTAP Macro data, please see <a href="#sec:gtapmacro-dataextract">GTAP Macro Data Extraction</a>.
+</div>
+
+
 To plot this figure, you can use the following command:
 
 ```{r GTAP Macro Plot, eval = FALSE}
@@ -687,7 +702,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Detail Plot</span> {#sec:detailplot}
+## Detail Plot {#sec:detailplot}
 
 
 This figure visualizes large-scale data, displaying all sectors (*COMM*, *ACTS*) or all regions (*REG*) within each experiment.  
@@ -741,8 +756,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Decomposition (Stack) Plot</span> {#sec:stackplot}
-
+## Decomposition (Stack) Plot {#sec:stackplot}
 
 This plot visualizes decomposition results, showing how different components contribute to a total value, making it particularly suitable for decomposition analysis.  
 
@@ -751,7 +765,9 @@ This plot visualizes decomposition results, showing how different components con
 - Allows further decomposition by unstacking components instead of using a stacked bar.  
 - Suitable for welfare decomposition, trade decomposition, and other GTAP structural breakdowns.  
 
-💡 **Tip:** Since decomposition data often contains multiple components, **renaming and restructuring** may be necessary before plotting. You can try the following code:
+<div class="tip-box">
+💡 <strong>Tip:</strong> Since decomposition data often contains multiple components, <strong>renaming and restructuring</strong> may be necessary before plotting. You can try the following code:
+</div>
 
 ```{r Rename Decomposition File, eval = FALSE}
 # Rename Value if needed
@@ -856,14 +872,14 @@ stack_plot(data = har.plot.data[["E1"]],
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Creating Report Table</span> {#sec:report-table-creating}
+# Creating Report Table {#sec:report-table-creating}
 
 This command generates multiple table formats suitable for *academic presentations* with minimal adjustments. You can process multiple data frames in the same session, even with different pivot formats, but each must be defined separately. See the sample code for details.  
 
 **Note:**  
 If you want to change values in a column, such as region names, do so before creating the report table (see [Renaming Values in a Dataframe](#sec:rename-value)).  
 
-## 1. Comparison Table {#sec:comparison-table}
+## Comparison Table {#sec:comparison-table}
 
 ```{r Comparison Table, eval = FALSE}
 report_table(
@@ -891,7 +907,7 @@ report_table(
 )
 ```
 
-## 2. GTAP Macro Table {#sec:macro-table}
+## GTAP Macro Table {#sec:macro-table}
 
 ```{r GTAP Macro Table, eval = FALSE}
 GTAPMacro <- list(GTAPMacro = Macros)
@@ -922,7 +938,7 @@ report_table(
 )
 ```
 
-## 3. Detail Table {#sec:detail-table}
+## Detail Table {#sec:detail-table}
 
 ```{r Detail Table, eval = FALSE}
 report_table(
@@ -952,7 +968,7 @@ report_table(
 )
 ```
 
-## 4. Decomposition Table {#sec:decomp-table}
+## Decomposition Table {#sec:decomp-table}
 
 ```{r Decomposition Table, eval = FALSE}
 report_table(
@@ -988,9 +1004,9 @@ report_table(
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Additional Utilities</span> {#sec:additional-utilities}
+# Additional Utilities {#sec:additional-utilities}
 
-## 1. Adding Unit and Description Columns {#sec:add-info}
+## Adding Unit and Description Columns {#sec:add-info}
 
 If you manually import data or need to adjust the `"Description"` and
 `"Unit"` columns, you can use the following command:
@@ -1009,7 +1025,7 @@ datasets <- add_mapping_info(mapping_df, external_map = mapping_df, mapping = "Y
 **Note:** Use `?add_mapping_info` to understand the meaning of `mapping`.
 
 
-## 2. Converting Units and Values {#sec:converting-unit}
+## Converting Units and Values {#sec:converting-unit}
 
 GTAP default values are typically reported in million USD, which may be too large for aesthetic plotting. This command converts units across all variables and data frames.
 
@@ -1030,7 +1046,7 @@ datasets <- convert_units(change_unit_from = c("million USD", "percent"),
 ```
 
 
-## 3. Renaming Columns and Data List Names {#sec:rename-column}
+## Renaming Columns and Data List Names {#sec:rename-column}
 
 To modify column names across all datasets and/or rename data list names automatically—such as changing `REG` to `Region` or `COMM` to `Commodity`—use the following command:  
 
@@ -1044,12 +1060,14 @@ rename_col <- data.frame(
 har.plot.data <- HARplus::rename_dims(har.plot.data, rename_col)
 ```
 
-💡 **Tip:** You can create this mapping dataframe in Excel and import it into R. The column names must be *"old"* and *"new"*.  
+💡 **Tip:** 
+You can create this mapping dataframe in Excel and import it into R. The column names must be *"old"* and *"new"*.  
 
-**Note:** The column names must be `"old"` and `"new"`. See `<?HARplus::rename_col>` for details.  
+**Note:** 
+The column names must be `"old"` and `"new"`. See `<?HARplus::rename_col>` for details.  
 
 
-## 4. Renaming Values in a Dataframe {#sec:rename-value}
+## Renaming Values in a Dataframe {#sec:rename-value}
 
 To automatically modify values in any column before plotting—such as renaming country names in the `REG` column (e.g., changing `"USA"` to `"United States"` or `"CHN"` to `"China"`)—use the following command:  
 
@@ -1070,8 +1088,7 @@ har.plot.data.rename <- rename_value(har.plot.data, mapping.file = rename.region
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Manual Data Processing</span> {#sec:manualdata}
-
+# Manual Data Processing {#sec:manualdata}
 
 This section is for non-GTAP models or manual data extraction for plotting. Follow these steps:
 
@@ -1106,7 +1123,7 @@ manual.data <- add_mapping_info(manual.data, external_map = "/your/mapping.xlsx"
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">GTAP Macro Data Extraction</span> {#sec:gtapmacro-dataextract}
+# GTAP Macro Data Extraction {#sec:gtapmacro-dataextract}
 
 
 Extract GTAP Macro variables from the *"Macros"* header in `.sl4` files using the following command:  
@@ -1122,7 +1139,7 @@ Macros <- gtap_macros_data(
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# <span style="color:#003366; font-weight: bold;">Sample Data</span> 
+# Sample Data
 
 Sample data used in this vignette is obtained from the GTAPv7 model
 and utilizes publicly available data from the GTAP 9 database. For
