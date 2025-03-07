@@ -2,8 +2,8 @@ url: https://bodysbobb.github.io/GTAPViz/
 template:
   bootstrap: 5
   bootswatch: flatly
-  params:
-    include_assets: ["mystyle.css"]
+home:
+  css: css/mystyle.css
 
 navbar:
   structure:
@@ -39,3 +39,4 @@ articles:
     toc_smooth_scroll: true
     highlights: true
     template: html_document
+
