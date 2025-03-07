@@ -16,7 +16,7 @@
 #'
 #' @author Pattawee Puangchit
 #' @export
-#' @seealso \code{\link{add_mapping_info}}, \code{\link{process_gtap_data}}
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{auto_gtap_data}}
 #'
 #' @examples
 #' \dontrun{

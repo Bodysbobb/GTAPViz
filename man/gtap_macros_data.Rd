@@ -47,7 +47,7 @@ Macros <- gtap_macros_data(input_dir, experiment_names = experiment,
 
 }
 \seealso{
-\code{\link{add_mapping_info}}, \code{\link{process_gtap_data}}
+\code{\link{add_mapping_info}}, \code{\link{auto_gtap_data}}
 }
 \author{
 Pattawee Puangchit
