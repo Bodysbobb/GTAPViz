@@ -27,19 +27,17 @@
 #' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #' @export
 #'
-get_plot_config <- function(plot_style = "all", config = NULL, export_config = NULL) {
-  valid_styles <- c("comparison", "detail", "stack", "all")
+get_plot_config <- function(plot_style = "default", config = NULL, export_config = NULL) {
+  valid_styles <- c("default")
   if (!plot_style %in% valid_styles) {
-    stop("Plot style must be one of: 'comparison', 'detail', 'stack', or 'all'")
+    stop("Plot style must be one of: 'default'")
   }
 
   result <- list()
 
   if (plot_style == "all") {
     result$plot_style_config <- list(
-      comparison = .calculate_plot_style_config(config, "comparison"),
-      detail = .calculate_plot_style_config(config, "detail"),
-      stack = .calculate_plot_style_config(config, "stack")
+      comparison = .calculate_plot_style_config(config, "default")
     )
   } else {
     result$plot_style_config <- .calculate_plot_style_config(config, plot_style)
@@ -185,7 +183,7 @@ get_plot_config <- function(plot_style = "all", config = NULL, export_config = N
 #' custom_config <- list(title_size = 24, bar_width = 0.7)
 #' validated <- get_plot_style_config("comparison", validate_custom = custom_config)
 #'
-get_plot_style_config <- function(plot_type = "comparison",
+get_plot_style_config <- function(plot_type = "default",
                                   parameter_name = NULL,
                                   show_docs = FALSE,
                                   validate_custom = NULL,
@@ -564,7 +562,7 @@ get_export_config <- function(as_dataframe = FALSE) {
 #' This function is internal and used by plotting functions to define visual styling.
 #'
 #' @param config Optional list with custom style configuration parameters.
-#' @param plot_type Type of plot: `"comparison"`, `"detail"`, or `"stack"`.
+#' @param plot_type Type of plot: `"default"`.
 #'
 #' @return A list with complete style configuration for the specified plot type.
 #' @importFrom utils modifyList
@@ -572,9 +570,9 @@ get_export_config <- function(as_dataframe = FALSE) {
 #' @keywords internal
 #' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #'
-.calculate_plot_style_config <- function(config = NULL, plot_type = "comparison") {
+.calculate_plot_style_config <- function(config = NULL, plot_type = "default") {
   # Default configurations specific to each plot type
-  comparison_defaults <- list(
+  style_default <- list(
     # Title settings
     show_title = TRUE,
     title_face = "bold",
@@ -588,19 +586,19 @@ get_export_config <- function(as_dataframe = FALSE) {
     show_x_axis_title = TRUE,
     x_axis_title_face = "bold",
     x_axis_title_size = 16,
-    x_axis_title_margin = ggplot2::margin(t = 20, r = 0, b = 0, l = 0),
+    x_axis_title_margin = ggplot2::margin(t = 25, r = 25, b = 0, l = 0),
     show_x_axis_labels = TRUE,
-    x_axis_text_face = "bold",
+    x_axis_text_face = "plain",
     x_axis_text_size = 14,
-    x_axis_text_angle = 45,
-    x_axis_text_hjust = 1,
+    x_axis_text_angle = 0,
+    x_axis_text_hjust = 0,
     x_axis_description = "",
 
     # Y-Axis settings
     show_y_axis_title = TRUE,
     y_axis_title_face = "bold",
     y_axis_title_size = 16,
-    y_axis_title_margin = ggplot2::margin(t = 0, r = 20, b = 0, l = 0),
+    y_axis_title_margin = ggplot2::margin(t = 25, r = 25, b = 0, l = 0),
     show_y_axis_labels = TRUE,
     y_axis_text_face = "plain",
     y_axis_text_size = 14,
@@ -645,7 +643,7 @@ get_export_config <- function(as_dataframe = FALSE) {
     background_color = "white",
     grid_color = "grey90",
     show_grid_major_x = FALSE,
-    show_grid_major_y = TRUE,
+    show_grid_major_y = FALSE,
     show_grid_minor_x = FALSE,
     show_grid_minor_y = FALSE,
 
@@ -672,208 +670,10 @@ get_export_config <- function(as_dataframe = FALSE) {
     all_font_size = 1
   )
 
-  detail_defaults <- list(
-    # Title settings
-    show_title = TRUE,
-    title_face = "bold",
-    title_size = 48,
-    title_hjust = 0.5,
-    add_unit_to_title = TRUE,
-    title_margin = ggplot2::margin(b = 30),
-    title_format = list(type = "standard", text = ""),
-
-    # X-Axis settings
-    show_x_axis_title = TRUE,
-    x_axis_title_face = "bold",
-    x_axis_title_size = 32,
-    x_axis_title_margin = ggplot2::margin(t = 20, r = 0, b = 0, l = 0),
-    show_x_axis_labels = TRUE,
-    x_axis_text_face = "plain",
-    x_axis_text_size = 32,
-    x_axis_text_angle = 45,
-    x_axis_text_hjust = 1,
-    x_axis_description = "",
-
-    # Y-Axis settings
-    show_y_axis_title = TRUE,
-    y_axis_title_face = "bold",
-    y_axis_title_size = 32,
-    y_axis_title_margin = ggplot2::margin(t = 0, r = 50, b = 0, l = 0),
-    show_y_axis_labels = TRUE,
-    y_axis_text_face = "plain",
-    y_axis_text_size = 32,
-    y_axis_text_angle = 0,
-    y_axis_text_hjust = 1,
-    y_axis_description = "",
-
-    # Axis Label across panel
-    show_axis_titles_on_all_facets = TRUE,
-
-    # Value label settings
-    show_value_labels = TRUE,
-    value_label_face = "plain",
-    value_label_size = 7,
-    value_label_position = "outside",
-    value_label_decimal_places = 2,
-
-    # Legend settings
-    show_legend = FALSE,
-    show_legend_title = FALSE,
-    legend_position = "bottom",
-    legend_title_face = "bold",
-    legend_text_face = "plain",
-    legend_text_size = 14,
-
-    # Panel strip settings
-    strip_face = "bold",
-    strip_text_size = 25,
-    strip_background = "lightgrey",
-    strip_text_margin = ggplot2::margin(10, 0, 10, 0),
-
-    # Panel layout
-    panel_spacing = 1,
-    panel_rows = NULL,
-    panel_cols = NULL,
-    theme = NULL,
-
-    # Color settings
-    color_tone = NULL,
-    positive_color = "#2E8B57",
-    negative_color = "#CD5C5C",
-    background_color = "white",
-    grid_color = "grey90",
-    show_grid_major_x = FALSE,
-    show_grid_major_y = FALSE,
-    show_grid_minor_x = FALSE,
-    show_grid_minor_y = FALSE,
-
-    # Zero line settings
-    show_zero_line = TRUE,
-    zero_line_type = "dashed",
-    zero_line_color = "black",
-    zero_line_size = 0.5,
-    zero_line_position = 0,
-
-    # Bar chart settings
-    bar_width = 0.4,
-    bar_spacing = 0.5,
-
-    # Scale settings
-    scale_limit = NULL,
-    scale_increment = NULL,
-
-    # Scale expansion settings
-    expansion_y_mult = c(0.2, 0.2),
-    expansion_x_mult = c(0.05, 0.05),
-
-    # Font size settings
-    all_font_size = 1
-  )
-
-  stack_defaults <- list(
-    # Title settings
-    show_title = TRUE,
-    title_face = "bold",
-    title_size = 32,
-    title_hjust = 0.5,
-    add_unit_to_title = TRUE,
-    title_margin = ggplot2::margin(b = 15),
-    title_format = list(type = "standard", text = ""),
-
-    # X-Axis settings
-    show_x_axis_title = TRUE,
-    x_axis_title_face = "bold",
-    x_axis_title_size = 20,
-    x_axis_title_margin = ggplot2::margin(t = 20, r = 0, b = 0, l = 0),
-    show_x_axis_labels = TRUE,
-    x_axis_text_face = "bold",
-    x_axis_text_size = 18,
-    x_axis_text_angle = 45,
-    x_axis_text_hjust = 1,
-    x_axis_description = "",
-
-    # Y-Axis settings
-    show_y_axis_title = TRUE,
-    y_axis_title_face = "bold",
-    y_axis_title_size = 20,
-    y_axis_title_margin = ggplot2::margin(t = 0, r = 20, b = 0, l = 0),
-    show_y_axis_labels = TRUE,
-    y_axis_text_face = "plain",
-    y_axis_text_size = 18,
-    y_axis_text_angle = 0,
-    y_axis_text_hjust = 0,
-    y_axis_description = "",
-
-    # Axis Label across panel
-    show_axis_titles_on_all_facets = TRUE,
-
-    # Value label settings
-    show_value_labels = TRUE,
-    value_label_face = "plain",
-    value_label_size = 5,
-    value_label_position = "top",
-    value_label_decimal_places = 2,
-
-    # Legend settings
-    show_legend = TRUE,
-    show_legend_title = FALSE,
-    legend_position = "bottom",
-    legend_title_face = "bold",
-    legend_text_face = "plain",
-    legend_text_size = 18,
-
-    # Panel strip settings
-    strip_face = "bold",
-    strip_text_size = 18,
-    strip_background = "lightgrey",
-    strip_text_margin = ggplot2::margin(10, 0, 10, 0),
-
-    # Panel layout
-    panel_spacing = 1,
-    panel_rows = NULL,
-    panel_cols = NULL,
-    theme = NULL,
-
-    # Color settings
-    color_tone = NULL,
-    positive_color = "#2E8B57",
-    negative_color = "#CD5C5C",
-    background_color = "white",
-    grid_color = "grey90",
-    show_grid_major_x = FALSE,
-    show_grid_major_y = TRUE,
-    show_grid_minor_x = FALSE,
-    show_grid_minor_y = FALSE,
-
-    # Zero line settings
-    show_zero_line = TRUE,
-    zero_line_type = "dashed",
-    zero_line_color = "black",
-    zero_line_size = 0.5,
-    zero_line_position = 0,
-
-    # Bar chart settings
-    bar_width = 0.7,
-    bar_spacing = 0,
-
-    # Scale settings
-    scale_limit = NULL,
-    scale_increment = NULL,
-
-    # Scale expansion settings
-    expansion_y_mult = c(0.1, 0.1),
-    expansion_x_mult = c(0.05, 0.05),
-
-    # Font size settings
-    all_font_size = 1
-  )
-
   # Select the appropriate default based on plot type
   default_config <- switch(plot_type,
-                           "comparison" = comparison_defaults,
-                           "detail" = detail_defaults,
-                           "stack" = stack_defaults,
-                           comparison_defaults)
+                           "default" = style_default,
+                           style_default)
 
   # If no config is provided, return the default
   if (is.null(config)) {
@@ -926,7 +726,6 @@ get_export_config <- function(as_dataframe = FALSE) {
 
   return(final_config)
 }
-
 
 #' @title Apply Plot Style Configuration to a ggplot Object
 #'

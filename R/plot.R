@@ -224,9 +224,9 @@ comparison_plot <- function(data, filter_var = NULL,
   # Merge with user provided config (user settings take precedence)
   if (!is.null(plot_style_config)) {
     style_config <- modifyList(base_style_config, plot_style_config)
-    style_config <- .calculate_plot_style_config(style_config, "comparison")
+    style_config <- .calculate_plot_style_config(style_config, "default")
   } else {
-    style_config <- .calculate_plot_style_config(base_style_config, "comparison")
+    style_config <- .calculate_plot_style_config(base_style_config, "default")
   }
 
   # PROCESS BY UNIT GROUPS (different units need separate plots)
@@ -472,7 +472,7 @@ comparison_plot <- function(data, filter_var = NULL,
   style_config <- if (!is.null(plot_style_config)) {
     plot_style_config
   } else {
-    .calculate_plot_style_config(NULL, "comparison")
+    .calculate_plot_style_config(NULL, "default")
   }
 
   # SET UP VARIABLES FOR PLOTTING
@@ -1021,9 +1021,9 @@ detail_plot <- function(data, filter_var = NULL,
   # Merge with user provided config (user settings take precedence)
   if (!is.null(plot_style_config)) {
     style_config <- modifyList(base_style_config, plot_style_config)
-    style_config <- .calculate_plot_style_config(style_config, "detail")
+    style_config <- .calculate_plot_style_config(style_config, "default")
   } else {
-    style_config <- .calculate_plot_style_config(base_style_config, "detail")
+    style_config <- .calculate_plot_style_config(base_style_config, "default")
   }
 
   # PROCESS BY UNIT GROUPS (different units need separate plots)
@@ -1283,7 +1283,7 @@ detail_plot <- function(data, filter_var = NULL,
   style_config <- if (!is.null(plot_style_config)) {
     plot_style_config
   } else {
-    .calculate_plot_style_config(NULL, "detail")
+    .calculate_plot_style_config(NULL, "default")
   }
 
   # SETUP COLOR PALETTE
@@ -1909,9 +1909,9 @@ stack_plot <- function(data, filter_var = NULL,
   # Merge with user provided config (user settings take precedence)
   if (!is.null(plot_style_config)) {
     style_config <- modifyList(base_style_config, plot_style_config)
-    style_config <- .calculate_plot_style_config(style_config, "stack")
+    style_config <- .calculate_plot_style_config(style_config, "default")
   } else {
-    style_config <- .calculate_plot_style_config(base_style_config, "stack")
+    style_config <- .calculate_plot_style_config(base_style_config, "default")
   }
 
   # PROCESS BY UNIT GROUPS (different units need separate plots)
@@ -2154,7 +2154,7 @@ stack_plot <- function(data, filter_var = NULL,
   style_config <- if (!is.null(plot_style_config)) {
     plot_style_config
   } else {
-    .calculate_plot_style_config(NULL, "stack")
+    .calculate_plot_style_config(NULL, "default")
   }
 
   # SETUP VARIABLES
@@ -2495,7 +2495,7 @@ stack_plot <- function(data, filter_var = NULL,
   style_config <- if (!is.null(plot_style_config)) {
     plot_style_config
   } else {
-    .calculate_plot_style_config(NULL, "stack")
+    .calculate_plot_style_config(NULL, "default")
   }
 
   # SETUP VARIABLES
