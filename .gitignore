@@ -6,3 +6,5 @@ LICENSE
 *.Rbuildignore
 .Rproj.user
 docs
+/doc/
+/Meta/
