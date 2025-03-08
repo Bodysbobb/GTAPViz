@@ -509,7 +509,7 @@ These predefined lists determine the display order of outputs, i.e., figures and
 - `<selected_sectors>` sorts the column for defined sectors by GTAP; the default is `"COMM"` and `"ACTS"`.  
 
 <div class="tip-box">
-💡 <strong>Tip:</strong> To customize sorting for additional columns, manual adjustments may be required. 
+💡 <strong>Tip:</strong> To customize sorting for additional columns, see `?sort_plot_data`. 
 </div>
 
 For example, this setup with will display the figure as shown below:  
@@ -579,7 +579,7 @@ har.plot.data <- convert_units(har.plot.data,
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
 <div class="info-box">
-# **Essential Info** {#essential-info .unnumbered}
+# **Essential Information for Visualization** {#essential-info-figure .unnumbered}
 
 ## Understanding Function Arguments {.unnumbered}
   <p>Before generating any figures, it is useful to review the function arguments to ensure you take full advantage of the available customization options:</p>
@@ -624,15 +624,13 @@ all_configs <- get_plot_config()
 
 This figure compares one or multiple variables across all experiments for selected observations from a chosen dimension (e.g., region, sector).  
 
-### Key Features:
+<strong style="font-size: 1.17em;">Key Features</strong>
 - Designed for comparing selected variables across experiments.  
 
 - Displays all selected variables in one plot, making it ideal for a few observations; too many can make it dense and unclear.  
 
 
-### Practical Examples  
-
-Plotting `qgdp`, `ppriv`, `EV`, `tot`, and `u` generates six separate figures using the following command:  
+For example, plotting `qgdp`, `ppriv`, `EV`, `tot`, and `u` generates six separate figures using the following command:  
 
 ```{r Comparison Plot, eval = FALSE}
 reg_data = sl4.plot.data[["1D"]][["Region"]]
@@ -693,9 +691,7 @@ comparison_plot(reg_data,
                     text = "Impact On"
                   ),
                   panel_rows = 2,
-                  panel_cols = NULL,
-                  show_axis_titles_on_all_facets = FALSE,
-                  show_title = FALSE
+                  show_title = TRUE
                 ))
 ```
 
@@ -704,7 +700,8 @@ comparison_plot(reg_data,
 ```{r, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/cpsplot.png")
 ```
-</div> <figcaption class="package-fig"> Comparison Plot Visualization <br> </figcaption> </figure>
+</div> <figcaption class="package-fig"> Comparison Plot Visualization <br> </figcaption>
+<span class="package-fig-note">(splt_by = FALSE, panel_rows = 2, panel_cols = NULL i.e., default)</span> </figcaption> </figure>
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -713,7 +710,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 
 This figure displays aggregated values across all experiments, typically for global economic impacts. It is designed for GTAP Macro variables extracted from the *"Macros"* header in `<.sl4>` files.  
 
-### Key Features:
+<strong style="font-size: 1.17em;">Key Features</strong>
 
 - Compares macroeconomic indicators across experiments.  
 
@@ -756,7 +753,7 @@ comparison_plot(GTAPMacro,
 ```{r, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/GTAPMacros.png")
 ```
-</div> <figcaption class="package-fig"> GTAP Macro Plot Visualization <br> <span class="package-fig-note">(splt_by = FALSE)</span> </figcaption> </figure>
+</div> <figcaption class="package-fig"> GTAP Macro Plot Visualization <br> <span class="package-fig-note">(splt_by = FALSE, panel_rows and panel_cols = NULL i.e., default)</span> </figcaption> </figure>
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -765,7 +762,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 
 This figure visualizes large-scale data, displaying all sectors (*COMM*, *ACTS*) or all regions (*REG*) within each experiment.  
 
-### Key Features:
+<strong style="font-size: 1.17em;">Key Features</strong>
 - Supports visualization across two selected dimensions.  
 - Suitable for datasets too large for *comparison_plot*.  
 - Automatically detects and aligns variables with different dimension names.  
@@ -779,11 +776,11 @@ detail_plot(sl4.plot.data[["2D"]],
             x_axis_from = "Sector",
             split_by = "Region",
 
-            top_impact = NULL,
+            top_impact = 10,
             var_name_by_description = TRUE,
             
             invert_pane = TRUE,
-            separate_figure = TRUE,
+            separate_figure = FALSE,
             
             export_config = list(
               width = 45,
@@ -791,7 +788,7 @@ detail_plot(sl4.plot.data[["2D"]],
             ),
             
             export_picture = TRUE,
-            export_as_pdf = TRUE,   
+            export_as_pdf = FALSE,   
             output_path = output.folder,
             
             plot_style_config = list(
@@ -799,16 +796,33 @@ detail_plot(sl4.plot.data[["2D"]],
               negative_color = "#CD5C5C",
               panel_rows = 1,
               panel_cols = NULL,
-              show_axis_titles_on_all_facets = FALSE
+              show_axis_titles_on_all_facets = FALSE,
+              y_axis_text_size = 25,
+              bar_width = 0.6,
+              all_font_size = 1.1
             ))
 ```
+
+<div class="tip-box">
+💡 **Tip:** You may notice the following adjustments:
+- `positive_color` and `negative_color`: Define colors for positive and negative values, automatically distinguishing impacts by shade.
+
+- `show_axis_titles_on_all_facets`: Suppresses repeated labels across facets.
+
+- `y_axis_text_size`: Increases y-axis label size to 25 from the default setting.
+
+- `bar_width`: Decreases bar width for better visualization of large datasets.
+
+- `all_font_size`: Increases all font sizes to 1.3 from the default setting.
+</div>
+
 
 <figure class="package-figure">
   <div class="package-figure-box">
 ```{r, echo=FALSE, fig.align="center", out.width="100%"}
   knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot.png")
 ```
-</div> <figcaption class="package-fig"> Detail Plot Visualization <br> <span class="package-fig-note">(top_impact = NULL, invert_pane = TRUE)</span> </figcaption> </figure>
+</div> <figcaption class="package-fig"> Detail Plot Visualization <br> <span class="package-fig-note">(top_impact = NULL, invert_pane = TRUE, panel_rows = 1)</span> </figcaption> </figure>
   
   
 <figure class="package-figure">
@@ -825,7 +839,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 
 This plot visualizes decomposition results, showing how different components contribute to a total value, making it particularly suitable for decomposition analysis.  
 
-### Key Features:
+<strong style="font-size: 1.17em;">Key Features</strong>
 - Displays the contribution of components to a total value.  
 - Allows further decomposition by unstacking components instead of using a stacked bar.  
 - Suitable for welfare decomposition, trade decomposition, and other GTAP structural breakdowns.  
@@ -879,7 +893,7 @@ stack_plot(data = har.plot.data[["A"]],
            output_path = output.folder,
            
            plot_style_config = list(
-             color_tone = "purdue",
+             color_tone = "gtap",
              panel_rows = 2,
              panel_cols = NULL,
              show_axis_titles_on_all_facets = FALSE
@@ -941,7 +955,57 @@ stack_plot(data = har.plot.data[["E1"]],
 ```
 
 
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
+<div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
+
+<div class="info-box">
+# **Essential Information for the Reporting Table** {#essential-info-table .unnumbered}
+
+## Understanding Function Arguments {.unnumbered}
+<p>Before generating any tables, it is useful to review the function arguments to ensure you take full advantage of the available customization options:</p>
+
+```{r, eval = FALSE}
+?report_table
+```
+  
+A limitation of this reporting table function is that the input data must be in a list format. The following code provides an example of how to convert data into this format:
+
+```{r, eval = FALSE}
+data_list = list(DataFrame = DataFrame)
+```
+
+## Key Parameters {.unnumbered}  
+In this vignette, I will clarify some of the more complex parameters of the reporting table function. However, additional arguments are available, which you can explore by running `?report_table`.  
+
+For example, using the following code settings:  
+
+```{r, eval = FALSE}
+report_table(
+  data_list = data_list,
+  pivot_col = list(Region = "Variable"),
+  group_by =  list(
+    Region = list("Experiment", "Region")),
+  rename_cols = list("Experiment" = "Scenario"),
+  total_column = FALSE)
+```
+
+- `data_list`: A named list of data list to process.  
+
+- `pivot_col`: Defines a pivot column for each dataset, converting it into a wide format. **Only one** pivot column can be defined per dataset.  
+  - Dataset A pivots by `COLUMN`.  
+  - Dataset E1 pivots by `PRICES`.  
+
+- `group_by`: Defines hierarchical grouping for each dataset, where column order determines the hierarchy.  
+  - A groups first by `Experiment`, then by `REG`.  
+  - E1 adds `COMM` as a third grouping level.  
+
+- `rename_cols`: Specifies column renaming across all datasets.  
+  - Any dataset containing `REG` will rename it to `Region`.  
+  - `COMM` and `Experiment` will be renamed to `Commodities` and `Scenario`.  
+
+</div>
+
+
+<div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
 # Creating Report Table {#sec:report-table-creating}
 
@@ -949,6 +1013,7 @@ This command generates multiple table formats suitable for *academic presentatio
 
 **Note:**  
 If you want to change values in a column, such as region names, do so before creating the report table (see [Renaming Values in a Dataframe](#sec:rename-value)).  
+
 
 ## Comparison Table {#sec:comparison-table}
 
@@ -980,7 +1045,7 @@ report_table(
 
 <figure class="package-table">
   <div class="package-table-box">
-```{r unstack plot, echo=FALSE, out.width="100%"}
+```{r example comparison table, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/comparison_table.png")
 ```
 </div> <figcaption class="package-table-caption"> Comparison Table <br> <span class="package-table-note">(separate_sheet_by = "Unit")</span> </figcaption> </figure> 
@@ -1019,7 +1084,7 @@ report_table(
 
 <figure class="package-table">
   <div class="package-table-box">
-```{r unstack plot, echo=FALSE, out.width="100%"}
+```{r example GTAPMacro table, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/GTAPMacro_table.png")
 ```
 </div> <figcaption class="package-table-caption"> GTAP Macros Table <br> <span class="package-table-note">(separate_sheet_by = FALSE)</span> </figcaption> </figure> 
@@ -1057,7 +1122,7 @@ report_table(
 
 <figure class="package-table">
   <div class="package-table-box">
-```{r unstack plot, echo=FALSE, out.width="100%"}
+```{r example detail table, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_table.png")
 ```
 </div> <figcaption class="package-table-caption"> Detail Table <br> <span class="package-table-note">(separate_sheet_by = NULL, add_group_line = TRUE)</span> </figcaption> </figure> 
@@ -1095,9 +1160,10 @@ report_table(
   workbook_name = "Decomposition Table"
 )
 ```
+
 <figure class="package-table">
   <div class="package-table-box">
-```{r unstack plot, echo=FALSE, out.width="100%"}
+```{r example decomposition table, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/decomp_table.png")
 ```
 </div> <figcaption class="package-table-caption"> Decomposition Table <br> <span class="package-table-note">(total_column = TRUE, separate_sheet_by = "Region")</span> </figcaption> </figure> 
@@ -1160,12 +1226,9 @@ rename_col <- data.frame(
 har.plot.data <- HARplus::rename_dims(har.plot.data, rename_col)
 ```
 
-💡 **Tip:** 
-You can create this mapping dataframe in Excel and import it into R. The column names must be *"old"* and *"new"*.  
-
-**Note:** 
-The column names must be `"old"` and `"new"`. See `<?HARplus::rename_col>` for details.  
-
+<div class="tip-box">
+💡 <strong>Tip:</strong> You can create this mapping dataframe in Excel and import it into R. The column names must be **"old"** and **"new"**.  
+</div>
 
 ## Renaming Values in a Dataframe {#sec:rename-value}
 
@@ -1183,7 +1246,9 @@ rename.region <- data.frame(
 har.plot.data.rename <- rename_value(har.plot.data, mapping.file = rename.region)
 ```
 
-💡 **Tip:** You can create this mapping dataframe in Excel and import it into R. The column names must be *"OldName"* and *"NewName"*, while `column_name` can be defined directly in the command. See `<?rename_value>` for details.  
+<div class="tip-box">
+💡 <strong>Tip:</strong> You can create this mapping dataframe in Excel and import it into R. The column names must be **"OldName"** and **"NewName"**, while `column_name` can be defined directly in the command. See `<?rename_value>` for details.  
+</div>
 
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
@@ -1242,6 +1307,6 @@ Macros <- gtap_macros_data(
 # Sample Data
 
 Sample data used in this vignette is obtained from the GTAPv7 model
-and utilizes publicly available data from the GTAP 9 database. For
+and utilizes data from the GTAP 11 database. For
 more details, refer to the [GTAP Database Archive](https://www.gtap.agecon.purdue.edu/databases/archives.asp).
 

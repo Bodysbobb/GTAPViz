@@ -77,7 +77,12 @@ get_plot_config <- function(plot_style = "default", config = NULL, export_config
 #' - `title_hjust`: Numeric. Horizontal alignment (0 = left, 1 = right). Default: `0.5`
 #' - `add_unit_to_title`: Logical. Append unit to title if applicable. Default: `TRUE`
 #' - `title_margin`: ggplot2 `margin()` object. Default: `ggplot2::margin(10, 0, 10, 0)`
-#' - `title_format`: List. Defines title formatting options (`type = "standard"`, `text = ""`)
+#' - `title_format`: List or NULL. Formatting options for the title, with elements:
+#'   \itemize{
+#'     \item \code{type}: Character. One of "prefix", "suffix", "full", or "dynamic".
+#'     \item \code{text}: Character. Text to add, or column names used for dynamic titles.
+#'     \item \code{sep}: Character. Separator used for dynamic titles. Default: " - ".
+#'   }
 #'
 #' ## **X-Axis Settings**
 #' - `show_x_axis_title`: Logical. Show or hide x-axis title. Default: `FALSE`
@@ -187,7 +192,7 @@ get_plot_style_config <- function(plot_type = "default",
                                   parameter_name = NULL,
                                   show_docs = FALSE,
                                   validate_custom = NULL,
-                                  as_dataframe = FALSE) {
+                                  as_dataframe = TRUE) {
   config <- .calculate_plot_style_config(NULL, plot_type)
 
   param_docs <- list(
@@ -471,7 +476,7 @@ get_plot_style_config <- function(plot_type = "default",
 #' # Get as a formatted dataframe
 #' export_df <- get_export_config(as_dataframe = TRUE)
 #'
-get_export_config <- function(as_dataframe = FALSE) {
+get_export_config <- function(as_dataframe = TRUE) {
   # Export config parameters
   export_config_params <- list(
     file_name = "gtap_plots",
@@ -667,7 +672,10 @@ get_export_config <- function(as_dataframe = FALSE) {
     expansion_x_mult = c(0.05, 0.05),
 
     # Font size settings
-    all_font_size = 1
+    all_font_size = 1,
+
+    # Sorting Data
+    sort_data_by_value = FALSE
   )
 
   # Select the appropriate default based on plot type
@@ -918,40 +926,106 @@ get_export_config <- function(as_dataframe = FALSE) {
 }
 
 
-#' @title Process Plot Title
+#' @title Handle Plot Title and Export Naming
 #'
 #' @description
-#' Processes the plot title based on formatting options and data content.
+#' Generates a formatted plot title and an export-friendly filename based on the provided parameters.
+#' The function adjusts titles dynamically based on various conditions, such as macro mode, variable duplication,
+#' title formatting options, and unit inclusion.
 #'
-#' @param default_title Character. The default title to use.
-#' @param title_format List or NULL. Formatting options for the title with elements:
+#' @param var_name Character or NULL. The name of the variable being plotted.
+#' @param sep_value Character or NULL. Separator value to combine with `var_name` if applicable.
+#' @param x_value Character or NULL. X-axis value for additional context.
+#' @param plot_type Character or NULL. The type of plot, one of "comparison", "detail", "stack", or "unstack".
+#' @param is_macro_mode Logical. If `TRUE`, uses a simplified macro-style title.
+#' @param split_by Character or NULL. Column used for splitting data; checked for duplication with `variable_col`.
+#' @param x_axis_from Character or NULL. Source column for the X-axis.
+#' @param variable_col Character or NULL. Column representing the variable in the dataset.
+#' @param unit_name Character or NULL. Unit name to be appended to the title if applicable.
+#' @param style_config List or NULL. Formatting options for the title, containing:
 #'   \itemize{
-#'     \item \code{type}: "prefix", "suffix", "full", or "dynamic"
-#'     \item \code{text}: Text to add or columns to use (for dynamic type)
-#'     \item \code{sep}: Separator to use for dynamic titles (default: " - ")
+#'     \item \code{title_format}: List specifying format type ("prefix", "suffix", "full", or "dynamic").
+#'     \item \code{add_unit_to_title}: Logical indicating whether to append the unit name.
 #'   }
-#' @param add_unit_to_title Logical. Whether to add unit information to the title.
-#' @param unit_name Character or NULL. Unit name to add to the title if add_unit_to_title is TRUE.
-#' @param data Data frame or NULL. Data to extract values from for dynamic titles.
+#' @param data Data frame or NULL. Used for extracting values in dynamic title generation.
 #'
-#' @return A list with elements:
+#' @return A named list containing:
 #'   \itemize{
-#'     \item \code{title}: The formatted plot title
-#'     \item \code{export_name}: Export-friendly version of the title for filenames
+#'     \item \code{title}: The final formatted plot title.
+#'     \item \code{export_name}: A cleaned, export-friendly version of the title.
 #'   }
 #'
 #' @author Pattawee Puangchit
 #' @keywords internal
 #' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #'
-.process_plot_title <- function(
-    default_title,
-    title_format = NULL,
-    add_unit_to_title = FALSE,
+.handle_plot_title_and_export <- function(
+    var_name = NULL,
+    sep_value = NULL,
+    x_value = NULL,
+    plot_type = NULL,  # "comparison", "detail", "stack", "unstack"
+    is_macro_mode = FALSE,
+    split_by = NULL,
+    x_axis_from = NULL,
+    variable_col = NULL,
     unit_name = NULL,
+    style_config = NULL,
     data = NULL) {
-  plot_title <- default_title
 
+  # 1. DETERMINE BASE TITLE BASED ON PLOT TYPE AND PARAMETERS
+
+  # Handle potential duplication when split_by equals variable_col
+  has_duplicate = FALSE
+  if (!is.null(split_by) && !is.null(variable_col) && split_by == variable_col &&
+      !is.null(var_name) && !is.null(sep_value) && var_name == sep_value) {
+    has_duplicate = TRUE
+  }
+
+  # Also check for other duplication cases
+  if (!is.null(x_axis_from) && !is.null(variable_col) && x_axis_from == variable_col &&
+      !is.null(var_name) && !is.null(x_value) && var_name == x_value) {
+    has_duplicate = TRUE
+  }
+
+  # Create base title based on plot type
+  if (is_macro_mode) {
+    # For macro mode, just use the variable name
+    if (!is.null(var_name)) {
+      plot_title <- var_name
+    } else {
+      plot_title <- "Global Economic Impacts"
+    }
+  } else {
+    # For split modes with potential duplicates
+    if (has_duplicate) {
+      # Avoid duplication by using just one value
+      plot_title <- var_name
+    } else if (!is.null(sep_value) && !is.null(var_name)) {
+      # Normal case: combine split value and variable name
+      plot_title <- paste0(sep_value, " - ", var_name)
+    } else if (!is.null(sep_value)) {
+      # Only split value available
+      plot_title <- sep_value
+    } else if (!is.null(var_name)) {
+      # Only variable name available
+      plot_title <- var_name
+    } else {
+      # Default fallback
+      plot_title <- "GTAP Analysis"
+    }
+  }
+
+  # 2. APPLY TITLE FORMAT AND UNIT
+  if (!is.null(style_config)) {
+    # Get formatting settings
+    title_format <- style_config$title_format
+    add_unit_to_title <- style_config$add_unit_to_title
+  } else {
+    title_format <- NULL
+    add_unit_to_title <- FALSE
+  }
+
+  # Apply title formatting
   if (!is.null(title_format)) {
     switch(title_format$type,
            "prefix" = {
@@ -987,6 +1061,7 @@ get_export_config <- function(as_dataframe = FALSE) {
     )
   }
 
+  # Add unit information if requested
   if (add_unit_to_title && !is.null(unit_name)) {
     if (tolower(unit_name) == "percent") {
       plot_title <- paste0(plot_title, " (%)")
@@ -995,18 +1070,42 @@ get_export_config <- function(as_dataframe = FALSE) {
     }
   }
 
+  # 3. CLEAN THE TITLE - REMOVE DUPLICATES
   title_parts <- unlist(strsplit(plot_title, " - |\\||,|;|\\s+"))
   title_parts <- trimws(title_parts)
   title_parts <- title_parts[title_parts != ""]
-  unique_parts <- unique(title_parts)
-  clean_title <- paste(unique_parts, collapse = "_")
 
-  export_name <- gsub("[\\/:*?\"<>|()%]", "_", clean_title)
+  # Remove duplicates while preserving order
+  unique_parts <- character(0)
+  for (part in title_parts) {
+    if (!(part %in% unique_parts)) {
+      unique_parts <- c(unique_parts, part)
+    }
+  }
+
+  # Generate final clean title
+  clean_title <- paste(unique_parts, collapse = " - ")
+
+  # 4. CREATE EXPORT NAME
+  # For export name: replace spaces and invalid chars, normalize underscores
+  export_name <- gsub(" ", "_", clean_title)
+  export_name <- gsub("[\\/:*?\"<>|()%]", "_", export_name)
   export_name <- gsub("__+", "_", export_name)
   export_name <- gsub("^_|_$", "", export_name)
 
+  # 5. ADD PLOT TYPE SUFFIX IF REQUESTED
+  if (!is.null(plot_type)) {
+    if (plot_type == "stack") {
+      export_name <- paste0(export_name, "_stack")
+    } else if (plot_type == "unstack") {
+      export_name <- paste0(export_name, "_unstack")
+    }
+    # comparison and detail plots don't get suffixes
+  }
+
+  # 6. RETURN THE RESULTS
   return(list(
-    title = plot_title,
+    title = clean_title,
     export_name = export_name
   ))
 }
@@ -1108,56 +1207,6 @@ get_export_config <- function(as_dataframe = FALSE) {
   }
 
   return(default_name)  # Return default or NULL
-}
-
-
-#' @title Prepare Data Source from List or Data Frame
-#'
-#' @description Finds a suitable data frame from a list or returns the input data frame.
-#'
-#' @param data A data frame or list of data frames.
-#' @param required_columns Optional vector of column names that must be present.
-#'
-#' @return A data frame that contains the required columns.
-#'
-#' @author Pattawee Puangchit
-#' @keywords internal
-#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
-#'
-.prepare_data_source <- function(data, required_columns = NULL) {
-  # Handle the case where data is a list of data frames
-  if (is.list(data) && !is.data.frame(data)) {
-    for (df_name in names(data)) {
-      df <- data[[df_name]]
-      if (!is.data.frame(df)) next
-
-      # If no required columns, return the first dataframe
-      if (is.null(required_columns)) return(df)
-
-      # Check if df has the required columns (case-insensitive)
-      has_required <- sapply(required_columns, function(col) {
-        any(tolower(names(df)) == tolower(col))
-      })
-
-      if (all(has_required)) {
-        return(df)
-      }
-    }
-
-    if (!is.null(required_columns)) {
-      stop(paste("No suitable dataframe found with required columns:",
-                 paste(required_columns, collapse=", ")))
-    } else {
-      stop("No suitable dataframe found")
-    }
-  }
-
-  # If data is already a data frame, return it directly
-  if (is.data.frame(data)) {
-    return(data)
-  }
-
-  stop("Input must be a data frame or a list of data frames")
 }
 
 
@@ -1385,12 +1434,50 @@ get_export_config <- function(as_dataframe = FALSE) {
       qualitative = c("#1F77B4", "#FF7F0E", "#2CA02C", "#D62728", "#9467BD", "#8C564B", "#E377C2", "#7F7F7F"),
       sequential = c("#F7FCF5", "#E5F5E0", "#C7E9C0", "#A1D99B", "#74C476", "#41AB5D", "#238B45", "#006D2C", "#00441B"),
       diverging = c("#2166AC", "#4393C3", "#92C5DE", "#D1E5F0", "#F7F7F7", "#FDDBC7", "#F4A582", "#D6604D", "#B2182B")
+    ),
+    gtap = list(
+      qualitative = c("#003366", "#0055A4", "#009CDE", "#F2A900", "#666666", "#000000"),
+      sequential = c("#FFFFFF", "#D6E6F7", "#A0C4E8", "#6AA2D8", "#347FC8", "#0055A4", "#003F88", "#002A66", "#000000"),
+      diverging = c("#000000", "#003366", "#0055A4", "#347FC8", "#009CDE", "#A0C4E8", "#D6E6F7", "#F2A900", "#FFFFFF")
+    ),
+    gtap2 = list(
+      qualitative = c("#002F5F", "#0072C6", "#00A3E0", "#F2A900", "#C28E0E", "#666666", "#4D4038"),
+      sequential = c("#FFFFFF", "#E1EFF7", "#B3DFF0", "#7FC6E0", "#009CDE", "#DAAA00", "#C28E0E", "#98700D", "#000000"),
+      diverging = c("#000000", "#4D4038", "#666666", "#0055A4", "#009CDE", "#00A3E0", "#DAAA00", "#E2D48E", "#FFFFFF")
+    ),
+    # Add monochromatic palettes
+    blue_mono = list(
+      qualitative = c("#0D47A1", "#1565C0", "#1976D2", "#1E88E5", "#2196F3", "#42A5F5", "#64B5F6", "#90CAF9"),
+      sequential = c("#E3F2FD", "#BBDEFB", "#90CAF9", "#64B5F6", "#42A5F5", "#2196F3", "#1E88E5", "#1976D2", "#1565C0", "#0D47A1"),
+      diverging = c("#0D47A1", "#1565C0", "#1976D2", "#1E88E5", "#2196F3", "#42A5F5", "#64B5F6", "#90CAF9", "#BBDEFB")
+    ),
+    green_mono = list(
+      qualitative = c("#1B5E20", "#2E7D32", "#388E3C", "#43A047", "#4CAF50", "#66BB6A", "#81C784", "#A5D6A7"),
+      sequential = c("#E8F5E9", "#C8E6C9", "#A5D6A7", "#81C784", "#66BB6A", "#4CAF50", "#43A047", "#388E3C", "#2E7D32", "#1B5E20"),
+      diverging = c("#1B5E20", "#2E7D32", "#388E3C", "#43A047", "#4CAF50", "#66BB6A", "#81C784", "#A5D6A7", "#C8E6C9")
+    ),
+    red_mono = list(
+      qualitative = c("#B71C1C", "#C62828", "#D32F2F", "#E53935", "#F44336", "#EF5350", "#E57373", "#EF9A9A"),
+      sequential = c("#FFEBEE", "#FFCDD2", "#EF9A9A", "#E57373", "#EF5350", "#F44336", "#E53935", "#D32F2F", "#C62828", "#B71C1C"),
+      diverging = c("#B71C1C", "#C62828", "#D32F2F", "#E53935", "#F44336", "#EF5350", "#E57373", "#EF9A9A", "#FFCDD2")
+    ),
+    grey_mono = list(
+      qualitative = c("#212121", "#424242", "#616161", "#757575", "#9E9E9E", "#BDBDBD", "#E0E0E0", "#EEEEEE"),
+      sequential = c("#FAFAFA", "#F5F5F5", "#EEEEEE", "#E0E0E0", "#BDBDBD", "#9E9E9E", "#757575", "#616161", "#424242", "#212121"),
+      diverging = c("#212121", "#424242", "#616161", "#757575", "#9E9E9E", "#BDBDBD", "#E0E0E0", "#EEEEEE", "#F5F5F5")
+    ),
+    black_mono = list(
+      qualitative = rep(c("#000000"), n_colors),
+      sequential = c(rep(c("#000000"), n_colors)),
+      diverging = c(rep(c("#000000"), n_colors))
     )
   )
 
+  # Check if color_tone is a recognized theme
   if (!is.null(color_tone) && tolower(color_tone) %in% names(themed_palettes)) {
     palette <- themed_palettes[[tolower(color_tone)]][[palette_type]]
 
+    # Ensure we have the right number of colors
     if (length(palette) < n_colors) {
       palette <- grDevices::colorRampPalette(palette)(n_colors)
     } else if (length(palette) > n_colors) {
@@ -1398,6 +1485,38 @@ get_export_config <- function(as_dataframe = FALSE) {
     }
 
     return(palette)
+  }
+
+  # For mono-color themes that aren't predefined
+  if (!is.null(color_tone) && grepl("_mono$", tolower(color_tone))) {
+    # Extract the base color before "_mono"
+    base_color <- gsub("_mono$", "", tolower(color_tone))
+
+    # Try to interpret as a standard color name
+    tryCatch({
+      # Create a mono palette from the base color
+      base_col <- grDevices::col2rgb(base_color)
+      if (!is.null(base_col)) {
+        # Create a range of lightness values
+        darken_factor <- if (palette_type == "diverging") {
+          seq(0.4, 1.3, length.out = n_colors)
+        } else {
+          seq(0.5, 1.5, length.out = n_colors)
+        }
+
+        colors <- sapply(darken_factor, function(factor) {
+          r <- min(255, max(0, base_col[1,1] * factor))
+          g <- min(255, max(0, base_col[2,1] * factor))
+          b <- min(255, max(0, base_col[3,1] * factor))
+          grDevices::rgb(r, g, b, maxColorValue = 255)
+        })
+
+        return(colors)
+      }
+    }, error = function(e) {
+      # If color name can't be interpreted, return NULL
+      return(NULL)
+    })
   }
 
   return(NULL)
@@ -1464,6 +1583,7 @@ get_export_config <- function(as_dataframe = FALSE) {
 #'
 #' @param positive_color Character. Hex code or color name for the positive color (default: "#2E8B57", sea green).
 #' @param negative_color Character. Hex code or color name for the negative color (default: "#CD5C5C", indian red).
+#' @param color_tone Character. Optional color tone to override the positive/negative colors.
 #'
 #' @return A named vector containing hex codes for different value categories.
 #'
@@ -1473,7 +1593,53 @@ get_export_config <- function(as_dataframe = FALSE) {
 #' @keywords internal
 #' @seealso \code{\link{detail_plot}}
 #'
-.generate_color_palette <- function(positive_color = "#2E8B57", negative_color = "#CD5C5C") {
+.generate_color_palette <- function(positive_color = "#2E8B57", negative_color = "#CD5C5C", color_tone = NULL) {
+  # If color_tone is specified, we use it to generate colors instead of positive/negative colors
+  if (!is.null(color_tone)) {
+    mono_palette <- .create_color_palette(color_tone = color_tone, n_colors = 5, palette_type = "qualitative")
+
+    if (!is.null(mono_palette)) {
+      if (length(mono_palette) >= 5) {
+        # If we have at least 5 colors, use them directly
+        return(c(
+          "extreme_positive" = mono_palette[1],
+          "normal_positive" = mono_palette[2],
+          "extreme_negative" = mono_palette[3],
+          "normal_negative" = mono_palette[4],
+          "neutral" = mono_palette[5]
+        ))
+      } else if (length(mono_palette) == 1) {
+        # For monochromatic palettes with a single color, use different lightness levels
+        base_rgb <- col2rgb(mono_palette[1])
+
+        # Calculate lighter and darker variants
+        lighter <- function(rgb_val, factor = 0.3) {
+          pmax(0, pmin(255, rgb_val + (255 - rgb_val) * factor))
+        }
+
+        darker <- function(rgb_val, factor = 0.3) {
+          pmax(0, pmin(255, rgb_val * (1 - factor)))
+        }
+
+        # Create variants with different lightness levels
+        lighter1 <- rgb(lighter(base_rgb[1], 0.3), lighter(base_rgb[2], 0.3), lighter(base_rgb[3], 0.3), maxColorValue = 255)
+        lighter2 <- rgb(lighter(base_rgb[1], 0.6), lighter(base_rgb[2], 0.6), lighter(base_rgb[3], 0.6), maxColorValue = 255)
+        darker1 <- rgb(darker(base_rgb[1], 0.3), darker(base_rgb[2], 0.3), darker(base_rgb[3], 0.3), maxColorValue = 255)
+        darker2 <- rgb(darker(base_rgb[1], 0.6), darker(base_rgb[2], 0.6), darker(base_rgb[3], 0.6), maxColorValue = 255)
+
+        return(c(
+          "extreme_positive" = darker1,
+          "normal_positive" = mono_palette[1],
+          "extreme_negative" = darker2,
+          "normal_negative" = lighter1,
+          "neutral" = lighter2
+        ))
+      }
+    }
+  }
+
+  # If we don't have a color_tone or couldn't generate a palette from it,
+  # fall back to the traditional positive/negative colors
   adjust_shade <- function(color, factor = 0.7) {
     rgb_col <- col2rgb(color)
     lighter <- rgb_col + (255 - rgb_col) * (1 - factor)
@@ -1626,7 +1792,7 @@ get_export_config <- function(as_dataframe = FALSE) {
 .calculate_plot_dimensions <- function(data, panel_layout) {
   num_panels <- panel_layout$rows * panel_layout$cols
   base_width <- 20
-  base_height <- 30
+  base_height <- 12
 
   width <- if(num_panels <= 4) {
     base_width
@@ -1641,6 +1807,42 @@ get_export_config <- function(as_dataframe = FALSE) {
 
 
 #  EXPORT -----------------------------------------------------------------
+
+#' @title Display Plot Export Dimensions
+#'
+#' @description
+#' Displays information about plot dimensions (width and height) during the export process.
+#'
+#' @param dimensions A list containing 'width' and 'height' values.
+#' @param plots A ggplot object or list of ggplot objects.
+#' @param phase Character. The phase of the export process ("start" or "end").
+#' @param dpi Numeric. DPI value for the export.
+#'
+#' @return Invisibly returns NULL.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @seealso \code{\link{.export_plot_output}}
+#'
+.display_export_dimensions <- function(dimensions, plots, phase = "start", dpi = 300) {
+  if (!is.list(dimensions) || is.null(dimensions$width) || is.null(dimensions$height)) {
+    return(invisible(NULL))
+  }
+
+  num_plots <- if (inherits(plots, "gg")) 1 else length(plots)
+
+  if (phase == "start") {
+    message(sprintf(">>> Starting plot export process: %d plot(s) with dimensions (widthxheight): %.1f x %.1f inches",
+                    num_plots, dimensions$width, dimensions$height))
+    message(sprintf(">>> DPI: %d", dpi))
+  } else if (phase == "end") {
+    message(sprintf(">>> Completed plot export: %d plot(s) exported with dimensions (widthxheight): %.1f x %.1f inches",
+                    num_plots, dimensions$width, dimensions$height))
+    message(sprintf(">>> DPI: %d", dpi))
+  }
+
+  invisible(NULL)
+}
 
 #' @title Export Plots to Files
 #'
@@ -1700,6 +1902,9 @@ get_export_config <- function(as_dataframe = FALSE) {
     export_config$width <- dimensions$width
     export_config$height <- dimensions$height
   }
+
+  # Display dimensions at the start of export process
+  .display_export_dimensions(list(width = export_config$width, height = export_config$height), plots, "start", export_config$dpi)
 
   # Create output directory if needed
   if (is.null(output_path)) {
@@ -1862,6 +2067,9 @@ get_export_config <- function(as_dataframe = FALSE) {
       }
     }
   }
+
+  # Display dimensions at the end of export process
+  .display_export_dimensions(list(width = export_config$width, height = export_config$height), plots, "end", export_config$dpi)
 
   invisible(plots)
 }

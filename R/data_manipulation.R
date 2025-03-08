@@ -160,7 +160,7 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 #' @author Pattawee Puangchit
 #' @export
 #'
-#' @seealso \code{\link{add_mapping_info}}, \code{\link{rename_value}}
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{rename_value}}, \code{\link{sort_plot_data}}
 #'
 #' @examples
 #' \dontrun{
@@ -373,7 +373,7 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
 #' @author Pattawee Puangchit
 #' @export
 #'
-#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}
 #'
 #' @examples
 #' \dontrun{
@@ -436,7 +436,7 @@ rename_value <- function(data, column_name = NULL, mapping.file) {
 #' @author Pattawee Puangchit
 #' @export
 #'
-#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}
 #'
 #' @examples
 #' \dontrun{
@@ -476,4 +476,142 @@ rename_GTAP_bilateral <- function(data) {
   }
 
   return(.apply_to_dataframes(data, rename_bilateral_cols))
+}
+
+
+#' @title Sort GTAP Plot Data
+#'
+#' @description
+#' Sorts data for plotting using flexible options for column ordering and value-based sorting.
+#' Works with data frames, lists of data frames, or nested data structures.
+#'
+#' @param data A data frame or list structure containing data to be sorted.
+#' @param cols Named list. Specifies columns to sort by and their ordering.
+#'        Each element should be a character vector of values in desired order.
+#'        For example, `list(Region = c("USA", "EU", "CHN")`,
+#'                          `Experiment = c("Base", "Shock1", "Shock2"))`.
+#' @param sort_by_value_desc Logical or NULL. Controls sorting by the "Value" column:
+#'        - NULL (default): Don't sort by value, only use column-based sorting.
+#'        - TRUE: After column-based sorting, sort by value in descending order.
+#'        - FALSE: After column-based sorting, sort by value in ascending order.
+#' @param convert_to_factor Logical. Whether to convert sorted columns to factors with custom ordering.
+#'        Default is TRUE, which preserves ordering in GTAP plotting functions.
+#'
+#' @return A data structure with the same form as the input, with all contained data frames sorted.
+#'
+#' @author Pattawee Puangchit
+#' @export
+#'
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_GTAP_bilateral}}
+#'
+sort_plot_data <- function(data, cols = NULL, sort_by_value_desc = NULL, convert_to_factor = TRUE) {
+  # If no sorting parameters provided, return the data as is
+  if (is.null(cols) && is.null(sort_by_value_desc)) {
+    return(data)
+  }
+
+  # Function to sort a single dataframe
+  sort_single_dataframe <- function(df) {
+    if (!is.data.frame(df)) return(df)
+    if (nrow(df) <= 1) return(df)
+
+    # Create copies to work with
+    original_df <- df
+    working_df <- df
+    sort_columns <- c()
+
+    # Keep track of column order info for factor conversion
+    col_order_maps <- list()
+
+    # Process column-based sorting
+    if (!is.null(cols)) {
+      for (col_name in names(cols)) {
+        if (!col_name %in% colnames(df)) {
+          next
+        }
+
+        col_values <- cols[[col_name]]
+        if (is.character(col_values) && length(col_values) > 0) {
+          # Get all unique values from the dataframe column
+          all_values <- unique(df[[col_name]])
+
+          # Create order: specified values first in specified order, then others
+          specified <- col_values[col_values %in% all_values]
+          unspecified <- setdiff(all_values, specified)
+          ordered_values <- c(specified, unspecified)
+
+          # Save this ordering for later factor conversion
+          col_order_maps[[col_name]] <- ordered_values
+
+          # Create a numeric index for sorting
+          order_map <- setNames(seq_along(ordered_values), ordered_values)
+
+          # Create sorting column
+          temp_col_name <- paste0("._sort_", col_name)
+          working_df[[temp_col_name]] <- match(df[[col_name]], ordered_values)
+          sort_columns <- c(sort_columns, temp_col_name)
+        } else if (isTRUE(col_values)) {
+          # Sort alphabetically
+          ordered_values <- sort(unique(df[[col_name]]))
+          col_order_maps[[col_name]] <- ordered_values
+
+          temp_col_name <- paste0("._sort_", col_name)
+          working_df[[temp_col_name]] <- match(df[[col_name]], ordered_values)
+          sort_columns <- c(sort_columns, temp_col_name)
+        }
+      }
+    }
+
+    # Add value sorting if requested
+    if (!is.null(sort_by_value_desc) && "Value" %in% colnames(df)) {
+      if (isTRUE(sort_by_value_desc)) {
+        working_df$._sort_Value <- -as.numeric(df$Value)  # Descending
+      } else {
+        working_df$._sort_Value <- as.numeric(df$Value)   # Ascending
+      }
+      sort_columns <- c(sort_columns, "._sort_Value")
+    }
+
+    # If no sorting columns created, return original
+    if (length(sort_columns) == 0) {
+      return(original_df)
+    }
+
+    # Sort the dataframe using all sorting columns
+    sort_order <- do.call(order, working_df[sort_columns])
+    sorted_df <- df[sort_order, ]
+
+    # Convert to factors with explicit ordering if requested
+    if (convert_to_factor) {
+      for (col_name in names(col_order_maps)) {
+        if (col_name %in% names(sorted_df)) {
+          # Convert to factor with our specific ordering
+          sorted_df[[col_name]] <- factor(sorted_df[[col_name]],
+                                          levels = col_order_maps[[col_name]])
+        }
+      }
+    }
+
+    # Preserve original rownames if present
+    if (!is.null(rownames(original_df))) {
+      rownames(sorted_df) <- rownames(original_df)[sort_order]
+    }
+
+    return(sorted_df)
+  }
+
+  if (exists(".apply_to_dataframes")) {
+    return(.apply_to_dataframes(data, sort_single_dataframe))
+  } else {
+    process_data <- function(x) {
+      if (is.data.frame(x)) {
+        return(sort_single_dataframe(x))
+      } else if (is.list(x)) {
+        return(lapply(x, process_data))
+      } else {
+        return(x)
+      }
+    }
+    return(process_data(data))
+  }
 }

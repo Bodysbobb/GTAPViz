@@ -1,28 +1,33 @@
-#' @title Generate a Detailed Report Table
+#' @title Generate a Structured Report Table
 #'
 #' @description
-#' Transforms one or more datasets into a wide-format table based on specified
-#' grouping columns and pivot column(s). Supports subtotal filtering, renaming,
+#' Transforms multiple datasets into wide-format tables based on defined pivot columns,
+#' hierarchical grouping, and renaming rules. Supports optional subtotal filtering
 #' and exporting to Excel.
 #'
-#' @param data_list A named list of data frames to be processed.
-#' @param pivot_col A named list specifying which column is pivoted into wide format for each dataset.
-#' @param total_column Logical. If `TRUE`, includes a "Total" column summing numeric values.
-#' @param export_table Logical. If `TRUE`, exports the tables to an Excel file.
-#' @param separate_file Logical. If `TRUE`, saves each dataset in a separate Excel file.
-#' @param output_path Character. Directory where Excel files are written if `export_table = TRUE`.
-#' @param sheet_names Optional named list for custom sheet names.
-#' @param include_units Logical. If `TRUE`, includes the "Unit" column in grouping.
-#' @param component_exclude Optional character vector specifying pivoted values to exclude.
-#' @param group_by A list or character vector of grouping columns, or `NULL` for automatic detection.
-#' @param rename_cols A named list for renaming columns.
-#' @param var_name_by_description Logical. If `TRUE`, replaces Variable names with their Description.
-#' @param add_var_info Logical. If `TRUE`, appends the Variable code in parentheses after the Description.
-#' @param decimal Numeric. Number of decimal places for rounding values.
-#' @param unit_select Optional. Filters rows based on the specified unit.
-#' @param separate_sheet_by Optional column name to split sheets in Excel.
-#' @param subtotal_level Logical. If `TRUE`, includes all subtotal values; otherwise, keeps only Subtotal = "TOTAL".
+#' @param data_list A named list of data frames to process.
+#' @param pivot_col A named list specifying the column to pivot into a wide format for each dataset.
+#'   Each dataset can have only one pivot column. Example:
+#'   \code{pivot_col = list(A = "COLUMN", E1 = "PRICES")}
+#' @param group_by A named list defining hierarchical grouping for each dataset. The order of columns
+#'   in each list determines the priority. Example:
+#'   \code{group_by = list(A = list("Experiment", "REG"), E1 = list("Experiment", "REG", "COMM"))}
+#' @param rename_cols A named list for renaming columns across **all** datasets. Example:
+#'   \code{rename_cols = list("REG" = "Region", "COMM" = "Commodities", "Experiment" = "Scenario")}
+#' @param separate_sheet_by Optional column name to split sheets in Excel. If defined, each unique
+#'   value in the specified column gets its own sheet. Example: \code{separate_sheet_by = "Scenario"}.
+#'
+#' @param total_column Logical. If `TRUE`, adds a "Total" column summing numeric values.
+#' @param subtotal_level Logical. If `TRUE`, includes all subtotal values; otherwise, keeps only `TOTAL` rows.
 #' @param repeat_label Logical. If `TRUE`, repeats the first group column in exports for clarity.
+#' @param include_units Logical. If `TRUE`, includes "Unit" as a grouping column if applicable.
+#' @param component_exclude Optional character vector specifying pivoted values to exclude.
+#' @param decimal Numeric. Number of decimal places for rounding values.
+#'
+#' @param export_table Logical. If `TRUE`, saves the output as an Excel file.
+#' @param output_path Character. Directory for saving Excel files when `export_table = TRUE`.
+#' @param separate_file Logical. If `TRUE`, saves each dataset as a separate Excel file.
+#' @param sheet_names Optional named list for custom sheet names.
 #' @param workbook_name Character. Name of the Excel workbook (without extension).
 #' @param add_group_line Logical. If `TRUE`, adds a thin line after each group in the exported table.
 #'

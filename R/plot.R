@@ -11,7 +11,7 @@
 #' If a data frame, filters `value_col` based on matching `variable_col` values.
 #' @param x_axis_from Character. Column name for x-axis categories (e.g., "REG", "Sector").
 #' @param split_by Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-#' Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., aggregated values without additional dimensions).
+#' Set to NULL for no splitting, suitable for macro-level analysis.
 #' @param panel_var Character. Column for panel facets (default: "Experiment").
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
@@ -22,27 +22,19 @@
 #' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
 #' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
 #' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
-#' @param export_as_pdf Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).
-#' @param export_config List. Configuration options for exported plots, including file name, width, and height.
-#' @param plot_style_config List. Custom style configuration for plots. If NULL, defaults from `get_plot_style_config("comparison")` are applied.
+#' @param export_as_pdf Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).
+#' @param export_config List. Export settings, including:
+#' \itemize{
+#'   \item `width`: Output file width (in inches).
+#'   \item `height`: Output file height (in inches).
+#'   \item Additional settings—see `?get_export_config`.
+#' }
+#' @param plot_style_config List. Custom plot styles—see `?get_plot_style_config`.
 #'
 #' @return A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
 #'
-#' @details
-#' This function allows for extensive customization of plots through the `plot_style_config` parameter,
-#' which integrates ggplot2 configurations. The function now supports more flexible export options
-#' with the `export_picture`, `export_as_pdf`, and `export_config` parameters.
-#'
-#' The `export_config` parameter can include:
-#' \itemize{
-#'   \item `file_name`: Base name for the output files (default: "comparison_plots").
-#'   \item `width`: Width of the output files in inches.
-#'   \item `height`: Height of the output files in inches.
-#'   \item Additional export settings as needed.
-#' }
-#'
 #' @author Pattawee Puangchit
-#' @seealso \code{\link{detail_plot}}, \code{\link{stack_plot}}, \code{\link{get_plot_style_config}}
+#' @seealso \code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #' @export
 #'
 #' @examples
@@ -248,32 +240,22 @@ comparison_plot <- function(data, filter_var = NULL,
         for (panel_name in names(panel_list)) {
           panel_data <- panel_list[[panel_name]]
 
-          # Format title
-          panel_title <- if (variable_col %in% names(panel_data) && panel_name %in% names(title_mapping)) {
-            title_mapping[[panel_name]]
-          } else {
-            panel_name
-          }
-
-          plot_title <- panel_title
-
-          # PLOT TITLE AND OUTPUT TITLE
-          title_info <- .process_plot_title(
-            default_title = plot_title,
-            title_format = style_config$title_format,
-            add_unit_to_title = style_config$add_unit_to_title,
+          # Use unified title handler
+          title_info <- .handle_plot_title_and_export(
+            var_name = panel_name,
+            plot_type = "comparison",
+            is_macro_mode = TRUE,
+            variable_col = variable_col,
             unit_name = unit_name,
+            style_config = style_config,
             data = panel_data
           )
-
-          # Extract the display title
-          plot_title <- title_info$title
 
           # Create plot
           p <- .create_single_comparison_plot(
             data = panel_data,
             x_axis_from = x_axis_from,
-            plot_title = plot_title,
+            plot_title = title_info$title,
             unit = unit_name,
             panel_rows = style_config$panel_rows,
             panel_cols = style_config$panel_cols,
@@ -285,26 +267,21 @@ comparison_plot <- function(data, filter_var = NULL,
           plot_list[[title_info$export_name]] <- p
         }
       } else {
-        # Format title for combined plot
-        plot_title <- "Global Economic Impacts"
-
-        # PLOT TITLE AND OUTPUT TITLE
-        title_info  <- .process_plot_title(
-          default_title = plot_title,
-          title_format = style_config$title_format,
-          add_unit_to_title = style_config$add_unit_to_title,
+        # Use unified title handler for combined plot
+        title_info <- .handle_plot_title_and_export(
+          var_name = "Global Economic Impacts",
+          plot_type = "comparison",
+          is_macro_mode = TRUE,
           unit_name = unit_name,
+          style_config = style_config,
           data = unit_data
         )
-
-        # Extract the display title
-        plot_title <- title_info$title
 
         # Create plot
         p <- .create_single_comparison_plot(
           data = unit_data,
           x_axis_from = x_axis_from,
-          plot_title = plot_title,
+          plot_title = title_info$title,
           unit = unit_name,
           panel_rows = style_config$panel_rows,
           panel_cols = style_config$panel_cols,
@@ -343,26 +320,24 @@ comparison_plot <- function(data, filter_var = NULL,
           for (panel_val in panel_values) {
             panel_data <- filtered_data[filtered_data[[panel_var]] == panel_val, ]
 
-            # Format title
-            plot_title <- paste0(sep_value, " - ", panel_val)
-
-            # PLOT TITLE AND OUTPUT TITLE
-            title_info  <- .process_plot_title(
-              default_title = plot_title,
-              title_format = style_config$title_format,
-              add_unit_to_title = style_config$add_unit_to_title,
+            # Use unified title handler
+            title_info <- .handle_plot_title_and_export(
+              var_name = panel_val,
+              sep_value = sep_value,
+              plot_type = "comparison",
+              is_macro_mode = FALSE,
+              split_by = split_by,
+              variable_col = variable_col,
               unit_name = unit_name,
+              style_config = style_config,
               data = panel_data
             )
-
-            # Extract the display title
-            plot_title <- title_info$title
 
             # Create plot
             p <- .create_single_comparison_plot(
               data = panel_data,
               x_axis_from = x_axis_from,
-              plot_title = plot_title,
+              plot_title = title_info$title,
               unit = unit_name,
               panel_rows = style_config$panel_rows,
               panel_cols = style_config$panel_cols,
@@ -374,26 +349,23 @@ comparison_plot <- function(data, filter_var = NULL,
             plot_list[[title_info$export_name]] <- p
           }
         } else {
-          # Format title
-          plot_title <- sep_value
-
-          # PLOT TITLE AND OUTPUT TITLE
-          title_info  <- .process_plot_title(
-            default_title = plot_title,
-            title_format = style_config$title_format,
-            add_unit_to_title = style_config$add_unit_to_title,
+          # Use unified title handler
+          title_info <- .handle_plot_title_and_export(
+            sep_value = sep_value,
+            plot_type = "comparison",
+            is_macro_mode = FALSE,
+            split_by = split_by,
+            variable_col = variable_col,
             unit_name = unit_name,
+            style_config = style_config,
             data = filtered_data
           )
-
-          # Extract the display title
-          plot_title <- title_info$title
 
           # Create plot
           p <- .create_single_comparison_plot(
             data = filtered_data,
             x_axis_from = x_axis_from,
-            plot_title = plot_title,
+            plot_title = title_info$title,
             unit = unit_name,
             panel_rows = style_config$panel_rows,
             panel_cols = style_config$panel_cols,
@@ -764,51 +736,42 @@ comparison_plot <- function(data, filter_var = NULL,
 
 # Detail Plot -------------------------------------------------------------
 
-#' @title Create Comprehensive Detailed Bar Charts for Impact Distribution
+#' @title Create Comprehensive Bar Charts from HAR and SL4 Data
 #'
 #' @description
-#' Generates detailed bar charts to visualize the distribution of impacts across multiple dimensions,
-#' automatically handling multi-dimensional data. The function supports top impact filtering,
-#' color coding for positive and negative values, and flexible visualization settings.
+#' Generates detailed bar charts to visualize the distribution of impacts across multiple dimensions.
+#' The function supports top impact filtering, color coding, and flexible visualization settings.
 #'
 #' @param data A data frame or a list of data frames containing GTAP results.
 #' @param filter_var Vector or data frame. If a vector, filters the values in `x_axis_from`.
 #' If a data frame, filters `value_col` based on matching `variable_col` values.
 #' @param x_axis_from Character. Column name for x-axis categories (e.g., "REG", "Sector").
 #' @param split_by Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-#' Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., aggregated values without additional dimensions).
+#' Set to NULL for no splitting, suitable for macro-level analysis.
 #' @param panel_var Character. Column for panel facets (default: "Experiment").
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
 #' @param desc_col Character. Column containing variable descriptions (default: "Description").
+#' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.
+#' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
+#' @param invert_pane Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
 #' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
 #' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
 #' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
 #' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
-#' @param export_as_pdf Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).
-#' @param export_config List. Configuration options for exported plots, including file name, width, and height.
-#' @param top_impact Numeric or NULL. If specified, filters to show only the top N impactful values. NULL shows all values.
-#' @param separate_figure Logical. If TRUE, creates a separate figure for each panel value (default: FALSE).
-#' @param invert_pane Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
-#' @param plot_style_config List. Custom style configuration for plots. If NULL, defaults from `get_plot_style_config("detail")` are applied.
+#' @param export_as_pdf Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).
+#' @param export_config List. Export settings, including:
+#' \itemize{
+#'   \item `width`: Output file width (in inches).
+#'   \item `height`: Output file height (in inches).
+#'   \item Additional settings—see `?get_export_config`.
+#' }
+#' @param plot_style_config List. Custom plot styles—see `?get_plot_style_config`.
 #'
 #' @return A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
 #'
-#' @details
-#' This function allows for extensive customization of plots through the `plot_style_config` parameter,
-#' which integrates ggplot2 configurations. The function now supports more flexible export options
-#' with the `export_picture`, `export_as_pdf`, and `export_config` parameters.
-#'
-#' The `export_config` parameter can include:
-#' \itemize{
-#'   \item `file_name`: Base name for the output files (default: "detail_plots").
-#'   \item `width`: Width of the output files in inches.
-#'   \item `height`: Height of the output files in inches.
-#'   \item Additional export settings as needed.
-#' }
-#'
 #' @author Pattawee Puangchit
-#' @seealso \code{\link{comparison_plot}}, \code{\link{stack_plot}}, \code{\link{get_plot_style_config}}
+#' @seealso \code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{stack_plot}}
 #' @export
 #'
 #' @examples
@@ -981,14 +944,6 @@ detail_plot <- function(data, filter_var = NULL,
 
       data <- result
     }
-
-    unique_vars <- unique(data.frame(
-      OrigVar = data[[variable_col]],
-      stringsAsFactors = FALSE
-    ))
-    title_mapping <- setNames(as.list(unique_vars$OrigVar), unique_vars$OrigVar)
-  } else {
-    title_mapping <- setNames(as.list(unique(data[[variable_col]])), unique(data[[variable_col]]))
   }
 
   # Calculate panel layout
@@ -1045,26 +1000,25 @@ detail_plot <- function(data, filter_var = NULL,
           for (panel_val in panel_values) {
             panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
 
-            # Format title
-            plot_title <- paste0(var_name, " - ", panel_val)
-
-            # PLOT TITLE AND OUTPUT TITLE
-            title_info  <- .process_plot_title(
-              default_title = plot_title,
-              title_format = style_config$title_format,
-              add_unit_to_title = style_config$add_unit_to_title,
+            # Use unified title handler
+            title_info <- .handle_plot_title_and_export(
+              var_name = var_name,
+              sep_value = panel_val,
+              plot_type = "detail",
+              is_macro_mode = is_macro_mode,
+              split_by = split_by,
+              x_axis_from = x_axis_from,
+              variable_col = variable_col,
               unit_name = unit_name,
+              style_config = style_config,
               data = panel_data
             )
-
-            # Extract the display title
-            plot_title <- title_info$title
 
             # Create plot
             p <- .create_single_detail_plot(
               data = panel_data,
               x_axis_from = x_axis_from,
-              plot_title = plot_title,
+              plot_title = title_info$title,
               unit = unit_name,
               panel_rows = style_config$panel_rows,
               panel_cols = style_config$panel_cols,
@@ -1074,7 +1028,7 @@ detail_plot <- function(data, filter_var = NULL,
               plot_style_config = style_config
             )
 
-            plot_list[[paste("detail", var_name, panel_val, unit_name, sep = "_")]] <- p
+            plot_list[[title_info$export_name]] <- p
           }
         }
       } else {
@@ -1083,26 +1037,24 @@ detail_plot <- function(data, filter_var = NULL,
         for (var_name in var_combinations) {
           var_data <- unit_data[unit_data[[variable_col]] == var_name, ]
 
-          # Format title
-          plot_title <- var_name
-
-          # PLOT TITLE AND OUTPUT TITLE
-          title_info  <- .process_plot_title(
-            default_title = plot_title,
-            title_format = style_config$title_format,
-            add_unit_to_title = style_config$add_unit_to_title,
+          # Use unified title handler
+          title_info <- .handle_plot_title_and_export(
+            var_name = var_name,
+            plot_type = "detail",
+            is_macro_mode = is_macro_mode,
+            split_by = split_by,
+            x_axis_from = x_axis_from,
+            variable_col = variable_col,
             unit_name = unit_name,
+            style_config = style_config,
             data = var_data
           )
-
-          # Extract the display title
-          plot_title <- title_info$title
 
           # Create plot
           p <- .create_single_detail_plot(
             data = var_data,
             x_axis_from = x_axis_from,
-            plot_title = plot_title,
+            plot_title = title_info$title,
             unit = unit_name,
             panel_rows = style_config$panel_rows,
             panel_cols = style_config$panel_cols,
@@ -1112,7 +1064,7 @@ detail_plot <- function(data, filter_var = NULL,
             plot_style_config = style_config
           )
 
-          plot_list[[paste("detail", var_name, unit_name, sep = "_")]] <- p
+          plot_list[[title_info$export_name]] <- p
         }
       }
     } else {
@@ -1145,26 +1097,26 @@ detail_plot <- function(data, filter_var = NULL,
             for (panel_val in panel_values) {
               panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
 
-              # Format title
-              plot_title <- paste0(sep_value, " - ", var_name, " - ", panel_val)
-
-              # PLOT TITLE AND OUTPUT TITLE
-              title_info  <- .process_plot_title(
-                default_title = plot_title,
-                title_format = style_config$title_format,
-                add_unit_to_title = style_config$add_unit_to_title,
+              # Use unified title handler
+              title_info <- .handle_plot_title_and_export(
+                var_name = var_name,
+                sep_value = sep_value,
+                x_value = panel_val,
+                plot_type = "detail",
+                is_macro_mode = is_macro_mode,
+                split_by = split_by,
+                x_axis_from = x_axis_from,
+                variable_col = variable_col,
                 unit_name = unit_name,
+                style_config = style_config,
                 data = panel_data
               )
-
-              # Extract the display title
-              plot_title <- title_info$title
 
               # Create plot
               p <- .create_single_detail_plot(
                 data = panel_data,
                 x_axis_from = x_axis_from,
-                plot_title = plot_title,
+                plot_title = title_info$title,
                 unit = unit_name,
                 panel_rows = style_config$panel_rows,
                 panel_cols = style_config$panel_cols,
@@ -1174,29 +1126,28 @@ detail_plot <- function(data, filter_var = NULL,
                 plot_style_config = style_config
               )
 
-              plot_list[[paste(sep_value, var_name, panel_val, unit_name, sep = "_")]] <- p
+              plot_list[[title_info$export_name]] <- p
             }
           } else {
-
-            plot_title <- paste0(sep_value, " - ", var_name)
-
-            # PLOT TITLE AND OUTPUT TITLE
-            title_info  <- .process_plot_title(
-              default_title = plot_title,
-              title_format = style_config$title_format,
-              add_unit_to_title = style_config$add_unit_to_title,
+            # Use unified title handler
+            title_info <- .handle_plot_title_and_export(
+              var_name = var_name,
+              sep_value = sep_value,
+              plot_type = "detail",
+              is_macro_mode = is_macro_mode,
+              split_by = split_by,
+              x_axis_from = x_axis_from,
+              variable_col = variable_col,
               unit_name = unit_name,
+              style_config = style_config,
               data = var_data
             )
-
-            # Extract the display title
-            plot_title <- title_info$title
 
             # Create plot
             p <- .create_single_detail_plot(
               data = var_data,
               x_axis_from = x_axis_from,
-              plot_title = plot_title,
+              plot_title = title_info$title,
               unit = unit_name,
               panel_rows = style_config$panel_rows,
               panel_cols = style_config$panel_cols,
@@ -1206,7 +1157,7 @@ detail_plot <- function(data, filter_var = NULL,
               plot_style_config = style_config
             )
 
-            plot_list[[paste(sep_value, var_name, unit_name, sep = "_")]] <- p
+            plot_list[[title_info$export_name]] <- p
           }
         }
       }
@@ -1345,9 +1296,18 @@ detail_plot <- function(data, filter_var = NULL,
   }
 
   # PREPARE DATA FOR PLOTTING
-  data <- data[order(data$Value), ]
-  x_factor_col <- paste0(x_axis_from, "_factor")
-  data[[x_factor_col]] <- factor(data[[x_axis_from]], levels = unique(data[[x_axis_from]]))
+  if (!is.null(top_impact)) {
+    data <- data[order(data$Value), ]
+    x_factor_col <- paste0(x_axis_from, "_factor")
+    data[[x_factor_col]] <- factor(data[[x_axis_from]], levels = unique(data[[x_axis_from]]))
+  } else {
+    x_factor_col <- paste0(x_axis_from, "_factor")
+    if (is.factor(data[[x_axis_from]])) {
+      data[[x_factor_col]] <- data[[x_axis_from]]
+    } else {
+      data[[x_factor_col]] <- factor(data[[x_axis_from]], levels = unique(data[[x_axis_from]]))
+    }
+  }
 
   # CREATE BASE PLOT WITH APPROPRIATE ORDERING
   if (invert_pane) {
@@ -1681,54 +1641,45 @@ detail_plot <- function(data, filter_var = NULL,
 
 # Stack Plot --------------------------------------------------------------
 
-#' @title Create Comprehensive Stacked Bar Charts for Decomposition Analysis
+#' @title Create Stacked Bar Charts for Decomposition Analysis
 #'
 #' @description
-#' Generates stacked bar charts to visualize the composition of values across multiple dimensions,
-#' automatically handling multi-dimensional data. The function supports both stacked and unstacked
-#' presentations, making it particularly useful for decomposition analysis.
+#' Generates stacked bar charts to visualize value compositions across multiple dimensions.
+#' The function supports stacked and unstacked presentations for decomposition analysis.
 #'
 #' @param data A data frame or a list of data frames containing GTAP results.
 #' @param filter_var Vector or data frame. If a vector, filters the values in `x_axis_from`.
 #' If a data frame, filters `value_col` based on matching `variable_col` values.
-#' @param x_axis_from Character. Name of the column to use for x-axis categories (e.g., "REG", "Sector").
-#' @param stack_value_from Character. Name of the column containing stack component categories (e.g., "COMM" for commodities).
+#' @param x_axis_from Character. Column name for x-axis categories (e.g., "REG", "Sector").
+#' @param stack_value_from Character. Column containing stack component categories (e.g., "COMM" for commodities).
 #' @param split_by Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-#' Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., aggregated values without additional dimensions).
+#' Set to NULL for no splitting, suitable for macro-level analysis.
 #' @param panel_var Character. Column for panel facets (default: "Experiment").
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
 #' @param desc_col Character. Column containing variable descriptions (default: "Description").
-#' @param invert_pane Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
-#' @param separate_figure Logical. If TRUE, creates a separate figure for each panel value (default: FALSE).
 #' @param unstack_plot Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).
-#' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
-#' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
-#' @param export_as_pdf Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).
-#' @param export_config List. Configuration options for exported plots, including file name, width, and height.
+#' @param show_total Logical. If TRUE, displays total values above stacked bars (default: TRUE).
+#' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.
+#' @param invert_pane Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
+#' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
 #' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
 #' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
-#' @param show_total Logical. If TRUE, displays total values above stacked bars (default: TRUE).
-#' @param top_impact Numeric or NULL. If specified, filters to show only the top N impactful values. NULL shows all values.
-#' @param plot_style_config List. Custom style configuration for plots. If NULL, defaults from `get_plot_style_config("stack")` are applied.
+#' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
+#' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
+#' @param export_as_pdf Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).
+#' @param export_config List. Export settings, including:
+#' \itemize{
+#'   \item `width`: Output file width (in inches).
+#'   \item `height`: Output file height (in inches).
+#'   \item Additional settings—see `?get_export_config`.
+#' }
+#' @param plot_style_config List. Custom plot styles—see `?get_plot_style_config`.
 #'
 #' @return A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
 #'
-#' @details
-#' This function allows for extensive customization of plots through the `plot_style_config` parameter,
-#' which integrates ggplot2 configurations. The function now supports more flexible export options
-#' with the `export_picture`, `export_as_pdf`, and `export_config` parameters.
-#'
-#' The `export_config` parameter can include:
-#' \itemize{
-#'   \item `file_name`: Base name for the output files (default: "stack_plots").
-#'   \item `width`: Width of the output files in inches.
-#'   \item `height`: Height of the output files in inches.
-#'   \item Additional export settings as needed.
-#' }
-#'
 #' @author Pattawee Puangchit
-#' @seealso \code{\link{detail_plot}}, \code{\link{comparison_plot}}, \code{\link{get_plot_style_config}}
+#' @seealso \code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{detail_plot}}
 #' @export
 #'
 #' @examples
@@ -2004,27 +1955,27 @@ stack_plot <- function(data, filter_var = NULL,
           x_data <- filtered_data[filtered_data[[x_axis_from]] == x_val, ]
           x_totals <- total_data[total_data[[x_axis_from]] == x_val, ]
 
-          # FORMAT TITLE
-          plot_title <- sep_value
-
-          # PLOT TITLE AND OUTPUT TITLE
-          title_info  <- .process_plot_title(
-            default_title = plot_title,
-            title_format = style_config$title_format,
-            add_unit_to_title = style_config$add_unit_to_title,
+          # Use unified title handler
+          title_info <- .handle_plot_title_and_export(
+            var_name = NULL,
+            sep_value = sep_value,
+            x_value = x_val,
+            plot_type = "unstack",
+            is_macro_mode = is_macro_mode,
+            split_by = split_by,
+            x_axis_from = x_axis_from,
+            variable_col = variable_col,
             unit_name = unit_name,
+            style_config = style_config,
             data = x_data
           )
-
-          # Extract the display title
-          plot_title <- title_info$title
 
           p <- .create_single_unstacked_plot(
             data = x_data,
             total_data = x_totals,
             x_axis_from = x_axis_from,
             stack_value_from = stack_value_from,
-            plot_title = plot_title,
+            plot_title = title_info$title,
             unit = y_axis_label,
             panel_rows = style_config$panel_rows,
             panel_cols = style_config$panel_cols,
@@ -2039,27 +1990,26 @@ stack_plot <- function(data, filter_var = NULL,
       } else {
         # CREATE STACKED PLOT
 
-        # FORMAT TITLE
-        plot_title <- sep_value
-
-        # PLOT TITLE AND OUTPUT TITLE
-        title_info  <- .process_plot_title(
-          default_title = plot_title,
-          title_format = style_config$title_format,
-          add_unit_to_title = style_config$add_unit_to_title,
+        # Use unified title handler
+        title_info <- .handle_plot_title_and_export(
+          var_name = NULL,
+          sep_value = sep_value,
+          plot_type = "stack",
+          is_macro_mode = is_macro_mode,
+          split_by = split_by,
+          x_axis_from = x_axis_from,
+          variable_col = variable_col,
           unit_name = unit_name,
+          style_config = style_config,
           data = filtered_data
         )
-
-        # Extract the display title
-        plot_title <- title_info$title
 
         p <- .create_single_stacked_plot(
           data = filtered_data,
           total_data = total_data,
           x_axis_from = x_axis_from,
           stack_value_from = stack_value_from,
-          plot_title = plot_title,
+          plot_title = title_info$title,
           unit = y_axis_label,
           panel_rows = style_config$panel_rows,
           panel_cols = style_config$panel_cols,
@@ -2076,19 +2026,19 @@ stack_plot <- function(data, filter_var = NULL,
   }
 
   # SET DEFAULT FILE_NAME IN EXPORT_CONFIG
-  if (is.null(export_config) || is.null(export_config$file_name)) {
-    if (is.null(export_config)) {
-      export_config <- list()
-    }
+  if (is.null(export_config)) {
+    export_config <- list()
+  }
 
-    # Determine plot type suffix
-    plot_type_suffix <- if (unstack_plot) "_unstacked" else "_stacked"
-
-    if (!is.null(top_impact)) {
-      export_config$file_name <- paste0(title_info$export_name, plot_type_suffix, "_top", top_impact)
-    } else {
-      export_config$file_name <- paste0(title_info$export_name, plot_type_suffix)
-    }
+  # Handle file_name for merged PDF export case
+  if (export_as_pdf == "merged" && is.null(export_config$file_name)) {
+    # Base filename for merged PDF
+    plot_type_name <- if (unstack_plot) "Unstacked_plots" else "Stacked_plots"
+    n_plots <- length(plot_list)
+    export_config$file_name <- paste0(plot_type_name, "_", n_plots)
+  } else if (is.null(export_config$file_name)) {
+    # Default filename (only used if no plot names exist)
+    export_config$file_name <- if (unstack_plot) "unstacked_plots" else "stacked_plots"
   }
 
   # Add calculated dimensions to export_config
@@ -2160,6 +2110,27 @@ stack_plot <- function(data, filter_var = NULL,
   # SETUP VARIABLES
   color_tone <- style_config$color_tone
   n_panels <- length(unique(data[[panel_var]]))
+
+  # RESPECT EXISTING FACTOR LEVELS FOR CONSISTENT SORTING
+  if (!is.null(top_impact)) {
+    # For top_impact case, allow automatic sorting
+  } else {
+    # Preserve existing factor levels for x_axis_from if it's already a factor
+    if (is.factor(data[[x_axis_from]])) {
+      # Already a factor, keep levels as is
+    } else {
+      # If not a factor, create one with current ordering
+      data[[x_axis_from]] <- factor(data[[x_axis_from]], levels = unique(data[[x_axis_from]]))
+    }
+
+    # Also preserve factor levels for stack_value_from
+    if (is.factor(data[[stack_value_from]])) {
+      # Already a factor, keep levels as is
+    } else {
+      # If not a factor, create one with current ordering
+      data[[stack_value_from]] <- factor(data[[stack_value_from]], levels = unique(data[[stack_value_from]]))
+    }
+  }
 
   # GENERATE COLOR PALETTE
   color_palette <- .generate_stack_colors(data, stack_value_from, color_tone)
@@ -2321,8 +2292,8 @@ stack_plot <- function(data, filter_var = NULL,
   }
 
   # ADD FACETS IF NEEDED
-  # ADD FACETS IF NEEDED
   if (n_panels > 1) {
+    # Determine facet behavior
     if (!is.null(panel_rows) && !is.null(panel_cols)) {
       if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
         p <- p + ggplot2::facet_wrap(
@@ -2462,7 +2433,8 @@ stack_plot <- function(data, filter_var = NULL,
 #' @title Create Single Unstacked Plot (Internal)
 #'
 #' @description
-#' Create a single unstacked plot from GTAP data for internal use.
+#' Create a single unstacked plot from GTAP data for internal use. This function shows
+#' individual components as separate bars rather than stacked.
 #'
 #' @param data A data frame containing plotting data.
 #' @param total_data A data frame with total values.
@@ -2501,6 +2473,27 @@ stack_plot <- function(data, filter_var = NULL,
   # SETUP VARIABLES
   color_tone <- style_config$color_tone
   n_panels <- length(unique(data[[panel_var]]))
+
+  # RESPECT EXISTING FACTOR LEVELS FOR CONSISTENT SORTING
+  if (!is.null(top_impact)) {
+    # For top_impact case, allow automatic sorting
+  } else {
+    # Preserve existing factor levels for x_axis_from if it's already a factor
+    if (is.factor(data[[x_axis_from]])) {
+      # Already a factor, keep levels as is
+    } else {
+      # If not a factor, create one with current ordering
+      data[[x_axis_from]] <- factor(data[[x_axis_from]], levels = unique(data[[x_axis_from]]))
+    }
+
+    # Also preserve factor levels for stack_value_from
+    if (is.factor(data[[stack_value_from]])) {
+      # Already a factor, keep levels as is
+    } else {
+      # If not a factor, create one with current ordering
+      data[[stack_value_from]] <- factor(data[[stack_value_from]], levels = unique(data[[stack_value_from]]))
+    }
+  }
 
   # GENERATE COLOR PALETTE
   color_palette <- .generate_stack_colors(data, stack_value_from, color_tone)
@@ -2544,7 +2537,8 @@ stack_plot <- function(data, filter_var = NULL,
   }
 
   # FORMAT VALUE LABELS
-  data$Label <- sprintf("%.2f", data$Value)
+  decimal_places <- style_config$value_label_decimal_places
+  data$Label <- sprintf(paste0("%.", decimal_places, "f"), data$Value)
 
   # CREATE BASE PLOT BASED ON ORIENTATION
   if (invert_pane) {
@@ -2558,8 +2552,11 @@ stack_plot <- function(data, filter_var = NULL,
           fill = stack_value_from
         ),
         width = style_config$bar_width
-      ) +
-      ggplot2::geom_text(
+      )
+
+    # ADD VALUE LABELS IF CONFIGURED
+    if (style_config$show_value_labels) {
+      p <- p + ggplot2::geom_text(
         data = data,
         ggplot2::aes_string(
           y = stack_value_from,
@@ -2569,6 +2566,7 @@ stack_plot <- function(data, filter_var = NULL,
         hjust = ifelse(data$Value >= 0, -0.2, 1.2),
         size = style_config$value_label_size
       )
+    }
 
     # ADD ZERO LINE IF CONFIGURED (VERTICAL FOR HORIZONTAL BARS)
     if (style_config$show_zero_line) {
@@ -2605,8 +2603,11 @@ stack_plot <- function(data, filter_var = NULL,
           fill = stack_value_from
         ),
         width = style_config$bar_width
-      ) +
-      ggplot2::geom_text(
+      )
+
+    # ADD VALUE LABELS IF CONFIGURED
+    if (style_config$show_value_labels) {
+      p <- p + ggplot2::geom_text(
         data = data,
         ggplot2::aes_string(
           x = stack_value_from,
@@ -2616,6 +2617,7 @@ stack_plot <- function(data, filter_var = NULL,
         vjust = ifelse(data$Value >= 0, -0.5, 1.5),
         size = style_config$value_label_size
       )
+    }
 
     # ADD ZERO LINE IF CONFIGURED (HORIZONTAL FOR VERTICAL BARS)
     if (style_config$show_zero_line) {
@@ -2644,6 +2646,7 @@ stack_plot <- function(data, filter_var = NULL,
 
   # ADD FACETS IF NEEDED
   if (n_panels > 1) {
+    # Determine facet behavior
     if (!is.null(panel_rows) && !is.null(panel_cols)) {
       if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
         p <- p + ggplot2::facet_wrap(
@@ -2778,8 +2781,6 @@ stack_plot <- function(data, filter_var = NULL,
 
   return(p)
 }
-
-
 
 #' @title Calculate Stack Totals
 #'
