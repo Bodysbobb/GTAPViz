@@ -27,17 +27,6 @@ knitr::opts_chunk$set(
   eval = requireNamespace("GTAPViz", quietly = TRUE)
 )
 
-required_pkgs <- c("tidyverse", "writexl", "dplyr", "devtools", 
-                   "openxlsx", "readxl", "knitr", "rmarkdown", "data.table", 
-                   "ggplot2", "tcltk", "gridExtra", "haven", "citation", "tinytex", "bookdown")
-
-# Load packages quietly, but only if available
-lapply(required_pkgs, function(pkg) {
-  if (!requireNamespace(pkg, quietly = TRUE)) {
-    warning(sprintf("Package '%s' is not installed. Please install it before running this vignette.", pkg))
-  }
-})
-
 ```
 
 
@@ -110,8 +99,8 @@ har.plot.data <- convert_units(har.plot.data,
 This package facilitates the reporting of CGE model outputs,
 particularly for GTAP users, but it can also be applied to other
 results based on `.har` and `.sl4` files. Its primary function is to
-generate [Figures](#sec:figure-type) and [Tables](#sec:report-table).
-Additionally, several [useful tools](#sec:additional-utilities) are
+generate **[Figures](#sec:figure-type)** and **[Tables](#sec:report-table)**.
+Additionally, several **[useful tools](#sec:additional-utilities)** are
 available for data manipulation to enhance figure illustration.
 
 
@@ -166,8 +155,11 @@ tables designed for academic presentations. This vignette provides
 some examples in [Creating Report Table](#sec:report-table-creating).
 
 1.  [`Comparison Table`](#sec:comparison-table)
+
 2.  [`GTAP Macro Table`](#sec:macro-table)
+
 3.  [`Detail Table`](#sec:detail-table)
+
 4.  [`Decomposition Table`](#sec:decomp-table)
 
 
@@ -194,22 +186,18 @@ output.folder <- paste0(project.folder, "/out")
 By default, this R script assumes that `<project.folder>` contains the
 following three main folders:
 
-<figure>
+<figure class="center-figure">
 
-::: {style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;"}
-```         
+<div class="code-box">
+```{.monospace}
 📂 project.folder/ 
 ├── 📂 in/  # Stores all input files
 ├── 📂 map/ # Stores the mapping file
-├── 📂 out/ 
+├── 📂 out/  
 ```
-:::
+</div>
 
-<figcaption style="text-align: center; font-style: italic;">
-
-Example of Project Folder
-
-</figcaption>
+<figcaption class="auto-fig">Example of Project Folder</figcaption>
 
 </figure>
 
@@ -220,17 +208,19 @@ All input files must be stored in `<input.folder>` (default: `"/in"` within `<pr
 
 Below is an example of `<input.folder>`:
 
-<figure>
+<figure class="center-figure">
 
-::: {style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;"}
-```         
+<div class="code-box">
+```{.monospace}
 📂 in/ 
-├── 📄 EXP1.sl4 
-├── 📄 EXP1-WEL.har 
-├── 📄 EXP2.sl4 
-├── 📄 EXP2-WEL.har 
+├── 📄 TAR10.sl4 
+├── 📄 TAR10-WEL.har 
+├── 📄 SUBT10.sl4 
+├── 📄 SUBT10-WEL.har 
 ```
-:::
+</div>
+
+<figcaption class="auto-fig">Example of Input Folder and Input Files</figcaption>
 
 </figure>
 
@@ -254,32 +244,54 @@ The mapping XLSX template is available here: [OutputMapping.xlsx](https://github
 
 Below is an example of mapping file:
 
-<div style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;">
-  <table style="border-collapse: collapse; width: 100%;">
+<figure class="center-figure">
+
+<div class="table-box">
+  <table>
     <tr>
-      <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Variable</th>
-      <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Description</th>
-      <th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">Unit</th>
+      <th>Variable</th>
+      <th>Description</th>
+      <th>Unit</th>
     </tr>
     <tr>
-      <td style="border: 1px solid #ABB2BF; padding: 8px;">qgdp</td>
-      <td style="border: 1px solid #ABB2BF; padding: 8px;">Real GDP Index (%)</td>
-      <td style="border: 1px solid #ABB2BF; padding: 8px;">percent</td>
+      <td>qgdp</td>
+      <td>Real GDP Index  </td>
+      <td>percent</td>
     </tr>
     <tr>
-      <td style="border: 1px solid #ABB2BF; padding: 8px;">EV</td>
-      <td style="border: 1px solid #ABB2BF; padding: 8px;">Welfare Equivalents</td>
-      <td style="border: 1px solid #ABB2BF; padding: 8px;">million USD</td>
+      <td>EV</td>
+      <td>Welfare Equivalents</td>
+      <td>million USD</td>
     </tr>
     <tr>
-      <td style="border: 1px solid #ABB2BF; padding: 8px;">pprive</td>
-      <td style="border: 1px solid #ABB2BF; padding: 8px;">Consumer Price Index</td>
-      <td style="border: 1px solid #ABB2BF; padding: 8px;">percent</td>
+      <td>ppriv</td>
+      <td>Consumer Price Index</td>
+      <td>percent</td>
+    </tr>
+    <tr>
+      <td>qo</td>
+      <td>Output</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>qxw</td>
+      <td></td>
+      <td></td>
     </tr>
   </table>
 </div>
 
-**Note:** The **Description** and **Unit** columns can be left empty if using [GTAP defaults](#sec:info.mode).
+<figcaption class="auto-fig">Example of "SL4File" and "HARFile" Sheet</figcaption>
+
+ <p class="figure-note">
+    **Note:** The <strong>Description</strong> and <strong>Unit</strong> columns can be left empty if using 
+    <a href="#sec:info.mode">GTAP defaults</a>.
+  </p>
+</figure>
+
+<div class="info-box">
+<strong>Important:</strong> The <a href="https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map">mapping file</a> is crucial for correctly formatting <strong>additional variables—non-GTAPv7 variables</strong>.
+</div>
 
 You can import your external mapping file into R using the following
 method:
@@ -289,9 +301,7 @@ sl4map <- readxl::read_xlsx(map.folder, sheet = "SL4File")
 harmap <- readxl::read_xlsx(map.folder, sheet = "HARFile")
 ```
 
-<div class="tip-box">
-💡 <strong>Tip:</strong> The <a href="https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map">mapping file</a> is crucial to correctly format your outputs.
-</div>
+Or manually create it in the R environment using the following code:
 
 ```{r Munual Mapping File Create, eval=FALSE}
 mapping_df <- data.frame(
@@ -305,17 +315,68 @@ mapping_df <- data.frame(
 
 ### FilterData Sheet {#sec:filterdata-sheets}
 
-This sheet is optional and can also be defined in R instead. It contains two columns for *filtering data from the dataframe*. Leave it empty to include all entries.
+This sheet is optional and can also be defined in R instead. It contains two columns for *filtering data from the dataframe*.
 
 • **"Region"** excludes specified regions by filtering the "REG" column in all dataframes.  
 
 • **"Sector"** excludes specified sectors by filtering the "COMM" and "ACTS" columns in all dataframes.  
 
-
 <div class="tip-box">
 💡 <strong>Tip:</strong> These columns also determine the sorting order. See <a href="#sec:sorting-output">Sorting Output</a> for details.
 </div>
 
+Below is an example of the filter data sheet:
+
+<figure class="center-figure">
+
+<div class="table-box">
+  <table>
+    <tr>
+      <th>Region</th>
+      <th>Sector</th>
+    </tr>
+    <tr>
+      <td>EastAsia</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>SEAsia</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Oceania</td>
+      <td></td>
+    </tr>
+  </table>
+</div>
+
+<figcaption class="auto-fig">Example of "FilterData" Sheet</figcaption>
+
+ <p class="figure-note">
+    **Note:** You may leave it empty to include all entries or redefine the order for sorting the output format.
+  </p>
+</figure>
+
+You can import your external mapping file into R using the following
+method:
+
+```{r Filtering Data, eval = FALSE}
+filter.map <- readxl::read_xlsx(map.folder, sheet = "FilterData")
+
+selected_regions <- if(length(filter.map$Region) > 0) filter.map$Region else NULL
+selected_sector  <- if(length(filter.map$Sector) > 0) filter.map$Sector else NULL
+```
+
+Or manually create it in the R environment using the following code:
+
+```{r Munual FilterData, eval=FALSE}
+selected_regions <- c("EastAsia", "SEAsia", "Oceania")
+selected_sector  <- NULL
+```
+
+<div class="tip-box">
+💡 <strong>Tip:</strong> If the plot is too dense or unclear, try filtering more data!
+</div>
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -410,58 +471,34 @@ txt.output <- "No"
 plot_data = TRUE
 ```
 
-<div style="
-    background-color: #E8F4FD; 
-    border-left: 5px solid #5B9BD5; 
-    padding: 10px 15px; 
-    border-radius: 5px;
-    margin: 15px 0;
-    ">
+<div class="tip-box">
 💡 <strong>Tip:</strong> Once this process is complete, you can use the same format for future documents—saving you time and ensuring consistency.
 </div>
 
-
-## Setting Up Sub-Directories {#sec:subdirectory}
-
-You can simply run the following code without modification if you followed all the previous instructions:
+You can simply run the following code to setup subdirectories without modification if you followed all the previous instructions:
 
 ```{r Default Input, eval = FALSE}
-# Default Folder
+# Default Subdirectories:
 input.folder <- paste0(project.folder, "/in")
 map.folder <- paste0(project.folder, "/map")
 output.folder <- paste0(project.folder, "/out")
 
-# Default Mapping File
+# Default Mapping File:
 sl4map <- readxl::read_xlsx(paste0(map.folder, "/OutputMapping.xlsx"), sheet = "SL4File")
 harmap <- readxl::read_xlsx(paste0(map.folder, "/OutputMapping.xlsx"), sheet = "HARFile")
 filter.map <- readxl::read_xlsx(paste0(map.folder, "/OutputMapping.xlsx"), sheet = "FilterData")
+
+# Filtering Data:
+selected_regions <- if(length(filter.map$Region) > 0) filter.map$Region else NULL
+selected_sector  <- if(length(filter.map$Sector) > 0) filter.map$Sector else NULL
 ```
 
 **Note:** If you're familiar with R and prefer a more flexible directory structure, you can customize any of these. However, you must also define them in the function. 
 
 
-## Data Filtering Setup {#sec:filtering-data}
-
-This filtering process runs automatically when the mapping file is used as instructed. However, experienced users can define it manually in the R environment:  
-
-```{r Filtering Data, eval = FALSE}
-# Using a Default Mapping File: 
-selected_regions <- if(length(filter.map$Region) > 0) filter.map$Region else NULL
-selected_sector  <- if(length(filter.map$Sector) > 0) filter.map$Sector else NULL
-
-# Manually Defining:  
-selected_regions <- c("EastAsia", "SEAsia", "Oceania")
-selected_sector  <- NULL
-```
-
-<div class="tip-box">
-💡 <strong>Tip:</strong> If the plot is too dense or unclear, try filtering more data!
-</div>
-
-
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# Output Sorting Rules {#sec:sorting-output}
+# Sorting Rules {#sec:sorting-output}
 
 These predefined lists determine the display order of outputs, i.e., figures and tables:  
 
@@ -471,21 +508,22 @@ These predefined lists determine the display order of outputs, i.e., figures and
 
 - `<selected_sectors>` sorts the column for defined sectors by GTAP; the default is `"COMM"` and `"ACTS"`.  
 
+<div class="tip-box">
+💡 <strong>Tip:</strong> To customize sorting for additional columns, manual adjustments may be required. 
+</div>
 
-To customize sorting for additional columns, manual adjustments may be required.  
-
-## Example:  
-
-This setup with will display the figure as shown below:  
+For example, this setup with will display the figure as shown below:  
 
 - `experiment <- c("TAR10", "SUBT10")`  
 
 - `selected_regions <- c("EastAsia", "SEAsia", "Oceania")`  
 
-```{r, echo=FALSE, out.width="600px"}
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/sort_example.png")
 ```
-
+</div> <figcaption class="package-fig"> Example of Sorting Figures <br> </figcaption> </figure>
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -513,11 +551,14 @@ auto_gtap_data(
     "txt" = txt.output))
 ```
 
-**Note:**  
-For non-GTAP models or manual data extraction, see [Manual Data Processing](#sec:manualdata).  
+The default process for extracting data in automation uses `HARplus::group_data_by_dims` for `.sl4` and `get_data_by_var` for `.har`.
 
 <div class="tip-box">
-💡 <strong>Tip:</strong> The process of extracting data in automation can be modified freely. See <code>?auto_gtap_data</code>. Keep in mind that the plot function may require slight modifications to suit the new format.
+💡 <strong>Tip 1:</strong> The process used in <code>?auto_gtap_data</code> can be modified for both `.sl4` and `.har`, which might be easier for some datasets, such as non-GTAP variables. Keep in mind that the plot function may require slight modifications to suit the new format
+</div>
+
+<div class="tip-box">
+💡 <strong>Tip 2:</strong> For manual data extraction, see [Manual Data Processing](#sec:manualdata).
 </div>
 
 ## Converting Units and Labels (Optional) {#sec:custom-unit}
@@ -537,30 +578,42 @@ har.plot.data <- convert_units(har.plot.data,
 
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
-# **<span style="color:#D62728;">Essential Info</span>** {.unnumbered}
+<div class="info-box">
+# **Essential Info** {#essential-info .unnumbered}
 
-## **<span style="color:#D62728;">Understanding the Function</span>** {.unnumbered}  
-
-Before generating any figures, it is useful to review the function arguments to ensure you take full advantage of the available customization options. See: `?comparison_plot`, `?detail_plot`, `?stack_plot`  
-
-
-## **<span style="color:#D62728;">Customizing the Plot</span>** {.unnumbered}
-
-
-This package builds on **ggplot2**, making nearly all of its customization options easily adjustable within its plotting functions.  
-
-Elements like font sizes, titles, value labels, and positioning can be modified using simple numeric or logical values (`TRUE`/`FALSE`).  
-
-To view all customization options (`?get_plot_style_config`), run:
-
+## Understanding Function Arguments {.unnumbered}
+  <p>Before generating any figures, it is useful to review the function arguments to ensure you take full advantage of the available customization options:</p>
+  
 ```{r, eval = FALSE}
-config_comparison <- get_plot_style_config("comparison", as_dataframe = TRUE)
-config_detail <- get_plot_style_config("detail", as_dataframe = TRUE)
-config_stack <- get_plot_style_config("stack", as_dataframe = TRUE)
-
-all_configs <- get_plot_config()
+?comparison_plot
+?detail_plot
+?stack_plot
 ```
 
+## Customizing the Plot Styles {.unnumbered}
+  <p>This package builds on <strong>ggplot2</strong>, making nearly all of its customization options easily adjustable within its plotting functions.</p>
+
+  <p>Elements like font sizes, titles, value labels, and positioning can be modified using simple numeric or logical values (`TRUE/FALSE`).</p>
+
+  <p>To view all customization options run:</p>
+
+```{r, eval = FALSE}
+?get_plot_style_config
+
+plot_config <- get_plot_style_config("default", as_dataframe = TRUE)
+```
+
+## Customizing the Figure Outputs {.unnumbered}
+
+<p>This package allows exporting figures in <strong>PNG and PDF</strong> formats. PDF files can be merged into a single file or saved as multiple separate files. To see all available options, see:</p>
+
+```{r, eval = FALSE}
+export_config <- get_export_config(as_dataframe = TRUE)
+
+# Or Get All Configurations
+all_configs <- get_plot_config()
+```
+</div>
 
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -582,8 +635,9 @@ This figure compares one or multiple variables across all experiments for select
 Plotting `qgdp`, `ppriv`, `EV`, `tot`, and `u` generates six separate figures using the following command:  
 
 ```{r Comparison Plot, eval = FALSE}
-comparison_plot(sl4.plot.data[["1D"]][["Region"]],
-                
+reg_data = sl4.plot.data[["1D"]][["Region"]]
+
+comparison_plot(data = reg_data,
                 x_axis_from = "Region",
                 split_by = "Variable",
                 panel_var = "Experiment", 
@@ -600,13 +654,15 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                 
                 export_picture = TRUE,
                 export_as_pdf = "merged",
+                output_path = output.folder,
+                
+                # See ?export_config
                 export_config = list(
                   width = 20,
                   height = 12
                   ),
-
-                output_path = output.folder,
                 
+                # See ?plot_style_config
                 plot_style_config = list(
                   color_tone = "purdue",
                   add_unit_to_title = TRUE,
@@ -622,7 +678,7 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
 By default, you might not need to define as much, as the previous sample code assumes that you follow all the previous instructions. You may use the following command to get the exact same output:  
 
 ```{r Comparison Plot - Short Version, eval = FALSE}
-comparison_plot(sl4.plot.data[["1D"]][["Region"]],
+comparison_plot(reg_data,
                 x_axis_from = "Region",
                 split_by = "Variable",
                 var_name_by_description = TRUE,
@@ -643,10 +699,12 @@ comparison_plot(sl4.plot.data[["1D"]][["Region"]],
                 ))
 ```
 
-```{r, echo=FALSE, out.width="600px"}
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/cpsplot.png")
 ```
-
+</div> <figcaption class="package-fig"> Comparison Plot Visualization <br> </figcaption> </figure>
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -668,7 +726,7 @@ This figure displays aggregated values across all experiments, typically for glo
 </div>
 
 
-To plot this figure, you can use the following command:
+To plot this figure—the only difference from previous figures is changing `split_by = FALSE`—you can use the following command:
 
 ```{r GTAP Macro Plot, eval = FALSE}
 comparison_plot(GTAPMacro,
@@ -689,16 +747,16 @@ comparison_plot(GTAPMacro,
                   title_format = list(
                     type = "full",  
                     text = "Global Economic Impacts"
-                  ),
-                  legend_position = "bottom"
+                  )
                 ))
 ```
 
-
-```{r, echo=FALSE, out.width="600px"}
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/GTAPMacros.png")
 ```
-
+</div> <figcaption class="package-fig"> GTAP Macro Plot Visualization <br> <span class="package-fig-note">(splt_by = FALSE)</span> </figcaption> </figure>
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -745,13 +803,20 @@ detail_plot(sl4.plot.data[["2D"]],
             ))
 ```
 
-```{r detail plot, echo=FALSE, out.width="600px"}
-knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot.png")
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r, echo=FALSE, fig.align="center", out.width="100%"}
+  knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot.png")
 ```
-
-```{r detail plot top impact, echo=FALSE, out.width="600px"}
+</div> <figcaption class="package-fig"> Detail Plot Visualization <br> <span class="package-fig-note">(top_impact = NULL, invert_pane = TRUE)</span> </figcaption> </figure>
+  
+  
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r detail plot top impact, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot_top10.png")
 ```
+</div> <figcaption class="package-fig"> Detail Plot Visualization (filtered) <br> <span class="package-fig-note">(top_impact = 10, invert_pane = TRUE)</span> </figcaption> </figure>
 
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
@@ -821,13 +886,19 @@ stack_plot(data = har.plot.data[["A"]],
            ))
 ```
 
-```{r stack plot, echo=FALSE, out.width="600px"}
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r stack plot, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/stack_plot.png")
 ```
+</div> <figcaption class="package-fig"> Stack Plot Visualization (stack) <br> <span class="package-fig-note">(split_by = FALSE, show_total = TRUE, unstack_plot = TRUE)</span> </figcaption> </figure>
 
-```{r unstack plot, echo=FALSE, out.width="600px"}
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r unstack plot, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/unstack_plot.png")
 ```
+</div> <figcaption class="package-fig"> Stack Plot Visualization (unstacked) <br> <span class="package-fig-note">(split_by = FALSE, show_total = TRUE, unstack_plot = FALSE)</span> </figcaption> </figure>
 
 Another practical example is plotting the decomposition of terms of trade (header E1), which is also a good example of multi-dimensional plotting. You may try the following command:
 
@@ -888,29 +959,37 @@ report_table(
   group_by =  list(
     Region = list("Experiment", "Region")),
   rename_cols = list("Experiment" = "Scenario"),
-  
+
   total_column = FALSE,
   decimal = 4,
   subtotal_level = FALSE,
   repeat_label = FALSE,
   include_units = TRUE,
 
-  var_name_by_description = FALSE,
-  add_var_info = FALSE,
+  var_name_by_description = TRUE,
+  add_var_info = TRUE,
   add_group_line = FALSE,
-
-  separate_sheet_by = NULL,
+  
+  separate_sheet_by = "Unit",
   export_table = TRUE,
-  output_dir = output.folder,
+  output_path = output.folder,
   separate_file = FALSE,
-  workbook_name = "comparison"
+  workbook_name = "Comparison Table"
 )
 ```
+
+<figure class="package-table">
+  <div class="package-table-box">
+```{r unstack plot, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/comparison_table.png")
+```
+</div> <figcaption class="package-table-caption"> Comparison Table <br> <span class="package-table-note">(separate_sheet_by = "Unit")</span> </figcaption> </figure> 
+
 
 ## GTAP Macro Table {#sec:macro-table}
 
 ```{r GTAP Macro Table, eval = FALSE}
-GTAPMacro <- list(GTAPMacro = Macros)
+GTAPMacro <- list(GTAPMacro = GTAPMacro)
 
 report_table(
   data_list = GTAPMacro,
@@ -932,11 +1011,19 @@ report_table(
 
   separate_sheet_by = NULL,
   export_table = TRUE,
-  output_dir = output.folder,
+  output_path = output.folder,
   separate_file = FALSE,
-  workbook_name = "GTAPMacro"
+  workbook_name = "GTAPMacro Table"
 )
 ```
+
+<figure class="package-table">
+  <div class="package-table-box">
+```{r unstack plot, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/GTAPMacro_table.png")
+```
+</div> <figcaption class="package-table-caption"> GTAP Macros Table <br> <span class="package-table-note">(separate_sheet_by = FALSE)</span> </figcaption> </figure> 
+
 
 ## Detail Table {#sec:detail-table}
 
@@ -951,22 +1038,30 @@ report_table(
   rename_cols = list("Experiment" = "Scenario"),
   
   total_column = FALSE,
-  decimal = 6,
+  decimal = 2,
   subtotal_level = FALSE,
   repeat_label = FALSE,
   include_units = TRUE,
 
-  var_name_by_description = FALSE,
-  add_var_info = FALSE,
-  add_group_line = FALSE,
+  var_name_by_description = TRUE,
+  add_var_info = TRUE,
+  add_group_line = TRUE,
 
   separate_sheet_by = NULL,
   export_table = TRUE,
-  output_dir = output.folder,
+  output_path = output.folder,
   separate_file = FALSE,
   workbook_name = "Detail Table"
 )
 ```
+
+<figure class="package-table">
+  <div class="package-table-box">
+```{r unstack plot, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_table.png")
+```
+</div> <figcaption class="package-table-caption"> Detail Table <br> <span class="package-table-note">(separate_sheet_by = NULL, add_group_line = TRUE)</span> </figcaption> </figure> 
+
 
 ## Decomposition Table {#sec:decomp-table}
 
@@ -976,11 +1071,11 @@ report_table(
   pivot_col = list(A = "COLUMN", 
                    E1 = "PRICES"),
   group_by = list(
-    A = list("Experiment", "Region"), 
-    E1 = list("Experiment", "Region", "Commodity")
+    A = list("Experiment", "REG"), 
+    E1 = list("Experiment", "REG", "COMM")
   ),
   rename_cols = list("REG" = "Region", 
-                     "COMM" = "Sector",
+                     "COMM" = "Commodities",
                      "Experiment" = "Scenario"),
   
   total_column = TRUE,
@@ -993,14 +1088,19 @@ report_table(
   add_var_info = FALSE,
   add_group_line = FALSE,
 
-  separate_sheet_by = NULL,
+  separate_sheet_by = "REG",
   export_table = TRUE,
-  output_dir = output.folder,
+  output_path = output.folder,
   separate_file = FALSE,
-  workbook_name = "Decomposition"
+  workbook_name = "Decomposition Table"
 )
 ```
-
+<figure class="package-table">
+  <div class="package-table-box">
+```{r unstack plot, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/decomp_table.png")
+```
+</div> <figcaption class="package-table-caption"> Decomposition Table <br> <span class="package-table-note">(total_column = TRUE, separate_sheet_by = "Region")</span> </figcaption> </figure> 
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 

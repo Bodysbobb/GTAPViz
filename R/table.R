@@ -10,7 +10,7 @@
 #' @param total_column Logical. If `TRUE`, includes a "Total" column summing numeric values.
 #' @param export_table Logical. If `TRUE`, exports the tables to an Excel file.
 #' @param separate_file Logical. If `TRUE`, saves each dataset in a separate Excel file.
-#' @param output_dir Character. Directory where Excel files are written if `export_table = TRUE`.
+#' @param output_path Character. Directory where Excel files are written if `export_table = TRUE`.
 #' @param sheet_names Optional named list for custom sheet names.
 #' @param include_units Logical. If `TRUE`, includes the "Unit" column in grouping.
 #' @param component_exclude Optional character vector specifying pivoted values to exclude.
@@ -40,7 +40,7 @@
 #'   data_list = my_data,
 #'   pivot_col = list("Variable" = "Value"),
 #'   export_table = TRUE,
-#'   output_dir = "results/"
+#'   output_path = "results/"
 #' )
 #' }
 #'
@@ -49,7 +49,7 @@ report_table <- function(data_list,
                          total_column = FALSE,
                          export_table = FALSE,
                          separate_file = FALSE,
-                         output_dir = NULL,
+                         output_path = NULL,
                          sheet_names = NULL,
                          include_units = FALSE,
                          component_exclude = NULL,
@@ -233,7 +233,7 @@ report_table <- function(data_list,
   if (export_table && length(out_list)>0) {
     .export_detail_tables(
       out_list,
-      output_dir,
+      output_path,
       separate_file,
       sheet_names,
       repeat_label,
@@ -356,7 +356,7 @@ report_table <- function(data_list,
 #' after each group in the first column if `add_group_line = TRUE`.
 #'
 #' @param result_list A named list of data frames to export.
-#' @param output_dir Character. The output directory path for saving the Excel file(s).
+#' @param output_path Character. The output directory path for saving the Excel file(s).
 #' @param separate_file Logical. If `TRUE`, each data frame is exported as a separate Excel file.
 #'   Otherwise, all data frames go into a single workbook.
 #' @param sheet_names Optional named list for custom sheet or file naming.
@@ -367,11 +367,11 @@ report_table <- function(data_list,
 #' @keywords internal
 #' @author Pattawee Puangchit
 #'
-.export_detail_tables <- function(result_list, output_dir, separate_file, sheet_names,
+.export_detail_tables <- function(result_list, output_path, separate_file, sheet_names,
                                   repeat_label, workbook_name,
                                   add_group_line = FALSE) {
-  if (is.null(output_dir)) stop("Output directory must be specified for exporting.")
-  if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
+  if (is.null(output_path)) stop("Output directory must be specified for exporting.")
+  if (!dir.exists(output_path)) dir.create(output_path, recursive = TRUE)
 
   # Define styles
   header_style_left <- openxlsx::createStyle(
@@ -476,7 +476,7 @@ report_table <- function(data_list,
         gsub("[^[:alnum:]_]", "_", sheet_key)
       }
       wb <- openxlsx::createWorkbook()
-      file_path <- file.path(output_dir, paste0(file_name, ".xlsx"))
+      file_path <- file.path(output_path, paste0(file_name, ".xlsx"))
       openxlsx::addWorksheet(wb, "Sheet1")
       openxlsx::writeData(wb, "Sheet1", df)
 
@@ -519,7 +519,7 @@ report_table <- function(data_list,
     }
   } else {
     wb <- openxlsx::createWorkbook()
-    file_path <- file.path(output_dir, paste0(workbook_name, ".xlsx"))
+    file_path <- file.path(output_path, paste0(workbook_name, ".xlsx"))
     for (sheet_key in names(result_list)) {
       df <- result_list[[sheet_key]]
       sheet_name <- if (!is.null(sheet_names) && sheet_key %in% names(sheet_names)) {
