@@ -6,7 +6,7 @@
 \usage{
 .export_detail_tables(
   result_list,
-  output_dir,
+  output_path,
   separate_file,
   sheet_names,
   repeat_label,
@@ -17,7 +17,7 @@
 \arguments{
 \item{result_list}{A named list of data frames to export.}
 
-\item{output_dir}{Character. The output directory path for saving the Excel file(s).}
+\item{output_path}{Character. The output directory path for saving the Excel file(s).}
 
 \item{separate_file}{Logical. If \code{TRUE}, each data frame is exported as a separate Excel file.
 Otherwise, all data frames go into a single workbook.}

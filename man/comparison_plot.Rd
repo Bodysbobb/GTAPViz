@@ -33,7 +33,7 @@ If a data frame, filters \code{value_col} based on matching \code{variable_col} 
 \item{x_axis_from}{Character. Column name for x-axis categories (e.g., "REG", "Sector").}
 
 \item{split_by}{Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., aggregated values without additional dimensions).}
+Set to NULL for no splitting, suitable for macro-level analysis.}
 
 \item{panel_var}{Character. Column for panel facets (default: "Experiment").}
 
@@ -55,11 +55,16 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 
 \item{export_picture}{Logical. If TRUE, exports plots as image files (default: TRUE).}
 
-\item{export_as_pdf}{Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).}
+\item{export_as_pdf}{Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).}
 
-\item{export_config}{List. Configuration options for exported plots, including file name, width, and height.}
+\item{export_config}{List. Export settings, including:
+\itemize{
+\item \code{width}: Output file width (in inches).
+\item \code{height}: Output file height (in inches).
+\item Additional settings—see \code{?get_export_config}.
+}}
 
-\item{plot_style_config}{List. Custom style configuration for plots. If NULL, defaults from \code{get_plot_style_config("comparison")} are applied.}
+\item{plot_style_config}{List. Custom plot styles—see \code{?get_plot_style_config}.}
 }
 \value{
 A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
@@ -67,19 +72,6 @@ A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plo
 \description{
 Generates comparative bar charts using GTAP data, allowing multiple visualization options
 such as panel facets, split grouping, and customizable styles.
-}
-\details{
-This function allows for extensive customization of plots through the \code{plot_style_config} parameter,
-which integrates ggplot2 configurations. The function now supports more flexible export options
-with the \code{export_picture}, \code{export_as_pdf}, and \code{export_config} parameters.
-
-The \code{export_config} parameter can include:
-\itemize{
-\item \code{file_name}: Base name for the output files (default: "comparison_plots").
-\item \code{width}: Width of the output files in inches.
-\item \code{height}: Height of the output files in inches.
-\item Additional export settings as needed.
-}
 }
 \examples{
 \dontrun{
@@ -113,7 +105,7 @@ p2 <- comparison_plot(
 }
 }
 \seealso{
-\code{\link{detail_plot}}, \code{\link{stack_plot}}, \code{\link{get_plot_style_config}}
+\code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 }
 \author{
 Pattawee Puangchit

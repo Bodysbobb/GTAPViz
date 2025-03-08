@@ -4,7 +4,7 @@
 \alias{get_plot_config}
 \title{Get Plot and Export Configurations}
 \usage{
-get_plot_config(plot_style = "all", config = NULL, export_config = NULL)
+get_plot_config(plot_style = "default", config = NULL, export_config = NULL)
 }
 \arguments{
 \item{plot_style}{Character. The plot style to retrieve: "comparison", "detail", "stack", or "all".

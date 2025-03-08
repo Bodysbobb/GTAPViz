@@ -67,7 +67,7 @@ gtap_data <- convert_units(gtap_data, scale_auto = "pct2frac")
 
 }
 \seealso{
-\code{\link{add_mapping_info}}, \code{\link{rename_value}}
+\code{\link{add_mapping_info}}, \code{\link{rename_value}}, \code{\link{sort_plot_data}}
 }
 \author{
 Pattawee Puangchit

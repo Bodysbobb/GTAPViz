@@ -2,7 +2,7 @@
 % Please edit documentation in R/table.R
 \name{report_table}
 \alias{report_table}
-\title{Generate a Detailed Report Table}
+\title{Generate a Structured Report Table}
 \usage{
 report_table(
   data_list,
@@ -10,7 +10,7 @@ report_table(
   total_column = FALSE,
   export_table = FALSE,
   separate_file = FALSE,
-  output_dir = NULL,
+  output_path = NULL,
   sheet_names = NULL,
   include_units = FALSE,
   component_exclude = NULL,
@@ -28,39 +28,39 @@ report_table(
 )
 }
 \arguments{
-\item{data_list}{A named list of data frames to be processed.}
+\item{data_list}{A named list of data frames to process.}
 
-\item{pivot_col}{A named list specifying which column is pivoted into wide format for each dataset.}
+\item{pivot_col}{A named list specifying the column to pivot into a wide format for each dataset.
+Each dataset can have only one pivot column. Example:
+\code{pivot_col = list(A = "COLUMN", E1 = "PRICES")}}
 
-\item{total_column}{Logical. If \code{TRUE}, includes a "Total" column summing numeric values.}
+\item{total_column}{Logical. If \code{TRUE}, adds a "Total" column summing numeric values.}
 
-\item{export_table}{Logical. If \code{TRUE}, exports the tables to an Excel file.}
+\item{export_table}{Logical. If \code{TRUE}, saves the output as an Excel file.}
 
-\item{separate_file}{Logical. If \code{TRUE}, saves each dataset in a separate Excel file.}
+\item{separate_file}{Logical. If \code{TRUE}, saves each dataset as a separate Excel file.}
 
-\item{output_dir}{Character. Directory where Excel files are written if \code{export_table = TRUE}.}
+\item{output_path}{Character. Directory for saving Excel files when \code{export_table = TRUE}.}
 
 \item{sheet_names}{Optional named list for custom sheet names.}
 
-\item{include_units}{Logical. If \code{TRUE}, includes the "Unit" column in grouping.}
+\item{include_units}{Logical. If \code{TRUE}, includes "Unit" as a grouping column if applicable.}
 
 \item{component_exclude}{Optional character vector specifying pivoted values to exclude.}
 
-\item{group_by}{A list or character vector of grouping columns, or \code{NULL} for automatic detection.}
+\item{group_by}{A named list defining hierarchical grouping for each dataset. The order of columns
+in each list determines the priority. Example:
+\code{group_by = list(A = list("Experiment", "REG"), E1 = list("Experiment", "REG", "COMM"))}}
 
-\item{rename_cols}{A named list for renaming columns.}
-
-\item{var_name_by_description}{Logical. If \code{TRUE}, replaces Variable names with their Description.}
-
-\item{add_var_info}{Logical. If \code{TRUE}, appends the Variable code in parentheses after the Description.}
+\item{rename_cols}{A named list for renaming columns across \strong{all} datasets. Example:
+\code{rename_cols = list("REG" = "Region", "COMM" = "Commodities", "Experiment" = "Scenario")}}
 
 \item{decimal}{Numeric. Number of decimal places for rounding values.}
 
-\item{unit_select}{Optional. Filters rows based on the specified unit.}
+\item{separate_sheet_by}{Optional column name to split sheets in Excel. If defined, each unique
+value in the specified column gets its own sheet. Example: \code{separate_sheet_by = "Scenario"}.}
 
-\item{separate_sheet_by}{Optional column name to split sheets in Excel.}
-
-\item{subtotal_level}{Logical. If \code{TRUE}, includes all subtotal values; otherwise, keeps only Subtotal = "TOTAL".}
+\item{subtotal_level}{Logical. If \code{TRUE}, includes all subtotal values; otherwise, keeps only \code{TOTAL} rows.}
 
 \item{repeat_label}{Logical. If \code{TRUE}, repeats the first group column in exports for clarity.}
 
@@ -72,8 +72,8 @@ report_table(
 A named list of transformed data frames. If \code{export_table = TRUE}, tables are saved as Excel files.
 }
 \description{
-Transforms one or more datasets into a wide-format table based on specified
-grouping columns and pivot column(s). Supports subtotal filtering, renaming,
+Transforms multiple datasets into wide-format tables based on defined pivot columns,
+hierarchical grouping, and renaming rules. Supports optional subtotal filtering
 and exporting to Excel.
 }
 \examples{
@@ -83,7 +83,7 @@ report_data <- report_table(
   data_list = my_data,
   pivot_col = list("Variable" = "Value"),
   export_table = TRUE,
-  output_dir = "results/"
+  output_path = "results/"
 )
 }
 

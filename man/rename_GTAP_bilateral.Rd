@@ -24,7 +24,7 @@ gtap_data <- rename_GTAP_bilateral(gtap_data)
 
 }
 \seealso{
-\code{\link{add_mapping_info}}, \code{\link{convert_units}}
+\code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}
 }
 \author{
 Pattawee Puangchit

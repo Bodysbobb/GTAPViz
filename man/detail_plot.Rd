@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{detail_plot}
 \alias{detail_plot}
-\title{Create Comprehensive Detailed Bar Charts for Impact Distribution}
+\title{Create Comprehensive Bar Charts from HAR and SL4 Data}
 \usage{
 detail_plot(
   data,
@@ -34,7 +34,7 @@ If a data frame, filters \code{value_col} based on matching \code{variable_col} 
 \item{x_axis_from}{Character. Column name for x-axis categories (e.g., "REG", "Sector").}
 
 \item{split_by}{Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., aggregated values without additional dimensions).}
+Set to NULL for no splitting, suitable for macro-level analysis.}
 
 \item{panel_var}{Character. Column for panel facets (default: "Experiment").}
 
@@ -52,38 +52,29 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 
 \item{export_picture}{Logical. If TRUE, exports plots as image files (default: TRUE).}
 
-\item{export_as_pdf}{Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).}
+\item{export_as_pdf}{Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).}
 
-\item{export_config}{List. Configuration options for exported plots, including file name, width, and height.}
+\item{export_config}{List. Export settings, including:
+\itemize{
+\item \code{width}: Output file width (in inches).
+\item \code{height}: Output file height (in inches).
+\item Additional settings—see \code{?get_export_config}.
+}}
 
-\item{top_impact}{Numeric or NULL. If specified, filters to show only the top N impactful values. NULL shows all values.}
+\item{top_impact}{Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.}
 
-\item{separate_figure}{Logical. If TRUE, creates a separate figure for each panel value (default: FALSE).}
+\item{separate_figure}{Logical. If TRUE, generates separate figures per panel value (default: FALSE).}
 
 \item{invert_pane}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
 
-\item{plot_style_config}{List. Custom style configuration for plots. If NULL, defaults from \code{get_plot_style_config("detail")} are applied.}
+\item{plot_style_config}{List. Custom plot styles—see \code{?get_plot_style_config}.}
 }
 \value{
 A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
 }
 \description{
-Generates detailed bar charts to visualize the distribution of impacts across multiple dimensions,
-automatically handling multi-dimensional data. The function supports top impact filtering,
-color coding for positive and negative values, and flexible visualization settings.
-}
-\details{
-This function allows for extensive customization of plots through the \code{plot_style_config} parameter,
-which integrates ggplot2 configurations. The function now supports more flexible export options
-with the \code{export_picture}, \code{export_as_pdf}, and \code{export_config} parameters.
-
-The \code{export_config} parameter can include:
-\itemize{
-\item \code{file_name}: Base name for the output files (default: "detail_plots").
-\item \code{width}: Width of the output files in inches.
-\item \code{height}: Height of the output files in inches.
-\item Additional export settings as needed.
-}
+Generates detailed bar charts to visualize the distribution of impacts across multiple dimensions.
+The function supports top impact filtering, color coding, and flexible visualization settings.
 }
 \examples{
 \dontrun{
@@ -116,7 +107,7 @@ p2 <- detail_plot(
 
 }
 \seealso{
-\code{\link{comparison_plot}}, \code{\link{stack_plot}}, \code{\link{get_plot_style_config}}
+\code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{stack_plot}}
 }
 \author{
 Pattawee Puangchit

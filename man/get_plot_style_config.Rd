@@ -5,11 +5,11 @@
 \title{Get Plot Style Configuration}
 \usage{
 get_plot_style_config(
-  plot_type = "comparison",
+  plot_type = "default",
   parameter_name = NULL,
   show_docs = FALSE,
   validate_custom = NULL,
-  as_dataframe = FALSE
+  as_dataframe = TRUE
 )
 }
 \arguments{
@@ -44,7 +44,12 @@ The parameters are grouped as follows:
 \item \code{title_hjust}: Numeric. Horizontal alignment (0 = left, 1 = right). Default: \code{0.5}
 \item \code{add_unit_to_title}: Logical. Append unit to title if applicable. Default: \code{TRUE}
 \item \code{title_margin}: ggplot2 \code{margin()} object. Default: \code{ggplot2::margin(10, 0, 10, 0)}
-\item \code{title_format}: List. Defines title formatting options (\code{type = "standard"}, \code{text = ""})
+\item \code{title_format}: List or NULL. Formatting options for the title, with elements:
+\itemize{
+\item \code{type}: Character. One of "prefix", "suffix", "full", or "dynamic".
+\item \code{text}: Character. Text to add, or column names used for dynamic titles.
+\item \code{sep}: Character. Separator used for dynamic titles. Default: " - ".
+}
 }
 }
 

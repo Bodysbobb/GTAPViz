@@ -29,7 +29,7 @@ gtap_data <- rename_value(gtap_data, column_name = "Variable", mapping.file = re
 
 }
 \seealso{
-\code{\link{add_mapping_info}}, \code{\link{convert_units}}
+\code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}
 }
 \author{
 Pattawee Puangchit

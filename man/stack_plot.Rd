@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{stack_plot}
 \alias{stack_plot}
-\title{Create Comprehensive Stacked Bar Charts for Decomposition Analysis}
+\title{Create Stacked Bar Charts for Decomposition Analysis}
 \usage{
 stack_plot(
   data,
@@ -34,12 +34,12 @@ stack_plot(
 \item{filter_var}{Vector or data frame. If a vector, filters the values in \code{x_axis_from}.
 If a data frame, filters \code{value_col} based on matching \code{variable_col} values.}
 
-\item{x_axis_from}{Character. Name of the column to use for x-axis categories (e.g., "REG", "Sector").}
+\item{x_axis_from}{Character. Column name for x-axis categories (e.g., "REG", "Sector").}
 
-\item{stack_value_from}{Character. Name of the column containing stack component categories (e.g., "COMM" for commodities).}
+\item{stack_value_from}{Character. Column containing stack component categories (e.g., "COMM" for commodities).}
 
 \item{split_by}{Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., aggregated values without additional dimensions).}
+Set to NULL for no splitting, suitable for macro-level analysis.}
 
 \item{panel_var}{Character. Column for panel facets (default: "Experiment").}
 
@@ -51,7 +51,7 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 
 \item{invert_pane}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
 
-\item{separate_figure}{Logical. If TRUE, creates a separate figure for each panel value (default: FALSE).}
+\item{separate_figure}{Logical. If TRUE, generates separate figures per panel value (default: FALSE).}
 
 \item{unstack_plot}{Logical. If TRUE, creates separate bar plots for each \code{x_axis_from} value instead of stacked bars (default: FALSE).}
 
@@ -59,9 +59,14 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 
 \item{export_picture}{Logical. If TRUE, exports plots as image files (default: TRUE).}
 
-\item{export_as_pdf}{Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).}
+\item{export_as_pdf}{Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).}
 
-\item{export_config}{List. Configuration options for exported plots, including file name, width, and height.}
+\item{export_config}{List. Export settings, including:
+\itemize{
+\item \code{width}: Output file width (in inches).
+\item \code{height}: Output file height (in inches).
+\item Additional settings—see \code{?get_export_config}.
+}}
 
 \item{var_name_by_description}{Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).}
 
@@ -69,30 +74,16 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 
 \item{show_total}{Logical. If TRUE, displays total values above stacked bars (default: TRUE).}
 
-\item{top_impact}{Numeric or NULL. If specified, filters to show only the top N impactful values. NULL shows all values.}
+\item{top_impact}{Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.}
 
-\item{plot_style_config}{List. Custom style configuration for plots. If NULL, defaults from \code{get_plot_style_config("stack")} are applied.}
+\item{plot_style_config}{List. Custom plot styles—see \code{?get_plot_style_config}.}
 }
 \value{
 A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
 }
 \description{
-Generates stacked bar charts to visualize the composition of values across multiple dimensions,
-automatically handling multi-dimensional data. The function supports both stacked and unstacked
-presentations, making it particularly useful for decomposition analysis.
-}
-\details{
-This function allows for extensive customization of plots through the \code{plot_style_config} parameter,
-which integrates ggplot2 configurations. The function now supports more flexible export options
-with the \code{export_picture}, \code{export_as_pdf}, and \code{export_config} parameters.
-
-The \code{export_config} parameter can include:
-\itemize{
-\item \code{file_name}: Base name for the output files (default: "stack_plots").
-\item \code{width}: Width of the output files in inches.
-\item \code{height}: Height of the output files in inches.
-\item Additional export settings as needed.
-}
+Generates stacked bar charts to visualize value compositions across multiple dimensions.
+The function supports stacked and unstacked presentations for decomposition analysis.
 }
 \examples{
 \dontrun{
@@ -125,7 +116,7 @@ p2 <- stack_plot(
 }
 }
 \seealso{
-\code{\link{detail_plot}}, \code{\link{comparison_plot}}, \code{\link{get_plot_style_config}}
+\code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{detail_plot}}
 }
 \author{
 Pattawee Puangchit

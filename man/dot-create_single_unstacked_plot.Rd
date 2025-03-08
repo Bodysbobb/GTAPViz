@@ -48,7 +48,8 @@
 A ggplot2 object representing the unstacked plot.
 }
 \description{
-Create a single unstacked plot from GTAP data for internal use.
+Create a single unstacked plot from GTAP data for internal use. This function shows
+individual components as separate bars rather than stacked.
 }
 \seealso{
 \code{\link{stack_plot}}

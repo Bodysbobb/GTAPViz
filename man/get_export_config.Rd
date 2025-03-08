@@ -4,7 +4,7 @@
 \alias{get_export_config}
 \title{Get Export Configuration Options}
 \usage{
-get_export_config(as_dataframe = FALSE)
+get_export_config(as_dataframe = TRUE)
 }
 \arguments{
 \item{as_dataframe}{Logical. Whether to return settings as a dataframe. Default is FALSE.}

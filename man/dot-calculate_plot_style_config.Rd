@@ -4,12 +4,12 @@
 \alias{.calculate_plot_style_config}
 \title{Calculate Plot Style Configuration}
 \usage{
-.calculate_plot_style_config(config = NULL, plot_type = "comparison")
+.calculate_plot_style_config(config = NULL, plot_type = "default")
 }
 \arguments{
 \item{config}{Optional list with custom style configuration parameters.}
 
-\item{plot_type}{Type of plot: \code{"comparison"}, \code{"detail"}, or \code{"stack"}.}
+\item{plot_type}{Type of plot: \code{"default"}.}
 }
 \value{
 A list with complete style configuration for the specified plot type.

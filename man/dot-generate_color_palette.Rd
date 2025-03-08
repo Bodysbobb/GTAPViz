@@ -4,12 +4,18 @@
 \alias{.generate_color_palette}
 \title{Generate Color Palette for Positive/Negative Comparison}
 \usage{
-.generate_color_palette(positive_color = "#2E8B57", negative_color = "#CD5C5C")
+.generate_color_palette(
+  positive_color = "#2E8B57",
+  negative_color = "#CD5C5C",
+  color_tone = NULL
+)
 }
 \arguments{
 \item{positive_color}{Character. Hex code or color name for the positive color (default: "#2E8B57", sea green).}
 
 \item{negative_color}{Character. Hex code or color name for the negative color (default: "#CD5C5C", indian red).}
+
+\item{color_tone}{Character. Optional color tone to override the positive/negative colors.}
 }
 \value{
 A named vector containing hex codes for different value categories.
