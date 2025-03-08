@@ -66,8 +66,9 @@ Puangchit</h4>
 <p>This package facilitates the reporting of CGE model outputs,
 particularly for GTAP users, but it can also be applied to other results
 based on <code>.har</code> and <code>.sl4</code> files. Its primary
-function is to generate <a href="#sec:figure-type">Figures</a> and <a href="#sec:report-table">Tables</a>. Additionally, several <a href="#sec:additional-utilities">useful tools</a> are available for data
-manipulation to enhance figure illustration.</p>
+function is to generate <strong><a href="#sec:figure-type">Figures</a></strong> and <strong><a href="#sec:report-table">Tables</a></strong>. Additionally, several
+<strong><a href="#sec:additional-utilities">useful tools</a></strong>
+are available for data manipulation to enhance figure illustration.</p>
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
 
 </div>
@@ -145,10 +146,10 @@ tables designed for academic presentations. This vignette provides some
 examples in <a href="#sec:report-table-creating">Creating Report
 Table</a>.</p>
 <ol style="list-style-type: decimal">
-<li><a href="#sec:comparison-table"><code>Comparison Table</code></a></li>
-<li><a href="#sec:macro-table"><code>GTAP Macro Table</code></a></li>
-<li><a href="#sec:detail-table"><code>Detail Table</code></a></li>
-<li><a href="#sec:decomp-table"><code>Decomposition Table</code></a></li>
+<li><p><a href="#sec:comparison-table"><code>Comparison Table</code></a></p></li>
+<li><p><a href="#sec:macro-table"><code>GTAP Macro Table</code></a></p></li>
+<li><p><a href="#sec:detail-table"><code>Detail Table</code></a></p></li>
+<li><p><a href="#sec:decomp-table"><code>Decomposition Table</code></a></p></li>
 </ol>
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
 
@@ -173,13 +174,14 @@ desired path:</p>
 <p>By default, this R script assumes that
 <code>&lt;project.folder&gt;</code> contains the following three main
 folders:</p>
-<figure><div style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;">
-<pre><code>📂 project.folder/ 
+<figure class="center-figure"><div class="code-box">
+<pre class="monospace"><code>📂 project.folder/ 
 ├── 📂 in/  # Stores all input files
 ├── 📂 map/ # Stores the mapping file
-├── 📂 out/ </code></pre>
+├── 📂 out/  </code></pre>
 </div>
-<figcaption style="text-align: center; font-style: italic;"><p>Example of Project Folder</p>
+<figcaption class="auto-fig">
+Example of Project Folder
 </figcaption></figure><div class="section level3">
 <h3 id="sec:input-folder">Input Folder<a class="anchor" aria-label="anchor" href="#sec:input-folder"></a>
 </h3>
@@ -189,14 +191,16 @@ folders:</p>
 <code>.har</code> file must follow the naming conventions outlined in <a href="#sec:experiment-name">how to name input files</a> to ensure
 consistency.</p>
 <p>Below is an example of <code>&lt;input.folder&gt;</code>:</p>
-<figure><div style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;">
-<pre><code>📂 in/ 
-├── 📄 EXP1.sl4 
-├── 📄 EXP1-WEL.har 
-├── 📄 EXP2.sl4 
-├── 📄 EXP2-WEL.har </code></pre>
+<figure class="center-figure"><div class="code-box">
+<pre class="monospace"><code>📂 in/ 
+├── 📄 TAR10.sl4 
+├── 📄 TAR10-WEL.har 
+├── 📄 SUBT10.sl4 
+├── 📄 SUBT10-WEL.har </code></pre>
 </div>
-</figure>
+<figcaption class="auto-fig">
+Example of Input Folder and Input Files
+</figcaption></figure>
 </div>
 <div class="section level3">
 <h3 id="sec:mapping-folder">Mapping Folder<a class="anchor" aria-label="anchor" href="#sec:mapping-folder"></a>
@@ -216,66 +220,93 @@ each file.</p>
 and plot titles.</p>
 <p>• <strong>“Unit”</strong> is required for all figure commands.</p>
 <p>Below is an example of mapping file:</p>
-<div style="font-family: monospace; background-color: #FFFFFF; color: #000000; padding: 10px; border-radius: 5px; width: fit-content;">
-<table style="border-collapse: collapse; width: 100%;" class="table">
+<figure class="center-figure"><div class="table-box">
+<table class="table">
 <tr>
-<th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">
+<th>
 Variable
 </th>
-<th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">
+<th>
 Description
 </th>
-<th style="border: 1px solid #ABB2BF; padding: 8px; text-align: left;">
+<th>
 Unit
 </th>
 </tr>
 <tr>
-<td style="border: 1px solid #ABB2BF; padding: 8px;">
+<td>
 qgdp
 </td>
-<td style="border: 1px solid #ABB2BF; padding: 8px;">
-Real GDP Index (%)
+<td>
+Real GDP Index
 </td>
-<td style="border: 1px solid #ABB2BF; padding: 8px;">
+<td>
 percent
 </td>
 </tr>
 <tr>
-<td style="border: 1px solid #ABB2BF; padding: 8px;">
+<td>
 EV
 </td>
-<td style="border: 1px solid #ABB2BF; padding: 8px;">
+<td>
 Welfare Equivalents
 </td>
-<td style="border: 1px solid #ABB2BF; padding: 8px;">
+<td>
 million USD
 </td>
 </tr>
 <tr>
-<td style="border: 1px solid #ABB2BF; padding: 8px;">
-pprive
+<td>
+ppriv
 </td>
-<td style="border: 1px solid #ABB2BF; padding: 8px;">
+<td>
 Consumer Price Index
 </td>
-<td style="border: 1px solid #ABB2BF; padding: 8px;">
+<td>
 percent
+</td>
+</tr>
+<tr>
+<td>
+qo
+</td>
+<td>
+Output
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+qxw
+</td>
+<td>
+</td>
+<td>
 </td>
 </tr>
 </table>
 </div>
-<p><strong>Note:</strong> The <strong>Description</strong> and
-<strong>Unit</strong> columns can be left empty if using <a href="#sec:info.mode">GTAP defaults</a>.</p>
+<figcaption class="auto-fig">
+Example of “SL4File” and “HARFile” Sheet
+</figcaption><p class="figure-note">
+<strong>Note:</strong> The <strong>Description</strong> and
+<strong>Unit</strong> columns can be left empty if using
+<a href="#sec:info.mode">GTAP defaults</a>.
+</p>
+</figure><div class="info-box">
+<p><strong>Important:</strong> The
+<a href="https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map" class="external-link">mapping
+file</a> is crucial for correctly formatting <strong>additional
+variables—non-GTAPv7 variables</strong>.</p>
+</div>
 <p>You can import your external mapping file into R using the following
 method:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sl4map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="va">map.folder</span>, sheet <span class="op">=</span> <span class="st">"SL4File"</span><span class="op">)</span></span>
 <span><span class="va">harmap</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="va">map.folder</span>, sheet <span class="op">=</span> <span class="st">"HARFile"</span><span class="op">)</span></span></code></pre></div>
-<div class="tip-box">
-<p>💡 <strong>Tip:</strong> The
-<a href="https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map" class="external-link">mapping
-file</a> is crucial to correctly format your outputs.</p>
-</div>
+<p>Or manually create it in the R environment using the following
+code:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mapping_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span>, <span class="st">"ppriv"</span><span class="op">)</span>,</span>
@@ -288,8 +319,7 @@ file</a> is crucial to correctly format your outputs.</p>
 <h4 id="sec:filterdata-sheets">FilterData Sheet<a class="anchor" aria-label="anchor" href="#sec:filterdata-sheets"></a>
 </h4>
 <p>This sheet is optional and can also be defined in R instead. It
-contains two columns for <em>filtering data from the dataframe</em>.
-Leave it empty to include all entries.</p>
+contains two columns for <em>filtering data from the dataframe</em>.</p>
 <p>• <strong>“Region”</strong> excludes specified regions by filtering
 the “REG” column in all dataframes.</p>
 <p>• <strong>“Sector”</strong> excludes specified sectors by filtering
@@ -298,6 +328,62 @@ the “COMM” and “ACTS” columns in all dataframes.</p>
 <p>💡 <strong>Tip:</strong> These columns also determine the sorting
 order. See <a href="#sec:sorting-output">Sorting Output</a> for
 details.</p>
+</div>
+<p>Below is an example of the filter data sheet:</p>
+<figure class="center-figure"><div class="table-box">
+<table class="table">
+<tr>
+<th>
+Region
+</th>
+<th>
+Sector
+</th>
+</tr>
+<tr>
+<td>
+EastAsia
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+SEAsia
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+Oceania
+</td>
+<td>
+</td>
+</tr>
+</table>
+</div>
+<figcaption class="auto-fig">
+Example of “FilterData” Sheet
+</figcaption><p class="figure-note">
+<strong>Note:</strong> You may leave it empty to include all entries or
+redefine the order for sorting the output format.
+</p>
+</figure><p>You can import your external mapping file into R using the following
+method:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">filter.map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="va">map.folder</span>, sheet <span class="op">=</span> <span class="st">"FilterData"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
+<span><span class="va">selected_sector</span>  <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span> <span class="kw">else</span> <span class="cn">NULL</span></span></code></pre></div>
+<p>Or manually create it in the R environment using the following
+code:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EastAsia"</span>, <span class="st">"SEAsia"</span>, <span class="st">"Oceania"</span><span class="op">)</span></span>
+<span><span class="va">selected_sector</span>  <span class="op">&lt;-</span> <span class="cn">NULL</span></span></code></pre></div>
+<div class="tip-box">
+<p>💡 <strong>Tip:</strong> If the plot is too dense or unclear, try
+filtering more data!</p>
 </div>
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
 
@@ -322,7 +408,7 @@ file name is recommended.</p>
 <code>&lt;experiment&gt;</code>. See <a href="#sec:sorting-output">Sorting Output</a> for details.</p>
 <p>The following command processes the files and sorts the output with
 EXP1 before EXP2:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">experiment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TAR10"</span>, <span class="st">"SUBT10"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Automatically Processing These Inputs in the Input Folder </span></span>
@@ -354,7 +440,7 @@ file.<br>
 <code>"Mix"</code> → Uses manual values when available; otherwise,
 applies GTAP defaults.</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">info.mode</span> <span class="op">&lt;-</span> <span class="st">"Mix"</span></span></code></pre></div>
 <p><strong>Note:</strong> GTAP defaults apply only to variables included
 in the GTAPv7 model. Any additional variables must be manually
@@ -388,7 +474,7 @@ without visualization, by setting <code>plot_data</code> to
 <code>TRUE</code> or <code>FALSE</code>.</p>
 <p>The following command exports all formats and generates data for
 plotting:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">csv.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span>    </span>
 <span><span class="va">stata.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span>  </span>
 <span><span class="va">r.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span></span>
@@ -405,7 +491,7 @@ plotting:</p>
 </h2>
 <p>In summary, the entire R setup is captured in the following
 chunk:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1. Project Directory</span></span>
 <span><span class="va">project.folder</span> <span class="op">&lt;-</span> <span class="st">"your/project/folder"</span></span>
 <span></span>
@@ -423,61 +509,36 @@ chunk:</p>
 <span></span>
 <span><span class="co"># 5. For Plotting: (TRUE/FALSE)</span></span>
 <span><span class="va">plot_data</span> <span class="op">=</span> <span class="cn">TRUE</span></span></code></pre></div>
-<div style="
-    background-color: #E8F4FD; 
-    border-left: 5px solid #5B9BD5; 
-    padding: 10px 15px; 
-    border-radius: 5px;
-    margin: 15px 0;
-    ">
+<div class="tip-box">
 <p>💡 <strong>Tip:</strong> Once this process is complete, you can use
 the same format for future documents—saving you time and ensuring
 consistency.</p>
 </div>
-<div class="section level3">
-<h3 id="sec:subdirectory">Setting Up Sub-Directories<a class="anchor" aria-label="anchor" href="#sec:subdirectory"></a>
-</h3>
-<p>You can simply run the following code without modification if you
-followed all the previous instructions:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Default Folder</span></span>
+<p>You can simply run the following code to setup subdirectories without
+modification if you followed all the previous instructions:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Default Subdirectories:</span></span>
 <span><span class="va">input.folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">project.folder</span>, <span class="st">"/in"</span><span class="op">)</span></span>
 <span><span class="va">map.folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">project.folder</span>, <span class="st">"/map"</span><span class="op">)</span></span>
 <span><span class="va">output.folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">project.folder</span>, <span class="st">"/out"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Default Mapping File</span></span>
+<span><span class="co"># Default Mapping File:</span></span>
 <span><span class="va">sl4map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"SL4File"</span><span class="op">)</span></span>
 <span><span class="va">harmap</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"HARFile"</span><span class="op">)</span></span>
-<span><span class="va">filter.map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"FilterData"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">filter.map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"FilterData"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Filtering Data:</span></span>
+<span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
+<span><span class="va">selected_sector</span>  <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span> <span class="kw">else</span> <span class="cn">NULL</span></span></code></pre></div>
 <p><strong>Note:</strong> If you’re familiar with R and prefer a more
 flexible directory structure, you can customize any of these. However,
 you must also define them in the function.</p>
-</div>
-<div class="section level3">
-<h3 id="sec:filtering-data">Data Filtering Setup<a class="anchor" aria-label="anchor" href="#sec:filtering-data"></a>
-</h3>
-<p>This filtering process runs automatically when the mapping file is
-used as instructed. However, experienced users can define it manually in
-the R environment:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Using a Default Mapping File: </span></span>
-<span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
-<span><span class="va">selected_sector</span>  <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
-<span></span>
-<span><span class="co"># Manually Defining:  </span></span>
-<span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EastAsia"</span>, <span class="st">"SEAsia"</span>, <span class="st">"Oceania"</span><span class="op">)</span></span>
-<span><span class="va">selected_sector</span>  <span class="op">&lt;-</span> <span class="cn">NULL</span></span></code></pre></div>
-<div class="tip-box">
-<p>💡 <strong>Tip:</strong> If the plot is too dense or unclear, try
-filtering more data!</p>
-</div>
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
 
 </div>
 </div>
-</div>
 <div class="section level2">
-<h2 id="sec:sorting-output">Output Sorting Rules<a class="anchor" aria-label="anchor" href="#sec:sorting-output"></a>
+<h2 id="sec:sorting-output">Sorting Rules<a class="anchor" aria-label="anchor" href="#sec:sorting-output"></a>
 </h2>
 <p>These predefined lists determine the display order of outputs, i.e.,
 figures and tables:</p>
@@ -490,20 +551,22 @@ countries by GTAP; the default is <code>"REG"</code>.</p></li>
 defined sectors by GTAP; the default is <code>"COMM"</code> and
 <code>"ACTS"</code>.</p></li>
 </ul>
-<p>To customize sorting for additional columns, manual adjustments may
-be required.</p>
-<div class="section level3">
-<h3 id="example">Example:<a class="anchor" aria-label="anchor" href="#example"></a>
-</h3>
-<p>This setup with will display the figure as shown below:</p>
+<div class="tip-box">
+<p>💡 <strong>Tip:</strong> To customize sorting for additional columns,
+see <code>?sort_plot_data</code>.</p>
+</div>
+<p>For example, this setup with will display the figure as shown
+below:</p>
 <ul>
 <li><p><code>experiment &lt;- c("TAR10", "SUBT10")</code></p></li>
 <li><p><code>selected_regions &lt;- c("EastAsia", "SEAsia", "Oceania")</code></p></li>
 </ul>
-<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/sort_example.png" width="600px"></p>
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
-
+<figure class="package-figure"><div class="package-figure-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/sort_example.png" width="100%"></p>
 </div>
+<figcaption class="package-fig">
+Example of Sorting Figures <br></figcaption></figure><div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
+
 </div>
 </div>
 <div class="section level2">
@@ -511,7 +574,7 @@ be required.</p>
 </h2>
 <p>To streamline figure generation from GTAP results, I developed an
 automated data extraction method using the following command:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/auto_gtap_data.html">auto_gtap_data</a></span><span class="op">(</span></span>
 <span>  process_sl4_vars <span class="op">=</span> <span class="va">sl4map</span>, </span>
 <span>  process_har_vars <span class="op">=</span> <span class="va">harmap</span>,</span>
@@ -529,13 +592,18 @@ automated data extraction method using the following command:</p>
 <span>    <span class="st">"stata"</span> <span class="op">=</span> <span class="va">stata.output</span>,</span>
 <span>    <span class="st">"rds"</span> <span class="op">=</span> <span class="va">r.output</span>,</span>
 <span>    <span class="st">"txt"</span> <span class="op">=</span> <span class="va">txt.output</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><strong>Note:</strong><br>
-For non-GTAP models or manual data extraction, see <a href="#sec:manualdata">Manual Data Processing</a>.</p>
+<p>The default process for extracting data in automation uses
+<code><a href="https://bodysbobb.github.io/HARplus/reference/group_data_by_dims.html" class="external-link">HARplus::group_data_by_dims</a></code> for <code>.sl4</code> and
+<code>get_data_by_var</code> for <code>.har</code>.</p>
 <div class="tip-box">
-<p>💡 <strong>Tip:</strong> The process of extracting data in automation
-can be modified freely. See <code><a href="../reference/auto_gtap_data.html">?auto_gtap_data</a></code>. Keep in mind
-that the plot function may require slight modifications to suit the new
-format.</p>
+<p>💡 <strong>Tip 1:</strong> The process used in
+<code><a href="../reference/auto_gtap_data.html">?auto_gtap_data</a></code> can be modified for both <code>.sl4</code>
+and <code>.har</code>, which might be easier for some datasets, such as
+non-GTAP variables. Keep in mind that the plot function may require
+slight modifications to suit the new format</p>
+</div>
+<div class="tip-box">
+<p>💡 <strong>Tip 2:</strong> For manual data extraction, see <a href="#sec:manualdata">Manual Data Processing</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="sec:custom-unit">Converting Units and Labels (Optional)<a class="anchor" aria-label="anchor" href="#sec:custom-unit"></a>
@@ -543,7 +611,7 @@ format.</p>
 <p>These optional but recommended steps improve figure clarity. Use the
 following code to convert million USD to billion USD after data
 extraction:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sl4.plot.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/convert_units.html">convert_units</a></span><span class="op">(</span><span class="va">sl4.plot.data</span>, </span>
 <span>                               scale_auto <span class="op">=</span> <span class="st">"mil2bil"</span><span class="op">)</span></span>
 <span></span>
@@ -560,42 +628,61 @@ Units</a> or <code><a href="../reference/convert_units.html">?convert_units</a><
 </div>
 </div>
 <div class="section level2">
-<h2 class="unnumbered" id="essential-info">
-<strong><span style="color:#D62728;">Essential
-Info</span></strong><a class="anchor" aria-label="anchor" href="#essential-info"></a>
+<h2 class="unnumbered" id="essential-info-figure">
+<strong>Essential Information for
+Visualization</strong><a class="anchor" aria-label="anchor" href="#essential-info-figure"></a>
 </h2>
 <div class="section level3">
-<h3 class="unnumbered" id="understanding-the-function">
-<strong><span style="color:#D62728;">Understanding the Function</span></strong><a class="anchor" aria-label="anchor" href="#understanding-the-function"></a>
+<h3 class="unnumbered" id="understanding-function-arguments">Understanding Function Arguments<a class="anchor" aria-label="anchor" href="#understanding-function-arguments"></a>
 </h3>
-<p>Before generating any figures, it is useful to review the function
+<p>
+Before generating any figures, it is useful to review the function
 arguments to ensure you take full advantage of the available
-customization options. See: <code><a href="../reference/comparison_plot.html">?comparison_plot</a></code>,
-<code><a href="../reference/detail_plot.html">?detail_plot</a></code>, <code><a href="../reference/stack_plot.html">?stack_plot</a></code></p>
+customization options:
+</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">?</span><span class="va">comparison_plot</span></span>
+<span><span class="op">?</span><span class="va">detail_plot</span></span>
+<span><span class="op">?</span><span class="va">stack_plot</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 class="unnumbered" id="customizing-the-plot">
-<strong><span style="color:#D62728;">Customizing
-the Plot</span></strong><a class="anchor" aria-label="anchor" href="#customizing-the-plot"></a>
+<h3 class="unnumbered" id="customizing-the-plot-styles">Customizing the Plot Styles<a class="anchor" aria-label="anchor" href="#customizing-the-plot-styles"></a>
 </h3>
-<p>This package builds on <strong>ggplot2</strong>, making nearly all of
+<p>
+This package builds on <strong>ggplot2</strong>, making nearly all of
 its customization options easily adjustable within its plotting
-functions.</p>
-<p>Elements like font sizes, titles, value labels, and positioning can
-be modified using simple numeric or logical values
-(<code>TRUE</code>/<code>FALSE</code>).</p>
-<p>To view all customization options
-(<code><a href="../reference/get_plot_style_config.html">?get_plot_style_config</a></code>), run:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">config_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_plot_style_config.html">get_plot_style_config</a></span><span class="op">(</span><span class="st">"comparison"</span>, as_dataframe <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">config_detail</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_plot_style_config.html">get_plot_style_config</a></span><span class="op">(</span><span class="st">"detail"</span>, as_dataframe <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">config_stack</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_plot_style_config.html">get_plot_style_config</a></span><span class="op">(</span><span class="st">"stack"</span>, as_dataframe <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+functions.
+</p>
+<p>
+Elements like font sizes, titles, value labels, and positioning can be
+modified using simple numeric or logical values
+(<code>TRUE/FALSE</code>).
+</p>
+<p>
+To view all customization options run:
+</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">?</span><span class="va">get_plot_style_config</span></span>
 <span></span>
+<span><span class="va">plot_config</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_plot_style_config.html">get_plot_style_config</a></span><span class="op">(</span><span class="st">"default"</span>, as_dataframe <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 class="unnumbered" id="customizing-the-figure-outputs">Customizing the Figure Outputs<a class="anchor" aria-label="anchor" href="#customizing-the-figure-outputs"></a>
+</h3>
+<p>
+This package allows exporting figures in <strong>PNG and PDF</strong>
+formats. PDF files can be merged into a single file or saved as multiple
+separate files. To see all available options, see:
+</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">export_config</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_export_config.html">get_export_config</a></span><span class="op">(</span>as_dataframe <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Or Get All Configurations</span></span>
 <span><span class="va">all_configs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_plot_config.html">get_plot_config</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;">
 
-</div>
-</div>
 </div>
 <div class="section level2">
 <h2 id="sec:create-plot">Creating Figures<a class="anchor" aria-label="anchor" href="#sec:create-plot"></a>
@@ -606,25 +693,19 @@ be modified using simple numeric or logical values
 <p>This figure compares one or multiple variables across all experiments
 for selected observations from a chosen dimension (e.g., region,
 sector).</p>
-<div class="section level4">
-<h4 id="key-features">Key Features:<a class="anchor" aria-label="anchor" href="#key-features"></a>
-</h4>
+<p><strong style="font-size: 1.17em;">Key Features</strong> - Designed
+for comparing selected variables across experiments.</p>
 <ul>
-<li><p>Designed for comparing selected variables across
-experiments.</p></li>
-<li><p>Displays all selected variables in one plot, making it ideal for
-a few observations; too many can make it dense and unclear.</p></li>
+<li>Displays all selected variables in one plot, making it ideal for a
+few observations; too many can make it dense and unclear.</li>
 </ul>
-</div>
-<div class="section level4">
-<h4 id="practical-examples">Practical Examples<a class="anchor" aria-label="anchor" href="#practical-examples"></a>
-</h4>
-<p>Plotting <code>qgdp</code>, <code>ppriv</code>, <code>EV</code>,
-<code>tot</code>, and <code>u</code> generates six separate figures
-using the following command:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/comparison_plot.html">comparison_plot</a></span><span class="op">(</span><span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Region"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>                </span>
+<p>For example, plotting <code>qgdp</code>, <code>ppriv</code>,
+<code>EV</code>, <code>tot</code>, and <code>u</code> generates six
+separate figures using the following command:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">reg_data</span> <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Region"</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/comparison_plot.html">comparison_plot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">reg_data</span>,</span>
 <span>                x_axis_from <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span>                split_by <span class="op">=</span> <span class="st">"Variable"</span>,</span>
 <span>                panel_var <span class="op">=</span> <span class="st">"Experiment"</span>, </span>
@@ -641,13 +722,15 @@ using the following command:</p>
 <span>                </span>
 <span>                export_picture <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                export_as_pdf <span class="op">=</span> <span class="st">"merged"</span>,</span>
+<span>                output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>                </span>
+<span>                <span class="co"># See ?export_config</span></span>
 <span>                export_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>                  width <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>                  height <span class="op">=</span> <span class="fl">12</span></span>
 <span>                  <span class="op">)</span>,</span>
-<span></span>
-<span>                output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
 <span>                </span>
+<span>                <span class="co"># See ?plot_style_config</span></span>
 <span>                plot_style_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>                  color_tone <span class="op">=</span> <span class="st">"purdue"</span>,</span>
 <span>                  add_unit_to_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -661,8 +744,8 @@ using the following command:</p>
 <p>By default, you might not need to define as much, as the previous
 sample code assumes that you follow all the previous instructions. You
 may use the following command to get the exact same output:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/comparison_plot.html">comparison_plot</a></span><span class="op">(</span><span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Region"</span><span class="op">]</span><span class="op">]</span>,</span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/comparison_plot.html">comparison_plot</a></span><span class="op">(</span><span class="va">reg_data</span>,</span>
 <span>                x_axis_from <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span>                split_by <span class="op">=</span> <span class="st">"Variable"</span>,</span>
 <span>                var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -677,14 +760,17 @@ may use the following command to get the exact same output:</p>
 <span>                    text <span class="op">=</span> <span class="st">"Impact On"</span></span>
 <span>                  <span class="op">)</span>,</span>
 <span>                  panel_rows <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>                  panel_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                  show_axis_titles_on_all_facets <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                  show_title <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>                  show_title <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>                <span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/cpsplot.png" width="600px"></p>
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
-
+<figure class="package-figure"><div class="package-figure-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/cpsplot.png" width="100%"></p>
 </div>
+<figcaption class="package-fig">
+Comparison Plot Visualization <br></figcaption><span class="package-fig-note">(splt_by = FALSE, panel_rows = 2,
+panel_cols = NULL i.e., default)</span>
+
+</figure><div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
+
 </div>
 </div>
 <div class="section level3">
@@ -694,9 +780,7 @@ may use the following command to get the exact same output:</p>
 typically for global economic impacts. It is designed for GTAP Macro
 variables extracted from the <em>“Macros”</em> header in
 <code>&lt;.sl4&gt;</code> files.</p>
-<div class="section level4">
-<h4 id="key-features-1">Key Features:<a class="anchor" aria-label="anchor" href="#key-features-1"></a>
-</h4>
+<p><strong style="font-size: 1.17em;">Key Features</strong></p>
 <ul>
 <li><p>Compares macroeconomic indicators across experiments.</p></li>
 <li><p>Works with aggregated data, making it ideal for global-scale
@@ -709,8 +793,10 @@ other aggregated datasets.</p></li>
 data, please see <a href="#sec:gtapmacro-dataextract">GTAP Macro Data
 Extraction</a>.</p>
 </div>
-<p>To plot this figure, you can use the following command:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<p>To plot this figure—the only difference from previous figures is
+changing <code>split_by = FALSE</code>—you can use the following
+command:</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/comparison_plot.html">comparison_plot</a></span><span class="op">(</span><span class="va">GTAPMacro</span>,</span>
 <span>                x_axis_from <span class="op">=</span> <span class="st">"Variable"</span>,</span>
 <span>                split_by <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -729,13 +815,16 @@ Extraction</a>.</p>
 <span>                  title_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>                    type <span class="op">=</span> <span class="st">"full"</span>,  </span>
 <span>                    text <span class="op">=</span> <span class="st">"Global Economic Impacts"</span></span>
-<span>                  <span class="op">)</span>,</span>
-<span>                  legend_position <span class="op">=</span> <span class="st">"bottom"</span></span>
+<span>                  <span class="op">)</span></span>
 <span>                <span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/GTAPMacros.png" width="600px"></p>
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
-
+<figure class="package-figure"><div class="package-figure-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/GTAPMacros.png" width="100%"></p>
 </div>
+<figcaption class="package-fig">
+GTAP Macro Plot Visualization <br><span class="package-fig-note">(splt_by = FALSE, panel_rows and panel_cols =
+NULL i.e., default)</span>
+</figcaption></figure><div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
+
 </div>
 </div>
 <div class="section level3">
@@ -744,32 +833,25 @@ Extraction</a>.</p>
 <p>This figure visualizes large-scale data, displaying all sectors
 (<em>COMM</em>, <em>ACTS</em>) or all regions (<em>REG</em>) within each
 experiment.</p>
-<div class="section level4">
-<h4 id="key-features-2">Key Features:<a class="anchor" aria-label="anchor" href="#key-features-2"></a>
-</h4>
-<ul>
-<li>Supports visualization across two selected dimensions.<br>
-</li>
-<li>Suitable for datasets too large for <em>comparison_plot</em>.<br>
-</li>
-<li>Automatically detects and aligns variables with different dimension
+<p><strong style="font-size: 1.17em;">Key Features</strong> - Supports
+visualization across two selected dimensions.<br>
+- Suitable for datasets too large for <em>comparison_plot</em>.<br>
+- Automatically detects and aligns variables with different dimension
 names.<br>
-</li>
-<li>Filters data by selecting the most affected variables using
-<strong>top_impact</strong>.</li>
-</ul>
+- Filters data by selecting the most affected variables using
+<strong>top_impact</strong>.</p>
 <p>For example, the following command plots all variables with sectors
 on the x-axis for each region:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/detail_plot.html">detail_plot</a></span><span class="op">(</span><span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"2D"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>            x_axis_from <span class="op">=</span> <span class="st">"Sector"</span>,</span>
 <span>            split_by <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span></span>
-<span>            top_impact <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>            top_impact <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>            var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>            </span>
 <span>            invert_pane <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>            separate_figure <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>            separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>            </span>
 <span>            export_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>              width <span class="op">=</span> <span class="fl">45</span>,</span>
@@ -777,7 +859,7 @@ on the x-axis for each region:</p>
 <span>            <span class="op">)</span>,</span>
 <span>            </span>
 <span>            export_picture <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>            export_as_pdf <span class="op">=</span> <span class="cn">TRUE</span>,   </span>
+<span>            export_as_pdf <span class="op">=</span> <span class="cn">FALSE</span>,   </span>
 <span>            output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
 <span>            </span>
 <span>            plot_style_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -785,13 +867,40 @@ on the x-axis for each region:</p>
 <span>              negative_color <span class="op">=</span> <span class="st">"#CD5C5C"</span>,</span>
 <span>              panel_rows <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>              panel_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>              show_axis_titles_on_all_facets <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>              show_axis_titles_on_all_facets <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>              y_axis_text_size <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>              bar_width <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>              all_font_size <span class="op">=</span> <span class="fl">1.1</span></span>
 <span>            <span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot.png" width="600px"></p>
-<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot_top10.png" width="600px"></p>
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
-
+<div class="tip-box">
+<p>💡 <strong>Tip:</strong> You may notice the following adjustments: -
+<code>positive_color</code> and <code>negative_color</code>: Define
+colors for positive and negative values, automatically distinguishing
+impacts by shade.</p>
+<ul>
+<li><p><code>show_axis_titles_on_all_facets</code>: Suppresses repeated
+labels across facets.</p></li>
+<li><p><code>y_axis_text_size</code>: Increases y-axis label size to 25
+from the default setting.</p></li>
+<li><p><code>bar_width</code>: Decreases bar width for better
+visualization of large datasets.</p></li>
+<li><p><code>all_font_size</code>: Increases all font sizes to 1.3 from
+the default setting.</p></li>
+</ul>
 </div>
+<figure class="package-figure"><div class="package-figure-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot.png" width="100%" style="display: block; margin: auto;"></p>
+</div>
+<figcaption class="package-fig">
+Detail Plot Visualization <br><span class="package-fig-note">(top_impact = NULL, invert_pane = TRUE,
+panel_rows = 1)</span>
+</figcaption></figure><figure class="package-figure"><div class="package-figure-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot_top10.png" width="100%"></p>
+</div>
+<figcaption class="package-fig">
+Detail Plot Visualization (filtered) <br><span class="package-fig-note">(top_impact = 10, invert_pane = TRUE)</span>
+</figcaption></figure><div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
+
 </div>
 </div>
 <div class="section level3">
@@ -800,24 +909,18 @@ on the x-axis for each region:</p>
 <p>This plot visualizes decomposition results, showing how different
 components contribute to a total value, making it particularly suitable
 for decomposition analysis.</p>
-<div class="section level4">
-<h4 id="key-features-3">Key Features:<a class="anchor" aria-label="anchor" href="#key-features-3"></a>
-</h4>
-<ul>
-<li>Displays the contribution of components to a total value.<br>
-</li>
-<li>Allows further decomposition by unstacking components instead of
-using a stacked bar.<br>
-</li>
-<li>Suitable for welfare decomposition, trade decomposition, and other
-GTAP structural breakdowns.</li>
-</ul>
+<p><strong style="font-size: 1.17em;">Key Features</strong> - Displays
+the contribution of components to a total value.<br>
+- Allows further decomposition by unstacking components instead of using
+a stacked bar.<br>
+- Suitable for welfare decomposition, trade decomposition, and other
+GTAP structural breakdowns.</p>
 <div class="tip-box">
 <p>💡 <strong>Tip:</strong> Since decomposition data often contains
 multiple components, <strong>renaming and restructuring</strong> may be
 necessary before plotting. You can try the following code:</p>
 </div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Rename Value if needed</span></span>
 <span><span class="va">wefare.decomp.rename</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  ColumnName <span class="op">=</span> <span class="st">"COLUMN"</span>,</span>
@@ -837,7 +940,7 @@ necessary before plotting. You can try the following code:</p>
 <span><span class="va">har.plot.data</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/rename_dims.html" class="external-link">rename_dims</a></span><span class="op">(</span><span class="va">har.plot.data</span>, <span class="va">rename_col</span><span class="op">)</span></span></code></pre></div>
 <p>Then, you can use the following command to plot the decomposition
 figure:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stack_plot.html">stack_plot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">har.plot.data</span><span class="op">[[</span><span class="st">"A"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>           x_axis_from <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span>           stack_value_from <span class="op">=</span> <span class="st">"COLUMN"</span>,</span>
@@ -860,17 +963,27 @@ figure:</p>
 <span>           output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
 <span>           </span>
 <span>           plot_style_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>             color_tone <span class="op">=</span> <span class="st">"purdue"</span>,</span>
+<span>             color_tone <span class="op">=</span> <span class="st">"gtap"</span>,</span>
 <span>             panel_rows <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>             panel_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>             show_axis_titles_on_all_facets <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>           <span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/stack_plot.png" width="600px"></p>
-<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/unstack_plot.png" width="600px"></p>
-<p>Another practical example is plotting the decomposition of terms of
+<figure class="package-figure"><div class="package-figure-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/stack_plot.png" width="100%"></p>
+</div>
+<figcaption class="package-fig">
+Stack Plot Visualization (stack) <br><span class="package-fig-note">(split_by = FALSE, show_total = TRUE,
+unstack_plot = TRUE)</span>
+</figcaption></figure><figure class="package-figure"><div class="package-figure-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/unstack_plot.png" width="100%"></p>
+</div>
+<figcaption class="package-fig">
+Stack Plot Visualization (unstacked) <br><span class="package-fig-note">(split_by = FALSE, show_total = TRUE,
+unstack_plot = FALSE)</span>
+</figcaption></figure><p>Another practical example is plotting the decomposition of terms of
 trade (header E1), which is also a good example of multi-dimensional
 plotting. You may try the following command:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stack_plot.html">stack_plot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">har.plot.data</span><span class="op">[[</span><span class="st">"E1"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>           x_axis_from <span class="op">=</span> <span class="st">"Commodity"</span>,</span>
 <span>           stack_value_from <span class="op">=</span> <span class="st">"PRICES"</span>,</span>
@@ -905,11 +1018,88 @@ plotting. You may try the following command:</p>
 <span>             bar_width <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>             bar_spacing <span class="op">=</span> <span class="fl">0</span></span>
 <span>           <span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
+<div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;">
 
 </div>
 </div>
 </div>
+<div class="section level2">
+<h2 class="unnumbered" id="essential-info-table">
+<strong>Essential Information for the Reporting
+Table</strong><a class="anchor" aria-label="anchor" href="#essential-info-table"></a>
+</h2>
+<div class="section level3">
+<h3 class="unnumbered" id="understanding-function-arguments-1">Understanding Function Arguments<a class="anchor" aria-label="anchor" href="#understanding-function-arguments-1"></a>
+</h3>
+<p>
+Before generating any tables, it is useful to review the function
+arguments to ensure you take full advantage of the available
+customization options:
+</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">?</span><span class="va">report_table</span></span></code></pre></div>
+<p>A limitation of this reporting table function is that the input data
+must be in a list format. The following code provides an example of how
+to convert data into this format:</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>DataFrame <span class="op">=</span> <span class="va">DataFrame</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 class="unnumbered" id="key-parameters">Key Parameters<a class="anchor" aria-label="anchor" href="#key-parameters"></a>
+</h3>
+<p>In this vignette, I will clarify some of the more complex parameters
+of the reporting table function. However, additional arguments are
+available, which you can explore by running
+<code><a href="../reference/report_table.html">?report_table</a></code>.</p>
+<p>For example, using the following code settings:</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
+<span>  data_list <span class="op">=</span> <span class="va">data_list</span>,</span>
+<span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Region <span class="op">=</span> <span class="st">"Variable"</span><span class="op">)</span>,</span>
+<span>  group_by <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    Region <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Region"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  rename_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span> <span class="op">=</span> <span class="st">"Scenario"</span><span class="op">)</span>,</span>
+<span>  total_column <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<ul>
+<li><p><code>data_list</code>: A named list of data list to
+process.</p></li>
+<li>
+<p><code>pivot_col</code>: Defines a pivot column for each dataset,
+converting it into a wide format. <strong>Only one</strong> pivot column
+can be defined per dataset.</p>
+<ul>
+<li>Dataset A pivots by <code>COLUMN</code>.<br>
+</li>
+<li>Dataset E1 pivots by <code>PRICES</code>.</li>
+</ul>
+</li>
+<li>
+<p><code>group_by</code>: Defines hierarchical grouping for each
+dataset, where column order determines the hierarchy.</p>
+<ul>
+<li>A groups first by <code>Experiment</code>, then by
+<code>REG</code>.<br>
+</li>
+<li>E1 adds <code>COMM</code> as a third grouping level.</li>
+</ul>
+</li>
+<li>
+<p><code>rename_cols</code>: Specifies column renaming across all
+datasets.</p>
+<ul>
+<li>Any dataset containing <code>REG</code> will rename it to
+<code>Region</code>.<br>
+</li>
+<li>
+<code>COMM</code> and <code>Experiment</code> will be renamed to
+<code>Commodities</code> and <code>Scenario</code>.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;">
+
 </div>
 <div class="section level2">
 <h2 id="sec:report-table-creating">Creating Report Table<a class="anchor" aria-label="anchor" href="#sec:report-table-creating"></a>
@@ -925,36 +1115,42 @@ before creating the report table (see <a href="#sec:rename-value">Renaming Value
 <div class="section level3">
 <h3 id="sec:comparison-table">Comparison Table<a class="anchor" aria-label="anchor" href="#sec:comparison-table"></a>
 </h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
 <span>  data_list <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Region <span class="op">=</span> <span class="st">"Variable"</span><span class="op">)</span>,</span>
 <span>  group_by <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    Region <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Region"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  rename_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span> <span class="op">=</span> <span class="st">"Scenario"</span><span class="op">)</span>,</span>
-<span>  </span>
+<span></span>
 <span>  total_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  decimal <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  repeat_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  include_units <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span></span>
-<span>  var_name_by_description <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  add_var_info <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add_var_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  add_group_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span></span>
-<span>  separate_sheet_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  </span>
+<span>  separate_sheet_by <span class="op">=</span> <span class="st">"Unit"</span>,</span>
 <span>  export_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
 <span>  separate_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  workbook_name <span class="op">=</span> <span class="st">"comparison"</span></span>
+<span>  workbook_name <span class="op">=</span> <span class="st">"Comparison Table"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<figure class="package-table"><div class="package-table-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/comparison_table.png" width="100%"></p>
+</div>
+<figcaption class="package-table-caption">
+Comparison Table <br><span class="package-table-note">(separate_sheet_by = “Unit”)</span>
+</figcaption></figure>
 </div>
 <div class="section level3">
 <h3 id="sec:macro-table">GTAP Macro Table<a class="anchor" aria-label="anchor" href="#sec:macro-table"></a>
 </h3>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">GTAPMacro</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GTAPMacro <span class="op">=</span> <span class="va">Macros</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">GTAPMacro</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GTAPMacro <span class="op">=</span> <span class="va">GTAPMacro</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
 <span>  data_list <span class="op">=</span> <span class="va">GTAPMacro</span>,</span>
@@ -976,15 +1172,21 @@ before creating the report table (see <a href="#sec:rename-value">Renaming Value
 <span></span>
 <span>  separate_sheet_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  export_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
 <span>  separate_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  workbook_name <span class="op">=</span> <span class="st">"GTAPMacro"</span></span>
+<span>  workbook_name <span class="op">=</span> <span class="st">"GTAPMacro Table"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<figure class="package-table"><div class="package-table-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/GTAPMacro_table.png" width="100%"></p>
+</div>
+<figcaption class="package-table-caption">
+GTAP Macros Table <br><span class="package-table-note">(separate_sheet_by = FALSE)</span>
+</figcaption></figure>
 </div>
 <div class="section level3">
 <h3 id="sec:detail-table">Detail Table<a class="anchor" aria-label="anchor" href="#sec:detail-table"></a>
 </h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
 <span>  data_list <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"2D"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  </span>
@@ -995,36 +1197,43 @@ before creating the report table (see <a href="#sec:rename-value">Renaming Value
 <span>  rename_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span> <span class="op">=</span> <span class="st">"Scenario"</span><span class="op">)</span>,</span>
 <span>  </span>
 <span>  total_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  decimal <span class="op">=</span> <span class="fl">6</span>,</span>
+<span>  decimal <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  repeat_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  include_units <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span></span>
-<span>  var_name_by_description <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  add_var_info <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  add_group_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add_var_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add_group_line <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span></span>
 <span>  separate_sheet_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  export_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
 <span>  separate_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  workbook_name <span class="op">=</span> <span class="st">"Detail Table"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<figure class="package-table"><div class="package-table-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_table.png" width="100%"></p>
+</div>
+<figcaption class="package-table-caption">
+Detail Table <br><span class="package-table-note">(separate_sheet_by =
+NULL, add_group_line = TRUE)</span>
+</figcaption></figure>
 </div>
 <div class="section level3">
 <h3 id="sec:decomp-table">Decomposition Table<a class="anchor" aria-label="anchor" href="#sec:decomp-table"></a>
 </h3>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
 <span>  data_list <span class="op">=</span> <span class="va">har.plot.data</span>,</span>
 <span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">"COLUMN"</span>, </span>
 <span>                   E1 <span class="op">=</span> <span class="st">"PRICES"</span><span class="op">)</span>,</span>
 <span>  group_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Region"</span><span class="op">)</span>, </span>
-<span>    E1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Region"</span>, <span class="st">"Commodity"</span><span class="op">)</span></span>
+<span>    A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"REG"</span><span class="op">)</span>, </span>
+<span>    E1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"REG"</span>, <span class="st">"COMM"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  rename_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"REG"</span> <span class="op">=</span> <span class="st">"Region"</span>, </span>
-<span>                     <span class="st">"COMM"</span> <span class="op">=</span> <span class="st">"Sector"</span>,</span>
+<span>                     <span class="st">"COMM"</span> <span class="op">=</span> <span class="st">"Commodities"</span>,</span>
 <span>                     <span class="st">"Experiment"</span> <span class="op">=</span> <span class="st">"Scenario"</span><span class="op">)</span>,</span>
 <span>  </span>
 <span>  total_column <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -1037,13 +1246,19 @@ before creating the report table (see <a href="#sec:rename-value">Renaming Value
 <span>  add_var_info <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  add_group_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span></span>
-<span>  separate_sheet_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  separate_sheet_by <span class="op">=</span> <span class="st">"REG"</span>,</span>
 <span>  export_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
 <span>  separate_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  workbook_name <span class="op">=</span> <span class="st">"Decomposition"</span></span>
+<span>  workbook_name <span class="op">=</span> <span class="st">"Decomposition Table"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
+<figure class="package-table"><div class="package-table-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/decomp_table.png" width="100%"></p>
+</div>
+<figcaption class="package-table-caption">
+Decomposition Table <br><span class="package-table-note">(total_column
+= TRUE, separate_sheet_by = “Region”)</span>
+</figcaption></figure><div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
 
 </div>
 </div>
@@ -1057,7 +1272,7 @@ before creating the report table (see <a href="#sec:rename-value">Renaming Value
 <p>If you manually import data or need to adjust the
 <code>"Description"</code> and <code>"Unit"</code> columns, you can use
 the following command:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mapping_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span>, <span class="st">"ppriv"</span><span class="op">)</span>,</span>
 <span>  Description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Real GDP Index"</span>, <span class="st">"Welfare Equivalents"</span>, <span class="st">"Consumer Price Index"</span><span class="op">)</span>,</span>
@@ -1098,7 +1313,7 @@ value.</li>
 dividing by 1,000.<br>
 • Convert <code>percent</code> to <code>proportion</code> by dividing by
 100.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">datasets</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/convert_units.html">convert_units</a></span><span class="op">(</span>change_unit_from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"million USD"</span>, <span class="st">"percent"</span><span class="op">)</span>,</span>
 <span>                          change_unit_to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"billion USD"</span>, <span class="st">"proportion"</span><span class="op">)</span>,</span>
 <span>                          adjustment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"/1000"</span>, <span class="st">"/100"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -1111,7 +1326,7 @@ dividing by 1,000.<br>
 names automatically—such as changing <code>REG</code> to
 <code>Region</code> or <code>COMM</code> to <code>Commodity</code>—use
 the following command:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating Mapping File</span></span>
 <span><span class="va">rename_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"REG"</span>, <span class="st">"COMM"</span>, <span class="st">"ACTS"</span><span class="op">)</span>,</span>
@@ -1119,12 +1334,11 @@ the following command:</p>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="va">har.plot.data</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/rename_dims.html" class="external-link">rename_dims</a></span><span class="op">(</span><span class="va">har.plot.data</span>, <span class="va">rename_col</span><span class="op">)</span></span></code></pre></div>
+<div class="tip-box">
 <p>💡 <strong>Tip:</strong> You can create this mapping dataframe in
-Excel and import it into R. The column names must be <em>“old”</em> and
-<em>“new”</em>.</p>
-<p><strong>Note:</strong> The column names must be <code>"old"</code>
-and <code>"new"</code>. See <code>&lt;?HARplus::rename_col&gt;</code>
-for details.</p>
+Excel and import it into R. The column names must be
+<strong>“old”</strong> and <strong>“new”</strong>.</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="sec:rename-value">Renaming Values in a Dataframe<a class="anchor" aria-label="anchor" href="#sec:rename-value"></a>
@@ -1133,7 +1347,7 @@ for details.</p>
 renaming country names in the <code>REG</code> column (e.g., changing
 <code>"USA"</code> to <code>"United States"</code> or <code>"CHN"</code>
 to <code>"China"</code>)—use the following command:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating Mapping File</span></span>
 <span><span class="va">rename.region</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  ColumnName <span class="op">=</span> <span class="st">"REG"</span>,</span>
@@ -1143,11 +1357,13 @@ to <code>"China"</code>)—use the following command:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">har.plot.data.rename</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rename_value.html">rename_value</a></span><span class="op">(</span><span class="va">har.plot.data</span>, mapping.file <span class="op">=</span> <span class="va">rename.region</span><span class="op">)</span></span></code></pre></div>
+<div class="tip-box">
 <p>💡 <strong>Tip:</strong> You can create this mapping dataframe in
-Excel and import it into R. The column names must be <em>“OldName”</em>
-and <em>“NewName”</em>, while <code>column_name</code> can be defined
-directly in the command. See <code>&lt;?rename_value&gt;</code> for
-details.</p>
+Excel and import it into R. The column names must be
+<strong>“OldName”</strong> and <strong>“NewName”</strong>, while
+<code>column_name</code> can be defined directly in the command. See
+<code>&lt;?rename_value&gt;</code> for details.</p>
+</div>
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
 
 </div>
@@ -1169,7 +1385,7 @@ operations.</p></li>
 <code>"add_mapping_info"</code> (the <em>“Unit”</em> column is required
 for plotting).</p></li>
 </ol>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Step 1: Extracting Data</span></span>
 <span><span class="va">sl4data1</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP1.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">sl4data2</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP2.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
@@ -1198,7 +1414,7 @@ for plotting).</p></li>
 </h2>
 <p>Extract GTAP Macro variables from the <em>“Macros”</em> header in
 <code>.sl4</code> files using the following command:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Macros</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gtap_macros_data.html">gtap_macros_data</a></span><span class="op">(</span></span>
 <span>  input_dir <span class="op">=</span> <span class="va">input.folder</span>,</span>
 <span>  experiment_names <span class="op">=</span> <span class="va">experiment</span>,</span>
@@ -1212,8 +1428,8 @@ for plotting).</p></li>
 <h2 id="sample-data">Sample Data<a class="anchor" aria-label="anchor" href="#sample-data"></a>
 </h2>
 <p>Sample data used in this vignette is obtained from the GTAPv7 model
-and utilizes publicly available data from the GTAP 9 database. For more
-details, refer to the <a href="https://www.gtap.agecon.purdue.edu/databases/archives.asp" class="external-link">GTAP
+and utilizes data from the GTAP 11 database. For more details, refer to
+the <a href="https://www.gtap.agecon.purdue.edu/databases/archives.asp" class="external-link">GTAP
 Database Archive</a>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
