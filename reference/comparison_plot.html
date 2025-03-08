@@ -81,7 +81,7 @@ If a data frame, filters <code>value_col</code> based on matching <code>variable
 
 <dt id="arg-split-by">split_by<a class="anchor" aria-label="anchor" href="#arg-split-by"></a></dt>
 <dd><p>Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., aggregated values without additional dimensions).</p></dd>
+Set to NULL for no splitting, suitable for macro-level analysis.</p></dd>
 
 
 <dt id="arg-panel-var">panel_var<a class="anchor" aria-label="anchor" href="#arg-panel-var"></a></dt>
@@ -125,15 +125,18 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
 
 
 <dt id="arg-export-as-pdf">export_as_pdf<a class="anchor" aria-label="anchor" href="#arg-export-as-pdf"></a></dt>
-<dd><p>Logical. If TRUE, exports plots as PDF files instead of PNG (default: FALSE).</p></dd>
+<dd><p>Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).</p></dd>
 
 
 <dt id="arg-export-config">export_config<a class="anchor" aria-label="anchor" href="#arg-export-config"></a></dt>
-<dd><p>List. Configuration options for exported plots, including file name, width, and height.</p></dd>
+<dd><p>List. Export settings, including:</p><ul><li><p><code>width</code>: Output file width (in inches).</p></li>
+<li><p><code>height</code>: Output file height (in inches).</p></li>
+<li><p>Additional settings—see <code><a href="get_export_config.html">?get_export_config</a></code>.</p></li>
+</ul></dd>
 
 
 <dt id="arg-plot-style-config">plot_style_config<a class="anchor" aria-label="anchor" href="#arg-plot-style-config"></a></dt>
-<dd><p>List. Custom style configuration for plots. If NULL, defaults from <code>get_plot_style_config("comparison")</code> are applied.</p></dd>
+<dd><p>List. Custom plot styles—see <code><a href="get_plot_style_config.html">?get_plot_style_config</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -141,18 +144,8 @@ Set to NULL for no splitting, which is suitable for macro-level analysis (i.e., 
     <p>A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.</p>
     </div>
     <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function allows for extensive customization of plots through the <code>plot_style_config</code> parameter,
-which integrates ggplot2 configurations. The function now supports more flexible export options
-with the <code>export_picture</code>, <code>export_as_pdf</code>, and <code>export_config</code> parameters.</p>
-<p>The <code>export_config</code> parameter can include:</p><ul><li><p><code>file_name</code>: Base name for the output files (default: "comparison_plots").</p></li>
-<li><p><code>width</code>: Width of the output files in inches.</p></li>
-<li><p><code>height</code>: Height of the output files in inches.</p></li>
-<li><p>Additional export settings as needed.</p></li>
-</ul></div>
-    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="detail_plot.html">detail_plot</a></code>, <code><a href="stack_plot.html">stack_plot</a></code>, <code><a href="get_plot_style_config.html">get_plot_style_config</a></code></p></div>
+    <div class="dont-index"><p><code><a href="get_plot_style_config.html">get_plot_style_config</a></code>, <code><a href="get_export_config.html">get_export_config</a></code>, <code><a href="detail_plot.html">detail_plot</a></code>, <code><a href="stack_plot.html">stack_plot</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

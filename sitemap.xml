@@ -26,6 +26,7 @@
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-create_single_detail_plot.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-create_single_stacked_plot.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-create_single_unstacked_plot.html</loc></url>
+<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-display_export_dimensions.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-export_detail_tables.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-export_plot_output.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-filter_top_impact_values_detail.html</loc></url>
@@ -36,10 +37,9 @@
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-generate_comparison_colors.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-generate_stack_colors.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-get_title_mapping.html</loc></url>
+<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-handle_plot_title_and_export.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-output_format.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-prepare_data_source.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-process_detail_data.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-process_plot_title.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-process_split_by.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-validate_column_params.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-validate_gtap_files.html</loc></url>
@@ -51,6 +51,7 @@
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/rename_GTAP_bilateral.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/rename_value.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/report_table.html</loc></url>
+<url><loc>https://bodysbobb.github.io/GTAPViz/reference/sort_plot_data.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/stack_plot.html</loc></url>
 </urlset>
 
