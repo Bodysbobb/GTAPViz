@@ -1342,53 +1342,6 @@ get_export_config <- function(as_dataframe = TRUE) {
 }
 
 
-#' @title Get Title Mapping From Variable Names and Descriptions
-#'
-#' @description Creates a mapping from original variable names to formatted display names.
-#'
-#' @param data A data frame or list of data frames containing variable and description columns.
-#' @param variable_col Name of the column containing variable identifiers.
-#' @param desc_col Name of the column containing descriptions.
-#' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable names.
-#' @param add_var_info Logical. If TRUE, adds additional information in parentheses.
-#'
-#' @return A named list mapping original variable names to formatted display names.
-#'
-#' @author Pattawee Puangchit
-#' @keywords internal
-#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
-#'
-.get_title_mapping <- function(data, variable_col, desc_col,
-                               var_name_by_description = TRUE, add_var_info = FALSE) {
-  extract_title_mapping <- function(df) {
-    if (!is.data.frame(df)) return(NULL)
-    if (!variable_col %in% names(df)) return(NULL)
-
-    # Apply the variable name formatting
-    formatted_df <- .format_variable_names(df, variable_col, desc_col, var_name_by_description, add_var_info)
-
-    # Create mapping from original Variable to formatted Variable
-    unique_vars <- unique(data.frame(
-      OrigVar = df[[variable_col]],
-      DisplayVar = formatted_df[[variable_col]],
-      stringsAsFactors = FALSE
-    ))
-
-    setNames(unique_vars$DisplayVar, unique_vars$OrigVar)
-  }
-
-  if (is.data.frame(data)) {
-    return(extract_title_mapping(data))
-  } else if (is.list(data)) {
-    result <- lapply(data, extract_title_mapping)
-    result <- result[!sapply(result, is.null)]
-    return(do.call(c, result))
-  } else {
-    stop("Unsupported data type. Input should be a data frame or a list of data frames.")
-  }
-}
-
-
 # COLOR PALETTE  -----------------------------------
 
 #' @title Create Academic and Themed Color Palettes

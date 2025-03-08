@@ -13,9 +13,9 @@ output:
     code_folding: show
     self_contained: true
 vignette: >
-  %\VignetteIndexEntry{GTAPViz: Visualizing GTAP Model Results}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  %/VignetteIndexEntry{GTAPViz: Visualizing GTAP Model Results}
+  %/VignetteEngine{knitr::rmarkdown}
+  %/VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE, eval = FALSE}
@@ -34,8 +34,8 @@ knitr::opts_chunk$set(
 rm(list=ls())
 #------------------Dev Period######################################
 # Directory
-#project.folder <- "D:/GitHub/GTAPViz/inst/extdata"
-project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data"
+project.folder <- "C:/Users/b_pat/OneDrive - purdue.edu/GTAPViz Data"
+#project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data"
 
 input.folder <- paste0(project.folder, "/in")
 map.folder <- paste0(project.folder, "/map")
@@ -621,7 +621,6 @@ all_configs <- get_plot_config()
 
 ## Comparison Plot {#sec:comparisonplot}
 
-
 This figure compares one or multiple variables across all experiments for selected observations from a chosen dimension (e.g., region, sector).  
 
 <strong style="font-size: 1.17em;">Key Features</strong>
@@ -645,7 +644,7 @@ comparison_plot(data = reg_data,
                 desc_col = "Description",
                 
                 var_name_by_description = TRUE,
-                add_var_info = FALSE,
+                add_var_info = TRUE,
                 
                 invert_pane = FALSE,                
                 separate_figure = FALSE,
@@ -776,7 +775,7 @@ detail_plot(sl4.plot.data[["2D"]],
             x_axis_from = "Sector",
             split_by = "Region",
 
-            top_impact = 10,
+            top_impact = NULL,
             var_name_by_description = TRUE,
             
             invert_pane = TRUE,
