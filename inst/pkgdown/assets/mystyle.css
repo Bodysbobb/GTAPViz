@@ -1,0 +1,127 @@
+/* Base styling from your custom CSS */
+h1, h2, h3, h4, h5, h6 {
+  color: #003366;
+  font-weight: bold;
+}
+
+/* Font sizes adjusted for pkgdown */
+body { font-size: 18px; }
+h1 { font-size: 34px; }
+h2 { font-size: 28px; }
+h3 { font-size: 24px; }
+h4 { font-size: 20px; }
+code, pre { font-size: 16px; }
+
+/* Override pkgdown TOC styling to match your custom TOC */
+#toc {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.sidebar li > a {
+  font-size: 17px !important;
+}
+
+/* Make the TOC float and stay visible while scrolling */
+.col-md-3 .sidebar {
+  position: sticky;
+  top: 70px;
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+}
+
+/* Add proper section numbering (not automatic in pkgdown) */
+.section {
+  counter-increment: section;
+}
+
+.section h2::before {
+  content: counter(section) ". ";
+}
+
+.section .section {
+  counter-increment: subsection;
+}
+
+.section .section h3::before {
+  content: counter(section) "." counter(subsection) " ";
+}
+
+/* Style figures and tables */
+.figure, table.table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 20px auto;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #FAFAFA;
+  width: fit-content;
+}
+
+.figure p.caption {
+  margin-top: 10px;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Special boxes styling */
+.tip-box, .info-box {
+  padding: 15px 20px;
+  margin: 20px 0;
+  border-radius: 6px;
+  font-size: 17px;
+}
+
+.tip-box {
+  background-color: #E8F4FD;
+  border-left: 5px solid #5B9BD5;
+}
+
+.info-box {
+  background-color: #FDF8E4;
+  border-left: 5px solid #E8A317;
+  color: #5C3D00;
+}
+
+/* Code block styling */
+pre, code {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #FAFAFA !important;
+}
+
+pre {
+  padding: 10px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* For code folding buttons */
+.code-folding-btn {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  margin-bottom: 5px;
+  padding: 2px 8px;
+  font-size: 14px;
+}
+
+.code-folding-btn.active {
+  background-color: #e9ecef;
+}
+
+.code-wrapper {
+  margin-bottom: 15px;
+}
+
+/* For section numbering */
+.section-number {
+  font-weight: bold;
+}
+
+/* For figure/table numbering */
+.figure-number, .table-number {
+  font-weight: bold;
+}
