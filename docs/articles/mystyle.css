@@ -1,0 +1,238 @@
+/* custom_style.css */
+
+/* Existing style for headings */
+h1, h2, h3, h4, h5, h6 {
+  color: #003366;
+  font-weight: bold;
+}
+
+/* All Font Sizes */
+body { font-size: 18px; }
+h1 { font-size: 34px; }
+h2 { font-size: 28px; }
+h3 { font-size: 24px; }
+h4 { font-size: 20px; }
+code, pre { font-size: 16px; }
+#TOC a { font-size: 17px; }
+
+/* Center the entire figure (tables, code blocks, images) */
+.center-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 20px auto;
+  counter-increment: fig-num;
+}
+
+/* Note below the figure */
+.figure-note {
+  font-size: 90%;
+  color: #555;
+  text-align: center;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* Auto-numbered figure caption with spacing */
+.auto-fig {
+  margin-top: 10px; /* Adds slight spacing between figure and caption */
+  text-align: center;
+  font-style: italic;
+}
+
+/* Auto-numbered figure prefix */
+.auto-fig::before {
+  content: "Figure " counter(fig-num) ": ";
+  font-weight: bold;
+}
+
+/* Clean formatting for code box */
+.code-box, .table-box {
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 5px;
+  width: fit-content;
+  background-color: #FAFAFA;
+  display: inline-block;
+  text-align: left;
+}
+
+/* Ensure preformatted text has no extra background */
+.code-box pre, .table-box pre {
+  background-color: transparent !important;
+  font-family: monospace;
+  color: #000000;
+  padding: 0;
+  margin: 0;
+  white-space: pre;
+}
+
+/* Remove extra code background */
+.code-box pre code, .table-box pre code {
+  background-color: transparent !important;
+  padding: 0;
+  margin: 0;
+  border: none;
+  display: block;
+}
+
+/* Table styling inside a figure */
+.table-box table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Table cell styling */
+.table-box th, .table-box td {
+  border: 1px solid #ABB2BF;
+  padding: 8px;
+  text-align: left;
+}
+
+/* Global Plot Counter (for Package Figures) */
+body {
+  counter-reset: package-plot-num;
+}
+
+/* Center the package figure */
+.package-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 20px auto;
+  counter-increment: package-plot-num;
+}
+
+/* Ensure all package figures follow the correct numbering */
+.package-figure figcaption::before {
+  content: "Plot " counter(package-plot-num) ": ";
+  font-weight: bold;
+}
+
+/* Style the package figure box */
+.package-figure-box {
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #FAFAFA;
+  display: inline-block;
+  text-align: center;
+  width: fit-content;
+}
+
+/* Ensure images inside package figures are properly styled */
+.package-figure-box img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Package figure note styling */
+.package-fig-note {
+  font-size: 90%;
+  color: #555;
+  font-style: italic;
+}
+
+
+/* Global Table Counter (for Package Tables) */
+body {
+  counter-reset: package-table-num;
+}
+
+/* Center the package table */
+.package-table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 20px auto;
+  counter-increment: package-table-num;
+}
+
+/* Ensure all package tables follow the correct numbering */
+.package-table figcaption::before {
+  content: "Table " counter(package-table-num) ": ";
+  font-weight: bold;
+}
+
+/* Style the package table box */
+.package-table-box {
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #FAFAFA;
+  display: inline-block;
+  text-align: center;
+  width: fit-content;
+}
+
+/* Ensure images inside package tables are properly styled */
+.package-table-box img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Package table note styling */
+.package-table-note {
+  font-size: 90%;
+  color: #555;
+  font-style: italic;
+}
+
+
+/* New TIP box style */
+.tip-box {
+  background-color: #E8F4FD;      /* soft blue background */
+  border-left: 5px solid #5B9BD5; /* darker blue border */
+  padding: 10px 15px;             /* padding inside box */
+  margin: 15px 0;                 /* margin above/below */
+  border-radius: 4px;             /* slightly rounded corners */
+  font-size: 16px;                /* readable font size */
+}
+
+.tip-icon {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+
+/* Infi Box */
+.info-box {
+  background-color: #FDF8E4;
+  border-left: 5px solid #E8A317;
+  padding: 15px 20px;
+  margin: 20px 0;
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: 400;
+  color: #5C3D00;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.info-box h1,
+.info-box h2,
+.info-box h3,
+.info-box h4,
+.info-box h5,
+.info-box h6 {
+  color: #5C3D00;
+}
+
+.info-box code {
+  background-color: transparent; /* Removes background color */
+  color: #2A2A2A; /* Keeps text color */
+  padding: 0; /* Removes padding */
+  border-radius: 0; /* Removes rounded edges */
+  font-weight: normal; /* Removes bold effect */
+  font-size: inherit; /* Ensures it follows surrounding text size */
+  border: none; /* Removes border */
+  box-shadow: none; /* Removes box effect */
+}
+

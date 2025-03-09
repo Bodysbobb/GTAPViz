@@ -5,6 +5,5 @@ LICENSE
 *.Rhistory
 *.Rbuildignore
 .Rproj.user
-docs
 /doc/
 /Meta/
