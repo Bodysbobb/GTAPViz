@@ -1,14 +1,18 @@
 # GTAPViz: Automating GTAP Data Processing and Visualization  
 
-**This package is currently under development.**  
-
 GTAPViz streamlines the **processing and visualization of HAR/SL4 results**, building on the **HARplus** package. It simplifies data extraction, transformation, and visualization from **.sl4** and **.har** files, reducing manual effort—particularly for **GTAP model simulations**.  
 
 # GTAPViz Key Features 
-- **Automated Processing** – Handles data extraction and transformation with minimal manual work.  
-- **Effortless Visualization** – Generates figures and tables optimized for academic presentations.  
-- **Customizable Yet Simple** – Modify color schemes, font sizes, and legend positions with intuitive commands.  
-- **Full Control Without Complexity** – Advanced users can fine-tune every aspect within a single command.  
+- **Automated adjustments** for plot dimensions, facet settings, and other elements, requiring minimal input.  
+
+- **Intuitive customization** of color tones, font sizes, and legend positions with simple, adaptable commands.  
+
+- **Full control without complexity**, allowing users to modify every aspect with a single command—no deep coding required.  
+
+- **PNG and PDF export**, enabling simultaneous saving in both formats for easy use in presentations and LaTeX.  
+
+- **Comprehensive documentation**, with an easy-to-follow vignette and a help function listing all plot modifications—adjust settings effortlessly without searching online.
+
 
 # Installation  
 
