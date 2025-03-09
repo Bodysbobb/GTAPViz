@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,18 +40,12 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">auto_gtap_data</span><span class="op">(</span></span>
 <span>  <span class="va">experiment</span>,</span>
-<span>  mapping_info <span class="op">=</span> <span class="st">"GTAPv7"</span>,</span>
 <span>  project_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  input_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  output_formats <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  plot_data <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  region_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  sector_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  sl4_output_name <span class="op">=</span> <span class="st">"sl4.plot.data"</span>,</span>
-<span>  har_output_name <span class="op">=</span> <span class="st">"har.plot.data"</span>,</span>
-<span>  macro_output_name <span class="op">=</span> <span class="st">"GTAPMacro"</span>,</span>
+<span>  sl4_suffix <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  har_suffix <span class="op">=</span> <span class="st">"-WEL"</span>,</span>
+<span>  mapping_info <span class="op">=</span> <span class="st">"GTAPv7"</span>,</span>
 <span>  process_sl4_vars <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  process_har_vars <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sl4_mapping_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -60,8 +54,14 @@
 <span>  har_extract_method <span class="op">=</span> <span class="st">"get_data_by_var"</span>,</span>
 <span>  sl4_priority <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  har_priority <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  sl4_suffix <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  har_suffix <span class="op">=</span> <span class="st">"-WEL"</span></span>
+<span>  region_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sector_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  plot_data <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  output_formats <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sl4_output_name <span class="op">=</span> <span class="st">"sl4.plot.data"</span>,</span>
+<span>  har_output_name <span class="op">=</span> <span class="st">"har.plot.data"</span>,</span>
+<span>  macro_output_name <span class="op">=</span> <span class="st">"GTAPMacro"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -71,10 +71,6 @@
 
 <dl><dt id="arg-experiment">experiment<a class="anchor" aria-label="anchor" href="#arg-experiment"></a></dt>
 <dd><p>Character vector. Case names to process.</p></dd>
-
-
-<dt id="arg-mapping-info">mapping_info<a class="anchor" aria-label="anchor" href="#arg-mapping-info"></a></dt>
-<dd><p>Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".</p></dd>
 
 
 <dt id="arg-project-path">project_path<a class="anchor" aria-label="anchor" href="#arg-project-path"></a></dt>
@@ -89,44 +85,28 @@
 <dd><p>Character. Path to the output folder. Overrides <code>project_path/out</code> if specified.</p></dd>
 
 
-<dt id="arg-output-formats">output_formats<a class="anchor" aria-label="anchor" href="#arg-output-formats"></a></dt>
-<dd><p>Character vector or list. Exports data in these formats (valid: "csv", "stata", "rds", "txt").</p></dd>
+<dt id="arg-sl-suffix">sl4_suffix<a class="anchor" aria-label="anchor" href="#arg-sl-suffix"></a></dt>
+<dd><p>Character. Custom suffix for SL4 files (e.g., "" or "-custom").</p></dd>
 
 
-<dt id="arg-plot-data">plot_data<a class="anchor" aria-label="anchor" href="#arg-plot-data"></a></dt>
-<dd><p>Logical. If TRUE, prepares data for plotting and assigns to variables.</p></dd>
+<dt id="arg-har-suffix">har_suffix<a class="anchor" aria-label="anchor" href="#arg-har-suffix"></a></dt>
+<dd><p>Character. Custom suffix for HAR files (e.g., "-WEL").</p></dd>
 
 
-<dt id="arg-region-select">region_select<a class="anchor" aria-label="anchor" href="#arg-region-select"></a></dt>
-<dd><p>Optional character vector. Specifies regions to filter the data.</p></dd>
-
-
-<dt id="arg-sector-select">sector_select<a class="anchor" aria-label="anchor" href="#arg-sector-select"></a></dt>
-<dd><p>Optional character vector. Specifies sectors to filter the data.</p></dd>
-
-
-<dt id="arg-subtotal-level">subtotal_level<a class="anchor" aria-label="anchor" href="#arg-subtotal-level"></a></dt>
-<dd><p>Logical. If TRUE, includes subtotal data. Default is FALSE.</p></dd>
-
-
-<dt id="arg-sl-output-name">sl4_output_name<a class="anchor" aria-label="anchor" href="#arg-sl-output-name"></a></dt>
-<dd><p>Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".</p></dd>
-
-
-<dt id="arg-har-output-name">har_output_name<a class="anchor" aria-label="anchor" href="#arg-har-output-name"></a></dt>
-<dd><p>Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".</p></dd>
-
-
-<dt id="arg-macro-output-name">macro_output_name<a class="anchor" aria-label="anchor" href="#arg-macro-output-name"></a></dt>
-<dd><p>Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".</p></dd>
+<dt id="arg-mapping-info">mapping_info<a class="anchor" aria-label="anchor" href="#arg-mapping-info"></a></dt>
+<dd><p>Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".</p></dd>
 
 
 <dt id="arg-process-sl-vars">process_sl4_vars<a class="anchor" aria-label="anchor" href="#arg-process-sl-vars"></a></dt>
-<dd><p>Data frame, NULL, or FALSE. Variables to extract from SL4 files. Set to NULL to extract all variables, or FALSE to skip SL4 processing.</p></dd>
+<dd><p>Data frame, NULL, or FALSE. Variables to extract from SL4 files.</p><ul><li><p>Set to NULL to extract all variables.</p></li>
+<li><p>Set to FALSE to skip SL4 processing.</p></li>
+</ul></dd>
 
 
 <dt id="arg-process-har-vars">process_har_vars<a class="anchor" aria-label="anchor" href="#arg-process-har-vars"></a></dt>
-<dd><p>Data frame, NULL, or FALSE. Variables to extract from HAR files. Set to NULL to extract all variables, or FALSE to skip HAR processing.</p></dd>
+<dd><p>Data frame, NULL, or FALSE. Variables to extract from HAR files.</p><ul><li><p>Set to NULL to extract all variables.</p></li>
+<li><p>Set to FALSE to skip HAR processing.</p></li>
+</ul></dd>
 
 
 <dt id="arg-sl-mapping-info">sl4_mapping_info<a class="anchor" aria-label="anchor" href="#arg-sl-mapping-info"></a></dt>
@@ -153,17 +133,41 @@
 <dd><p>Optional list. Priority rules for HAR data grouping.</p></dd>
 
 
-<dt id="arg-sl-suffix">sl4_suffix<a class="anchor" aria-label="anchor" href="#arg-sl-suffix"></a></dt>
-<dd><p>Character. Custom suffix for SL4 files (e.g., "" or "-custom").</p></dd>
+<dt id="arg-region-select">region_select<a class="anchor" aria-label="anchor" href="#arg-region-select"></a></dt>
+<dd><p>Optional character vector. Specifies regions to filter the data.</p></dd>
 
 
-<dt id="arg-har-suffix">har_suffix<a class="anchor" aria-label="anchor" href="#arg-har-suffix"></a></dt>
-<dd><p>Character. Custom suffix for HAR files (e.g., "-WEL").</p></dd>
+<dt id="arg-sector-select">sector_select<a class="anchor" aria-label="anchor" href="#arg-sector-select"></a></dt>
+<dd><p>Optional character vector. Specifies sectors to filter the data.</p></dd>
+
+
+<dt id="arg-subtotal-level">subtotal_level<a class="anchor" aria-label="anchor" href="#arg-subtotal-level"></a></dt>
+<dd><p>Logical. If TRUE, includes subtotal data. Default is FALSE.</p></dd>
+
+
+<dt id="arg-plot-data">plot_data<a class="anchor" aria-label="anchor" href="#arg-plot-data"></a></dt>
+<dd><p>Logical. If TRUE, prepares data for plotting and assigns to variables.</p></dd>
+
+
+<dt id="arg-output-formats">output_formats<a class="anchor" aria-label="anchor" href="#arg-output-formats"></a></dt>
+<dd><p>Character vector or list. Exports data in these formats (valid: "csv", "stata", "rds", "txt").</p></dd>
+
+
+<dt id="arg-sl-output-name">sl4_output_name<a class="anchor" aria-label="anchor" href="#arg-sl-output-name"></a></dt>
+<dd><p>Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".</p></dd>
+
+
+<dt id="arg-har-output-name">har_output_name<a class="anchor" aria-label="anchor" href="#arg-har-output-name"></a></dt>
+<dd><p>Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".</p></dd>
+
+
+<dt id="arg-macro-output-name">macro_output_name<a class="anchor" aria-label="anchor" href="#arg-macro-output-name"></a></dt>
+<dd><p>Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Returns the processed data invisibly, which will not be printed to the console.</p>
+    <p>A processed dataset, with options for exporting and visualization.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -192,24 +196,15 @@ for any missing values.</p></li>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Extract data with region and experiment filters</span></span></span>
-<span class="r-in"><span><span class="fu">auto_gtap_data</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="co"># Example usage</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">process_gtap_data</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Base"</span>, <span class="st">"Shock"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  project_path <span class="op">=</span> <span class="st">"path/to/project"</span>,</span></span>
 <span class="r-in"><span>  process_sl4_vars <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>  process_har_vars <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  sl4_mapping_info <span class="op">=</span> <span class="va">sl4_mapping_info</span>,</span></span>
-<span class="r-in"><span>  har_mapping_info <span class="op">=</span> <span class="va">har_mapping_info</span>,</span></span>
-<span class="r-in"><span>  region_select <span class="op">=</span> <span class="va">selected_regions</span>,</span></span>
-<span class="r-in"><span>  sector_select <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  experiment <span class="op">=</span> <span class="va">experiment</span>,</span></span>
-<span class="r-in"><span>  mapping_info <span class="op">=</span> <span class="st">"GTAPv7"</span>,</span></span>
-<span class="r-in"><span>  project_path <span class="op">=</span> <span class="va">project_folder</span>,</span></span>
 <span class="r-in"><span>  plot_data <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  output_formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="st">"csv"</span> <span class="op">=</span> <span class="st">"No"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"stata"</span> <span class="op">=</span> <span class="st">"No"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"rds"</span> <span class="op">=</span> <span class="st">"No"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"txt"</span> <span class="op">=</span> <span class="st">"No"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  output_formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"csv"</span>, <span class="st">"rds"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

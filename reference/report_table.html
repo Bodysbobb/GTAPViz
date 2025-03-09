@@ -11,7 +11,7 @@ and exporting to Excel."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,8 +121,20 @@ in each list determines the priority. Example:
 <code>rename_cols = list("REG" = "Region", "COMM" = "Commodities", "Experiment" = "Scenario")</code></p></dd>
 
 
+<dt id="arg-var-name-by-description">var_name_by_description<a class="anchor" aria-label="anchor" href="#arg-var-name-by-description"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, replaces variable codes with descriptions when available.</p></dd>
+
+
+<dt id="arg-add-var-info">add_var_info<a class="anchor" aria-label="anchor" href="#arg-add-var-info"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, appends variable codes in parentheses after descriptions.</p></dd>
+
+
 <dt id="arg-decimal">decimal<a class="anchor" aria-label="anchor" href="#arg-decimal"></a></dt>
 <dd><p>Numeric. Number of decimal places for rounding values.</p></dd>
+
+
+<dt id="arg-unit-select">unit_select<a class="anchor" aria-label="anchor" href="#arg-unit-select"></a></dt>
+<dd><p>Optional character. Specifies a unit to filter the dataset.</p></dd>
 
 
 <dt id="arg-separate-sheet-by">separate_sheet_by<a class="anchor" aria-label="anchor" href="#arg-separate-sheet-by"></a></dt>

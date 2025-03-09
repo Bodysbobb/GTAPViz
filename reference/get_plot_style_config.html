@@ -9,7 +9,7 @@ or to look up specific parameters. Also provides parameter validation for custom
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,8 @@ or to look up specific parameters. Also provides parameter validation for custom
 <span>  parameter_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  show_docs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  validate_custom <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  as_dataframe <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  as_dataframe <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  printing <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -72,6 +73,11 @@ or to look up specific parameters. Also provides parameter validation for custom
 
 <dt id="arg-as-dataframe">as_dataframe<a class="anchor" aria-label="anchor" href="#arg-as-dataframe"></a></dt>
 <dd><p>Logical. Whether to return settings as a dataframe.</p></dd>
+
+
+<dt id="arg-printing">printing<a class="anchor" aria-label="anchor" href="#arg-printing"></a></dt>
+<dd><p>Logical. If TRUE, prints a formatted code snippet that can be copied
+and pasted to recreate the configuration. Default is FALSE.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -232,18 +238,124 @@ The parameters are grouped as follows:</p><div class="section">
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Get default configuration</span></span></span>
-<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu">get_plot_style_config</span><span class="op">(</span><span class="st">"comparison"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Get alldefault configuration</span></span></span>
+<span class="r-in"><span><span class="fu">get_plot_style_config</span><span class="op">(</span>printing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> my_style_config &lt;- list(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Title settings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_title = TRUE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   title_face = "bold",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   title_size = 20,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   title_hjust = 0.5,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   add_unit_to_title = TRUE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   title_margin = margin(t = 10, r = 0, b = 10, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   title_format = list(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     type = "standard", #option: prefix, suffix, full, dynamic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     text = "",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     sep = ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # X-Axis settings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_x_axis_title = TRUE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_face = "bold",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_size = 16,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_x_axis_labels = TRUE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_text_face = "plain",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_text_size = 14,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_text_angle = 0,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_text_hjust = 0,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_description = "",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Y-Axis settings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_y_axis_title = TRUE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_face = "bold",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_size = 16,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_y_axis_labels = TRUE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_text_face = "plain",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_text_size = 14,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_text_angle = 0,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_text_hjust = 0,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_description = "",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_axis_titles_on_all_facets = TRUE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Value Labels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_value_labels = TRUE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   value_label_face = "plain",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   value_label_size = 5,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   value_label_position = "above",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   value_label_decimal_places = 2,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Legend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_legend = FALSE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_legend_title = FALSE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   legend_position = "bottom",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   legend_title_face = "bold",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   legend_text_face = "plain",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   legend_text_size = 14,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Panel Strip</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   strip_face = "bold",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   strip_text_size = 16,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   strip_background = "lightgrey",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   strip_text_margin = margin(t = 10, r = 0, b = 10, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Panel Layout</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   panel_spacing = 2,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   panel_rows = NULL,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   panel_cols = NULL,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   theme = NULL,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Colors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color_tone = NULL,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   positive_color = "#2E8B57",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   negative_color = "#CD5C5C",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background_color = "white",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   grid_color = "grey90",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_grid_major_x = FALSE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_grid_major_y = FALSE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_grid_minor_x = FALSE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_grid_minor_y = FALSE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Zero Line</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   show_zero_line = TRUE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   zero_line_type = "dashed",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   zero_line_color = "black",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   zero_line_size = 0.5,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   zero_line_position = 0,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Bar Chart</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   bar_width = 0.9,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   bar_spacing = 0.9,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Scale Settings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   scale_limit = NULL,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   scale_increment = NULL,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Scale Expansion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expansion_y_mult = c(0.05, 0.1),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expansion_x_mult = c(0.05, 0.05),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Font Size Control</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   all_font_size = 1,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Data Sorting</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sort_data_by_value = FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Example usage:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # comparison_plot(data, x_axis_from = "REG", plot_style_config = my_style_config)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get information about a specific parameter</span></span></span>
-<span class="r-in"><span><span class="va">param_info</span> <span class="op">&lt;-</span> <span class="fu">get_plot_style_config</span><span class="op">(</span><span class="st">"detail"</span>, <span class="st">"bar_width"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">param_info</span> <span class="op">&lt;-</span> <span class="fu">get_plot_style_config</span><span class="op">(</span><span class="st">"default"</span>, <span class="st">"bar_width"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get as structured dataframe</span></span></span>
-<span class="r-in"><span><span class="va">config_df</span> <span class="op">&lt;-</span> <span class="fu">get_plot_style_config</span><span class="op">(</span><span class="st">"stack"</span>, as_dataframe <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">config_df</span> <span class="op">&lt;-</span> <span class="fu">get_plot_style_config</span><span class="op">(</span><span class="st">"default"</span>, as_dataframe <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Validate custom configuration</span></span></span>
 <span class="r-in"><span><span class="va">custom_config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>title_size <span class="op">=</span> <span class="fl">24</span>, bar_width <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">validated</span> <span class="op">&lt;-</span> <span class="fu">get_plot_style_config</span><span class="op">(</span><span class="st">"comparison"</span>, validate_custom <span class="op">=</span> <span class="va">custom_config</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">validated</span> <span class="op">&lt;-</span> <span class="fu">get_plot_style_config</span><span class="op">(</span><span class="st">"default"</span>, validate_custom <span class="op">=</span> <span class="va">custom_config</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
