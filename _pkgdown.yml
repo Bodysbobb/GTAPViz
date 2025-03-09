@@ -5,8 +5,7 @@ template:
   includes:
     in_header: |
       <link rel="stylesheet" href="mystyle.css">
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script src="extra.js"></script>
+      <meta name="google-site-verification" content="8QKloLN9mSrDsTaZuR4KAEAmti-k3mYCBZpMVgq2RO8" />
 home:
   title: GTAPViz - Visualizing GTAP Model Results
 navbar:
@@ -19,7 +18,11 @@ navbar:
       href: index.html
     reference:
       text: "References"
-      href: reference/index.html
+      menu:
+      - text: "Function Reference"
+        href: reference/index.html
+      - text: "PDF Manual"
+        href: GTAPViz_1.0.0.pdf
     articles:
       text: "Vignettes"
       href: articles/index.html
@@ -36,4 +39,3 @@ articles:
   - title: "GTAPViz Vignette"
     contents:
       - GTAPViz_vignette
-      
