@@ -156,21 +156,24 @@ gtap_macros_data <- function(select_var = NULL,
 #'         for any missing values.
 #' }
 #'
+#' @section Input Paths & Directories:
 #' @param experiment Character vector. Case names to process.
-#'
-#' # Input Paths & Directories
 #' @param project_path Character. Path to the project folder with "in" and "out" subfolders.
 #' @param input_path Character. Path to the input folder. Overrides `project_path/in` if specified.
 #' @param output_path Character. Path to the output folder. Overrides `project_path/out` if specified.
 #'
-#' # File Naming & Suffixes
+#' @section File Naming & Suffixes:
 #' @param sl4_suffix Character. Custom suffix for SL4 files (e.g., "" or "-custom").
 #' @param har_suffix Character. Custom suffix for HAR files (e.g., "-WEL").
 #'
-#' # Data Processing & Extraction
+#' @section Data Processing & Extraction:
 #' @param mapping_info Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".
-#' @param process_sl4_vars Data frame, NULL, or FALSE. Variables to extract from SL4 files. Set to NULL to extract all variables, or FALSE to skip SL4 processing.
-#' @param process_har_vars Data frame, NULL, or FALSE. Variables to extract from HAR files. Set to NULL to extract all variables, or FALSE to skip HAR processing.
+#' @param process_sl4_vars Data frame, NULL, or FALSE. Variables to extract from SL4 files.
+#'   - Set to NULL to extract all variables.
+#'   - Set to FALSE to skip SL4 processing.
+#' @param process_har_vars Data frame, NULL, or FALSE. Variables to extract from HAR files.
+#'   - Set to NULL to extract all variables.
+#'   - Set to FALSE to skip HAR processing.
 #' @param sl4_mapping_info Data frame or NULL. Mapping information for SL4 variables (with "Variable", "Description", and "Unit" columns).
 #' @param har_mapping_info Data frame or NULL. Mapping information for HAR variables (with "Variable", "Description", and "Unit" columns).
 #' @param sl4_extract_method Character. SL4 extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".
@@ -178,21 +181,22 @@ gtap_macros_data <- function(select_var = NULL,
 #' @param sl4_priority Optional list. Priority rules for SL4 data grouping.
 #' @param har_priority Optional list. Priority rules for HAR data grouping.
 #'
-#' # Data Filtering
+#' @section Data Filtering:
 #' @param region_select Optional character vector. Specifies regions to filter the data.
 #' @param sector_select Optional character vector. Specifies sectors to filter the data.
 #' @param subtotal_level Logical. If TRUE, includes subtotal data. Default is FALSE.
 #'
-#' # Output Settings
+#' @section Output Settings:
 #' @param plot_data Logical. If TRUE, prepares data for plotting and assigns to variables.
 #' @param output_formats Character vector or list. Exports data in these formats (valid: "csv", "stata", "rds", "txt").
 #'
-#' # Output Variables for Plotting
+#' @section Output Variables for Plotting:
 #' @param sl4_output_name Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".
 #' @param har_output_name Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".
 #' @param macro_output_name Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".
 #'
-#' @return Returns the processed data invisibly, which will not be printed to the console.
+#' @return
+#' A processed dataset, with options for exporting and visualization.
 #'
 #' @author Pattawee Puangchit
 #' @export
@@ -200,24 +204,15 @@ gtap_macros_data <- function(select_var = NULL,
 #'
 #' @examples
 #' \dontrun{
-#' # Extract data with region and experiment filters
-#' auto_gtap_data(
+#' # Example usage
+#' result <- process_gtap_data(
+#'   experiment = c("Base", "Shock"),
+#'   project_path = "path/to/project",
 #'   process_sl4_vars = NULL,
 #'   process_har_vars = NULL,
-#'   sl4_mapping_info = sl4_mapping_info,
-#'   har_mapping_info = har_mapping_info,
-#'   region_select = selected_regions,
-#'   sector_select = NULL,
-#'   subtotal_level = FALSE,
-#'   experiment = experiment,
-#'   mapping_info = "GTAPv7",
-#'   project_path = project_folder,
 #'   plot_data = TRUE,
-#'   output_formats = list(
-#'     "csv" = "No",
-#'     "stata" = "No",
-#'     "rds" = "No",
-#'     "txt" = "No"))
+#'   output_formats = c("csv", "rds")
+#' )
 #' }
 #'
 auto_gtap_data <- function(experiment,

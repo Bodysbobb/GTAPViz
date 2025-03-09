@@ -620,14 +620,28 @@ export_config <- get_export_config(as_dataframe = TRUE)
 
 ## Highly Recommended for Advanced Configurations {.unnumbered}
 
-<p> To simplify modifications and maintain structured code, a printing function is provided. This function displays available options, allowing you to adjust and apply a custom plot style across all plot functions.  
+<p> To simplify modifications and maintain structured code, a printing function is provided. This function displays available options, allowing you to adjust and apply a custom plot style across all plot functions. </p>  
 
-Use the following code to create and apply your own plot style:  <p>
+<p> Firstly, multiple `color_tone` options are available in this package.  
+You can view all predefined palettes by using the following code: </p>
+```{r color palette, eval=FALSE}}
+# Get all palettes as a list
+all_palettes <- print_palette_colors("all")
+
+# Click or call a specific palette to view its colors
+all_palettes$winter()   # View the winter palette
+all_palettes$fall()     # View the fall palette
+all_palettes$gtap()     # View the GTAP palette
+```
+
+<p> **Note:** You can also define any other color palette simply by using `"blue"`, `"red"`, or any other standard color name that works with `ggplot2`. </p>
+
+<p> Next, use the following code to create and apply your own plot style: </p>
 ```{r, eval = FALSE}
 get_plot_config(printing = TRUE)
 ```
 
-You will get:
+<p> You will get: </p>
 ```{r, eval = FALSE, tidy = TRUE}
 my_style_config <- list(
 
@@ -862,7 +876,7 @@ comparison_plot(GTAPMacro,
                 output_path = output.folder,
                 
                 plot_style_config = list(
-                  color_tone = "purdue",
+                  color_tone = "blue",
                   title_format = list(
                     type = "full",  
                     text = "Global Economic Impacts"
@@ -1025,6 +1039,7 @@ stack_plot(data = har.plot.data[["A"]],
              color_tone = "gtap",
              panel_rows = 2,
              panel_cols = NULL,
+             show_legend = TRUE,
              show_axis_titles_on_all_facets = FALSE
            ))
 ```
@@ -1082,7 +1097,8 @@ stack_plot(data = har.plot.data[["E1"]],
              x_axis_title_size = 32,
              y_axis_title_size = 32,
              x_axis_text_size = 20,
-             y_axis_text_size = 20
+             y_axis_text_size = 20,
+             show_legend = TRUE
            ))
 
 ```

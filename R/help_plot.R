@@ -1000,6 +1000,131 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
   ))
 }
 
+
+#' @title Print and Visualize Themed Color Palettes
+#'
+#' @description
+#' This function prints and visualizes predefined color palettes. Users can specify a `color_tone`
+#' and `palette_type` to display the corresponding colors. Additionally, calling `color_tone = "all"`
+#' returns a list of callable functions, where each entry dynamically generates a color palette visualization.
+#'
+#' @param color_tone Character. The name of the predefined color theme. Default is `NULL`, which requires specification.
+#' Available themes include:
+#' \itemize{
+#'   \item \strong{Academic}: A balanced set of colors for research-oriented visuals.
+#'   \item \strong{Purdue}: Themed after Purdue University branding.
+#'   \item \strong{Colorblind}: Designed for colorblind-friendly visualization.
+#'   \item \strong{Economic}: Used for economic data visualization.
+#'   \item \strong{Trade}: Suited for trade-related data.
+#'   \item \strong{GTAP}: Based on Global Trade Analysis Project visuals.
+#'   \item \strong{GTAP2}: An alternative GTAP color set.
+#'   \item \strong{Earth}: Inspired by natural, earthy tones.
+#'   \item \strong{Vibrant}: High-contrast and energetic colors.
+#'   \item \strong{Bright}: Bright and playful color combinations.
+#'   \item \strong{Minimal}: Monochrome and muted colors for minimalistic designs.
+#'   \item \strong{Energetic}: Warm and dynamic tones.
+#'   \item \strong{Pastel}: Soft pastel shades.
+#'   \item \strong{Spring}: Fresh, floral-inspired hues.
+#'   \item \strong{Summer}: Sunny, warm color gradients.
+#'   \item \strong{Winter}: Cool, icy tones for winter visuals.
+#'   \item \strong{Fall}: Autumn-inspired warm color palette.
+#'   \item \strong{Blue_mono}, \strong{Green_mono}, \strong{Red_mono}, \strong{Grey_mono}: Monochromatic shades for respective colors.
+#' }
+#'
+#' Use `"all"` to return a list of callable functions for all palettes.
+#'
+#' @param palette_type Character. The type of color palette to use.
+#' Options include:
+#' \itemize{
+#'   \item \strong{"qualitative"} - Best for categorical data.
+#'   \item \strong{"sequential"} - Used for ordered, continuous scales.
+#'   \item \strong{"diverging"} - Ideal for highlighting contrasts.
+#' }
+#' Default is `"qualitative"`.
+#'
+#' @details
+#' The function retrieves colors from `.create_color_palette()` and provides a
+#' visual preview of the selected theme.
+#'
+#' If `color_tone = "all"`, the function returns a **list of functions**,
+#' where calling any element (e.g., `all_palettes$winter()`) generates the corresponding color palette visualization.
+#'
+#' If the requested `color_tone` does not exist or is empty, the function throws an error.
+#'
+#' @return
+#' \itemize{
+#'   \item If a specific `color_tone` is provided, it prints the color palette and returns `NULL`.
+#'   \item If `color_tone = "all"`, it returns a **list of callable functions** to visualize each palette on demand.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' # Print & visualize a specific palette
+#' print_palette_colors("winter")
+#'
+#' # Print & visualize another palette with different types
+#' print_palette_colors("fall", "sequential")
+#' print_palette_colors("academic", "diverging")
+#'
+#' # Get all palettes as a list of callable functions
+#' all_palettes <- print_palette_colors("all")
+#'
+#' # Click or call a specific palette function to view its colors
+#' all_palettes$winter()   # View the winter palette
+#' all_palettes$fall()     # View the fall palette
+#' all_palettes$gtap()     # View the GTAP palette
+#' }
+#'
+#' @export
+#'
+print_palette_colors <- function(color_tone = NULL, palette_type = "qualitative") {
+  # Define available themes
+  available_palettes <- c(
+    "academic", "purdue", "colorblind", "economic", "trade", "gtap", "gtap2",
+    "earth", "vibrant", "bright", "minimal", "energetic", "pastel", "spring",
+    "summer", "winter", "fall", "blue_mono", "green_mono", "red_mono", "grey_mono"
+  )
+
+  # If color_tone is "all", return a list of functions (lazy evaluation)
+  if (!is.null(color_tone) && color_tone == "all") {
+    plot_list <- list()
+
+    for (palette in available_palettes) {
+      plot_list[[palette]] <- local({
+        pal <- palette  # Store the palette name (to prevent overwriting issues)
+        function() { print_palette_colors(pal, palette_type) }
+      })
+    }
+
+    return(plot_list)  # Returns a list of callable functions
+  }
+
+  # Generate the color palette using the existing function
+  colors <- .create_color_palette(color_tone = color_tone, n_colors = 10, palette_type = palette_type)
+
+  # Validate output
+  if (is.null(colors) || length(colors) == 0) {
+    stop("Invalid color tone or empty palette. Please choose a valid color_tone from .create_color_palette().")
+  }
+
+  # Print colors in console
+  cat("\nPalette:", color_tone, "-", palette_type, "\n")
+  cat(" Colors: ", paste(colors, collapse = ", "), "\n")
+
+  # Base R visualization
+  n_colors <- length(colors)
+  bar_x <- seq_len(n_colors)
+  bar_y <- rep(1, n_colors)
+
+  par(mar = c(2, 2, 2, 2))  # Adjust margins for visualization
+  plot(bar_x, bar_y, type = "n", xlab = "", ylab = "", axes = FALSE,
+       main = paste("Palette:", color_tone, "-", palette_type))
+  rect(bar_x - 0.5, 0, bar_x + 0.5, 1, col = colors, border = "black")
+
+  # Add labels
+  text(bar_x, rep(-0.2, n_colors), labels = seq_along(colors), cex = 0.8, col = "black")
+}
+
 # PLOT STYLE CONFIG HELPERS -----------------------------------------
 
 #' @title Calculate Plot Style Configuration
@@ -1878,6 +2003,57 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
       sequential = c("#FFFFFF", "#E1EFF7", "#B3DFF0", "#7FC6E0", "#009CDE", "#DAAA00", "#C28E0E", "#98700D", "#000000"),
       diverging = c("#000000", "#4D4038", "#666666", "#0055A4", "#009CDE", "#00A3E0", "#DAAA00", "#E2D48E", "#FFFFFF")
     ),
+    earth = list(
+      qualitative = c("#8B4513", "#A0522D", "#CD853F", "#D2B48C", "#8FBC8F", "#556B2F", "#2E8B57"),
+      sequential = c("#F5F5DC", "#E3DAC9", "#C4A484", "#A67B5B", "#806040", "#594028", "#3B2F2F"),
+      diverging = c("#8B0000", "#B22222", "#CD5C5C", "#D3D3D3", "#4682B4", "#1E90FF", "#00008B")
+    ),
+    vibrant = list(
+      qualitative = c("#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#4B0082", "#9400D3"),
+      sequential = c("#FFE5B4", "#FFCC66", "#FF9933", "#FF6600", "#FF3300", "#CC0000", "#990000"),
+      diverging = c("#800000", "#FF4500", "#FFD700", "#FFFFFF", "#32CD32", "#008080", "#000080")
+    ),
+    bright = list(
+      qualitative = c("#FF69B4", "#FF4500", "#FFD700", "#32CD32", "#00FFFF", "#1E90FF", "#8A2BE2"),
+      sequential = c("#FFFACD", "#FFD700", "#FFA500", "#FF4500", "#DC143C", "#8B0000", "#4B0082"),
+      diverging = c("#D2691E", "#FFA07A", "#FFDEAD", "#FFFFFF", "#ADD8E6", "#4682B4", "#00008B")
+    ),
+    minimal = list(
+      qualitative = c("#222222", "#444444", "#666666", "#888888", "#AAAAAA", "#CCCCCC", "#EEEEEE"),
+      sequential = c("#F8F9FA", "#E9ECEF", "#DEE2E6", "#CED4DA", "#ADB5BD", "#6C757D", "#343A40"),
+      diverging = c("#5A5A5A", "#878787", "#B4B4B4", "#FFFFFF", "#CCCCCC", "#888888", "#444444")
+    ),
+    energetic = list(
+      qualitative = c("#FF0000", "#FFAA00", "#FFFF00", "#00FF00", "#00AAAA", "#0000FF", "#5500AA"),
+      sequential = c("#FFF5E6", "#FFDAB9", "#FFB07F", "#FF7F50", "#FF4500", "#DC143C", "#8B0000"),
+      diverging = c("#8B0000", "#FF4500", "#FFD700", "#FFFFFF", "#00FFFF", "#0000FF", "#4B0082")
+    ),
+    pastel = list(
+      qualitative = c("#FFB6C1", "#FFDAC1", "#FAFAD2", "#C1E1C1", "#B0E0E6", "#DDA0DD", "#E6E6FA"),
+      sequential = c("#FFF5EE", "#FFE4E1", "#FFC0CB", "#FFB6C1", "#DB7093", "#C71585", "#800080"),
+      diverging = c("#CD5C5C", "#FFA07A", "#FFDAB9", "#FFFFFF", "#ADD8E6", "#4682B4", "#00008B")
+    ),
+    spring = list(
+      qualitative = c("#FF69B4", "#FFB6C1", "#FFD700", "#32CD32", "#87CEEB", "#9370DB", "#8B008B"),
+      sequential = c("#FFF0F5", "#FFDAB9", "#FFC0CB", "#FFB6C1", "#FF69B4", "#DB7093", "#8B008B"),
+      diverging = c("#FF4500", "#FFD700", "#FFFACD", "#FFFFFF", "#00FF7F", "#20B2AA", "#008080")
+    ),
+    summer = list(
+      qualitative = c("#FF4500", "#FFA500", "#FFD700", "#00FF00", "#00CED1", "#1E90FF", "#8A2BE2"),
+      sequential = c("#FFEBCD", "#FFD700", "#FFA500", "#FF4500", "#DC143C", "#8B0000", "#4B0082"),
+      diverging = c("#FF4500", "#FFD700", "#FFFACD", "#FFFFFF", "#00CED1", "#1E90FF", "#00008B")
+    ),
+    winter = list(
+      qualitative = c("#00FFFF", "#4682B4", "#87CEEB", "#5F9EA0", "#B0E0E6", "#ADD8E6", "#E0FFFF"),
+      sequential = c("#FFFFFF", "#E0FFFF", "#B0E0E6", "#87CEEB", "#4682B4", "#4169E1", "#00008B"),
+      diverging = c("#00008B", "#1E90FF", "#87CEEB", "#FFFFFF", "#FFDAB9", "#FF6347", "#8B0000")
+    ),
+    fall = list(
+      qualitative = c("#FF4500", "#D2691E", "#8B4513", "#A0522D", "#CD853F", "#F4A460", "#FFD700"),
+      sequential = c("#FFE4B5", "#FFD700", "#FFA500", "#FF8C00", "#D2691E", "#A0522D", "#8B0000"),
+      diverging = c("#8B0000", "#D2691E", "#FFA07A", "#FFFFFF", "#87CEFA", "#4682B4", "#00008B")
+    ),
+
     # Add monochromatic palettes
     blue_mono = list(
       qualitative = c("#0D47A1", "#1565C0", "#1976D2", "#1E88E5", "#2196F3", "#42A5F5", "#64B5F6", "#90CAF9"),
@@ -1948,6 +2124,34 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
       }
     }, error = function(e) {
       # If color name can't be interpreted, return NULL
+      return(NULL)
+    })
+  }
+
+  # NEW: Try to interpret any standard R color
+  if (!is.null(color_tone)) {
+    tryCatch({
+      # Try to validate if it's a valid R color
+      base_col <- grDevices::col2rgb(color_tone)
+
+      # If we get here, it's a valid color - create a palette of shades
+      darken_factor <- if (palette_type == "diverging") {
+        seq(0.4, 1.3, length.out = n_colors)
+      } else {
+        seq(0.5, 1.5, length.out = n_colors)
+      }
+
+      # Create different shades based on the base color
+      colors <- sapply(darken_factor, function(factor) {
+        r <- min(255, max(0, base_col[1,1] * factor))
+        g <- min(255, max(0, base_col[2,1] * factor))
+        b <- min(255, max(0, base_col[3,1] * factor))
+        grDevices::rgb(r, g, b, maxColorValue = 255)
+      })
+
+      return(colors)
+    }, error = function(e) {
+      # Color wasn't valid, return NULL
       return(NULL)
     })
   }
@@ -2111,23 +2315,44 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
     return(setNames(c("#4477AA"), components))
   }
 
-  themed_palette <- .create_color_palette(color_tone = color_tone, n_colors = n_components,
-                                          palette_type = "qualitative")
+  # Try to generate a diverse palette based on the provided color_tone
+  themed_palette <- .create_color_palette(color_tone = color_tone, n_colors = n_components, palette_type = "qualitative")
 
   if (!is.null(themed_palette)) {
-    return(setNames(themed_palette, components))
+    # Modify colors to increase distinction in the stack plot
+    adjusted_colors <- colorspace::lighten(themed_palette, amount = seq(0.1, 0.5, length.out = n_components))
+    return(setNames(adjusted_colors, components))
   }
 
-  default_palette <- c("#4C78A8", "#F58518", "#E45756", "#72B7B2", "#54A24B", "#EECA3B", "#B279A2", "#FF9DA6")
+  # If color_tone is a standard color, generate variations with more differentiation
+  if (!is.null(color_tone)) {
+    tryCatch({
+      base_col <- grDevices::col2rgb(color_tone) / 255  # Normalize to 0-1
+      hue_shifts <- seq(0, 360, length.out = n_components + 1)[-1]  # Rotate hues
+      saturation_shifts <- seq(0.6, 1, length.out = n_components)  # Vary saturation
+
+      colors <- sapply(seq_len(n_components), function(i) {
+        hcl_col <- colorspace::HLS(base_col[1,1] * 360, base_col[2,1], base_col[3,1])
+        colorspace::hcl(hue = (hcl_col@coords[1] + hue_shifts[i]) %% 360,
+                        chroma = saturation_shifts[i] * 100,
+                        luminance = hcl_col@coords[3] * 100)
+      })
+
+      return(setNames(colors, components))
+    }, error = function(e) {
+      # Fallback in case of any issues
+    })
+  }
+
+  # Default High-Contrast Palette for Stack Plot
+  default_palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999")
 
   if (n_components > length(default_palette)) {
-    default_palette <- rep(default_palette, ceiling(n_components / length(default_palette)))
+    default_palette <- colorspace::rainbow_hcl(n_components, c = 100, l = 65)
   }
 
-  default_palette <- default_palette[1:n_components]
-  return(setNames(default_palette, components))
+  return(setNames(default_palette[1:n_components], components))
 }
-
 
 # LAYOUT AND DIMENSIONS HELPERS ---------------------------------------
 
