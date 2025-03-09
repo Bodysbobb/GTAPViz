@@ -156,17 +156,12 @@ gtap_macros_data <- function(select_var = NULL,
 #'         for any missing values.
 #' }
 #'
-#' @section Input Paths & Directories:
 #' @param experiment Character vector. Case names to process.
 #' @param project_path Character. Path to the project folder with "in" and "out" subfolders.
 #' @param input_path Character. Path to the input folder. Overrides `project_path/in` if specified.
 #' @param output_path Character. Path to the output folder. Overrides `project_path/out` if specified.
-#'
-#' @section File Naming & Suffixes:
 #' @param sl4_suffix Character. Custom suffix for SL4 files (e.g., "" or "-custom").
 #' @param har_suffix Character. Custom suffix for HAR files (e.g., "-WEL").
-#'
-#' @section Data Processing & Extraction:
 #' @param mapping_info Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".
 #' @param process_sl4_vars Data frame, NULL, or FALSE. Variables to extract from SL4 files.
 #'   - Set to NULL to extract all variables.
@@ -180,17 +175,11 @@ gtap_macros_data <- function(select_var = NULL,
 #' @param har_extract_method Character. HAR extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".
 #' @param sl4_priority Optional list. Priority rules for SL4 data grouping.
 #' @param har_priority Optional list. Priority rules for HAR data grouping.
-#'
-#' @section Data Filtering:
 #' @param region_select Optional character vector. Specifies regions to filter the data.
 #' @param sector_select Optional character vector. Specifies sectors to filter the data.
 #' @param subtotal_level Logical. If TRUE, includes subtotal data. Default is FALSE.
-#'
-#' @section Output Settings:
 #' @param plot_data Logical. If TRUE, prepares data for plotting and assigns to variables.
 #' @param output_formats Character vector or list. Exports data in these formats (valid: "csv", "stata", "rds", "txt").
-#'
-#' @section Output Variables for Plotting:
 #' @param sl4_output_name Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".
 #' @param har_output_name Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".
 #' @param macro_output_name Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".

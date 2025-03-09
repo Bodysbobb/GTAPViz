@@ -1084,45 +1084,36 @@ print_palette_colors <- function(color_tone = NULL, palette_type = "qualitative"
     "earth", "vibrant", "bright", "minimal", "energetic", "pastel", "spring",
     "summer", "winter", "fall", "blue_mono", "green_mono", "red_mono", "grey_mono"
   )
-
   # If color_tone is "all", return a list of functions (lazy evaluation)
   if (!is.null(color_tone) && color_tone == "all") {
     plot_list <- list()
-
     for (palette in available_palettes) {
       plot_list[[palette]] <- local({
         pal <- palette  # Store the palette name (to prevent overwriting issues)
         function() { print_palette_colors(pal, palette_type) }
       })
     }
-
     return(plot_list)  # Returns a list of callable functions
   }
-
   # Generate the color palette using the existing function
   colors <- .create_color_palette(color_tone = color_tone, n_colors = 10, palette_type = palette_type)
-
   # Validate output
   if (is.null(colors) || length(colors) == 0) {
     stop("Invalid color tone or empty palette. Please choose a valid color_tone from .create_color_palette().")
   }
-
   # Print colors in console
   cat("\nPalette:", color_tone, "-", palette_type, "\n")
   cat(" Colors: ", paste(colors, collapse = ", "), "\n")
-
   # Base R visualization
   n_colors <- length(colors)
   bar_x <- seq_len(n_colors)
   bar_y <- rep(1, n_colors)
-
-  par(mar = c(2, 2, 2, 2))  # Adjust margins for visualization
-  plot(bar_x, bar_y, type = "n", xlab = "", ylab = "", axes = FALSE,
-       main = paste("Palette:", color_tone, "-", palette_type))
-  rect(bar_x - 0.5, 0, bar_x + 0.5, 1, col = colors, border = "black")
-
+  graphics::par(mar = c(2, 2, 2, 2))  # Adjust margins for visualization
+  graphics::plot(bar_x, bar_y, type = "n", xlab = "", ylab = "", axes = FALSE,
+                 main = paste("Palette:", color_tone, "-", palette_type))
+  graphics::rect(bar_x - 0.5, 0, bar_x + 0.5, 1, col = colors, border = "black")
   # Add labels
-  text(bar_x, rep(-0.2, n_colors), labels = seq_along(colors), cex = 0.8, col = "black")
+  graphics::text(bar_x, rep(-0.2, n_colors), labels = seq_along(colors), cex = 0.8, col = "black")
 }
 
 # PLOT STYLE CONFIG HELPERS -----------------------------------------
@@ -1635,25 +1626,27 @@ print_palette_colors <- function(color_tone = NULL, palette_type = "qualitative"
 #' @title Prepare Data Source for Plotting
 #'
 #' @description
-#' Validates and extracts a suitable data frame from the provided input.
-#' Ensures that required columns exist before returning the data.
-#' Supports both single data frames and lists of data frames.
+#' Validates and extracts a suitable data frame from the provided input. Ensures that required
+#' columns exist before returning the data. Supports both single data frames and lists of data
+#' frames.
 #'
 #' @param data A data frame or a named list of data frames.
 #' @param x_axis_from Character. The column name to be used as the x-axis in plotting.
-#' @param stack_value_from Character or NULL. Optional column name for stacked values (used in stack plots).
+#' @param stack_value_from Character or NULL. Optional column name for stacked values
+#'   (used in stack plots).
 #' @param variable_col Character or NULL. Optional column name representing variable names.
 #'
 #' @return A validated data frame containing the required columns.
 #'
 #' @details
 #' If `data` is a single data frame, the function checks whether the required columns exist.
-#' If `data` is a list of data frames, it attempts to find the first data frame containing the required columns.
-#' If no suitable data frame is found, the function stops with an error.
+#' If `data` is a list of data frames, it attempts to find the first data frame containing the
+#' required columns. If no suitable data frame is found, the function stops with an error.
 #'
 #' @author Pattawee Puangchit
 #' @keywords internal
-#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}},
+#'   \code{\link{stack_plot}}
 #'
 #' @examples
 #' \dontrun{
@@ -1661,9 +1654,10 @@ print_palette_colors <- function(color_tone = NULL, palette_type = "qualitative"
 #' prepared_data <- .prepare_data_source(my_data, x_axis_from = "Region")
 #'
 #' # Example with a list of data frames
-#' prepared_data <- .prepare_data_source(list_data, x_axis_from = "Sector", stack_value_from = "Commodity")
+#' prepared_data <- .prepare_data_source(
+#'   list_data, x_axis_from = "Sector", stack_value_from = "Commodity"
+#' )
 #' }
-#'
 .prepare_data_source <- function(data, x_axis_from,
                                  stack_value_from = NULL,
                                  variable_col = NULL) {
@@ -2170,7 +2164,7 @@ print_palette_colors <- function(color_tone = NULL, palette_type = "qualitative"
 #'
 #' @return A vector of colors in hexadecimal format, or NULL if color_tone is NULL.
 #'
-#' @importFrom colorspace hex2RGB hex polarLUV
+#' @importFrom colorspace hex2RGB polarLUV
 #' @importFrom grDevices col2rgb
 #'
 #' @author Pattawee Puangchit
@@ -2302,7 +2296,8 @@ print_palette_colors <- function(color_tone = NULL, palette_type = "qualitative"
 #' @param color_tone Optional base color to influence the palette.
 #'
 #' @return A named vector of colors for each stack component.
-#'
+#' @importFrom colorspace hex2RGB hex polarLUV
+#' @importFrom grDevices hcl
 #' @author Pattawee Puangchit
 #' @keywords internal
 #' @seealso \code{\link{stack_plot}}
@@ -2333,7 +2328,7 @@ print_palette_colors <- function(color_tone = NULL, palette_type = "qualitative"
 
       colors <- sapply(seq_len(n_components), function(i) {
         hcl_col <- colorspace::HLS(base_col[1,1] * 360, base_col[2,1], base_col[3,1])
-        colorspace::hcl(hue = (hcl_col@coords[1] + hue_shifts[i]) %% 360,
+        grDevices::hcl(hue = (hcl_col@coords[1] + hue_shifts[i]) %% 360,
                         chroma = saturation_shifts[i] * 100,
                         luminance = hcl_col@coords[3] * 100)
       })

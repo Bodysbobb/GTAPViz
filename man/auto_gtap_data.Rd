@@ -113,30 +113,6 @@ The \code{mapping_info} parameter controls how descriptions and units are assign
 for any missing values.
 }
 }
-\section{Input Paths & Directories}{
-
-}
-
-\section{File Naming & Suffixes}{
-
-}
-
-\section{Data Processing & Extraction}{
-
-}
-
-\section{Data Filtering}{
-
-}
-
-\section{Output Settings}{
-
-}
-
-\section{Output Variables for Plotting}{
-
-}
-
 \examples{
 \dontrun{
 # Example usage

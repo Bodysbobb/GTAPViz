@@ -16,7 +16,8 @@
 
 \item{x_axis_from}{Character. The column name to be used as the x-axis in plotting.}
 
-\item{stack_value_from}{Character or NULL. Optional column name for stacked values (used in stack plots).}
+\item{stack_value_from}{Character or NULL. Optional column name for stacked values
+(used in stack plots).}
 
 \item{variable_col}{Character or NULL. Optional column name representing variable names.}
 }
@@ -24,14 +25,14 @@
 A validated data frame containing the required columns.
 }
 \description{
-Validates and extracts a suitable data frame from the provided input.
-Ensures that required columns exist before returning the data.
-Supports both single data frames and lists of data frames.
+Validates and extracts a suitable data frame from the provided input. Ensures that required
+columns exist before returning the data. Supports both single data frames and lists of data
+frames.
 }
 \details{
 If \code{data} is a single data frame, the function checks whether the required columns exist.
-If \code{data} is a list of data frames, it attempts to find the first data frame containing the required columns.
-If no suitable data frame is found, the function stops with an error.
+If \code{data} is a list of data frames, it attempts to find the first data frame containing the
+required columns. If no suitable data frame is found, the function stops with an error.
 }
 \examples{
 \dontrun{
@@ -39,12 +40,14 @@ If no suitable data frame is found, the function stops with an error.
 prepared_data <- .prepare_data_source(my_data, x_axis_from = "Region")
 
 # Example with a list of data frames
-prepared_data <- .prepare_data_source(list_data, x_axis_from = "Sector", stack_value_from = "Commodity")
+prepared_data <- .prepare_data_source(
+  list_data, x_axis_from = "Sector", stack_value_from = "Commodity"
+)
 }
-
 }
 \seealso{
-\code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+\code{\link{comparison_plot}}, \code{\link{detail_plot}},
+\code{\link{stack_plot}}
 }
 \author{
 Pattawee Puangchit

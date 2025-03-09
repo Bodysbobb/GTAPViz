@@ -34,10 +34,10 @@ Imports:
     stats
 Remotes: 
     github::Bodysbobb/HARplus
+VignetteBuilder: knitr
 Suggests: 
     knitr,
     rmarkdown,
     devtools
-VignetteBuilder: knitr
 Depends: 
     R (>= 3.5)

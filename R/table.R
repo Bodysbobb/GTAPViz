@@ -31,6 +31,10 @@
 #' @param workbook_name Character. Name of the Excel workbook (without extension).
 #' @param add_group_line Logical. If `TRUE`, adds a thin line after each group in the exported table.
 #'
+#' @param var_name_by_description Logical. If `TRUE`, replaces variable codes with descriptions when available.
+#' @param add_var_info Logical. If `TRUE`, appends variable codes in parentheses after descriptions.
+#' @param unit_select Optional character. Specifies a unit to filter the dataset.
+#'
 #' @return A named list of transformed data frames. If `export_table = TRUE`, tables are saved as Excel files.
 #'
 #' @author Pattawee Puangchit

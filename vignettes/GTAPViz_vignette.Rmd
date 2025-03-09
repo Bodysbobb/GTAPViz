@@ -3,6 +3,8 @@ title: 'GTAPViz: Visualizing GTAP Model Results'
 author: "Pattawee Puangchit"
 date: "`r Sys.Date()`"
 output:
+  rmarkdown::html_vignette:
+    toc: true
   html_document:
     toc: true
     toc_float:
@@ -13,9 +15,9 @@ output:
     code_folding: show
     self_contained: true
 vignette: >
-  %/VignetteIndexEntry{GTAPViz: Visualizing GTAP Model Results}
-  %/VignetteEngine{knitr::rmarkdown}
-  %/VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{GTAPViz: Visualizing GTAP Model Results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE, eval = FALSE}
@@ -624,7 +626,7 @@ export_config <- get_export_config(as_dataframe = TRUE)
 
 <p> Firstly, multiple `color_tone` options are available in this package.  
 You can view all predefined palettes by using the following code: </p>
-```{r color palette, eval=FALSE}}
+```{r color palette, eval=FALSE}
 # Get all palettes as a list
 all_palettes <- print_palette_colors("all")
 
@@ -642,7 +644,7 @@ get_plot_config(printing = TRUE)
 ```
 
 <p> You will get: </p>
-```{r, eval = FALSE, tidy = TRUE}
+```{r my style config, eval = FALSE}
 my_style_config <- list(
 
   # Title settings
@@ -1105,7 +1107,7 @@ stack_plot(data = har.plot.data[["E1"]],
 
 <figure class="package-figure">
   <div class="package-figure-box">
-```{r unstack plot, echo=FALSE, out.width="100%"}
+```{r stack multi plot, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/stack_multi_plot.png")
 ```
 </div> <figcaption class="package-fig"> Stack Plot Visualization (Multi-Dimension) <br> <span class="package-fig-note">(split_by = "Region", plot_style_config -> adjustments)</span> </figcaption> </figure>

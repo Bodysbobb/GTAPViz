@@ -55,7 +55,13 @@ in each list determines the priority. Example:
 \item{rename_cols}{A named list for renaming columns across \strong{all} datasets. Example:
 \code{rename_cols = list("REG" = "Region", "COMM" = "Commodities", "Experiment" = "Scenario")}}
 
+\item{var_name_by_description}{Logical. If \code{TRUE}, replaces variable codes with descriptions when available.}
+
+\item{add_var_info}{Logical. If \code{TRUE}, appends variable codes in parentheses after descriptions.}
+
 \item{decimal}{Numeric. Number of decimal places for rounding values.}
+
+\item{unit_select}{Optional character. Specifies a unit to filter the dataset.}
 
 \item{separate_sheet_by}{Optional column name to split sheets in Excel. If defined, each unique
 value in the specified column gets its own sheet. Example: \code{separate_sheet_by = "Scenario"}.}
