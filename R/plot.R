@@ -95,46 +95,18 @@ comparison_plot <- function(data, filter_var = NULL,
   ))
 
   # PREPARE DATA SOURCE
-  if (is.list(data) && !is.data.frame(data)) {
-    data_found <- FALSE
-    for (df_name in names(data)) {
-      df <- data[[df_name]]
-      if (is.data.frame(df) && x_axis_from %in% names(df)) {
-        data <- df
-        data_found <- TRUE
-        break
-      }
-    }
-
-    if (!data_found) {
-      stop(paste("No suitable dataframe found with column:", x_axis_from))
-    }
-  }
+  data <- .prepare_data_source(data, x_axis_from, variable_col = variable_col)
 
   # CHECK FOR UNIT COLUMN
-  if (!(unit_col %in% names(data))) {
-    stop("Missing 'Unit' column in data frame. See add_mapping_info for help.")
-  }
+  unit_check_result <- .check_unit_column(data, unit_col)
+  data <- unit_check_result$data
+  unit_col <- unit_check_result$unit_col
 
   # PROCESS SPLIT_BY PARAMETER
-  is_macro_mode <- FALSE
-  if (is.null(split_by) || (is.logical(split_by) && !split_by)) {
-    is_macro_mode <- TRUE
-  } else {
-    if (length(split_by) > 1) {
-      for (col in split_by) {
-        if (!(col %in% names(data))) {
-          warning(paste("Split-by column", col, "not found. Creating default column."))
-          data[[col]] <- "Default"
-        }
-      }
-    } else {
-      if (!(split_by %in% names(data))) {
-        warning(paste("Split-by column", split_by, "not found. Creating default column."))
-        data[[split_by]] <- "Default"
-      }
-    }
-  }
+  split_by_result <- .process_split_by(data, split_by)
+  data <- split_by_result$data
+  is_macro_mode <- split_by_result$is_macro_mode
+  split_by <- split_by_result$split_by
 
   # FILTER DATA BY FILTER_VAR IF PROVIDED
   if (!is.null(filter_var)) {
@@ -152,97 +124,66 @@ comparison_plot <- function(data, filter_var = NULL,
 
   # FORMAT VARIABLE NAMES
   if (variable_col %in% names(data) && desc_col %in% names(data)) {
-    if (var_name_by_description || add_var_info) {
-      result <- data
-
-      for (i in seq_len(nrow(result))) {
-        var_ <- result[[variable_col]][i]
-        des_ <- result[[desc_col]][i]
-
-        if (is.na(des_) || !nzchar(des_))
-          des_ <- var_
-
-        if (var_name_by_description && add_var_info) {
-          result[[variable_col]][i] <- paste0(des_, " (", var_, ")")
-        } else if (var_name_by_description && !add_var_info) {
-          result[[variable_col]][i] <- des_
-        } else if (!var_name_by_description && add_var_info) {
-          if (des_ != var_) {
-            result[[variable_col]][i] <- paste0(var_, " (", des_, ")")
-          }
-        }
-      }
-
-      data <- result
-    }
-
-    # Create mapping from original Variable to formatted Variable for titles
-    unique_vars <- unique(data.frame(
-      OrigVar = data[[variable_col]],
-      stringsAsFactors = FALSE
-    ))
-    title_mapping <- setNames(as.list(unique_vars$OrigVar), unique_vars$OrigVar)
-  } else {
-    title_mapping <- setNames(as.list(unique(data[[variable_col]])), unique(data[[variable_col]]))
+    data <- .format_variable_names(
+      data,
+      variable_col = variable_col,
+      desc_col = desc_col,
+      var_name_by_description = var_name_by_description,
+      add_var_info = add_var_info
+    )
   }
 
-  # Calculate panel layout before style configuration to inform sizing
-  panel_layout <- .calculate_panel_layout(data, NULL, NULL, panel_var)
+  # Calculate panel layout before style configuration
+  panel_layout <- .calculate_panel_layout(data,
+                                          panel_rows = if(!is.null(plot_style_config)) plot_style_config$panel_rows else NULL,
+                                          panel_cols = if(!is.null(plot_style_config)) plot_style_config$panel_cols else NULL,
+                                          panel_var = panel_var)
 
   # Check if custom dimensions are provided
-  if (!is.null(export_config) && !is.null(export_config$width) && !is.null(export_config$height)) {
-    dimensions <- list(
+  dimensions <- if (!is.null(export_config) &&
+                    !is.null(export_config$width) &&
+                    !is.null(export_config$height)) {
+    list(
       width = export_config$width,
       height = export_config$height
     )
   } else {
-    # Use standard dimension calculation
-    dimensions <- .calculate_plot_dimensions(data, panel_layout)
+    .calculate_plot_dimensions(data, panel_layout)
   }
 
-  # Create base style config with all_font_size if provided in plot_style_config
-  all_font_size <- 1  # Default value
-  if (!is.null(plot_style_config) && !is.null(plot_style_config$all_font_size)) {
-    all_font_size <- plot_style_config$all_font_size
-  }
-
-  # Use simplified base style config with just panel layout and all_font_size
+  # Prepare style configuration
   base_style_config <- list(
     panel_rows = panel_layout$rows,
     panel_cols = panel_layout$cols,
-    all_font_size = all_font_size
+    all_font_size = plot_style_config$all_font_size
   )
 
-  # Merge with user provided config (user settings take precedence)
-  if (!is.null(plot_style_config)) {
-    style_config <- modifyList(base_style_config, plot_style_config)
-    style_config <- .calculate_plot_style_config(style_config, "default")
-  } else {
-    style_config <- .calculate_plot_style_config(base_style_config, "default")
-  }
+  # Merge user config if provided
+  style_config <- .calculate_plot_style_config(
+    config = if (!is.null(plot_style_config))
+      modifyList(base_style_config, plot_style_config)
+    else
+      base_style_config,
+    plot_type = "default"
+  )
 
-  # PROCESS BY UNIT GROUPS (different units need separate plots)
+  # PROCESS BY UNIT GROUPS
   unit_groups <- split(data, data[[unit_col]])
   plot_list <- list()
 
   for (unit_name in names(unit_groups)) {
     unit_data <- unit_groups[[unit_name]]
 
-    # HANDLE MACRO MODE (no split_by)
     if (is_macro_mode) {
       if (separate_figure) {
-        if (variable_col %in% names(unit_data)) {
-          panel_list <- split(unit_data, unit_data[[variable_col]])
-        } else {
-          panel_list <- list(data = unit_data)
-        }
+        panel_values <- unique(unit_data[[panel_var]])
 
-        for (panel_name in names(panel_list)) {
-          panel_data <- panel_list[[panel_name]]
+        for (panel_val in panel_values) {
+          panel_data <- unit_data[unit_data[[panel_var]] == panel_val, ]
 
-          # Use unified title handler
           title_info <- .handle_plot_title_and_export(
-            var_name = panel_name,
+            var_name = "Global Economic Impacts",
+            sep_value = panel_val,
             plot_type = "comparison",
             is_macro_mode = TRUE,
             variable_col = variable_col,
@@ -251,7 +192,6 @@ comparison_plot <- function(data, filter_var = NULL,
             data = panel_data
           )
 
-          # Create plot
           p <- .create_single_comparison_plot(
             data = panel_data,
             x_axis_from = x_axis_from,
@@ -267,7 +207,6 @@ comparison_plot <- function(data, filter_var = NULL,
           plot_list[[title_info$export_name]] <- p
         }
       } else {
-        # Use unified title handler for combined plot
         title_info <- .handle_plot_title_and_export(
           var_name = "Global Economic Impacts",
           plot_type = "comparison",
@@ -277,7 +216,6 @@ comparison_plot <- function(data, filter_var = NULL,
           data = unit_data
         )
 
-        # Create plot
         p <- .create_single_comparison_plot(
           data = unit_data,
           x_axis_from = x_axis_from,
@@ -293,47 +231,41 @@ comparison_plot <- function(data, filter_var = NULL,
         plot_list[[title_info$export_name]] <- p
       }
     } else {
-      # HANDLE SPLIT_BY MODE
-      # Get unique values for separate plots
-      if (length(split_by) > 1) {
-        # For multiple split_by columns, create a display name that combines all values
+      separate_values <- if (length(split_by) > 1) {
         unit_data$split_display <- apply(unit_data[, split_by, drop = FALSE], 1, paste, collapse = "-")
-        separate_values <- unique(unit_data$split_display)
-        split_col <- "split_display"
+        unique(unit_data$split_display)
       } else {
-        separate_values <- unique(unit_data[[split_by]])
-        split_col <- split_by
+        unique(unit_data[[split_by]])
       }
 
+      split_col <- if (length(split_by) > 1) "split_display" else split_by
+
       for (sep_value in separate_values) {
-        # Filter data for the current separate value
-        if (split_col == "split_display") {
-          filtered_data <- unit_data[unit_data$split_display == sep_value, ]
+        filtered_data <- if (split_col == "split_display") {
+          unit_data[unit_data$split_display == sep_value, ]
         } else {
-          filtered_data <- unit_data[unit_data[[split_col]] == sep_value, ]
+          unit_data[unit_data[[split_col]] == sep_value, ]
         }
 
         if (separate_figure) {
           panel_values <- unique(filtered_data[[panel_var]])
 
-          # Create separate figures for each panel value
           for (panel_val in panel_values) {
             panel_data <- filtered_data[filtered_data[[panel_var]] == panel_val, ]
 
-            # Use unified title handler
             title_info <- .handle_plot_title_and_export(
-              var_name = panel_val,
               sep_value = sep_value,
+              x_value = panel_val,
               plot_type = "comparison",
               is_macro_mode = FALSE,
               split_by = split_by,
+              x_axis_from = x_axis_from,
               variable_col = variable_col,
               unit_name = unit_name,
               style_config = style_config,
               data = panel_data
             )
 
-            # Create plot
             p <- .create_single_comparison_plot(
               data = panel_data,
               x_axis_from = x_axis_from,
@@ -349,19 +281,18 @@ comparison_plot <- function(data, filter_var = NULL,
             plot_list[[title_info$export_name]] <- p
           }
         } else {
-          # Use unified title handler
           title_info <- .handle_plot_title_and_export(
             sep_value = sep_value,
             plot_type = "comparison",
             is_macro_mode = FALSE,
             split_by = split_by,
+            x_axis_from = x_axis_from,
             variable_col = variable_col,
             unit_name = unit_name,
             style_config = style_config,
             data = filtered_data
           )
 
-          # Create plot
           p <- .create_single_comparison_plot(
             data = filtered_data,
             x_axis_from = x_axis_from,
@@ -380,11 +311,9 @@ comparison_plot <- function(data, filter_var = NULL,
     }
   }
 
-  # Set default file_name in export_config if not already set
+  # SET DEFAULT FILE_NAME IN EXPORT_CONFIG
   if (is.null(export_config) || is.null(export_config$file_name)) {
-    if (is.null(export_config)) {
-      export_config <- list()
-    }
+    export_config <- .coalesce(export_config, list())
     export_config$file_name <- "comparison_plots"
   }
 
@@ -392,7 +321,7 @@ comparison_plot <- function(data, filter_var = NULL,
   export_config$width <- dimensions$width
   export_config$height <- dimensions$height
 
-  # EXPORT PLOTS USING HELPER FUNCTION
+  # EXPORT PLOTS
   .export_plot_output(
     plots = plot_list,
     output_path = output_path,
@@ -403,12 +332,8 @@ comparison_plot <- function(data, filter_var = NULL,
     panel_layout = panel_layout
   )
 
-  # Return single plot or list of plots based on number of plots
-  if (length(plot_list) == 1) {
-    return(plot_list[[1]])
-  } else {
-    return(plot_list)
-  }
+  # RETURN SINGLE PLOT OR LIST OF PLOTS
+  return(invisible(NULL))
 }
 
 
@@ -625,12 +550,17 @@ comparison_plot <- function(data, filter_var = NULL,
 
   # ADD FACET WRAP IF WE HAVE MULTIPLE PANELS
   if (n_panels > 1) {
-    p <- p + ggplot2::facet_wrap(
+    facet_args <- list(
       as.formula(paste("~", facet_var)),
-      scales = if (style_config$show_axis_titles_on_all_facets) "free" else "fixed",
-      nrow = panel_rows,
-      ncol = panel_cols
+      scales = if (style_config$show_axis_titles_on_all_facets) "free" else "fixed"
     )
+    if (!is.null(panel_rows)) {
+      facet_args$nrow <- panel_rows
+    }
+    if (!is.null(panel_cols)) {
+      facet_args$ncol <- panel_cols
+    }
+    p <- p + do.call(ggplot2::facet_wrap, facet_args)
   }
 
   # APPLY THEME STYLING
@@ -832,57 +762,29 @@ detail_plot <- function(data, filter_var = NULL,
   ))
 
   # PREPARE DATA SOURCE
-  if (is.list(data) && !is.data.frame(data)) {
-    data_found <- FALSE
-    for (df_name in names(data)) {
-      df <- data[[df_name]]
-      if (is.data.frame(df) && x_axis_from %in% names(df)) {
-        data <- df
-        data_found <- TRUE
-        break
-      }
-    }
-
-    if (!data_found) {
-      stop(paste("No suitable dataframe found with column:", x_axis_from))
-    }
-  }
+  data <- .prepare_data_source(data, x_axis_from, variable_col = variable_col)
 
   # CHECK FOR REQUIRED COLUMNS
-  if (!(unit_col %in% names(data))) {
-    stop("Missing 'Unit' column in data frame. See add_mapping_info for help.")
-  }
+  unit_check_result <- .check_unit_column(data, unit_col)
+  data <- unit_check_result$data
+  unit_col <- unit_check_result$unit_col
 
   if (!("Value" %in% names(data))) {
     stop("Missing 'Value' column in data frame.")
   }
 
   # PROCESS SPLIT_BY PARAMETER
-  is_macro_mode <- FALSE
-  if (is.null(split_by) || (is.logical(split_by) && !split_by)) {
-    is_macro_mode <- TRUE
-  } else {
-    if (length(split_by) > 1) {
-      for (col in split_by) {
-        if (!(col %in% names(data))) {
-          warning(paste("Split-by column", col, "not found. Creating default column."))
-          data[[col]] <- "Default"
-        }
-      }
-    } else {
-      if (!(split_by %in% names(data))) {
-        warning(paste("Split-by column", split_by, "not found. Creating default column."))
-        data[[split_by]] <- "Default"
-      }
-    }
-  }
+  split_by_result <- .process_split_by(data, split_by)
+  data <- split_by_result$data
+  is_macro_mode <- split_by_result$is_macro_mode
+  split_by <- split_by_result$split_by
 
   # FILTER DATA BY FILTER_VAR IF PROVIDED
   if (!is.null(filter_var)) {
     if (is.data.frame(filter_var) && variable_col %in% names(filter_var)) {
       data <- data[data[[variable_col]] %in% filter_var[[variable_col]], ]
     } else {
-      data <- data[data[[variable_col]] %in% filter_var, ]
+      data <- data[data[[x_axis_from]] %in% filter_var, ]
     }
 
     if (nrow(data) == 0) {
@@ -902,7 +804,6 @@ detail_plot <- function(data, filter_var = NULL,
       top_impact_filter_col <- x_axis_from
     }
 
-    # Pass all required parameters to the filter function
     data <- .filter_top_impact_values_detail(
       data = data,
       top_impact = top_impact,
@@ -913,7 +814,6 @@ detail_plot <- function(data, filter_var = NULL,
       unit_col = unit_col
     )
 
-    # Clean up temporary column if created
     if ("._split_group_" %in% names(data)) {
       data$._split_group_ <- NULL
     }
@@ -921,74 +821,57 @@ detail_plot <- function(data, filter_var = NULL,
 
   # FORMAT VARIABLE NAMES
   if (variable_col %in% names(data) && desc_col %in% names(data)) {
-    if (var_name_by_description || add_var_info) {
-      result <- data
-
-      for (i in seq_len(nrow(result))) {
-        var_ <- result[[variable_col]][i]
-        des_ <- result[[desc_col]][i]
-
-        if (is.na(des_) || !nzchar(des_))
-          des_ <- var_
-
-        if (var_name_by_description && add_var_info) {
-          result[[variable_col]][i] <- paste0(des_, " (", var_, ")")
-        } else if (var_name_by_description && !add_var_info) {
-          result[[variable_col]][i] <- des_
-        } else if (!var_name_by_description && add_var_info) {
-          if (des_ != var_) {
-            result[[variable_col]][i] <- paste0(var_, " (", des_, ")")
-          }
-        }
-      }
-
-      data <- result
-    }
+    data <- .format_variable_names(
+      data,
+      variable_col = variable_col,
+      desc_col = desc_col,
+      var_name_by_description = var_name_by_description,
+      add_var_info = add_var_info
+    )
   }
 
   # Calculate panel layout
-  panel_layout <- .calculate_panel_layout(data, NULL, NULL, panel_var)
+  panel_layout <- .calculate_panel_layout(data,
+                                          panel_rows = if(!is.null(plot_style_config)) plot_style_config$panel_rows else NULL,
+                                          panel_cols = if(!is.null(plot_style_config)) plot_style_config$panel_cols else NULL,
+                                          panel_var = panel_var)
 
   # Check if custom dimensions are provided
-  if (!is.null(export_config) && !is.null(export_config$width) && !is.null(export_config$height)) {
-    dimensions <- list(
+  dimensions <- if (!is.null(export_config) &&
+                    !is.null(export_config$width) &&
+                    !is.null(export_config$height)) {
+    list(
       width = export_config$width,
       height = export_config$height
     )
   } else {
-    # Use standard dimension calculation
-    dimensions <- .calculate_plot_dimensions(data, panel_layout)
+    .calculate_plot_dimensions(data, panel_layout)
   }
 
-  # Create base style config with all_font_size if provided in plot_style_config
-  all_font_size <- 1  # Default value
-  if (!is.null(plot_style_config) && !is.null(plot_style_config$all_font_size)) {
-    all_font_size <- plot_style_config$all_font_size
-  }
-
-  # Use simplified base style config with just panel layout and all_font_size
+  # Prepare base style configuration
   base_style_config <- list(
     panel_rows = panel_layout$rows,
     panel_cols = panel_layout$cols,
-    all_font_size = all_font_size
+    all_font_size <- .coalesce(plot_style_config$all_font_size, 1)
   )
 
-  # Merge with user provided config (user settings take precedence)
-  if (!is.null(plot_style_config)) {
-    style_config <- modifyList(base_style_config, plot_style_config)
-    style_config <- .calculate_plot_style_config(style_config, "default")
-  } else {
-    style_config <- .calculate_plot_style_config(base_style_config, "default")
-  }
+  # Calculate plot style configuration
+  style_config <- .calculate_plot_style_config(
+    config = if (!is.null(plot_style_config))
+      modifyList(base_style_config, plot_style_config)
+    else
+      base_style_config,
+    plot_type = "default"
+  )
 
-  # PROCESS BY UNIT GROUPS (different units need separate plots)
+  # PROCESS BY UNIT GROUPS
   unit_groups <- split(data, data[[unit_col]])
   plot_list <- list()
 
   for (unit_name in names(unit_groups)) {
     unit_data <- unit_groups[[unit_name]]
 
-    # HANDLE MACRO MODE (no split_by)
+    # HANDLE MACRO MODE
     if (is_macro_mode) {
       if (separate_figure) {
         var_combinations <- unique(unit_data[[variable_col]])
@@ -1000,21 +883,17 @@ detail_plot <- function(data, filter_var = NULL,
           for (panel_val in panel_values) {
             panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
 
-            # Use unified title handler
             title_info <- .handle_plot_title_and_export(
               var_name = var_name,
               sep_value = panel_val,
               plot_type = "detail",
               is_macro_mode = is_macro_mode,
-              split_by = split_by,
-              x_axis_from = x_axis_from,
               variable_col = variable_col,
               unit_name = unit_name,
               style_config = style_config,
               data = panel_data
             )
 
-            # Create plot
             p <- .create_single_detail_plot(
               data = panel_data,
               x_axis_from = x_axis_from,
@@ -1037,20 +916,16 @@ detail_plot <- function(data, filter_var = NULL,
         for (var_name in var_combinations) {
           var_data <- unit_data[unit_data[[variable_col]] == var_name, ]
 
-          # Use unified title handler
           title_info <- .handle_plot_title_and_export(
             var_name = var_name,
             plot_type = "detail",
             is_macro_mode = is_macro_mode,
-            split_by = split_by,
-            x_axis_from = x_axis_from,
             variable_col = variable_col,
             unit_name = unit_name,
             style_config = style_config,
             data = var_data
           )
 
-          # Create plot
           p <- .create_single_detail_plot(
             data = var_data,
             x_axis_from = x_axis_from,
@@ -1079,11 +954,10 @@ detail_plot <- function(data, filter_var = NULL,
       }
 
       for (sep_value in separate_values) {
-        # Filter data for current separate value
-        if (split_col == "split_display") {
-          filtered_data <- unit_data[unit_data$split_display == sep_value, ]
+        filtered_data <- if (split_col == "split_display") {
+          unit_data[unit_data$split_display == sep_value, ]
         } else {
-          filtered_data <- unit_data[unit_data[[split_col]] == sep_value, ]
+          unit_data[unit_data[[split_col]] == sep_value, ]
         }
 
         var_combinations <- unique(filtered_data[[variable_col]])
@@ -1097,7 +971,6 @@ detail_plot <- function(data, filter_var = NULL,
             for (panel_val in panel_values) {
               panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
 
-              # Use unified title handler
               title_info <- .handle_plot_title_and_export(
                 var_name = var_name,
                 sep_value = sep_value,
@@ -1112,7 +985,6 @@ detail_plot <- function(data, filter_var = NULL,
                 data = panel_data
               )
 
-              # Create plot
               p <- .create_single_detail_plot(
                 data = panel_data,
                 x_axis_from = x_axis_from,
@@ -1129,7 +1001,6 @@ detail_plot <- function(data, filter_var = NULL,
               plot_list[[title_info$export_name]] <- p
             }
           } else {
-            # Use unified title handler
             title_info <- .handle_plot_title_and_export(
               var_name = var_name,
               sep_value = sep_value,
@@ -1143,7 +1014,6 @@ detail_plot <- function(data, filter_var = NULL,
               data = var_data
             )
 
-            # Create plot
             p <- .create_single_detail_plot(
               data = var_data,
               x_axis_from = x_axis_from,
@@ -1166,13 +1036,11 @@ detail_plot <- function(data, filter_var = NULL,
 
   # SET DEFAULT FILE_NAME IN EXPORT_CONFIG
   if (is.null(export_config) || is.null(export_config$file_name)) {
-    if (is.null(export_config)) {
-      export_config <- list()
-    }
-    if (!is.null(top_impact)) {
-      export_config$file_name <- paste0("detail_plots_top", top_impact)
+    export_config <- .coalesce(export_config, list())
+    export_config$file_name <- if (!is.null(top_impact)) {
+      paste0("detail_plots_top", top_impact)
     } else {
-      export_config$file_name <- "detail_plots"
+      "detail_plots"
     }
   }
 
@@ -1180,7 +1048,7 @@ detail_plot <- function(data, filter_var = NULL,
   export_config$width <- dimensions$width
   export_config$height <- dimensions$height
 
-  # EXPORT PLOTS USING HELPER FUNCTION
+  # EXPORT PLOTS
   .export_plot_output(
     plots = plot_list,
     output_path = output_path,
@@ -1192,11 +1060,7 @@ detail_plot <- function(data, filter_var = NULL,
   )
 
   # RETURN SINGLE PLOT OR LIST OF PLOTS
-  if (length(plot_list) == 1) {
-    return(plot_list[[1]])
-  } else {
-    return(plot_list)
-  }
+  return(invisible(NULL))
 }
 
 
@@ -1425,33 +1289,20 @@ detail_plot <- function(data, filter_var = NULL,
 
   # ADD FACETS IF NEEDED
   if (n_panels > 1) {
-    # Panel rows/cols can be specified or calculated automatically
-    if (is.null(panel_rows) && !is.null(panel_cols)) {
-      panel_rows <- ceiling(n_panels / panel_cols)
-    } else if (!is.null(panel_rows) && is.null(panel_cols)) {
-      panel_cols <- ceiling(n_panels / panel_rows)
-    } else if (is.null(panel_rows) && is.null(panel_cols)) {
-      # Auto-calculate both if neither is provided
-      panel_cols <- ceiling(sqrt(n_panels))
-      panel_rows <- ceiling(n_panels / panel_cols)
+    facet_args <- list(
+      as.formula(paste("~", panel_var)),
+      scales = if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) "free" else "fixed"
+    )
+
+    if (!is.null(panel_rows)) {
+      facet_args$nrow <- panel_rows
     }
 
-    # Now apply faceting with calculated dimensions
-    if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
-      p <- p + ggplot2::facet_wrap(
-        as.formula(paste("~", panel_var)),
-        nrow = panel_rows,
-        ncol = panel_cols,
-        scales = "free"
-      )
-    } else {
-      p <- p + ggplot2::facet_wrap(
-        as.formula(paste("~", panel_var)),
-        nrow = panel_rows,
-        ncol = panel_cols,
-        scales = "fixed"
-      )
+    if (!is.null(panel_cols)) {
+      facet_args$ncol <- panel_cols
     }
+
+    p <- p + do.call(ggplot2::facet_wrap, facet_args)
   }
 
   # FIRST APPLY BASE THEME STYLING
@@ -1744,44 +1595,13 @@ stack_plot <- function(data, filter_var = NULL,
   ))
 
   # PREPARE DATA SOURCE
-  if (is.list(data) && !is.data.frame(data)) {
-    data_found <- FALSE
-    for (df_name in names(data)) {
-      df <- data[[df_name]]
-      if (is.data.frame(df) &&
-          x_axis_from %in% names(df) &&
-          stack_value_from %in% names(df)) {
-        data <- df
-        data_found <- TRUE
-        break
-      }
-    }
-
-    if (!data_found) {
-      stop(paste("No suitable dataframe found with required columns:",
-                 x_axis_from, "and", stack_value_from))
-    }
-  }
+  data <- .prepare_data_source(data, x_axis_from, stack_value_from, variable_col)
 
   # PROCESS SPLIT_BY PARAMETER
-  is_macro_mode <- FALSE
-  if (is.null(split_by) || (is.logical(split_by) && !split_by)) {
-    is_macro_mode <- TRUE
-  } else {
-    if (length(split_by) > 1) {
-      for (col in split_by) {
-        if (!(col %in% names(data))) {
-          warning(paste("Split-by column", col, "not found. Creating default column."))
-          data[[col]] <- "Default"
-        }
-      }
-    } else {
-      if (!(split_by %in% names(data))) {
-        warning(paste("Split-by column", split_by, "not found. Creating default column."))
-        data[[split_by]] <- "Default"
-      }
-    }
-  }
+  split_by_result <- .process_split_by(data, split_by)
+  data <- split_by_result$data
+  is_macro_mode <- split_by_result$is_macro_mode
+  split_by <- split_by_result$split_by
 
   # FILTER DATA BY FILTER_VAR IF PROVIDED
   if (!is.null(filter_var)) {
@@ -1799,73 +1619,50 @@ stack_plot <- function(data, filter_var = NULL,
 
   # FORMAT VARIABLE NAMES
   if (variable_col %in% names(data) && desc_col %in% names(data)) {
-    if (var_name_by_description || add_var_info) {
-      result <- data
-
-      for (i in seq_len(nrow(result))) {
-        var_ <- result[[variable_col]][i]
-        des_ <- result[[desc_col]][i]
-
-        if (is.na(des_) || !nzchar(des_))
-          des_ <- var_
-
-        if (var_name_by_description && add_var_info) {
-          result[[variable_col]][i] <- paste0(des_, " (", var_, ")")
-        } else if (var_name_by_description && !add_var_info) {
-          result[[variable_col]][i] <- des_
-        } else if (!var_name_by_description && add_var_info) {
-          if (des_ != var_) {
-            result[[variable_col]][i] <- paste0(var_, " (", des_, ")")
-          }
-        }
-      }
-
-      data <- result
-    }
+    data <- .format_variable_names(
+      data,
+      variable_col = variable_col,
+      desc_col = desc_col,
+      var_name_by_description = var_name_by_description,
+      add_var_info = add_var_info
+    )
   }
 
-  # Create title mapping from variable names
-  title_mapping <- NULL
-  if (variable_col %in% names(data)) {
-    unique_vars <- unique(data[[variable_col]])
-    title_mapping <- setNames(as.list(unique_vars), unique_vars)
-  }
-
-  panel_layout <- .calculate_panel_layout(data, NULL, NULL, panel_var)
+  # Calculate panel layout
+  panel_layout <- .calculate_panel_layout(data,
+                                          panel_rows = if(!is.null(plot_style_config)) plot_style_config$panel_rows else NULL,
+                                          panel_cols = if(!is.null(plot_style_config)) plot_style_config$panel_cols else NULL,
+                                          panel_var = panel_var)
 
   # Check if custom dimensions are provided
-  if (!is.null(export_config) && !is.null(export_config$width) && !is.null(export_config$height)) {
-    dimensions <- list(
+  dimensions <- if (!is.null(export_config) &&
+                    !is.null(export_config$width) &&
+                    !is.null(export_config$height)) {
+    list(
       width = export_config$width,
       height = export_config$height
     )
   } else {
-    # Use standard dimension calculation
-    dimensions <- .calculate_plot_dimensions(data, panel_layout)
+    .calculate_plot_dimensions(data, panel_layout)
   }
 
-  # Create base style config with all_font_size if provided in plot_style_config
-  all_font_size <- 1  # Default value
-  if (!is.null(plot_style_config) && !is.null(plot_style_config$all_font_size)) {
-    all_font_size <- plot_style_config$all_font_size
-  }
-
-  # Use simplified base style config with just panel layout and all_font_size
+  # Prepare base style configuration
   base_style_config <- list(
     panel_rows = panel_layout$rows,
     panel_cols = panel_layout$cols,
-    all_font_size = all_font_size
+    all_font_size <- .coalesce(plot_style_config$all_font_size, 1)
   )
 
-  # Merge with user provided config (user settings take precedence)
-  if (!is.null(plot_style_config)) {
-    style_config <- modifyList(base_style_config, plot_style_config)
-    style_config <- .calculate_plot_style_config(style_config, "default")
-  } else {
-    style_config <- .calculate_plot_style_config(base_style_config, "default")
-  }
+  # Calculate plot style configuration
+  style_config <- .calculate_plot_style_config(
+    config = if (!is.null(plot_style_config))
+      modifyList(base_style_config, plot_style_config)
+    else
+      base_style_config,
+    plot_type = "default"
+  )
 
-  # PROCESS BY UNIT GROUPS (different units need separate plots)
+  # PROCESS BY UNIT GROUPS
   unit_groups <- split(data, data[[unit_col]])
   plot_list <- list()
 
@@ -1874,18 +1671,7 @@ stack_plot <- function(data, filter_var = NULL,
 
     # DETERMINE SEPARATE VALUES
     if (is_macro_mode) {
-      # Get a proper title using the variable information if available
-      if (!is.null(title_mapping) && variable_col %in% names(unit_data)) {
-        # Use the first variable encountered as default title in macro mode
-        unique_vars <- unique(unit_data[[variable_col]])
-        if (length(unique_vars) > 0) {
-          separate_values <- unique_vars[1]
-        } else {
-          separate_values <- "All Data"
-        }
-      } else {
-        separate_values <- "All Data"
-      }
+      separate_values <- "All Data"
     } else if (length(split_by) > 1) {
       unit_data$split_display <- apply(unit_data[, split_by, drop = FALSE], 1, paste, collapse = "-")
       separate_values <- unique(unit_data$split_display)
@@ -1897,24 +1683,15 @@ stack_plot <- function(data, filter_var = NULL,
 
     for (sep_value in separate_values) {
       # FILTER DATA FOR CURRENT SEPARATE VALUE
-      if (is_macro_mode) {
-        filtered_data <- unit_data
+      filtered_data <- if (is_macro_mode) {
+        unit_data
       } else if (split_col == "split_display") {
-        filtered_data <- unit_data[unit_data$split_display == sep_value, ]
+        unit_data[unit_data$split_display == sep_value, ]
       } else {
-        filtered_data <- unit_data[unit_data[[split_col]] == sep_value, ]
+        unit_data[unit_data[[split_col]] == sep_value, ]
       }
 
-      # FORMAT Y-AXIS LABEL
-      y_axis_label <- if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
-        style_config$y_axis_description
-      } else if (tolower(unit_name) == "percent") {
-        "Percentage (%)"
-      } else {
-        unit_name
-      }
-
-      # CALCULATE TOTALS USING HELPER FUNCTION
+      # CALCULATE TOTALS
       total_data <- .calculate_stack_totals(filtered_data, x_axis_from, panel_var)
 
       # APPLY TOP_IMPACT FILTER IF SPECIFIED
@@ -1947,6 +1724,15 @@ stack_plot <- function(data, filter_var = NULL,
         }
       }
 
+      # FORMAT Y-AXIS LABEL
+      y_axis_label <- if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
+        style_config$y_axis_description
+      } else if (tolower(unit_name) == "percent") {
+        "Percentage (%)"
+      } else {
+        unit_name
+      }
+
       # CREATE APPROPRIATE PLOT TYPE
       if (unstack_plot) {
         x_axis_values <- unique(filtered_data[[x_axis_from]])
@@ -1955,7 +1741,6 @@ stack_plot <- function(data, filter_var = NULL,
           x_data <- filtered_data[filtered_data[[x_axis_from]] == x_val, ]
           x_totals <- total_data[total_data[[x_axis_from]] == x_val, ]
 
-          # Use unified title handler
           title_info <- .handle_plot_title_and_export(
             var_name = NULL,
             sep_value = sep_value,
@@ -1988,9 +1773,6 @@ stack_plot <- function(data, filter_var = NULL,
           plot_list[[title_info$export_name]] <- p
         }
       } else {
-        # CREATE STACKED PLOT
-
-        # Use unified title handler
         title_info <- .handle_plot_title_and_export(
           var_name = NULL,
           sep_value = sep_value,
@@ -2026,26 +1808,19 @@ stack_plot <- function(data, filter_var = NULL,
   }
 
   # SET DEFAULT FILE_NAME IN EXPORT_CONFIG
-  if (is.null(export_config)) {
-    export_config <- list()
-  }
+  if (is.null(export_config) || is.null(export_config$file_name)) {
+    export_config <- .coalesce(export_config, list())
 
-  # Handle file_name for merged PDF export case
-  if (export_as_pdf == "merged" && is.null(export_config$file_name)) {
-    # Base filename for merged PDF
     plot_type_name <- if (unstack_plot) "Unstacked_plots" else "Stacked_plots"
     n_plots <- length(plot_list)
     export_config$file_name <- paste0(plot_type_name, "_", n_plots)
-  } else if (is.null(export_config$file_name)) {
-    # Default filename (only used if no plot names exist)
-    export_config$file_name <- if (unstack_plot) "unstacked_plots" else "stacked_plots"
   }
 
   # Add calculated dimensions to export_config
   export_config$width <- dimensions$width
   export_config$height <- dimensions$height
 
-  # EXPORT PLOTS USING HELPER FUNCTION
+  # EXPORT PLOTS
   .export_plot_output(
     plots = plot_list,
     output_path = output_path,
@@ -2057,11 +1832,7 @@ stack_plot <- function(data, filter_var = NULL,
   )
 
   # RETURN SINGLE PLOT OR LIST OF PLOTS
-  if (length(plot_list) == 1) {
-    return(plot_list[[1]])
-  } else {
-    return(plot_list)
-  }
+  return(invisible(NULL))
 }
 
 
@@ -2293,37 +2064,20 @@ stack_plot <- function(data, filter_var = NULL,
 
   # ADD FACETS IF NEEDED
   if (n_panels > 1) {
-    # Determine facet behavior
-    if (!is.null(panel_rows) && !is.null(panel_cols)) {
-      if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
-        p <- p + ggplot2::facet_wrap(
-          as.formula(paste("~", panel_var)),
-          scales = "free",
-          nrow = panel_rows,
-          ncol = panel_cols
-        )
-      } else {
-        p <- p + ggplot2::facet_wrap(
-          as.formula(paste("~", panel_var)),
-          scales = "fixed",
-          nrow = panel_rows,
-          ncol = panel_cols
-        )
-      }
-    } else {
-      # Auto-determine layout if dimensions aren't specified
-      if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
-        p <- p + ggplot2::facet_wrap(
-          as.formula(paste("~", panel_var)),
-          scales = "free"
-        )
-      } else {
-        p <- p + ggplot2::facet_wrap(
-          as.formula(paste("~", panel_var)),
-          scales = "fixed"
-        )
-      }
+    facet_args <- list(
+      as.formula(paste("~", panel_var)),
+      scales = if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) "free" else "fixed"
+    )
+
+    if (!is.null(panel_rows)) {
+      facet_args$nrow <- panel_rows
     }
+
+    if (!is.null(panel_cols)) {
+      facet_args$ncol <- panel_cols
+    }
+
+    p <- p + do.call(ggplot2::facet_wrap, facet_args)
   }
 
   # SETUP APPEARANCE
@@ -2646,37 +2400,20 @@ stack_plot <- function(data, filter_var = NULL,
 
   # ADD FACETS IF NEEDED
   if (n_panels > 1) {
-    # Determine facet behavior
-    if (!is.null(panel_rows) && !is.null(panel_cols)) {
-      if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
-        p <- p + ggplot2::facet_wrap(
-          as.formula(paste("~", panel_var)),
-          scales = "free",
-          nrow = panel_rows,
-          ncol = panel_cols
-        )
-      } else {
-        p <- p + ggplot2::facet_wrap(
-          as.formula(paste("~", panel_var)),
-          scales = "fixed",
-          nrow = panel_rows,
-          ncol = panel_cols
-        )
-      }
-    } else {
-      # Auto-determine layout if dimensions aren't specified
-      if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) {
-        p <- p + ggplot2::facet_wrap(
-          as.formula(paste("~", panel_var)),
-          scales = "free"
-        )
-      } else {
-        p <- p + ggplot2::facet_wrap(
-          as.formula(paste("~", panel_var)),
-          scales = "fixed"
-        )
-      }
+    facet_args <- list(
+      as.formula(paste("~", panel_var)),
+      scales = if (!is.null(top_impact) || style_config$show_axis_titles_on_all_facets) "free" else "fixed"
+    )
+
+    if (!is.null(panel_rows)) {
+      facet_args$nrow <- panel_rows
     }
+
+    if (!is.null(panel_cols)) {
+      facet_args$ncol <- panel_cols
+    }
+
+    p <- p + do.call(ggplot2::facet_wrap, facet_args)
   }
 
   # SETUP APPEARANCE

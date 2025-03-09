@@ -34,8 +34,8 @@ knitr::opts_chunk$set(
 rm(list=ls())
 #------------------Dev Period######################################
 # Directory
-project.folder <- "C:/Users/b_pat/OneDrive - purdue.edu/GTAPViz Data"
-#project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data"
+#project.folder <- "C:/Users/b_pat/OneDrive - purdue.edu/GTAPViz Data"
+project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data"
 
 input.folder <- paste0(project.folder, "/in")
 map.folder <- paste0(project.folder, "/map")
@@ -509,7 +509,7 @@ These predefined lists determine the display order of outputs, i.e., figures and
 - `<selected_sectors>` sorts the column for defined sectors by GTAP; the default is `"COMM"` and `"ACTS"`.  
 
 <div class="tip-box">
-💡 <strong>Tip:</strong> To customize sorting for additional columns, see `?sort_plot_data`. 
+💡 <strong>Tip:</strong> To customize sorting for additional columns, see [Sorting Data](sec:sorting-data). 
 </div>
 
 For example, this setup with will display the figure as shown below:  
@@ -519,11 +519,14 @@ For example, this setup with will display the figure as shown below:
 - `selected_regions <- c("EastAsia", "SEAsia", "Oceania")`  
 
 <figure class="package-figure">
-  <div class="package-figure-box">
+    <div class="package-figure-box">
 ```{r, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/sort_example.png")
 ```
-</div> <figcaption class="package-fig"> Example of Sorting Figures <br> </figcaption> </figure>
+    </div> 
+  <figcaption class="package-fig"> Example of Sorting Figures <br> 
+  </figcaption> 
+</figure>
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -533,15 +536,15 @@ To streamline figure generation from GTAP results, I developed an automated data
 
 ```{r Preparing Data for Plot, eval = FALSE}
 auto_gtap_data(
+  experiment = experiment,
   process_sl4_vars = sl4map, 
   process_har_vars = harmap,
+  mapping_info = info.mode,
   sl4_mapping_info = sl4map,
   har_mapping_info = harmap,
   region_select = selected_regions,
   sector_select = selected_sector,
   subtotal_level = FALSE,
-  experiment = experiment, 
-  mapping_info = info.mode,
   project_path = project.folder,
   plot_data = plot_data,
   output_formats = list(
@@ -554,12 +557,15 @@ auto_gtap_data(
 The default process for extracting data in automation uses `HARplus::group_data_by_dims` for `.sl4` and `get_data_by_var` for `.har`.
 
 <div class="tip-box">
-💡 <strong>Tip 1:</strong> The process used in <code>?auto_gtap_data</code> can be modified for both `.sl4` and `.har`, which might be easier for some datasets, such as non-GTAP variables. Keep in mind that the plot function may require slight modifications to suit the new format
+💡 <strong>Tip:</strong> The process in <code>?auto_gtap_data</code> can be modified for both `.sl4` and `.har` files, making it more suitable for certain datasets, including non-GTAP variables.
+
+- See [Hybrid Data Extraction](#sec:hybrid-semi).  
+
+- See [Manual Data Processing](#sec:manualdata).  
+
+Keep in mind that the plot functions may require slight modifications to accommodate the new format.
 </div>
 
-<div class="tip-box">
-💡 <strong>Tip 2:</strong> For manual data extraction, see [Manual Data Processing](#sec:manualdata).
-</div>
 
 ## Converting Units and Labels (Optional) {#sec:custom-unit}
 
@@ -579,7 +585,7 @@ har.plot.data <- convert_units(har.plot.data,
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
 <div class="info-box">
-# **Essential Information for Visualization** {#essential-info-figure .unnumbered}
+# **Visualization: Essential Information** {#essential-info-figure .unnumbered}
 
 ## Understanding Function Arguments {.unnumbered}
   <p>Before generating any figures, it is useful to review the function arguments to ensure you take full advantage of the available customization options:</p>
@@ -609,10 +615,129 @@ plot_config <- get_plot_style_config("default", as_dataframe = TRUE)
 
 ```{r, eval = FALSE}
 export_config <- get_export_config(as_dataframe = TRUE)
-
-# Or Get All Configurations
-all_configs <- get_plot_config()
 ```
+
+
+## Highly Recommended for Advanced Configurations {.unnumbered}
+
+<p> To simplify modifications and maintain structured code, a printing function is provided. This function displays available options, allowing you to adjust and apply a custom plot style across all plot functions.  
+
+Use the following code to create and apply your own plot style:  <p>
+```{r, eval = FALSE}
+get_plot_config(printing = TRUE)
+```
+
+You will get:
+```{r, eval = FALSE, tidy = TRUE}
+my_style_config <- list(
+
+  # Title settings
+  show_title = TRUE,
+  title_face = "bold",
+  title_size = 20,
+  title_hjust = 0.5,
+  add_unit_to_title = TRUE,
+  title_margin = margin(t = 10, r = 0, b = 10, l = 0),
+  title_format = list(
+    type = "standard", #option: prefix, suffix, full, dynamic
+    text = "",
+    sep = ""
+  ),
+
+  # X-Axis settings
+  show_x_axis_title = TRUE,
+  x_axis_title_face = "bold",
+  x_axis_title_size = 16,
+  x_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),
+  show_x_axis_labels = TRUE,
+  x_axis_text_face = "plain",
+  x_axis_text_size = 14,
+  x_axis_text_angle = 0,
+  x_axis_text_hjust = 0,
+  x_axis_description = "",
+
+  # Y-Axis settings
+  show_y_axis_title = TRUE,
+  y_axis_title_face = "bold",
+  y_axis_title_size = 16,
+  y_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),
+  show_y_axis_labels = TRUE,
+  y_axis_text_face = "plain",
+  y_axis_text_size = 14,
+  y_axis_text_angle = 0,
+  y_axis_text_hjust = 0,
+  y_axis_description = "",
+  show_axis_titles_on_all_facets = TRUE,
+
+  # Value Labels
+  show_value_labels = TRUE,
+  value_label_face = "plain",
+  value_label_size = 5,
+  value_label_position = "above",
+  value_label_decimal_places = 2,
+
+  # Legend
+  show_legend = FALSE,
+  show_legend_title = FALSE,
+  legend_position = "bottom",
+  legend_title_face = "bold",
+  legend_text_face = "plain",
+  legend_text_size = 14,
+
+  # Panel Strip
+  strip_face = "bold",
+  strip_text_size = 16,
+  strip_background = "lightgrey",
+  strip_text_margin = margin(t = 10, r = 0, b = 10, l = 0),
+
+  # Panel Layout
+  panel_spacing = 2,
+  panel_rows = NULL,
+  panel_cols = NULL,
+  theme = NULL,
+
+  # Colors
+  color_tone = NULL,
+  positive_color = "#2E8B57",
+  negative_color = "#CD5C5C",
+  background_color = "white",
+  grid_color = "grey90",
+  show_grid_major_x = FALSE,
+  show_grid_major_y = FALSE,
+  show_grid_minor_x = FALSE,
+  show_grid_minor_y = FALSE,
+
+  # Zero Line
+  show_zero_line = TRUE,
+  zero_line_type = "dashed",
+  zero_line_color = "black",
+  zero_line_size = 0.5,
+  zero_line_position = 0,
+
+  # Bar Chart
+  bar_width = 0.9,
+  bar_spacing = 0.9,
+
+  # Scale Settings
+  scale_limit = NULL,
+  scale_increment = NULL,
+
+  # Scale Expansion
+  expansion_y_mult = c(0.05, 0.1),
+  expansion_x_mult = c(0.05, 0.05),
+
+  # Font Size Control
+  all_font_size = 1,
+
+  # Data Sorting
+  sort_data_by_value = FALSE
+)
+
+# Example usage:
+# comparison_plot(data, x_axis_from = "REG", 
+#                 plot_style_config = my_style_config)
+```
+
 </div>
 
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
@@ -624,10 +749,10 @@ all_configs <- get_plot_config()
 This figure compares one or multiple variables across all experiments for selected observations from a chosen dimension (e.g., region, sector).  
 
 <strong style="font-size: 1.17em;">Key Features</strong>
+
 - Designed for comparing selected variables across experiments.  
 
 - Displays all selected variables in one plot, making it ideal for a few observations; too many can make it dense and unclear.  
-
 
 For example, plotting `qgdp`, `ppriv`, `EV`, `tot`, and `u` generates six separate figures using the following command:  
 
@@ -665,10 +790,9 @@ comparison_plot(data = reg_data,
                   add_unit_to_title = TRUE,
                   title_format = list(
                     type = "prefix",  
-                    text = "Impact On"
+                    text = "Impact on"
                   ),
-                  panel_rows = 2,
-                  panel_cols = NULL
+                  panel_rows = 2
                 ))
 ```
 
@@ -687,10 +811,9 @@ comparison_plot(reg_data,
                   color_tone = "purdue",
                   title_format = list(
                     type = "prefix",  
-                    text = "Impact On"
+                    text = "Impact on"
                   ),
-                  panel_rows = 2,
-                  show_title = TRUE
+                  panel_rows = 2
                 ))
 ```
 
@@ -762,9 +885,13 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 This figure visualizes large-scale data, displaying all sectors (*COMM*, *ACTS*) or all regions (*REG*) within each experiment.  
 
 <strong style="font-size: 1.17em;">Key Features</strong>
+
 - Supports visualization across two selected dimensions.  
+
 - Suitable for datasets too large for *comparison_plot*.  
+
 - Automatically detects and aligns variables with different dimension names.  
+
 - Filters data by selecting the most affected variables using **top_impact**.  
 
 
@@ -839,8 +966,11 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 This plot visualizes decomposition results, showing how different components contribute to a total value, making it particularly suitable for decomposition analysis.  
 
 <strong style="font-size: 1.17em;">Key Features</strong>
+
 - Displays the contribution of components to a total value.  
+
 - Allows further decomposition by unstacking components instead of using a stacked bar.  
+
 - Suitable for welfare decomposition, trade decomposition, and other GTAP structural breakdowns.  
 
 <div class="tip-box">
@@ -921,7 +1051,7 @@ stack_plot(data = har.plot.data[["E1"]],
            stack_value_from = "PRICES",
            split_by = "Region",
            
-           show_total = FALSE,
+           show_total = TRUE,
            unstack_plot = FALSE,
            
            var_name_by_description = TRUE,       
@@ -930,34 +1060,44 @@ stack_plot(data = har.plot.data[["E1"]],
            separate_figure = FALSE,
 
            export_picture = TRUE,
-           export_as_pdf = "merged",
+           export_as_pdf = FALSE,
            export_config = list(
              width = 50,
-             height = 20
+             height = 30
            ),
            output_path = output.folder,
            
            plot_style_config = list(
              title_format = list(
-               type = "full",
-               text = "Terms of Trade Decomposition"
+               type = "prefix",
+               text = "Terms of Trade Decomposition",
+               sep = ": "
              ),
-             positive_color = "#2E8B57", 
-             negative_color = "#CD5C5C",
+             color_tone = "blue", 
              panel_rows = 1,
-             panel_cols = NULL,
              show_axis_titles_on_all_facets = FALSE,
              bar_width = 0.5,
-             bar_spacing = 0
+             bar_spacing = 0,
+             title_size = 48,
+             x_axis_title_size = 32,
+             y_axis_title_size = 32,
+             x_axis_text_size = 20,
+             y_axis_text_size = 20
            ))
 
 ```
 
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r unstack plot, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/stack_multi_plot.png")
+```
+</div> <figcaption class="package-fig"> Stack Plot Visualization (Multi-Dimension) <br> <span class="package-fig-note">(split_by = "Region", plot_style_config -> adjustments)</span> </figcaption> </figure>
 
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
 
 <div class="info-box">
-# **Essential Information for the Reporting Table** {#essential-info-table .unnumbered}
+# **Report Table: Essential Information** {#essential-info-table .unnumbered}
 
 ## Understanding Function Arguments {.unnumbered}
 <p>Before generating any tables, it is useful to review the function arguments to ensure you take full advantage of the available customization options:</p>
@@ -1200,7 +1340,8 @@ You can convert all units in a dataframe at once, but the *order must be defined
 - `change_unit_to`: The new unit name to be recorded in the `"Unit"` column.  
 - `adjustment`: The mathematical operation (`/`, `*`, `+`, or `-`) to transform the value.  
 
-### Example Conversions:  
+<strong style="font-size: 1.17em;">Example Conversions</strong>
+
 • Convert `million USD` to `billion USD` by dividing by 1,000.  
 • Convert `percent` to `proportion` by dividing by 100.  
 
@@ -1249,8 +1390,94 @@ har.plot.data.rename <- rename_value(har.plot.data, mapping.file = rename.region
 💡 <strong>Tip:</strong> You can create this mapping dataframe in Excel and import it into R. The column names must be **"OldName"** and **"NewName"**, while `column_name` can be defined directly in the command. See `<?rename_value>` for details.  
 </div>
 
+## Sorting Data {#sec:sorting-data}
+
+This function sorts data columns before generating plots or tables. Key arguments:  
+
+- `cols` specifies the column(s) to sort based on a predefined order (e.g., in `sl4.plot.data`, `Experiment` and `Region` will follow the defined order).  
+
+- `sort_by_value_desc` controls whether sorting is in descending order (`TRUE/FALSE/NULL`). See `?sorting_specs` for details.  
+
+To apply sorting, use the following command:  
+
+```{r Sorting Data Function, eval = FALSE}
+# Creating Sorting File
+sorting_specs <- data.frame(
+  Experiment = c("US_All10_RetalTar", "US_All", "US_All10", "US_Specific"),
+  Region = c("CHN", "USA", "ROW", "CAN")
+)
+      
+regional_data <- sort_plot_data(
+  sl4.plot.data,
+  cols = sorting_specs$cols,
+  sort_by_value_desc = NULL
+)
+```
+
+**Note:** This function performs **sorting, not filtering**. Unlisted values remain in the dataset, following the prioritized order.
+
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
+
+
+# Hybrid Data Processing: Automation & Manual Adjustments {#sec:hybrid-semi}
+
+This process modifies `auto_gtap_data` to extract data using different methods from `HARplus`, while allowing adjustments to `priority_list` for `"HARplus::group_data_by_dims"` (see `?auto_gtap_data`).
+
+It is particularly useful when working with additional variables beyond the GTAP default model, such as defining a new dimension, `"AREG"`, which represents a group of regions. By default, automation does not recognize `"AREG"` as `"Region"`, potentially leading to incorrect grouping in the data list.
+
+To facilitate data extraction for plotting and reporting table creation, consider the following approach:
+
+```{r, eval = FALSE}
+auto_gtap_data(
+  # Input Main File Names
+  experiment = experiment, 
+  
+  # Input File Suffixes
+  sl4_suffix = "",
+  har_suffix = "-WEL",
+  
+  # Directories
+  input_path = input.folder,
+  output_path = output.folder,
+
+  # Variable Selection
+  process_sl4_vars = sl4map, 
+  process_har_vars = harmap,
+  
+  # Description and Unit Mapping (if `mapping_info` is set to "Yes" or "Mix")
+  sl4_mapping_info = sl4map,
+  har_mapping_info = harmap,
+  mapping_info = info.mode,
+  
+  # Region and Sector Filtering
+  region_select = selected_regions,
+  sector_select = selected_sector,
+  
+  # Data Extraction Process
+  sl4_extract_method = "get_data_by_dims",
+  har_extract_method = "get_data_by_var",
+  subtotal_level = FALSE,
+  
+  # If using `"group_data_by_dims"`, a `priority_list` is required. See `?HARplus::group_data_by_dims`.
+  sl4_priority = NULL,
+  har_priority = NULL,
+
+  # Output Formats
+  plot_data = plot_data,
+  output_formats = list(
+    "csv" = csv.output,
+    "stata" = stata.output,
+    "rds" = r.output,
+    "txt" = txt.output
+  ),
+
+  # Output Names for Plot Data
+  sl4_output_name = "sl4.plot.data",
+  har_output_name = "har.plot.data",
+  macro_output_name = "GTAPMacro"
+)
+```
 
 # Manual Data Processing {#sec:manualdata}
 
@@ -1294,8 +1521,8 @@ Extract GTAP Macro variables from the *"Macros"* header in `.sl4` files using th
 
 ```{r GTAP Macro Data Extraction, eval = FALSE}
 Macros <- gtap_macros_data(
-  input_dir = input.folder,
-  experiment_names = experiment,
+  input_path = input.folder,
+  experiment = experiment,
   subtotal_level = FALSE
 )
 ```

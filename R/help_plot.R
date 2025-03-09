@@ -8,6 +8,8 @@
 #'        Default is "all", which returns configurations for all styles.
 #' @param config List. Optional custom style configuration to override defaults.
 #' @param export_config List. Optional custom export configuration to override defaults.
+#' @param printing Logical. If TRUE, prints a formatted code snippet that can be copied
+#'   and pasted to recreate the configuration. Default is FALSE.
 #'
 #' @return A list with two components:
 #' \itemize{
@@ -21,18 +23,35 @@
 #' all_configs <- get_plot_config()
 #'
 #' # Get only comparison plot configuration
-#' comp_config <- get_plot_config("comparison")
+#' comp_config <- get_plot_config("default")
 #' @author Pattawee Puangchit
 #'
-#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+#' @seealso \code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #' @export
 #'
-get_plot_config <- function(plot_style = "default", config = NULL, export_config = NULL) {
+get_plot_config <- function(plot_style = "default", config = NULL,
+                            export_config = NULL, printing = FALSE) {
   valid_styles <- c("default")
   if (!plot_style %in% valid_styles) {
     stop("Plot style must be one of: 'default'")
   }
 
+  # If printing mode, we'll just print and return nothing
+  if (printing) {
+    # Print the plot style configuration
+    get_plot_style_config(plot_type = plot_style, validate_custom = config, printing = TRUE)
+
+    # Add some separation between the two sections
+    cat("\n\n")
+
+    # Print the export configuration
+    get_export_config(printing = TRUE)
+
+    # Return invisibly to avoid printing any values
+    return(invisible(NULL))
+  }
+
+  # Normal (non-printing) mode continues here
   result <- list()
 
   if (plot_style == "all") {
@@ -40,13 +59,18 @@ get_plot_config <- function(plot_style = "default", config = NULL, export_config
       comparison = .calculate_plot_style_config(config, "default")
     )
   } else {
-    result$plot_style_config <- .calculate_plot_style_config(config, plot_style)
+    # Get plot style as dataframe
+    result$plot_style_config <- get_plot_style_config(plot_type = plot_style,
+                                                      validate_custom = config,
+                                                      as_dataframe = TRUE)
   }
 
+  # Get export configuration as dataframe
   result$export_config <- get_export_config(as_dataframe = TRUE)
 
   return(result)
 }
+
 
 #' @title Get Plot Style Configuration
 #'
@@ -59,6 +83,8 @@ get_plot_config <- function(plot_style = "default", config = NULL, export_config
 #' @param show_docs Logical. Whether to include documentation in the output.
 #' @param validate_custom List or NULL. Custom configuration settings to validate.
 #' @param as_dataframe Logical. Whether to return settings as a dataframe.
+#' @param printing Logical. If TRUE, prints a formatted code snippet that can be copied
+#'   and pasted to recreate the configuration. Default is FALSE.
 #'
 #' @return
 #' If \code{parameter_name} is specified, returns a list with the value and documentation for that parameter.
@@ -175,24 +201,25 @@ get_plot_config <- function(plot_style = "default", config = NULL, export_config
 #' @export
 #'
 #' @examples
-#' # Get default configuration
-#' config <- get_plot_style_config("comparison")
+#' # Get alldefault configuration
+#' get_plot_style_config(printing = TRUE)
 #'
 #' # Get information about a specific parameter
-#' param_info <- get_plot_style_config("detail", "bar_width")
+#' param_info <- get_plot_style_config("default", "bar_width")
 #'
 #' # Get as structured dataframe
-#' config_df <- get_plot_style_config("stack", as_dataframe = TRUE)
+#' config_df <- get_plot_style_config("default", as_dataframe = TRUE)
 #'
 #' # Validate custom configuration
 #' custom_config <- list(title_size = 24, bar_width = 0.7)
-#' validated <- get_plot_style_config("comparison", validate_custom = custom_config)
+#' validated <- get_plot_style_config("default", validate_custom = custom_config)
 #'
 get_plot_style_config <- function(plot_type = "default",
                                   parameter_name = NULL,
                                   show_docs = FALSE,
                                   validate_custom = NULL,
-                                  as_dataframe = TRUE) {
+                                  as_dataframe = FALSE,
+                                  printing = TRUE) {
   config <- .calculate_plot_style_config(NULL, plot_type)
 
   param_docs <- list(
@@ -202,7 +229,7 @@ get_plot_style_config <- function(plot_type = "default",
     title_hjust = "Numeric. Horizontal justification of title (0 = left, 1 = right).",
     add_unit_to_title = "Logical. Add unit information to title.",
     title_margin = "ggplot2 margin object. Margin around title.",
-    title_format = "List. Format of title, with elements 'type' and 'text'.",
+    title_format = "List with components: 'type' (options: 'standard', 'prefix', 'suffix', 'full', 'dynamic'), 'text' (content to display or column names for dynamic titles), and 'sep' (separator for dynamic titles, default: ' - ').",
     show_x_axis_title = "Logical. Show or hide the x-axis title.",
     x_axis_title_face = "Character. Font face for x-axis title.",
     x_axis_title_size = "Numeric. Font size of x-axis title.",
@@ -338,118 +365,480 @@ get_plot_style_config <- function(plot_type = "default",
     return(result)
   }
 
+  # Create a dataframe for as_dataframe = TRUE
   if (as_dataframe) {
-    param_categories <- list(
-      "Title" = c("show_title", "title_face", "title_size", "title_hjust",
-                  "add_unit_to_title", "title_margin", "title_format"),
+    # Count the total number of parameters
+    params_count <- 68 # Adjusted to the correct count
 
-      "X-Axis" = c("show_x_axis_title", "x_axis_title_face", "x_axis_title_size",
-                   "x_axis_title_margin", "show_x_axis_labels", "x_axis_text_face",
-                   "x_axis_text_size", "x_axis_text_angle", "x_axis_text_hjust",
-                   "x_axis_description"),
+    # Create vectors with the exact same length
+    topics <- character(params_count)
+    arguments <- character(params_count)
+    default_values <- character(params_count)
+    input_formats <- character(params_count)
+    descriptions <- character(params_count)
+    examples <- character(params_count)
 
-      "Y-Axis" = c("show_y_axis_title", "y_axis_title_face", "y_axis_title_size",
-                   "y_axis_title_margin", "show_y_axis_labels", "y_axis_text_face",
-                   "y_axis_text_size", "y_axis_text_angle", "y_axis_text_hjust",
-                   "y_axis_description", "show_axis_titles_on_all_facets"),
+    # Fill in the values (double check the counts!)
 
-      "Value Labels" = c("show_value_labels", "value_label_face", "value_label_size",
-                         "value_label_position", "value_label_decimal_places"),
-
-      "Legend" = c("show_legend", "show_legend_title", "legend_position",
-                   "legend_title_face", "legend_text_face", "legend_text_size"),
-
-      "Panel Strip" = c("strip_face", "strip_text_size", "strip_background", "strip_text_margin"),
-
-      "Panel Layout" = c("panel_spacing", "panel_rows", "panel_cols", "theme"),
-
-      "Colors" = c("color_tone", "positive_color", "negative_color", "background_color",
-                   "grid_color", "show_grid_major_x", "show_grid_major_y",
-                   "show_grid_minor_x", "show_grid_minor_y"),
-
-      "Zero Line" = c("show_zero_line", "zero_line_type", "zero_line_color",
-                      "zero_line_size", "zero_line_position"),
-
-      "Bar Chart" = c("bar_width", "bar_spacing"),
-
-      "Scale Settings" = c("scale_limit", "scale_increment"),
-
-      "Scale Expansion" = c("expansion_y_mult", "expansion_x_mult"),
-
-      "Font Size Control" = c("all_font_size")
+    # Title section (7 parameters)
+    topics[1:7] <- c("Title", "", "", "", "", "", "")
+    arguments[1:7] <- c("show_title", "title_face", "title_size", "title_hjust", "add_unit_to_title", "title_margin", "title_format")
+    default_values[1:7] <- c("TRUE", "bold", "20", "0.5", "TRUE", "margin(t=10, r=0, b=10, l=0)",
+                             "list(type=\"standard\" [options: standard/prefix/suffix/full/dynamic], text=\"\", sep=\" - \")")
+    input_formats[1:7] <- c("logical", "character", "numeric", "numeric", "logical", "unit", "list")
+    descriptions[1:7] <- c(
+      "Show or hide the plot title.",
+      "Font face for title ('bold', 'plain', 'italic').",
+      "Font size of title.",
+      "Horizontal justification of title (0 = left, 1 = right).",
+      "Add unit information to title.",
+      "Margin around title.",
+      "List with components: 'type' (options: 'standard', 'prefix', 'suffix', 'full', 'dynamic'), 'text' (content to display or column names for dynamic titles), and 'sep' (separator for dynamic titles, default: ' - ')."
+    )
+    examples[1:7] <- c(
+      "show_title = TRUE",
+      "title_face = \"bold\"",
+      "title_size = 20",
+      "title_hjust = 0.5",
+      "add_unit_to_title = TRUE",
+      "title_margin = margin(t = 10, r = 0, b = 10, l = 0)",
+      "title_format = list(\n  type = \"standard\", # options: standard/prefix/suffix/full/dynamic\n  text = \"\",\n  sep = \"\"\n)"
     )
 
-    result_cols <- c("Category", "Parameter", "Value", "Type", "Description", "Example")
+    # X-Axis section (10 parameters)
+    idx <- 8:17
+    topics[idx] <- c("X-Axis", rep("", length(idx)-1))
+    arguments[idx] <- c("show_x_axis_title", "x_axis_title_face", "x_axis_title_size", "x_axis_title_margin",
+                        "show_x_axis_labels", "x_axis_text_face", "x_axis_text_size", "x_axis_text_angle",
+                        "x_axis_text_hjust", "x_axis_description")
+    default_values[idx] <- c("TRUE", "bold", "16", "margin(t=25, r=25, b=0, l=0)", "TRUE", "plain", "14", "0", "0", "")
+    input_formats[idx] <- c("logical", "character", "numeric", "unit", "logical", "character", "numeric", "numeric", "numeric", "character")
+    descriptions[idx] <- c(
+      "Show or hide the x-axis title.",
+      "Font face for x-axis title.",
+      "Font size of x-axis title.",
+      "Margin around x-axis title.",
+      "Show or hide x-axis tick labels.",
+      "Font face for x-axis tick labels.",
+      "Font size of x-axis tick labels.",
+      "Angle of x-axis tick labels in degrees.",
+      "Horizontal justification of x-axis tick labels.",
+      "Optional description for x-axis."
+    )
+    examples[idx] <- c(
+      "show_x_axis_title = TRUE",
+      "x_axis_title_face = \"bold\"",
+      "x_axis_title_size = 16",
+      "x_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0)",
+      "show_x_axis_labels = TRUE",
+      "x_axis_text_face = \"plain\"",
+      "x_axis_text_size = 14",
+      "x_axis_text_angle = 0",
+      "x_axis_text_hjust = 0",
+      "x_axis_description = \"\""
+    )
 
-    result <- data.frame(matrix(ncol = length(result_cols), nrow = 0))
-    colnames(result) <- result_cols
+    # Y-Axis section (11 parameters)
+    idx <- 18:28
+    topics[idx] <- c("Y-Axis", rep("", length(idx)-1))
+    arguments[idx] <- c("show_y_axis_title", "y_axis_title_face", "y_axis_title_size", "y_axis_title_margin",
+                        "show_y_axis_labels", "y_axis_text_face", "y_axis_text_size", "y_axis_text_angle",
+                        "y_axis_text_hjust", "y_axis_description", "show_axis_titles_on_all_facets")
+    default_values[idx] <- c("TRUE", "bold", "16", "margin(t=25, r=25, b=0, l=0)", "TRUE", "plain", "14", "0", "0", "", "TRUE")
+    input_formats[idx] <- c("logical", "character", "numeric", "unit", "logical", "character", "numeric", "numeric", "numeric", "character", "logical")
+    descriptions[idx] <- c(
+      "Show or hide the y-axis title.",
+      "Font face for y-axis title.",
+      "Font size of y-axis title.",
+      "Margin around y-axis title.",
+      "Show or hide y-axis tick labels.",
+      "Font face for y-axis tick labels.",
+      "Font size of y-axis tick labels.",
+      "Angle of y-axis tick labels in degrees.",
+      "Horizontal justification of y-axis tick labels.",
+      "Optional description for y-axis.",
+      "Show axis titles on all facets."
+    )
+    examples[idx] <- c(
+      "show_y_axis_title = TRUE",
+      "y_axis_title_face = \"bold\"",
+      "y_axis_title_size = 16",
+      "y_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0)",
+      "show_y_axis_labels = TRUE",
+      "y_axis_text_face = \"plain\"",
+      "y_axis_text_size = 14",
+      "y_axis_text_angle = 0",
+      "y_axis_text_hjust = 0",
+      "y_axis_description = \"\"",
+      "show_axis_titles_on_all_facets = TRUE"
+    )
 
-    for (category in names(param_categories)) {
-      params <- param_categories[[category]]
+    # Value Labels section (5 parameters)
+    idx <- 29:33
+    topics[idx] <- c("Value Labels", rep("", length(idx)-1))
+    arguments[idx] <- c("show_value_labels", "value_label_face", "value_label_size", "value_label_position", "value_label_decimal_places")
+    default_values[idx] <- c("TRUE", "plain", "5", "above", "2")
+    input_formats[idx] <- c("logical", "character", "numeric", "character", "numeric")
+    descriptions[idx] <- c(
+      "Show or hide value labels.",
+      "Font face for value labels.",
+      "Font size of value labels.",
+      "Position of value labels ('above', 'outside', 'top').",
+      "Number of decimal places in value labels."
+    )
+    examples[idx] <- c(
+      "show_value_labels = TRUE",
+      "value_label_face = \"plain\"",
+      "value_label_size = 5",
+      "value_label_position = \"above\"",
+      "value_label_decimal_places = 2"
+    )
 
-      for (param in params) {
-        if (param %in% names(config)) {
-          param_value <- config[[param]]
+    # Legend section (6 parameters)
+    idx <- 34:39
+    topics[idx] <- c("Legend", rep("", length(idx)-1))
+    arguments[idx] <- c("show_legend", "show_legend_title", "legend_position", "legend_title_face", "legend_text_face", "legend_text_size")
+    default_values[idx] <- c("FALSE", "FALSE", "bottom", "bold", "plain", "14")
+    input_formats[idx] <- c("logical", "logical", "character", "character", "character", "numeric")
+    descriptions[idx] <- c(
+      "Show or hide the legend.",
+      "Show or hide the legend title.",
+      "Position of the legend ('none', 'right', 'bottom', etc.).",
+      "Font face for legend title.",
+      "Font face for legend text.",
+      "Font size of legend text."
+    )
+    examples[idx] <- c(
+      "show_legend = FALSE",
+      "show_legend_title = FALSE",
+      "legend_position = \"bottom\"",
+      "legend_title_face = \"bold\"",
+      "legend_text_face = \"plain\"",
+      "legend_text_size = 14"
+    )
 
-          if (inherits(param_value, "unit")) {
-            param_value <- paste("margin:", paste(as.numeric(param_value), collapse = ","))
-          } else if (is.list(param_value) && !is.data.frame(param_value)) {
-            param_value <- paste(utils::capture.output(utils::str(param_value, max.level = 1)), collapse = " ")
-          }
+    # Panel Strip section (4 parameters)
+    idx <- 40:43
+    topics[idx] <- c("Panel Strip", rep("", length(idx)-1))
+    arguments[idx] <- c("strip_face", "strip_text_size", "strip_background", "strip_text_margin")
+    default_values[idx] <- c("bold", "16", "lightgrey", "margin(t=10, r=0, b=10, l=0)")
+    input_formats[idx] <- c("character", "numeric", "character", "unit")
+    descriptions[idx] <- c(
+      "Font face for panel strip labels.",
+      "Font size of panel strip labels.",
+      "Background color of panel strips.",
+      "Margin around panel strip labels."
+    )
+    examples[idx] <- c(
+      "strip_face = \"bold\"",
+      "strip_text_size = 16",
+      "strip_background = \"lightgrey\"",
+      "strip_text_margin = margin(t = 10, r = 0, b = 10, l = 0)"
+    )
 
-          param_type <- class(config[[param]])[1]
+    # Panel Layout section (4 parameters)
+    idx <- 44:47
+    topics[idx] <- c("Panel Layout", rep("", length(idx)-1))
+    arguments[idx] <- c("panel_spacing", "panel_rows", "panel_cols", "theme")
+    default_values[idx] <- c("2", "NULL", "NULL", "NULL")
+    input_formats[idx] <- c("numeric", "NULL or numeric", "NULL or numeric", "ggplot2 theme")
+    descriptions[idx] <- c(
+      "Spacing between panels in centimeters.",
+      "Number of rows in panel layout.",
+      "Number of columns in panel layout.",
+      "Custom theme to apply."
+    )
+    examples[idx] <- c(
+      "panel_spacing = 2",
+      "panel_rows = NULL",
+      "panel_cols = NULL",
+      "theme = NULL"
+    )
 
-          description <- if (param %in% names(param_docs)) param_docs[[param]] else ""
+    # Colors section (9 parameters)
+    idx <- 48:56
+    topics[idx] <- c("Colors", rep("", length(idx)-1))
+    arguments[idx] <- c("color_tone", "positive_color", "negative_color", "background_color", "grid_color",
+                        "show_grid_major_x", "show_grid_major_y", "show_grid_minor_x", "show_grid_minor_y")
+    default_values[idx] <- c("NULL", "#2E8B57", "#CD5C5C", "white", "grey90", "FALSE", "FALSE", "FALSE", "FALSE")
+    input_formats[idx] <- c("character", "character", "character", "character", "character", "logical", "logical", "logical", "logical")
+    descriptions[idx] <- c(
+      "Base color tone for the plot (e.g., 'academic', 'purdue').",
+      "Color for positive values.",
+      "Color for negative values.",
+      "Background color of the plot.",
+      "Color of grid lines.",
+      "Show major grid lines on x-axis.",
+      "Show major grid lines on y-axis.",
+      "Show minor grid lines on x-axis.",
+      "Show minor grid lines on y-axis."
+    )
+    examples[idx] <- c(
+      "color_tone = NULL",
+      "positive_color = \"#2E8B57\"",
+      "negative_color = \"#CD5C5C\"",
+      "background_color = \"white\"",
+      "grid_color = \"grey90\"",
+      "show_grid_major_x = FALSE",
+      "show_grid_major_y = FALSE",
+      "show_grid_minor_x = FALSE",
+      "show_grid_minor_y = FALSE"
+    )
 
-          example <- paste0(param, " = ", if(is.character(param_value)) {
-            paste0('"', param_value, '"')
-          } else if(is.logical(param_value)) {
-            ifelse(param_value, "TRUE", "FALSE")
-          } else if(is.numeric(param_value) && length(param_value) == 1) {
-            as.character(param_value)
-          } else if(is.numeric(param_value) && length(param_value) > 1) {
-            paste0("c(", paste(param_value, collapse = ", "), ")")
-          } else if(is.list(param_value)) {
-            "list(...)"
-          } else {
-            as.character(param_value)
-          })
+    # Zero Line section (5 parameters)
+    idx <- 57:61
+    topics[idx] <- c("Zero Line", rep("", length(idx)-1))
+    arguments[idx] <- c("show_zero_line", "zero_line_type", "zero_line_color", "zero_line_size", "zero_line_position")
+    default_values[idx] <- c("TRUE", "dashed", "black", "0.5", "0")
+    input_formats[idx] <- c("logical", "character", "numeric", "numeric", "numeric")
+    descriptions[idx] <- c(
+      "Show or hide the zero line.",
+      "Line type for zero line ('solid', 'dashed', 'dotted').",
+      "Color of zero line.",
+      "Line thickness of zero line.",
+      "Position of the zero line."
+    )
+    examples[idx] <- c(
+      "show_zero_line = TRUE",
+      "zero_line_type = \"dashed\"",
+      "zero_line_color = \"black\"",
+      "zero_line_size = 0.5",
+      "zero_line_position = 0"
+    )
 
-          row_data <- c(category, param, paste(param_value, collapse = ", "), param_type, description, example)
-          result <- rbind(result, row_data)
-        }
-      }
-    }
+    # Bar Chart section (2 parameters)
+    idx <- 62:63
+    topics[idx] <- c("Bar Chart", rep("", length(idx)-1))
+    arguments[idx] <- c("bar_width", "bar_spacing")
+    default_values[idx] <- c("0.9", "0.9")
+    input_formats[idx] <- c("numeric", "numeric")
+    descriptions[idx] <- c(
+      "Width of bars (0-1).",
+      "Spacing between groups of bars."
+    )
+    examples[idx] <- c(
+      "bar_width = 0.9",
+      "bar_spacing = 0.9"
+    )
 
-    rownames(result) <- NULL
+    # Scale Settings section (2 parameters)
+    idx <- 64:65
+    topics[idx] <- c("Scale Settings", rep("", length(idx)-1))
+    arguments[idx] <- c("scale_limit", "scale_increment")
+    default_values[idx] <- c("NULL", "NULL")
+    input_formats[idx] <- c("numeric vector", "numeric")
+    descriptions[idx] <- c(
+      "Manual limits for value axis (min, max).",
+      "Step size for axis tick marks."
+    )
+    examples[idx] <- c(
+      "scale_limit = NULL",
+      "scale_increment = NULL"
+    )
 
-    attr(result, "plot_type") <- plot_type
+    # Scale Expansion section (2 parameters)
+    idx <- 66:67
+    topics[idx] <- c("Scale Expansion", rep("", length(idx)-1))
+    arguments[idx] <- c("expansion_y_mult", "expansion_x_mult")
+    default_values[idx] <- c("c(0.05, 0.1)", "c(0.05, 0.05)")
+    input_formats[idx] <- c("numeric vector", "numeric vector")
+    descriptions[idx] <- c(
+      "Expansion multiplier for y-axis.",
+      "Expansion multiplier for x-axis."
+    )
+    examples[idx] <- c(
+      "expansion_y_mult = c(0.05, 0.1)",
+      "expansion_x_mult = c(0.05, 0.05)"
+    )
 
-    colnames(result) <- c("Topic", "Arguments", "Default Value", "Input Format", "Description", "Example")
+    # Font Size Control section (1 parameter)
+    idx <- 68
+    topics[idx] <- "Font Size Control"
+    arguments[idx] <- "all_font_size"
+    default_values[idx] <- "1"
+    input_formats[idx] <- "numeric"
+    descriptions[idx] <- "Master control for all font sizes. Values > 1 increase all fonts, values < 1 decrease all fonts."
+    examples[idx] <- "all_font_size = 1"
 
-    # Add this check to avoid the error when the result is empty
-    if (nrow(result) > 0) {
-      current_topic <- result$Topic[1]
-      for (i in 2:nrow(result)) {
-        if (result$Topic[i] == current_topic) {
-          result$Topic[i] <- ""
-        } else {
-          current_topic <- result$Topic[i]
-        }
-      }
-    }
+    # Create the result dataframe
+    result <- data.frame(
+      Topic = topics,
+      Arguments = arguments,
+      "Default Value" = default_values,
+      "Input Format" = input_formats,
+      Description = descriptions,
+      Example = examples,
+      stringsAsFactors = FALSE
+    )
+
+    # Assign to plot_style_config in parent environment
+    assign("plot_style_config", result, envir = parent.frame())
 
     return(result)
   }
+  if (printing) {
+    cat("my_style_config <- list(\n")
+
+    # Title settings
+    cat("\n  # Title settings\n")
+    cat("  show_title = ", ifelse(config$show_title, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  title_face = \"", config$title_face, "\",\n", sep="")
+    cat("  title_size = ", config$title_size, ",\n", sep="")
+    cat("  title_hjust = ", config$title_hjust, ",\n", sep="")
+    cat("  add_unit_to_title = ", ifelse(config$add_unit_to_title, "TRUE", "FALSE"), ",\n", sep="")
+
+    # Format margin objects with proper names
+    margin_values <- as.numeric(config$title_margin)
+    cat("  title_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
+        ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
+
+    # Format title_format as a properly structured list
+    tf <- config$title_format
+    cat("  title_format = list(\n")
+    cat("    type = \"", .coalesce(tf$type, "standard"), "\", #option: prefix, suffix, full, dynamic\n", sep="")
+    cat("    text = \"", .coalesce(tf$text, ""), "\",\n", sep="")
+    cat("    sep = \"", .coalesce(tf$sep, ""), "\"\n", sep="")
+    cat("  ),\n")
+
+    # X-Axis settings
+    cat("\n  # X-Axis settings\n")
+    cat("  show_x_axis_title = ", ifelse(config$show_x_axis_title, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  x_axis_title_face = \"", config$x_axis_title_face, "\",\n", sep="")
+    cat("  x_axis_title_size = ", config$x_axis_title_size, ",\n", sep="")
+
+    margin_values <- as.numeric(config$x_axis_title_margin)
+    cat("  x_axis_title_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
+        ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
+
+    cat("  show_x_axis_labels = ", ifelse(config$show_x_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  x_axis_text_face = \"", config$x_axis_text_face, "\",\n", sep="")
+    cat("  x_axis_text_size = ", config$x_axis_text_size, ",\n", sep="")
+    cat("  x_axis_text_angle = ", config$x_axis_text_angle, ",\n", sep="")
+    cat("  x_axis_text_hjust = ", config$x_axis_text_hjust, ",\n", sep="")
+    cat("  x_axis_description = \"", config$x_axis_description, "\",\n", sep="")
+
+    # Y-Axis settings
+    cat("\n  # Y-Axis settings\n")
+    cat("  show_y_axis_title = ", ifelse(config$show_y_axis_title, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  y_axis_title_face = \"", config$y_axis_title_face, "\",\n", sep="")
+    cat("  y_axis_title_size = ", config$y_axis_title_size, ",\n", sep="")
+
+    margin_values <- as.numeric(config$y_axis_title_margin)
+    cat("  y_axis_title_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
+        ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
+
+    cat("  show_y_axis_labels = ", ifelse(config$show_y_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  y_axis_text_face = \"", config$y_axis_text_face, "\",\n", sep="")
+    cat("  y_axis_text_size = ", config$y_axis_text_size, ",\n", sep="")
+    cat("  y_axis_text_angle = ", config$y_axis_text_angle, ",\n", sep="")
+    cat("  y_axis_text_hjust = ", config$y_axis_text_hjust, ",\n", sep="")
+    cat("  y_axis_description = \"", config$y_axis_description, "\",\n", sep="")
+    cat("  show_axis_titles_on_all_facets = ", ifelse(config$show_axis_titles_on_all_facets, "TRUE", "FALSE"), ",\n", sep="")
+
+    # Value Labels
+    cat("\n  # Value Labels\n")
+    cat("  show_value_labels = ", ifelse(config$show_value_labels, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  value_label_face = \"", config$value_label_face, "\",\n", sep="")
+    cat("  value_label_size = ", config$value_label_size, ",\n", sep="")
+    cat("  value_label_position = \"", config$value_label_position, "\",\n", sep="")
+    cat("  value_label_decimal_places = ", config$value_label_decimal_places, ",\n", sep="")
+
+    # Legend
+    cat("\n  # Legend\n")
+    cat("  show_legend = ", ifelse(config$show_legend, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  show_legend_title = ", ifelse(config$show_legend_title, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  legend_position = \"", config$legend_position, "\",\n", sep="")
+    cat("  legend_title_face = \"", config$legend_title_face, "\",\n", sep="")
+    cat("  legend_text_face = \"", config$legend_text_face, "\",\n", sep="")
+    cat("  legend_text_size = ", config$legend_text_size, ",\n", sep="")
+
+    # Panel Strip
+    cat("\n  # Panel Strip\n")
+    cat("  strip_face = \"", config$strip_face, "\",\n", sep="")
+    cat("  strip_text_size = ", config$strip_text_size, ",\n", sep="")
+    cat("  strip_background = \"", config$strip_background, "\",\n", sep="")
+
+    margin_values <- as.numeric(config$strip_text_margin)
+    cat("  strip_text_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
+        ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
+
+    # Panel Layout
+    cat("\n  # Panel Layout\n")
+    cat("  panel_spacing = ", config$panel_spacing, ",\n", sep="")
+    cat("  panel_rows = ", if(is.null(config$panel_rows)) "NULL" else config$panel_rows, ",\n", sep="")
+    cat("  panel_cols = ", if(is.null(config$panel_cols)) "NULL" else config$panel_cols, ",\n", sep="")
+    cat("  theme = ", if(is.null(config$theme)) "NULL" else "custom_theme", ",\n", sep="")
+
+    # Colors
+    cat("\n  # Colors\n")
+    cat("  color_tone = ", if(is.null(config$color_tone)) "NULL" else paste0("\"", config$color_tone, "\""), ",\n", sep="")
+    cat("  positive_color = \"", config$positive_color, "\",\n", sep="")
+    cat("  negative_color = \"", config$negative_color, "\",\n", sep="")
+    cat("  background_color = \"", config$background_color, "\",\n", sep="")
+    cat("  grid_color = \"", config$grid_color, "\",\n", sep="")
+    cat("  show_grid_major_x = ", ifelse(config$show_grid_major_x, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  show_grid_major_y = ", ifelse(config$show_grid_major_y, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  show_grid_minor_x = ", ifelse(config$show_grid_minor_x, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  show_grid_minor_y = ", ifelse(config$show_grid_minor_y, "TRUE", "FALSE"), ",\n", sep="")
+
+    # Zero Line
+    cat("\n  # Zero Line\n")
+    cat("  show_zero_line = ", ifelse(config$show_zero_line, "TRUE", "FALSE"), ",\n", sep="")
+    cat("  zero_line_type = \"", config$zero_line_type, "\",\n", sep="")
+    cat("  zero_line_color = \"", config$zero_line_color, "\",\n", sep="")
+    cat("  zero_line_size = ", config$zero_line_size, ",\n", sep="")
+    cat("  zero_line_position = ", config$zero_line_position, ",\n", sep="")
+
+    # Bar Chart
+    cat("\n  # Bar Chart\n")
+    cat("  bar_width = ", config$bar_width, ",\n", sep="")
+    cat("  bar_spacing = ", config$bar_spacing, ",\n", sep="")
+
+    # Scale Settings
+    cat("\n  # Scale Settings\n")
+    if (is.null(config$scale_limit)) {
+      cat("  scale_limit = NULL,\n", sep="")
+    } else {
+      cat("  scale_limit = c(", paste(config$scale_limit, collapse=", "), "),\n", sep="")
+    }
+    cat("  scale_increment = ", if(is.null(config$scale_increment)) "NULL" else config$scale_increment, ",\n", sep="")
+
+    # Scale Expansion
+    cat("\n  # Scale Expansion\n")
+    cat("  expansion_y_mult = c(", paste(config$expansion_y_mult, collapse=", "), "),\n", sep="")
+    cat("  expansion_x_mult = c(", paste(config$expansion_x_mult, collapse=", "), "),\n", sep="")
+
+    # Font Size Control
+    cat("\n  # Font Size Control\n")
+    cat("  all_font_size = ", config$all_font_size, ",\n", sep="")
+
+    # Data Sorting (if it exists)
+    if ("sort_data_by_value" %in% names(config)) {
+      cat("\n  # Data Sorting\n")
+      cat("  sort_data_by_value = ", ifelse(config$sort_data_by_value, "TRUE", "FALSE"), "\n", sep="")
+    } else {
+      # Remove trailing comma from previous section
+      cat("\b \b\n", sep="")
+    }
+
+    cat(")\n\n")
+    cat("# Example usage:\n")
+    cat("# comparison_plot(data, x_axis_from = \"REG\", plot_style_config = my_style_config)\n")
+
+    return(invisible(config))
+  }
+
   return(c(list(plot_type = plot_type), config))
 }
 
-#' Get Export Configuration Options
+#' @title Get Export Configuration Options
 #'
 #' @description
 #' Returns documentation and default values for export configuration options used in plotting functions.
 #'
 #' @param as_dataframe Logical. Whether to return settings as a dataframe. Default is FALSE.
+#' @param printing Logical. If TRUE, prints a formatted code snippet that can be copied
+#'   and pasted to recreate the configuration. Default is FALSE.
 #'
 #' @return
 #' If \code{as_dataframe} is TRUE, returns a dataframe with export configuration settings.
@@ -476,8 +865,8 @@ get_plot_style_config <- function(plot_type = "default",
 #' # Get as a formatted dataframe
 #' export_df <- get_export_config(as_dataframe = TRUE)
 #'
-get_export_config <- function(as_dataframe = TRUE) {
-  # Export config parameters
+get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
+  # Export config parameters with default values
   export_config_params <- list(
     file_name = "gtap_plots",
     width = NULL,
@@ -497,66 +886,118 @@ get_export_config <- function(as_dataframe = TRUE) {
     limitsize = "Logical. Whether to limit size. Default is FALSE."
   )
 
+  # Add printing functionality
+  if (printing) {
+    cat("export_config <- list(\n")
+
+    # Print file_name
+    cat("  file_name = \"", export_config_params$file_name, "\",\n", sep="")
+
+    # Print width
+    cat("  width = ", if(is.null(export_config_params$width)) "NULL" else export_config_params$width, ",\n", sep="")
+
+    # Print height
+    cat("  height = ", if(is.null(export_config_params$height)) "NULL" else export_config_params$height, ",\n", sep="")
+
+    # Print dpi
+    cat("  dpi = ", export_config_params$dpi, ",\n", sep="")
+
+    # Print bg
+    cat("  bg = \"", export_config_params$bg, "\",\n", sep="")
+
+    # Print limitsize (last item, no comma)
+    cat("  limitsize = ", ifelse(export_config_params$limitsize, "TRUE", "FALSE"), "\n", sep="")
+
+    cat(")\n\n")
+    cat("# Example usage:\n")
+    cat("# comparison_plot(data, x_axis_from = \"REG\", export_config = export_config)\n")
+
+    return(invisible(export_config_params))
+  }
+
+  # Create a dataframe for as_dataframe = TRUE
   if (as_dataframe) {
-    # Create the dataframe
+    # Count the total number of parameters
+    params_count <- 6 # Number of export_config parameters
+
+    # Create vectors with the exact same length
+    topics <- character(params_count)
+    arguments <- character(params_count)
+    default_values <- character(params_count)
+    input_formats <- character(params_count)
+    descriptions <- character(params_count)
+    examples <- character(params_count)
+
+    # Fill in the values - all under "Export Config" topic
+    topics[1:params_count] <- c("Export Config", rep("", params_count-1))
+
+    # Parameters
+    arguments[1:params_count] <- c(
+      "file_name", "width", "height", "dpi", "bg", "limitsize"
+    )
+
+    # Default values
+    default_values[1:params_count] <- c(
+      "\"gtap_plots\"",
+      "NULL",
+      "NULL",
+      "300",
+      "\"white\"",
+      "FALSE"
+    )
+
+    # Input formats
+    input_formats[1:params_count] <- c(
+      "character",
+      "numeric or NULL",
+      "numeric or NULL",
+      "numeric",
+      "character",
+      "logical"
+    )
+
+    # Descriptions
+    descriptions[1:params_count] <- c(
+      "Base name for exported files. Default is 'gtap_plots'.",
+      "Plot width in inches. Default is automatically calculated.",
+      "Plot height in inches. Default is automatically calculated.",
+      "Resolution for PNG export. Default is 300.",
+      "Background color. Default is 'white'.",
+      "Whether to limit size. Default is FALSE."
+    )
+
+    # Examples
+    examples[1:params_count] <- c(
+      "file_name = \"regional_impacts\"",
+      "width = 12",
+      "height = 8",
+      "dpi = 600",
+      "bg = \"white\"",
+      "limitsize = FALSE"
+    )
+
+    # Create the result dataframe
     result <- data.frame(
-      Topic = character(),
-      Arguments = character(),
-      `Default Value` = character(),
-      `Input Format` = character(),
-      Description = character(),
-      Example = character(),
+      Topic = topics,
+      Arguments = arguments,
+      "Default Value" = default_values,
+      "Input Format" = input_formats,
+      Description = descriptions,
+      Example = examples,
       stringsAsFactors = FALSE
     )
 
-    # Add export_config params
-    current_topic <- "Export Config"
-    for (param in names(export_config_params)) {
-      param_value <- export_config_params[[param]]
-      param_type <- if (is.null(param_value)) "numeric" else class(param_value)[1]
-
-      example <- if (param == "file_name") {
-        'export_config = list(file_name = "regional_impacts")'
-      } else if (param == "width") {
-        "export_config = list(width = 12)"
-      } else if (param == "height") {
-        "export_config = list(height = 8)"
-      } else if (param == "dpi") {
-        "export_config = list(dpi = 600)"
-      } else if (param == "bg") {
-        'export_config = list(bg = "white")'
-      } else if (param == "limitsize") {
-        "export_config = list(limitsize = FALSE)"
-      }
-
-      val_text <- if (is.null(param_value)) "NULL" else
-        if (is.logical(param_value)) ifelse(param_value, "TRUE", "FALSE") else
-          param_value
-
-      # Only show "Export Config" in the first row
-      display_topic <- if (param == names(export_config_params)[1]) current_topic else ""
-
-      result <- rbind(result, data.frame(
-        Topic = display_topic,
-        Arguments = param,
-        `Default Value` = val_text,
-        `Input Format` = param_type,
-        Description = export_config_docs[[param]],
-        Example = example,
-        stringsAsFactors = FALSE
-      ))
-    }
+    # Assign to export_config in parent environment
+    assign("export_config", result, envir = parent.frame())
 
     return(result)
   }
 
-  # Return as list
-  full_config <- list(
+  # Return as a list
+  return(list(
     export_config = export_config_params,
     export_config_docs = export_config_docs
-  )
-
-  return(full_config)
+  ))
 }
 
 # PLOT STYLE CONFIG HELPERS -----------------------------------------
@@ -972,67 +1413,41 @@ get_export_config <- function(as_dataframe = TRUE) {
     style_config = NULL,
     data = NULL) {
 
-  # 1. DETERMINE BASE TITLE BASED ON PLOT TYPE AND PARAMETERS
-
-  # Handle potential duplication when split_by equals variable_col
-  has_duplicate = FALSE
-  if (!is.null(split_by) && !is.null(variable_col) && split_by == variable_col &&
-      !is.null(var_name) && !is.null(sep_value) && var_name == sep_value) {
-    has_duplicate = TRUE
-  }
-
-  # Also check for other duplication cases
-  if (!is.null(x_axis_from) && !is.null(variable_col) && x_axis_from == variable_col &&
-      !is.null(var_name) && !is.null(x_value) && var_name == x_value) {
-    has_duplicate = TRUE
-  }
-
-  # Create base title based on plot type
+  # DETERMINE BASE TITLE
   if (is_macro_mode) {
-    # For macro mode, just use the variable name
-    if (!is.null(var_name)) {
-      plot_title <- var_name
-    } else {
-      plot_title <- "Global Economic Impacts"
-    }
+    plot_title <- .coalesce(
+      var_name,
+      .coalesce(
+        if (!is.null(data) && variable_col %in% names(data))
+          unique(data[[variable_col]])[1],
+        "Global Economic Impacts"
+      )
+    )
   } else {
-    # For split modes with potential duplicates
-    if (has_duplicate) {
-      # Avoid duplication by using just one value
-      plot_title <- var_name
-    } else if (!is.null(sep_value) && !is.null(var_name)) {
-      # Normal case: combine split value and variable name
-      plot_title <- paste0(sep_value, " - ", var_name)
+    plot_title <- if (!is.null(sep_value) && !is.null(var_name)) {
+      paste0(sep_value, " - ", var_name)
     } else if (!is.null(sep_value)) {
-      # Only split value available
-      plot_title <- sep_value
+      sep_value
     } else if (!is.null(var_name)) {
-      # Only variable name available
-      plot_title <- var_name
+      var_name
     } else {
-      # Default fallback
-      plot_title <- "GTAP Analysis"
+      "GTAP Analysis"
     }
   }
 
-  # 2. APPLY TITLE FORMAT AND UNIT
-  if (!is.null(style_config)) {
-    # Get formatting settings
+  # APPLY TITLE FORMAT
+  if (!is.null(style_config$title_format)) {
     title_format <- style_config$title_format
-    add_unit_to_title <- style_config$add_unit_to_title
-  } else {
-    title_format <- NULL
-    add_unit_to_title <- FALSE
-  }
-
-  # Apply title formatting
-  if (!is.null(title_format)) {
     switch(title_format$type,
            "prefix" = {
-             plot_title <- paste0(title_format$text, " ", plot_title)
+             # Use separator if defined, otherwise use space
+             separator <- if (!is.null(title_format$sep)) title_format$sep else " "
+             plot_title <- paste0(title_format$text, separator, plot_title)
            },
            "suffix" = {
-             plot_title <- paste0(plot_title, " ", title_format$text)
+             # Use separator if defined, otherwise use space
+             separator <- if (!is.null(title_format$sep)) title_format$sep else " "
+             plot_title <- paste0(plot_title, separator, title_format$text)
            },
            "full" = {
              plot_title <- title_format$text
@@ -1061,8 +1476,8 @@ get_export_config <- function(as_dataframe = TRUE) {
     )
   }
 
-  # Add unit information if requested
-  if (add_unit_to_title && !is.null(unit_name)) {
+  # ADD UNIT IF CONFIGURED
+  if (style_config$add_unit_to_title && !is.null(unit_name)) {
     if (tolower(unit_name) == "percent") {
       plot_title <- paste0(plot_title, " (%)")
     } else {
@@ -1070,46 +1485,111 @@ get_export_config <- function(as_dataframe = TRUE) {
     }
   }
 
-  # 3. CLEAN THE TITLE - REMOVE DUPLICATES
-  title_parts <- unlist(strsplit(plot_title, " - |\\||,|;|\\s+"))
-  title_parts <- trimws(title_parts)
-  title_parts <- title_parts[title_parts != ""]
-
-  # Remove duplicates while preserving order
-  unique_parts <- character(0)
-  for (part in title_parts) {
-    if (!(part %in% unique_parts)) {
-      unique_parts <- c(unique_parts, part)
-    }
-  }
-
-  # Generate final clean title
-  clean_title <- paste(unique_parts, collapse = " - ")
-
-  # 4. CREATE EXPORT NAME
-  # For export name: replace spaces and invalid chars, normalize underscores
-  export_name <- gsub(" ", "_", clean_title)
-  export_name <- gsub("[\\/:*?\"<>|()%]", "_", export_name)
-  export_name <- gsub("__+", "_", export_name)
+  # CLEAN TITLE FOR EXPORT NAME
+  clean_title <- gsub("[^a-zA-Z0-9\\s]", "", plot_title)
+  export_name <- gsub("\\s+", "_", clean_title)
+  export_name <- gsub("_+", "_", export_name)
   export_name <- gsub("^_|_$", "", export_name)
 
-  # 5. ADD PLOT TYPE SUFFIX IF REQUESTED
+  # ADD PLOT TYPE SUFFIX
   if (!is.null(plot_type)) {
     if (plot_type == "stack") {
       export_name <- paste0(export_name, "_stack")
     } else if (plot_type == "unstack") {
       export_name <- paste0(export_name, "_unstack")
     }
-    # comparison and detail plots don't get suffixes
   }
 
-  # 6. RETURN THE RESULTS
   return(list(
-    title = clean_title,
+    title = plot_title,
     export_name = export_name
   ))
 }
 
+
+#' @title Prepare Data Source for Plotting
+#'
+#' @description
+#' Validates and extracts a suitable data frame from the provided input.
+#' Ensures that required columns exist before returning the data.
+#' Supports both single data frames and lists of data frames.
+#'
+#' @param data A data frame or a named list of data frames.
+#' @param x_axis_from Character. The column name to be used as the x-axis in plotting.
+#' @param stack_value_from Character or NULL. Optional column name for stacked values (used in stack plots).
+#' @param variable_col Character or NULL. Optional column name representing variable names.
+#'
+#' @return A validated data frame containing the required columns.
+#'
+#' @details
+#' If `data` is a single data frame, the function checks whether the required columns exist.
+#' If `data` is a list of data frames, it attempts to find the first data frame containing the required columns.
+#' If no suitable data frame is found, the function stops with an error.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+#'
+#' @examples
+#' \dontrun{
+#' # Example with a single data frame
+#' prepared_data <- .prepare_data_source(my_data, x_axis_from = "Region")
+#'
+#' # Example with a list of data frames
+#' prepared_data <- .prepare_data_source(list_data, x_axis_from = "Sector", stack_value_from = "Commodity")
+#' }
+#'
+.prepare_data_source <- function(data, x_axis_from,
+                                 stack_value_from = NULL,
+                                 variable_col = NULL) {
+  # If already a data frame, validate columns
+  if (is.data.frame(data)) {
+    # Check x_axis_from column
+    if (!(x_axis_from %in% names(data))) {
+      stop(paste("Required column", x_axis_from, "not found in the data frame."))
+    }
+
+    # Check stack_value_from if provided (for stack_plot)
+    if (!is.null(stack_value_from) && !(stack_value_from %in% names(data))) {
+      stop(paste("Required column", stack_value_from, "not found in the data frame."))
+    }
+
+    # Check variable_col if provided
+    if (!is.null(variable_col) && !(variable_col %in% names(data))) {
+      stop(paste("Required column", variable_col, "not found in the data frame."))
+    }
+
+    return(data)
+  }
+
+  # If a list of data frames, find first matching data frame
+  if (is.list(data)) {
+    for (df_name in names(data)) {
+      df <- data[[df_name]]
+      if (is.data.frame(df)) {
+        # Check x_axis_from column
+        if (x_axis_from %in% names(df)) {
+          # Check stack_value_from if provided
+          if (!is.null(stack_value_from) && !(stack_value_from %in% names(df))) {
+            next
+          }
+
+          # Check variable_col if provided
+          if (!is.null(variable_col) && !(variable_col %in% names(df))) {
+            next
+          }
+
+          return(df)
+        }
+      }
+    }
+
+    # If no suitable data frame found
+    stop(paste("No suitable data frame found with required column:", x_axis_from))
+  }
+
+  stop("Input must be a data frame or a list of data frames.")
+}
 
 # COLUMN HANDLING HELPERS -----------------------------------------
 #' @title Validate Column Parameters in Data Frame
@@ -1671,22 +2151,28 @@ get_export_config <- function(as_dataframe = TRUE) {
   # DETERMINE NUMBER OF PANELS
   num_panels <- length(unique(data[[panel_var]]))
 
-  # HANDLE WHEN ONLY ONE DIMENSION IS SPECIFIED
+  # CASE 1: Only panel_rows is specified (panel_cols is NULL)
   if (!is.null(panel_rows) && is.null(panel_cols)) {
     panel_cols <- ceiling(num_panels / panel_rows)
     return(list(rows = panel_rows, cols = panel_cols))
-  } else if (is.null(panel_rows) && !is.null(panel_cols)) {
+  }
+  # CASE 2: Only panel_cols is specified (panel_rows is NULL)
+  else if (is.null(panel_rows) && !is.null(panel_cols)) {
     panel_rows <- ceiling(num_panels / panel_cols)
     return(list(rows = panel_rows, cols = panel_cols))
-  } else if (!is.null(panel_rows) && !is.null(panel_cols)) {
+  }
+  # CASE 3: Both panel_rows and panel_cols are specified (neither is NULL)
+  else if (!is.null(panel_rows) && !is.null(panel_cols)) {
+    # Check if there are enough panels and adjust if needed
     if (panel_rows * panel_cols < num_panels) {
       warning("Provided dimensions insufficient. Adjusting columns to fit all panels.")
+      # Preferentially adjust columns to fit all panels
       panel_cols <- ceiling(num_panels / panel_rows)
     }
     return(list(rows = panel_rows, cols = panel_cols))
   }
 
-  # AUTO CALCULATE LAYOUT WHEN NEITHER DIMENSION IS SPECIFIED
+  # CASE 4: AUTO CALCULATE LAYOUT WHEN NEITHER DIMENSION IS SPECIFIED
   if (num_panels <= 1) {
     return(list(rows = 1, cols = 1))
   } else if (num_panels <= 3) {
@@ -1700,6 +2186,7 @@ get_export_config <- function(as_dataframe = TRUE) {
   } else if (num_panels <= 12) {
     return(list(rows = 3, cols = 4))
   } else {
+    # For larger numbers, try to find a balanced layout
     factors <- c()
     for (i in 1:sqrt(num_panels)) {
       if (num_panels %% i == 0) {
@@ -1712,13 +2199,15 @@ get_export_config <- function(as_dataframe = TRUE) {
       rows <- best_factor
       cols <- num_panels / best_factor
     } else {
+      # If not divisible evenly, use a layout that can fit all panels
       cols <- ceiling(sqrt(num_panels))
       rows <- ceiling(num_panels / cols)
     }
 
+    # Ensure layout is not too wide compared to height
     if (cols > 2 * rows) {
       new_cols <- ceiling(sqrt(num_panels))
-      new_rows <- ceiling(num_panels / new_cols)
+      new_rows <- ceiling(num_panels / new_rows)
       rows <- new_rows
       cols <- new_cols
     }
@@ -2024,5 +2513,6 @@ get_export_config <- function(as_dataframe = TRUE) {
   # Display dimensions at the end of export process
   .display_export_dimensions(list(width = export_config$width, height = export_config$height), plots, "end", export_config$dpi)
 
-  invisible(plots)
+  # Always return NULL invisibly to suppress output
+  return(invisible(NULL))
 }
