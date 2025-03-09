@@ -1,6 +1,6 @@
 Package: GTAPViz
 Title: Automating GTAP Data Processing and Visualization
-Version: 0.0.0.9000
+Version: 1.0.0
 Author: Pattawee Puangchit <ppuangch@purdue.edu>
 Authors@R: 
     person("Pattawee", "Puangchit", , "ppuangch@purdue.edu", role = c("aut", "cre"))
