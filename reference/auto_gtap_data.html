@@ -82,11 +82,11 @@
 
 
 <dt id="arg-input-path">input_path<a class="anchor" aria-label="anchor" href="#arg-input-path"></a></dt>
-<dd><p>Character. Path to the input folder. Overrides <code>project_path/in</code> if specified.</p></dd>
+<dd><p>Character. Path to the input folder. Overrides `project_path/in` if specified.</p></dd>
 
 
 <dt id="arg-output-path">output_path<a class="anchor" aria-label="anchor" href="#arg-output-path"></a></dt>
-<dd><p>Character. Path to the output folder. Overrides <code>project_path/out</code> if specified.</p></dd>
+<dd><p>Character. Path to the output folder. Overrides `project_path/out` if specified.</p></dd>
 
 
 <dt id="arg-sl-suffix">sl4_suffix<a class="anchor" aria-label="anchor" href="#arg-sl-suffix"></a></dt>
@@ -102,15 +102,15 @@
 
 
 <dt id="arg-process-sl-vars">process_sl4_vars<a class="anchor" aria-label="anchor" href="#arg-process-sl-vars"></a></dt>
-<dd><p>Data frame, NULL, or FALSE. Variables to extract from SL4 files.</p><ul><li><p>Set to NULL to extract all variables.</p></li>
-<li><p>Set to FALSE to skip SL4 processing.</p></li>
-</ul></dd>
+<dd><p>Data frame, NULL, or FALSE. Variables to extract from SL4 files.
+- Set to NULL to extract all variables.
+- Set to FALSE to skip SL4 processing.</p></dd>
 
 
 <dt id="arg-process-har-vars">process_har_vars<a class="anchor" aria-label="anchor" href="#arg-process-har-vars"></a></dt>
-<dd><p>Data frame, NULL, or FALSE. Variables to extract from HAR files.</p><ul><li><p>Set to NULL to extract all variables.</p></li>
-<li><p>Set to FALSE to skip HAR processing.</p></li>
-</ul></dd>
+<dd><p>Data frame, NULL, or FALSE. Variables to extract from HAR files.
+- Set to NULL to extract all variables.
+- Set to FALSE to skip HAR processing.</p></dd>
 
 
 <dt id="arg-sl-mapping-info">sl4_mapping_info<a class="anchor" aria-label="anchor" href="#arg-sl-mapping-info"></a></dt>
@@ -177,16 +177,16 @@
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function automates the workflow for processing GTAP model outputs,
 with flexible output options and optional filtering for region- and sector-specific data.</p>
-<p>The key parameters <code>process_sl4_vars</code> and <code>process_har_vars</code> accept three different input types:</p><ul><li><p><strong>Data frame</strong>: Contains variable mappings with required "Variable" column. When
-provided, only specified variables will be extracted.</p></li>
+<p>The key parameters `process_sl4_vars` and `process_har_vars` accept three different input types:</p><ul><li><p><strong>Data frame</strong>: Contains variable mappings with required "Variable" column. When
+        provided, only specified variables will be extracted.</p></li>
 <li><p><strong>NULL</strong>: Extracts all available variables from the respective file type.</p></li>
 <li><p><strong>FALSE</strong>: Completely skips processing of that file type, allowing
-the function to focus only on the other file type.</p></li>
-</ul><p>The <code>mapping_info</code> parameter controls how descriptions and units are assigned:</p><ul><li><p><strong>GTAPv7</strong>: Uses standard GTAPv7 definitions (default).</p></li>
-<li><p><strong>Yes</strong>: Uses only the supplied descriptions and units from <code>sl4_mapping_info</code> / <code>har_mapping_info</code>.</p></li>
+        the function to focus only on the other file type.</p></li>
+</ul><p>The `mapping_info` parameter controls how descriptions and units are assigned:</p><ul><li><p><strong>GTAPv7</strong>: Uses standard GTAPv7 definitions (default).</p></li>
+<li><p><strong>Yes</strong>: Uses only the supplied descriptions and units from `sl4_mapping_info` / `har_mapping_info`.</p></li>
 <li><p><strong>No</strong>: Does not add any descriptions or units.</p></li>
 <li><p><strong>Mix</strong>: Prioritizes supplied descriptions and units, falling back to GTAPv7
-for any missing values.</p></li>
+        for any missing values.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

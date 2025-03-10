@@ -87,19 +87,19 @@ Each dataset can have only one pivot column. Example:
 
 
 <dt id="arg-total-column">total_column<a class="anchor" aria-label="anchor" href="#arg-total-column"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, adds a "Total" column summing numeric values.</p></dd>
+<dd><p>Logical. If `TRUE`, adds a "Total" column summing numeric values.</p></dd>
 
 
 <dt id="arg-export-table">export_table<a class="anchor" aria-label="anchor" href="#arg-export-table"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, saves the output as an Excel file.</p></dd>
+<dd><p>Logical. If `TRUE`, saves the output as an Excel file.</p></dd>
 
 
 <dt id="arg-separate-file">separate_file<a class="anchor" aria-label="anchor" href="#arg-separate-file"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, saves each dataset as a separate Excel file.</p></dd>
+<dd><p>Logical. If `TRUE`, saves each dataset as a separate Excel file.</p></dd>
 
 
 <dt id="arg-output-path">output_path<a class="anchor" aria-label="anchor" href="#arg-output-path"></a></dt>
-<dd><p>Character. Directory for saving Excel files when <code>export_table = TRUE</code>.</p></dd>
+<dd><p>Character. Directory for saving Excel files when `export_table = TRUE`.</p></dd>
 
 
 <dt id="arg-sheet-names">sheet_names<a class="anchor" aria-label="anchor" href="#arg-sheet-names"></a></dt>
@@ -107,7 +107,7 @@ Each dataset can have only one pivot column. Example:
 
 
 <dt id="arg-include-units">include_units<a class="anchor" aria-label="anchor" href="#arg-include-units"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, includes "Unit" as a grouping column if applicable.</p></dd>
+<dd><p>Logical. If `TRUE`, includes "Unit" as a grouping column if applicable.</p></dd>
 
 
 <dt id="arg-component-exclude">component_exclude<a class="anchor" aria-label="anchor" href="#arg-component-exclude"></a></dt>
@@ -121,16 +121,16 @@ in each list determines the priority. Example:
 
 
 <dt id="arg-rename-cols">rename_cols<a class="anchor" aria-label="anchor" href="#arg-rename-cols"></a></dt>
-<dd><p>A named list for renaming columns across <strong>all</strong> datasets. Example:
+<dd><p>A named list for renaming columns across **all** datasets. Example:
 <code>rename_cols = list("REG" = "Region", "COMM" = "Commodities", "Experiment" = "Scenario")</code></p></dd>
 
 
 <dt id="arg-var-name-by-description">var_name_by_description<a class="anchor" aria-label="anchor" href="#arg-var-name-by-description"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, replaces variable codes with descriptions when available.</p></dd>
+<dd><p>Logical. If `TRUE`, replaces variable codes with descriptions when available.</p></dd>
 
 
 <dt id="arg-add-var-info">add_var_info<a class="anchor" aria-label="anchor" href="#arg-add-var-info"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, appends variable codes in parentheses after descriptions.</p></dd>
+<dd><p>Logical. If `TRUE`, appends variable codes in parentheses after descriptions.</p></dd>
 
 
 <dt id="arg-decimal">decimal<a class="anchor" aria-label="anchor" href="#arg-decimal"></a></dt>
@@ -147,11 +147,11 @@ value in the specified column gets its own sheet. Example: <code>separate_sheet_
 
 
 <dt id="arg-subtotal-level">subtotal_level<a class="anchor" aria-label="anchor" href="#arg-subtotal-level"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, includes all subtotal values; otherwise, keeps only <code>TOTAL</code> rows.</p></dd>
+<dd><p>Logical. If `TRUE`, includes all subtotal values; otherwise, keeps only `TOTAL` rows.</p></dd>
 
 
 <dt id="arg-repeat-label">repeat_label<a class="anchor" aria-label="anchor" href="#arg-repeat-label"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, repeats the first group column in exports for clarity.</p></dd>
+<dd><p>Logical. If `TRUE`, repeats the first group column in exports for clarity.</p></dd>
 
 
 <dt id="arg-workbook-name">workbook_name<a class="anchor" aria-label="anchor" href="#arg-workbook-name"></a></dt>
@@ -159,12 +159,12 @@ value in the specified column gets its own sheet. Example: <code>separate_sheet_
 
 
 <dt id="arg-add-group-line">add_group_line<a class="anchor" aria-label="anchor" href="#arg-add-group-line"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, adds a thin line after each group in the exported table.</p></dd>
+<dd><p>Logical. If `TRUE`, adds a thin line after each group in the exported table.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A named list of transformed data frames. If <code>export_table = TRUE</code>, tables are saved as Excel files.</p>
+    <p>A named list of transformed data frames. If `export_table = TRUE`, tables are saved as Excel files.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

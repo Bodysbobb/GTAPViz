@@ -80,11 +80,11 @@ existing column names, and values are new column names.</p></dd>
 
 
 <dt id="arg-total-column">total_column<a class="anchor" aria-label="anchor" href="#arg-total-column"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, adds a "Total" column that sums all numeric columns. Default is <code>FALSE</code>.</p></dd>
+<dd><p>Logical. If `TRUE`, adds a "Total" column that sums all numeric columns. Default is `FALSE`.</p></dd>
 
 
 <dt id="arg-decimal">decimal<a class="anchor" aria-label="anchor" href="#arg-decimal"></a></dt>
-<dd><p>Numeric. Number of decimal places to round numeric columns. Default is <code>2</code>.</p></dd>
+<dd><p>Numeric. Number of decimal places to round numeric columns. Default is `2`.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -96,11 +96,12 @@ renamed columns, and rounded numeric values.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function preserves important grouping columns while converting a data frame into wide format.
 It also ensures numeric columns are properly rounded and formatted, and allows renaming of specific
-grouping variables for clearer reporting.</p><ul><li><p>If <code>total_column = TRUE</code>, the function calculates the total of all numeric columns and
-adds a <code>"Total"</code> column.</p></li>
-<li><p>If <code>rename_mapping</code> is provided, the function renames matching columns.</p></li>
-<li><p>Sorting is applied to ensure proper column arrangement.</p></li>
-</ul></div>
+grouping variables for clearer reporting.</p>
+<p>- If `total_column = TRUE`, the function calculates the total of all numeric columns and
+  adds a `"Total"` column.
+- If `rename_mapping` is provided, the function renames matching columns.
+- Sorting is applied to ensure proper column arrangement.</p>
+    </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Pattawee Puangchit</p>

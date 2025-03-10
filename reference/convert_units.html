@@ -71,19 +71,19 @@ Supports manual and automatic conversions for economic and trade-related metrics
 
 
 <dt id="arg-change-unit-to">change_unit_to<a class="anchor" aria-label="anchor" href="#arg-change-unit-to"></a></dt>
-<dd><p>Character vector. Target units corresponding to <code>change_unit_from</code>.</p></dd>
+<dd><p>Character vector. Target units corresponding to `change_unit_from`.</p></dd>
 
 
 <dt id="arg-adjustment">adjustment<a class="anchor" aria-label="anchor" href="#arg-adjustment"></a></dt>
-<dd><p>Character or numeric vector. Specifies conversion operations (e.g., <code>"/1000"</code> to convert million to billion).</p></dd>
+<dd><p>Character or numeric vector. Specifies conversion operations (e.g., `"/1000"` to convert million to billion).</p></dd>
 
 
 <dt id="arg-value-col">value_col<a class="anchor" aria-label="anchor" href="#arg-value-col"></a></dt>
-<dd><p>Character. Column name containing values to adjust (default: <code>"Value"</code>).</p></dd>
+<dd><p>Character. Column name containing values to adjust (default: `"Value"`).</p></dd>
 
 
 <dt id="arg-unit-col">unit_col<a class="anchor" aria-label="anchor" href="#arg-unit-col"></a></dt>
-<dd><p>Character. Column name containing unit information (default: <code>"Unit"</code>).</p></dd>
+<dd><p>Character. Column name containing unit information (default: `"Unit"`).</p></dd>
 
 
 <dt id="arg-variable-select">variable_select<a class="anchor" aria-label="anchor" href="#arg-variable-select"></a></dt>
@@ -91,15 +91,15 @@ Supports manual and automatic conversions for economic and trade-related metrics
 
 
 <dt id="arg-variable-col">variable_col<a class="anchor" aria-label="anchor" href="#arg-variable-col"></a></dt>
-<dd><p>Character. Column name containing variable identifiers (default: <code>"Variable"</code>).</p></dd>
+<dd><p>Character. Column name containing variable identifiers (default: `"Variable"`).</p></dd>
 
 
 <dt id="arg-scale-auto">scale_auto<a class="anchor" aria-label="anchor" href="#arg-scale-auto"></a></dt>
-<dd><p>Optional character vector of predefined conversion rules:</p><ul><li><p><code>"mil2bil"</code>: Converts million USD to billion USD (divides by 1000).</p></li>
-<li><p><code>"bil2mil"</code>: Converts billion USD to million USD (multiplies by 1000).</p></li>
-<li><p><code>"pct2frac"</code>: Converts percent to fraction (divides by 100).</p></li>
-<li><p><code>"frac2pct"</code>: Converts fraction to percent (multiplies by 100).</p></li>
-</ul></dd>
+<dd><p>Optional character vector of predefined conversion rules:
+- `"mil2bil"`: Converts million USD to billion USD (divides by 1000).
+- `"bil2mil"`: Converts billion USD to million USD (multiplies by 1000).
+- `"pct2frac"`: Converts percent to fraction (divides by 100).
+- `"frac2pct"`: Converts fraction to percent (multiplies by 100).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -108,7 +108,7 @@ Supports manual and automatic conversions for economic and trade-related metrics
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If both <code>change_unit_from</code> and <code>scale_auto</code> are provided, the function prompts the user
+    <p>If both `change_unit_from` and `scale_auto` are provided, the function prompts the user
 to choose between manual and automatic conversion.</p>
     </div>
     <div class="section level2">

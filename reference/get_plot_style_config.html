@@ -94,142 +94,90 @@ Otherwise, returns a list with all configuration settings.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function applies default styling for different types of plots and allows users to customize the appearance.
-The parameters are grouped as follows:</p><div class="section">
-<h3 id="title-settings"><strong>Title Settings</strong><a class="anchor" aria-label="anchor" href="#title-settings"></a></h3>
-
-<ul><li><p><code>show_title</code>: Logical. Show or hide the plot title. Default: <code>TRUE</code></p></li>
-<li><p><code>title_face</code>: Character. Font face (<code>"bold"</code>, <code>"plain"</code>, <code>"italic"</code>). Default: <code>"bold"</code></p></li>
-<li><p><code>title_size</code>: Numeric. Font size of title. Default: <code>20</code></p></li>
-<li><p><code>title_hjust</code>: Numeric. Horizontal alignment (0 = left, 1 = right). Default: <code>0.5</code></p></li>
-<li><p><code>add_unit_to_title</code>: Logical. Append unit to title if applicable. Default: <code>TRUE</code></p></li>
-<li><p><code>title_margin</code>: ggplot2 <code>margin()</code> object. Default: <code>ggplot2::margin(10, 0, 10, 0)</code></p></li>
-<li><p><code>title_format</code>: List or NULL. Formatting options for the title, with elements:</p><ul><li><p><code>type</code>: Character. One of "prefix", "suffix", "full", or "dynamic".</p></li>
+The parameters are grouped as follows:</p>
+<p>## **Title Settings**
+- `show_title`: Logical. Show or hide the plot title. Default: `TRUE`
+- `title_face`: Character. Font face (`"bold"`, `"plain"`, `"italic"`). Default: `"bold"`
+- `title_size`: Numeric. Font size of title. Default: `20`
+- `title_hjust`: Numeric. Horizontal alignment (0 = left, 1 = right). Default: `0.5`
+- `add_unit_to_title`: Logical. Append unit to title if applicable. Default: `TRUE`
+- `title_margin`: ggplot2 `margin()` object. Default: `ggplot2::margin(10, 0, 10, 0)`
+- `title_format`: List or NULL. Formatting options for the title, with elements:</p><ul><li><p><code>type</code>: Character. One of "prefix", "suffix", "full", or "dynamic".</p></li>
 <li><p><code>text</code>: Character. Text to add, or column names used for dynamic titles.</p></li>
 <li><p><code>sep</code>: Character. Separator used for dynamic titles. Default: " - ".</p></li>
-</ul></li>
-</ul></div>
-
-<div class="section">
-<h3 id="x-axis-settings"><strong>X-Axis Settings</strong><a class="anchor" aria-label="anchor" href="#x-axis-settings"></a></h3>
-
-<ul><li><p><code>show_x_axis_title</code>: Logical. Show or hide x-axis title. Default: <code>FALSE</code></p></li>
-<li><p><code>x_axis_title_face</code>: Character. Font face for x-axis title. Default: <code>"bold"</code></p></li>
-<li><p><code>x_axis_title_size</code>: Numeric. Font size of x-axis title. Default: <code>16</code></p></li>
-<li><p><code>x_axis_title_margin</code>: ggplot2 <code>margin()</code>. Default: <code>ggplot2::margin(t = 20)</code></p></li>
-<li><p><code>show_x_axis_labels</code>: Logical. Show or hide x-axis labels. Default: <code>TRUE</code></p></li>
-<li><p><code>x_axis_text_face</code>: Character. Font face for x-axis labels. Default: <code>"bold"</code></p></li>
-<li><p><code>x_axis_text_size</code>: Numeric. Font size of x-axis labels. Default: <code>14</code></p></li>
-<li><p><code>x_axis_text_angle</code>: Numeric. Angle of x-axis labels. Default: <code>45</code></p></li>
-<li><p><code>x_axis_text_hjust</code>: Numeric. Horizontal justification of x-axis labels. Default: <code>1</code></p></li>
-<li><p><code>x_axis_description</code>: Character. Optional description for the x-axis. Default: <code>""</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="y-axis-settings"><strong>Y-Axis Settings</strong><a class="anchor" aria-label="anchor" href="#y-axis-settings"></a></h3>
-
-<ul><li><p><code>show_y_axis_title</code>: Logical. Show or hide y-axis title. Default: <code>TRUE</code></p></li>
-<li><p><code>y_axis_title_face</code>: Character. Font face for y-axis title. Default: <code>"bold"</code></p></li>
-<li><p><code>y_axis_title_size</code>: Numeric. Font size of y-axis title. Default: <code>16</code></p></li>
-<li><p><code>y_axis_title_margin</code>: ggplot2 <code>margin()</code>. Default: <code>ggplot2::margin(r = 20)</code></p></li>
-<li><p><code>show_y_axis_labels</code>: Logical. Show or hide y-axis labels. Default: <code>TRUE</code></p></li>
-<li><p><code>y_axis_text_face</code>: Character. Font face for y-axis labels. Default: <code>"plain"</code></p></li>
-<li><p><code>y_axis_text_size</code>: Numeric. Font size of y-axis labels. Default: <code>14</code></p></li>
-<li><p><code>y_axis_text_angle</code>: Numeric. Angle of y-axis labels. Default: <code>0</code></p></li>
-<li><p><code>y_axis_text_hjust</code>: Numeric. Horizontal justification of y-axis labels. Default: <code>0</code></p></li>
-<li><p><code>y_axis_description</code>: Character. Optional description for the y-axis. Default: <code>""</code></p></li>
-<li><p><code>show_axis_titles_on_all_facets</code>: Logical. Show axis titles on all facets. Default: <code>TRUE</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="value-label-settings"><strong>Value Label Settings</strong><a class="anchor" aria-label="anchor" href="#value-label-settings"></a></h3>
-
-<ul><li><p><code>show_value_labels</code>: Logical. Show or hide value labels. Default: <code>TRUE</code></p></li>
-<li><p><code>value_label_face</code>: Character. Font face for value labels. Default: <code>"plain"</code></p></li>
-<li><p><code>value_label_size</code>: Numeric. Font size of value labels. Default: <code>5</code></p></li>
-<li><p><code>value_label_position</code>: Character. Position of value labels (<code>"above"</code>, <code>"outside"</code>, <code>"top"</code>). Default: <code>"above"</code></p></li>
-<li><p><code>value_label_decimal_places</code>: Numeric. Number of decimal places in value labels. Default: <code>2</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="legend-settings"><strong>Legend Settings</strong><a class="anchor" aria-label="anchor" href="#legend-settings"></a></h3>
-
-<ul><li><p><code>show_legend</code>: Logical. Show or hide legend. Default: <code>FALSE</code></p></li>
-<li><p><code>show_legend_title</code>: Logical. Show or hide legend title. Default: <code>FALSE</code></p></li>
-<li><p><code>legend_position</code>: Character. Legend position (<code>"none"</code>, <code>"bottom"</code>, <code>"right"</code>). Default: <code>"none"</code></p></li>
-<li><p><code>legend_title_face</code>: Character. Font face for legend title. Default: <code>"bold"</code></p></li>
-<li><p><code>legend_text_face</code>: Character. Font face for legend text. Default: <code>"plain"</code></p></li>
-<li><p><code>legend_text_size</code>: Numeric. Font size for legend text. Default: <code>14</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="panel-strip-settings"><strong>Panel Strip Settings</strong><a class="anchor" aria-label="anchor" href="#panel-strip-settings"></a></h3>
-
-<ul><li><p><code>strip_face</code>: Character. Font face for panel strip. Default: <code>"bold"</code></p></li>
-<li><p><code>strip_text_size</code>: Numeric. Font size for panel strip. Default: <code>16</code></p></li>
-<li><p><code>strip_background</code>: Character. Background color of strip. Default: <code>"lightgrey"</code></p></li>
-<li><p><code>strip_text_margin</code>: ggplot2 <code>margin()</code>. Default: <code>ggplot2::margin(10, 0, 10, 0)</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="panel-layout"><strong>Panel Layout</strong><a class="anchor" aria-label="anchor" href="#panel-layout"></a></h3>
-
-<ul><li><p><code>panel_spacing</code>: Numeric. Spacing between panels. Default: <code>2</code></p></li>
-<li><p><code>panel_rows</code>: Numeric or <code>NULL</code>. Number of rows in panel layout. Default: <code>NULL</code></p></li>
-<li><p><code>panel_cols</code>: Numeric or <code>NULL</code>. Number of columns in panel layout. Default: <code>NULL</code></p></li>
-<li><p><code>theme</code>: ggplot2 theme object or <code>NULL</code>. Custom ggplot theme. Default: <code>NULL</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="color-settings"><strong>Color Settings</strong><a class="anchor" aria-label="anchor" href="#color-settings"></a></h3>
-
-<ul><li><p><code>color_tone</code>: Character or <code>NULL</code>. Base color theme. Default: <code>NULL</code></p></li>
-<li><p><code>positive_color</code>: Character. Color for positive values. Default: <code>"#2E8B57"</code></p></li>
-<li><p><code>negative_color</code>: Character. Color for negative values. Default: <code>"#CD5C5C"</code></p></li>
-<li><p><code>background_color</code>: Character. Background color of plot. Default: <code>"white"</code></p></li>
-<li><p><code>grid_color</code>: Character. Color of grid lines. Default: <code>"grey90"</code></p></li>
-<li><p><code>show_grid_major_x</code>: Logical. Show major grid lines on x-axis. Default: <code>FALSE</code></p></li>
-<li><p><code>show_grid_major_y</code>: Logical. Show major grid lines on y-axis. Default: <code>TRUE</code></p></li>
-<li><p><code>show_grid_minor_x</code>: Logical. Show minor grid lines on x-axis. Default: <code>FALSE</code></p></li>
-<li><p><code>show_grid_minor_y</code>: Logical. Show minor grid lines on y-axis. Default: <code>FALSE</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="zero-line-settings"><strong>Zero Line Settings</strong><a class="anchor" aria-label="anchor" href="#zero-line-settings"></a></h3>
-
-<ul><li><p><code>show_zero_line</code>: Logical. Show or hide zero line. Default: <code>TRUE</code></p></li>
-<li><p><code>zero_line_type</code>: Character. Line type (<code>"solid"</code>, <code>"dashed"</code>, <code>"dotted"</code>). Default: <code>"dashed"</code></p></li>
-<li><p><code>zero_line_color</code>: Character. Color of zero line. Default: <code>"black"</code></p></li>
-<li><p><code>zero_line_size</code>: Numeric. Line thickness of zero line. Default: <code>0.5</code></p></li>
-<li><p><code>zero_line_position</code>: Numeric. Position of the zero line. Default: <code>0</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="bar-chart-settings"><strong>Bar Chart Settings</strong><a class="anchor" aria-label="anchor" href="#bar-chart-settings"></a></h3>
-
-<ul><li><p><code>bar_width</code>: Numeric. Width of bars. Default: <code>0.9</code></p></li>
-<li><p><code>bar_spacing</code>: Numeric. Spacing between bars. Default: <code>0.9</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="scale-settings"><strong>Scale Settings</strong><a class="anchor" aria-label="anchor" href="#scale-settings"></a></h3>
-
-<ul><li><p><code>scale_limit</code>: Numeric vector of length 2. Manual limits for value axis. Example: <code>c(-10, 10)</code></p></li>
-<li><p><code>scale_increment</code>: Numeric. Step size for axis tick marks. Example: <code>2</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="scale-expansion-settings"><strong>Scale Expansion Settings</strong><a class="anchor" aria-label="anchor" href="#scale-expansion-settings"></a></h3>
-
-<ul><li><p><code>expansion_y_mult</code>: Numeric vector. Y-axis expansion. Default: <code>c(0.05, 0.1)</code></p></li>
-<li><p><code>expansion_x_mult</code>: Numeric vector. X-axis expansion. Default: <code>c(0.05, 0.05)</code></p></li>
-</ul></div>
-
-<div class="section">
-<h3 id="all-font-adjustment"><strong>All Font Adjustment</strong><a class="anchor" aria-label="anchor" href="#all-font-adjustment"></a></h3>
-
-<ul><li><p><code>all_font_size</code>: Numeric. Master control for all font sizes. Default: <code>1</code></p></li>
-</ul></div>
-
+</ul><p>## **X-Axis Settings**
+- `show_x_axis_title`: Logical. Show or hide x-axis title. Default: `FALSE`
+- `x_axis_title_face`: Character. Font face for x-axis title. Default: `"bold"`
+- `x_axis_title_size`: Numeric. Font size of x-axis title. Default: `16`
+- `x_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(t = 20)`
+- `show_x_axis_labels`: Logical. Show or hide x-axis labels. Default: `TRUE`
+- `x_axis_text_face`: Character. Font face for x-axis labels. Default: `"bold"`
+- `x_axis_text_size`: Numeric. Font size of x-axis labels. Default: `14`
+- `x_axis_text_angle`: Numeric. Angle of x-axis labels. Default: `45`
+- `x_axis_text_hjust`: Numeric. Horizontal justification of x-axis labels. Default: `1`
+- `x_axis_description`: Character. Optional description for the x-axis. Default: `""`</p>
+<p>## **Y-Axis Settings**
+- `show_y_axis_title`: Logical. Show or hide y-axis title. Default: `TRUE`
+- `y_axis_title_face`: Character. Font face for y-axis title. Default: `"bold"`
+- `y_axis_title_size`: Numeric. Font size of y-axis title. Default: `16`
+- `y_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(r = 20)`
+- `show_y_axis_labels`: Logical. Show or hide y-axis labels. Default: `TRUE`
+- `y_axis_text_face`: Character. Font face for y-axis labels. Default: `"plain"`
+- `y_axis_text_size`: Numeric. Font size of y-axis labels. Default: `14`
+- `y_axis_text_angle`: Numeric. Angle of y-axis labels. Default: `0`
+- `y_axis_text_hjust`: Numeric. Horizontal justification of y-axis labels. Default: `0`
+- `y_axis_description`: Character. Optional description for the y-axis. Default: `""`
+- `show_axis_titles_on_all_facets`: Logical. Show axis titles on all facets. Default: `TRUE`</p>
+<p>## **Value Label Settings**
+- `show_value_labels`: Logical. Show or hide value labels. Default: `TRUE`
+- `value_label_face`: Character. Font face for value labels. Default: `"plain"`
+- `value_label_size`: Numeric. Font size of value labels. Default: `5`
+- `value_label_position`: Character. Position of value labels (`"above"`, `"outside"`, `"top"`). Default: `"above"`
+- `value_label_decimal_places`: Numeric. Number of decimal places in value labels. Default: `2`</p>
+<p>## **Legend Settings**
+- `show_legend`: Logical. Show or hide legend. Default: `FALSE`
+- `show_legend_title`: Logical. Show or hide legend title. Default: `FALSE`
+- `legend_position`: Character. Legend position (`"none"`, `"bottom"`, `"right"`). Default: `"none"`
+- `legend_title_face`: Character. Font face for legend title. Default: `"bold"`
+- `legend_text_face`: Character. Font face for legend text. Default: `"plain"`
+- `legend_text_size`: Numeric. Font size for legend text. Default: `14`</p>
+<p>## **Panel Strip Settings**
+- `strip_face`: Character. Font face for panel strip. Default: `"bold"`
+- `strip_text_size`: Numeric. Font size for panel strip. Default: `16`
+- `strip_background`: Character. Background color of strip. Default: `"lightgrey"`
+- `strip_text_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(10, 0, 10, 0)`</p>
+<p>## **Panel Layout**
+- `panel_spacing`: Numeric. Spacing between panels. Default: `2`
+- `panel_rows`: Numeric or `NULL`. Number of rows in panel layout. Default: `NULL`
+- `panel_cols`: Numeric or `NULL`. Number of columns in panel layout. Default: `NULL`
+- `theme`: ggplot2 theme object or `NULL`. Custom ggplot theme. Default: `NULL`</p>
+<p>## **Color Settings**
+- `color_tone`: Character or `NULL`. Base color theme. Default: `NULL`
+- `positive_color`: Character. Color for positive values. Default: `"#2E8B57"`
+- `negative_color`: Character. Color for negative values. Default: `"#CD5C5C"`
+- `background_color`: Character. Background color of plot. Default: `"white"`
+- `grid_color`: Character. Color of grid lines. Default: `"grey90"`
+- `show_grid_major_x`: Logical. Show major grid lines on x-axis. Default: `FALSE`
+- `show_grid_major_y`: Logical. Show major grid lines on y-axis. Default: `TRUE`
+- `show_grid_minor_x`: Logical. Show minor grid lines on x-axis. Default: `FALSE`
+- `show_grid_minor_y`: Logical. Show minor grid lines on y-axis. Default: `FALSE`</p>
+<p>## **Zero Line Settings**
+- `show_zero_line`: Logical. Show or hide zero line. Default: `TRUE`
+- `zero_line_type`: Character. Line type (`"solid"`, `"dashed"`, `"dotted"`). Default: `"dashed"`
+- `zero_line_color`: Character. Color of zero line. Default: `"black"`
+- `zero_line_size`: Numeric. Line thickness of zero line. Default: `0.5`
+- `zero_line_position`: Numeric. Position of the zero line. Default: `0`</p>
+<p>## **Bar Chart Settings**
+- `bar_width`: Numeric. Width of bars. Default: `0.9`
+- `bar_spacing`: Numeric. Spacing between bars. Default: `0.9`</p>
+<p>## **Scale Settings**
+- `scale_limit`: Numeric vector of length 2. Manual limits for value axis. Example: `c(-10, 10)`
+- `scale_increment`: Numeric. Step size for axis tick marks. Example: `2`</p>
+<p>## **Scale Expansion Settings**
+- `expansion_y_mult`: Numeric vector. Y-axis expansion. Default: `c(0.05, 0.1)`
+- `expansion_x_mult`: Numeric vector. X-axis expansion. Default: `c(0.05, 0.05)`</p>
+<p>## **All Font Adjustment**
+- `all_font_size`: Numeric. Master control for all font sizes. Default: `1`</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
