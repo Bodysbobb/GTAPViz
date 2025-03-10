@@ -32,7 +32,7 @@ For full details on how to use this package and explore practical examples, see 
 
 For the R reference manual, see the [GTAPViz Reference Manual](https://github.com/Bodysbobb/GTAPViz/blob/main/inst/docs/GTAPViz_1.0.0.pdf).
 
-## **License & Author ** 
+## **License & Author** 
 
 GTAPViz is released under the **MIT License**. See the full **[license](LICENSE)**.  
 
