@@ -20,10 +20,15 @@ With intuitive commands and automated adjustments, users can create, customize, 
 
 ## **Installation**
 
-GTAPViz can be installedfrom GitHub using the following command:
+GTAPViz can be installed from GitHub using the following command in R:
 
 ```r
 devtools::install_github("Bodysbobb/GTAPViz")
+```
+
+Then, you can access the package manual using:
+```r
+help(package = "GTAPViz")
 ```
 
 ## **Comprehensive Documentation** 
