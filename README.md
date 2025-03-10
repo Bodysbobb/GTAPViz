@@ -18,7 +18,7 @@ With intuitive commands and automated adjustments, users can create, customize, 
 - **Comprehensive Documentation** – Includes a vignette and built-in help functions covering all customization options—no need to search online.  
 
 
-## **Installation ** 
+## **Installation**
 
 GTAPViz can be installedfrom GitHub using the following command:
 
