@@ -16,8 +16,8 @@ sort_plot_data(
 
 \item{cols}{Named list. Specifies columns to sort by and their ordering.
 Each element should be a character vector of values in desired order.
-For example, \verb{list(Region = c("USA", "EU", "CHN")},
-\verb{Experiment = c("Base", "Shock1", "Shock2"))}.}
+For example, `list(Region = c("USA", "EU", "CHN")`,
+                  `Experiment = c("Base", "Shock1", "Shock2"))`.}
 
 \item{sort_by_value_desc}{Logical or NULL. Controls sorting by the "Value" column:
 - NULL (default): Don't sort by value, only use column-based sorting.

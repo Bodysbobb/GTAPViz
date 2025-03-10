@@ -20,16 +20,13 @@ Otherwise, returns a list with configuration settings.
 Returns documentation and default values for export configuration options used in plotting functions.
 }
 \details{
-\subsection{\strong{Export Configuration Parameters}}{
-\itemize{
-\item \code{file_name}: Character. Base name for exported files. Default: \code{"gtap_plots"}
-\item \code{width}: Numeric or \code{NULL}. Plot width in inches. Default: \code{NULL} (automatically calculated)
-\item \code{height}: Numeric or \code{NULL}. Plot height in inches. Default: \code{NULL} (automatically calculated)
-\item \code{dpi}: Numeric. Resolution for PNG export. Default: \code{300}
-\item \code{bg}: Character. Background color. Default: \code{"white"}
-\item \code{limitsize}: Logical. Whether to limit size. Default: \code{FALSE}
-}
-}
+## **Export Configuration Parameters**
+- `file_name`: Character. Base name for exported files. Default: `"gtap_plots"`
+- `width`: Numeric or `NULL`. Plot width in inches. Default: `NULL` (automatically calculated)
+- `height`: Numeric or `NULL`. Plot height in inches. Default: `NULL` (automatically calculated)
+- `dpi`: Numeric. Resolution for PNG export. Default: `300`
+- `bg`: Character. Background color. Default: `"white"`
+- `limitsize`: Logical. Whether to limit size. Default: `FALSE`
 }
 \examples{
 # Get export configuration as list

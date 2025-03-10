@@ -18,16 +18,14 @@ add_mapping_info(
 \item{external_map}{Optional data frame with mapping information (must include "Variable", "Description", and "Unit" columns).}
 
 \item{mapping}{Character. Mapping mode:
-\itemize{
-\item \code{"GTAPv7"} (default): Uses standard GTAPv7 definitions.
-\item \code{"Yes"}: Uses only the supplied descriptions and units from \code{external_map}.
-\item \code{"No"}: Does not add any descriptions or units.
-\item \code{"Mix"}: Prioritizes \code{external_map}, but falls back to GTAPv7 for missing values.
-}}
+- `"GTAPv7"` (default): Uses standard GTAPv7 definitions.
+- `"Yes"`: Uses only the supplied descriptions and units from `external_map`.
+- `"No"`: Does not add any descriptions or units.
+- `"Mix"`: Prioritizes `external_map`, but falls back to GTAPv7 for missing values.}
 
-\item{description_info}{Logical. If \code{TRUE}, adds description information to the data.}
+\item{description_info}{Logical. If `TRUE`, adds description information to the data.}
 
-\item{unit_info}{Logical. If \code{TRUE}, adds unit information to the data.}
+\item{unit_info}{Logical. If `TRUE`, adds unit information to the data.}
 }
 \value{
 A data structure with added mapping information, preserving the original structure.

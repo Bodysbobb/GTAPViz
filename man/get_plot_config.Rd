@@ -25,9 +25,9 @@ and pasted to recreate the configuration. Default is FALSE.}
 \value{
 A list with two components:
 \itemize{
-\item \code{plot_style_config}: Plot style configuration(s). If \code{plot_style="all"}, contains
-a nested list with configurations for all styles.
-\item \code{export_config}: Export configuration as a data frame.
+  \item \code{plot_style_config}: Plot style configuration(s). If \code{plot_style="all"}, contains
+        a nested list with configurations for all styles.
+  \item \code{export_config}: Export configuration as a data frame.
 }
 }
 \description{

@@ -23,9 +23,9 @@
 \item{rename_mapping}{Named list. Specifies mapping for renaming grouping columns, where names are
 existing column names, and values are new column names.}
 
-\item{total_column}{Logical. If \code{TRUE}, adds a "Total" column that sums all numeric columns. Default is \code{FALSE}.}
+\item{total_column}{Logical. If `TRUE`, adds a "Total" column that sums all numeric columns. Default is `FALSE`.}
 
-\item{decimal}{Numeric. Number of decimal places to round numeric columns. Default is \code{2}.}
+\item{decimal}{Numeric. Number of decimal places to round numeric columns. Default is `2`.}
 }
 \value{
 A wide-format data frame with transformed column headers, optional total values,
@@ -40,12 +40,11 @@ are preserved while transforming the data into a structured table for reporting.
 This function preserves important grouping columns while converting a data frame into wide format.
 It also ensures numeric columns are properly rounded and formatted, and allows renaming of specific
 grouping variables for clearer reporting.
-\itemize{
-\item If \code{total_column = TRUE}, the function calculates the total of all numeric columns and
-adds a \code{"Total"} column.
-\item If \code{rename_mapping} is provided, the function renames matching columns.
-\item Sorting is applied to ensure proper column arrangement.
-}
+
+- If `total_column = TRUE`, the function calculates the total of all numeric columns and
+  adds a `"Total"` column.
+- If `rename_mapping` is provided, the function renames matching columns.
+- Sorting is applied to ensure proper column arrangement.
 }
 \author{
 Pattawee Puangchit

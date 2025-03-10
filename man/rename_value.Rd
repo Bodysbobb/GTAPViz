@@ -9,9 +9,9 @@ rename_value(data, column_name = NULL, mapping.file)
 \arguments{
 \item{data}{Data structure (data frame, list, or nested combination).}
 
-\item{column_name}{Character. Column to modify. If \code{NULL}, the function extracts it from \code{mapping.file}.}
+\item{column_name}{Character. Column to modify. If `NULL`, the function extracts it from `mapping.file`.}
 
-\item{mapping.file}{Data frame with \code{"OldName"} and \code{"NewName"} columns for renaming.}
+\item{mapping.file}{Data frame with `"OldName"` and `"NewName"` columns for renaming.}
 }
 \value{
 The same data structure with specified values replaced.

@@ -27,8 +27,8 @@ comparison_plot(
 \arguments{
 \item{data}{A data frame or a list of data frames containing GTAP results.}
 
-\item{filter_var}{Vector or data frame. If a vector, filters the values in \code{x_axis_from}.
-If a data frame, filters \code{value_col} based on matching \code{variable_col} values.}
+\item{filter_var}{Vector or data frame. If a vector, filters the values in `x_axis_from`.
+If a data frame, filters `value_col` based on matching `variable_col` values.}
 
 \item{x_axis_from}{Character. Column name for x-axis categories (e.g., "REG", "Sector").}
 
@@ -59,12 +59,12 @@ Set to NULL for no splitting, suitable for macro-level analysis.}
 
 \item{export_config}{List. Export settings, including:
 \itemize{
-\item \code{width}: Output file width (in inches).
-\item \code{height}: Output file height (in inches).
-\item Additional settings—see \code{?get_export_config}.
+  \item `width`: Output file width (in inches).
+  \item `height`: Output file height (in inches).
+  \item Additional settings—see `?get_export_config`.
 }}
 
-\item{plot_style_config}{List. Custom plot styles—see \code{?get_plot_style_config}.}
+\item{plot_style_config}{List. Custom plot styles—see `?get_plot_style_config`.}
 }
 \value{
 A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.

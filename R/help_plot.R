@@ -1060,14 +1060,14 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
 #' @examples
 #' \dontrun{
 #' # Print & visualize a specific palette
-#' print_palette_colors("winter")
+#' get_color_palette("winter")
 #'
 #' # Print & visualize another palette with different types
-#' print_palette_colors("fall", "sequential")
-#' print_palette_colors("academic", "diverging")
+#' get_color_palette("fall", "sequential")
+#' get_color_palette("academic", "diverging")
 #'
 #' # Get all palettes as a list of callable functions
-#' all_palettes <- print_palette_colors("all")
+#' all_palettes <- get_color_palette("all")
 #'
 #' # Click or call a specific palette function to view its colors
 #' all_palettes$winter()   # View the winter palette
@@ -1077,7 +1077,7 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
 #'
 #' @export
 #'
-print_palette_colors <- function(color_tone = NULL, palette_type = "qualitative") {
+get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   # Define available themes
   available_palettes <- c(
     "academic", "purdue", "colorblind", "economic", "trade", "gtap", "gtap2",
@@ -1090,7 +1090,7 @@ print_palette_colors <- function(color_tone = NULL, palette_type = "qualitative"
     for (palette in available_palettes) {
       plot_list[[palette]] <- local({
         pal <- palette  # Store the palette name (to prevent overwriting issues)
-        function() { print_palette_colors(pal, palette_type) }
+        function() { get_color_palette(pal, palette_type) }
       })
     }
     return(plot_list)  # Returns a list of callable functions

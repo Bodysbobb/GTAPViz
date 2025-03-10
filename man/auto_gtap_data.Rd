@@ -35,9 +35,9 @@ auto_gtap_data(
 
 \item{project_path}{Character. Path to the project folder with "in" and "out" subfolders.}
 
-\item{input_path}{Character. Path to the input folder. Overrides \verb{project_path/in} if specified.}
+\item{input_path}{Character. Path to the input folder. Overrides `project_path/in` if specified.}
 
-\item{output_path}{Character. Path to the output folder. Overrides \code{project_path/out} if specified.}
+\item{output_path}{Character. Path to the output folder. Overrides `project_path/out` if specified.}
 
 \item{sl4_suffix}{Character. Custom suffix for SL4 files (e.g., "" or "-custom").}
 
@@ -46,16 +46,12 @@ auto_gtap_data(
 \item{mapping_info}{Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".}
 
 \item{process_sl4_vars}{Data frame, NULL, or FALSE. Variables to extract from SL4 files.
-\itemize{
-\item Set to NULL to extract all variables.
-\item Set to FALSE to skip SL4 processing.
-}}
+- Set to NULL to extract all variables.
+- Set to FALSE to skip SL4 processing.}
 
 \item{process_har_vars}{Data frame, NULL, or FALSE. Variables to extract from HAR files.
-\itemize{
-\item Set to NULL to extract all variables.
-\item Set to FALSE to skip HAR processing.
-}}
+- Set to NULL to extract all variables.
+- Set to FALSE to skip HAR processing.}
 
 \item{sl4_mapping_info}{Data frame or NULL. Mapping information for SL4 variables (with "Variable", "Description", and "Unit" columns).}
 
@@ -95,22 +91,22 @@ Processes GTAP data from SL4 and HAR files with options for exporting and prepar
 This function automates the workflow for processing GTAP model outputs,
 with flexible output options and optional filtering for region- and sector-specific data.
 
-The key parameters \code{process_sl4_vars} and \code{process_har_vars} accept three different input types:
+The key parameters `process_sl4_vars` and `process_har_vars` accept three different input types:
 \itemize{
-\item \strong{Data frame}: Contains variable mappings with required "Variable" column. When
-provided, only specified variables will be extracted.
-\item \strong{NULL}: Extracts all available variables from the respective file type.
-\item \strong{FALSE}: Completely skips processing of that file type, allowing
-the function to focus only on the other file type.
+  \item \strong{Data frame}: Contains variable mappings with required "Variable" column. When
+        provided, only specified variables will be extracted.
+  \item \strong{NULL}: Extracts all available variables from the respective file type.
+  \item \strong{FALSE}: Completely skips processing of that file type, allowing
+        the function to focus only on the other file type.
 }
 
-The \code{mapping_info} parameter controls how descriptions and units are assigned:
+The `mapping_info` parameter controls how descriptions and units are assigned:
 \itemize{
-\item \strong{GTAPv7}: Uses standard GTAPv7 definitions (default).
-\item \strong{Yes}: Uses only the supplied descriptions and units from \code{sl4_mapping_info} / \code{har_mapping_info}.
-\item \strong{No}: Does not add any descriptions or units.
-\item \strong{Mix}: Prioritizes supplied descriptions and units, falling back to GTAPv7
-for any missing values.
+  \item \strong{GTAPv7}: Uses standard GTAPv7 definitions (default).
+  \item \strong{Yes}: Uses only the supplied descriptions and units from `sl4_mapping_info` / `har_mapping_info`.
+  \item \strong{No}: Does not add any descriptions or units.
+  \item \strong{Mix}: Prioritizes supplied descriptions and units, falling back to GTAPv7
+        for any missing values.
 }
 }
 \examples{
