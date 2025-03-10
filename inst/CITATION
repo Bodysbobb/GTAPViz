@@ -1,8 +1,7 @@
-citEntry(
-  entry = "Misc",
-  title = "GTAPViz: Automating GTAP Data Processing and Visualization",
-  author = person("Pattawee", "Puangchit"),
-  year = 2024,
-  url = "https://github.com/Bodysbobb/GTAPViz",
-  note = "R package version 0.1.0, Licensed under MIT"
-)
+@Manual{GTAPViz,
+  title = {GTAPViz: Automating GTAP Data Processing and Visualization},
+  author = {Pattawee Puangchit},
+  year = {2024},
+  url = {https://github.com/Bodysbobb/GTAPViz},
+  note = {R package version 1.0.0, Licensed under MIT}
+}
