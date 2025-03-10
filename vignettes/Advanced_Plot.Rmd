@@ -99,6 +99,7 @@ har.plot.data <- convert_units(har.plot.data,
 This vignette is specifically designed to demonstrate how to simply apply all plot configurations within the package. For data extraction and full detail, please refer to [GTAPViz: Visualizing GTAP Results from HAR and SL4 Files](https://bodysbobb.github.io/GTAPViz/articles/GTAPViz_vignette.html).
 
 This vignette will illustrate how to use:
+
 - [Plot Style Configuraion](#sec:plot-config)
 
 - [Color Palette](#sec:color-config)
@@ -112,9 +113,11 @@ library(GTAPViz)
 
 Let's start by clarifying what these three configurations are by using a help function to call any plot function (any plot is fine since all of them have the same configuration parameters):
 
-```{r}
+```{r, eval=FALSE}
 ?comparison_plot
 ```
+
+You will get something like this and as I noted below the last two parameters are the main focus of this vignette:
 
 ```{r, eval=FALSE}
 comparison_plot(
@@ -133,8 +136,8 @@ comparison_plot(
   output_path = NULL,
   export_picture = TRUE,
   export_as_pdf = FALSE,
-  export_config = NULL,
-  plot_style_config = NULL
+  export_config = NULL,        # Export Configuration
+  plot_style_config = NULL     # Plot Style Configuration + Color Palette
 )
 ```
 
@@ -142,29 +145,13 @@ comparison_plot(
 
 To simply get all **plot configurations** using the following code:
 
-
-
-
-<p> Firstly, multiple `color_tone` options are available in this package.  
-You can view all predefined palettes by using the following code: </p>
-```{r color palette, eval=FALSE}
-# Get all palettes as a list
-all_palettes <- get_color_palette("all")
-
-# Click or call a specific palette to view its colors
-all_palettes$winter("qualitative")   # View the winter palette
-all_palettes$fall("sequential")                 # View the fall palette
-all_palettes$gtap("diverging")     # View the GTAP palette
-```
-
-<p> **Note:** You can also define any other color palette simply by using `"blue"`, `"red"`, or any other standard color name that works with `ggplot2`. </p>
-
 ```{r, eval = FALSE}
-get_all_config(printing = TRUE)
+get_plot_style_config(printing = TRUE)
 ```
 
-<p> You will get: </p>
-```{r my style config, eval = FALSE}
+You will get a list called **my_style_config** (you can rename it to whatever you like), containing the **default setting** for all configurations (in a well-organized structure for each category!) as well as a sample of usuage like below:
+
+```{r plot style config, eval = FALSE}
 my_style_config <- list(
 
   # Title settings
@@ -234,6 +221,7 @@ my_style_config <- list(
 
   # Colors
   color_tone = NULL,
+  color_palette_type = "qualitative", #option: qualitative, sequential, diverging
   positive_color = "#2E8B57",
   negative_color = "#CD5C5C",
   background_color = "white",
@@ -270,7 +258,123 @@ my_style_config <- list(
 )
 
 # Example usage:
-# comparison_plot(data, x_axis_from = "REG", 
-#                 plot_style_config = my_style_config)
+# comparison_plot(data, x_axis_from = "REG", plot_style_config = my_style_config)
 ```
 
+<div class="tip-box">
+💡 <strong>Tip:</strong> You can create as many styles as you want, just change the list name such as `my_style_config`, `comparison_style_config`, `detail_style_config`, to be re-applied to all the functoins or in the future projects!
+</div>
+
+There is no rule, or any suggestion how and what parameters to modify since it's mostly depending on your preference and the type of figure (I would encourage you to try this and that to see the difference yourself).
+
+However, there are two parameters that I am willing to further clarify: `title_format` and `all_font_size` (before getting to `color` configuration)
+
+## Title Format {#sec:title-format}
+
+By default, without defining anything, all plot functions are automatically generated the title based on your input data. The auto-generated title may come from `x_axis_from`, `split_by`, `variable_col`, `desc_col`, and `unit_col`. 
+
+However, `title_format` is a helpful configuration to help you further modify the title. It contains three arguments 
+
+- `type`: Defining what you want the `text` to be displayed.
+  - `"prefix"` / `"suffix"` is to define how the `text` will be added to the auto-generated title. 
+  - `"full"` is to completely replace the auto-generated title with your own text.
+  - `"dynamic` is also to completely replace the auto-generated title but with the value from the corresponding column being plotted
+  
+- `text`: Two different cases
+  - For `"prefix"`, `"suffix"`, and `"full`: Defining the text to be added/replaced.
+  - For `"dynamic"`: Defining the column name to be used for extracting values for the title
+ 
+- `sep`: Defining separator to be used if the title is a combination of multiple parts e.g., having `prefix` or `suffix`.
+
+### Practical Example
+
+If you are plotting "qgdp" using the following code:
+```{r plotting qgdp, eval = FALSE}
+comparison_plot(data = reg_data,
+                x_axis_from = "Region",
+                split_by = "Variable",
+                panel_var = "Experiment")
+```
+
+By default you will get the title as **"qgdp (%)"**
+ 
+However, if you add the following code:
+```{r plotting qgdp plot title, eval = FALSE}
+comparison_plot(data = reg_data,
+                # Main Arguments
+                x_axis_from = "Region",
+                split_by = "Variable",
+                panel_var = "Experiment",
+                
+                # plot_style_config arguments
+                plot_style_config = list(
+                  title_format = list(
+                    type = "prefix",  
+                    text = "Impact on",
+                    sep = " - "
+                  )))
+``` 
+
+Your plot title will be:
+- `type = "prefix"` → "Impact on - qgdp (%)"
+- `type = "suffix` → "qgdp - Impact on (%)"
+- `type = "full` → "Impact on (%)"
+
+<div class="tip-box">
+💡 <strong>Tip:</strong> 
+1. You can remove unit from the title by changing `add_unit_to_title = FALSE` in the `plot_style_config` see the  **"# Title settings** in the `my_style_config` list from earlier.
+
+2. Only if **Variable** column is used as title (e.g., qgdp is a value of Variable column), you may use the main parameters to use **Description** column to be a title instead:
+  - `var_name_by_description = TRUE`
+  - `add_var_info = TRUE` (this option will add variable name in the parenthesis)
+In this setting, your title will be "Impact on - Real GDP (qgdp) (%)"
+</div>
+ 
+Now, for option `"dynamic"` is a little tricky here since it will require you to define the exact column name to be used as a title. For example, the following code will generate the title as "USA - Real GDP (qgdp) (%)":
+
+```{r plotting qgdp plot title dynamic, eval = FALSE}
+comparison_plot(data = reg_data,
+                # Main Arguments
+                x_axis_from = "Region",
+                split_by = "Variable",
+                panel_var = "Experiment",
+                var_name_by_description = TRUE,
+                add_var_info = TRUE,
+                
+                # plot_style_config arguments
+                plot_style_config = list(
+                  title_format = list(
+                    type = "dynamic",  
+                    text = c("Region", "Variable"), # These are column names
+                    sep = " - "
+                  )))
+``` 
+
+**Note:** 
+- "USA" comes from column "Region",
+- "Real GDP (qgdp)" comes from column "Variable" and due to `var_name_by_description = TRUE`  
+
+<div class="tip-box">
+💡 <strong>Tip:</strong> 
+1. This `"dynamic"` option is extremely helpful if you want to add other columns that are not being plotted to define the title. For example, in `stack_plot` for decomposition analysis where all of your inputs are not from **"Variable"** column, but you would like the title to show as "Welfare Decomposition" which is defined by "Variable" column.
+</div>
+Once you re-define the style 
+
+<p> Firstly, multiple `color_tone` options are available in this package.  
+You can view all predefined palettes by using the following code: </p>
+```{r color palette, eval=FALSE}
+# Get all palettes as a list
+all_palettes <- get_color_palette("all")
+
+# Click or call a specific palette to view its colors
+all_palettes$winter("qualitative")   # View the winter palette
+all_palettes$fall("sequential")                 # View the fall palette
+all_palettes$gtap("diverging")     # View the GTAP palette
+```
+
+<p> **Note:** You can also define any other color palette simply by using `"blue"`, `"red"`, or any other standard color name that works with `ggplot2`. </p>
+
+
+
+# Color Palette {#sec:color-config}
+# Export Configuraion {#sec:export-config}
