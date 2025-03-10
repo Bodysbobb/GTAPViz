@@ -7,7 +7,7 @@ template:
       <link rel="stylesheet" href="mystyle.css">
       <meta name="google-site-verification" content="8QKloLN9mSrDsTaZuR4KAEAmti-k3mYCBZpMVgq2RO8" />
 home:
-  title: GTAPViz - Visualizing GTAP Results from HAR and SL4 Files
+  title: GTAPViz - Visualizing GTAP Model Results
 navbar:
   structure:
     left:  [home, articles, reference]

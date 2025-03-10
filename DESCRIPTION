@@ -1,20 +1,18 @@
 Package: GTAPViz
-Title: Automating GTAP Data Processing and Visualization
+Title: R Package for Automating GTAP Data Processing and Visualization
 Version: 1.0.0
 Author: Pattawee Puangchit <ppuangch@purdue.edu>
 Authors@R: 
-    person("Pattawee", "Puangchit", , "ppuangch@purdue.edu", role = c("aut", "cre"))
-Description: GTAPViz is an extension package of HARplus, designed to provide seamless 
-    data visualization for GTAP model results from `.HAR` and `.SL4` files. This package 
-    focuses on user-friendly visualization tools, enabling GTAP users to analyze and compare 
-    simulation results efficiently without requiring deep coding knowledge. With built-in 
-    functions for pivoting, mapping, unit assignments, and graphical representation, GTAPViz 
-    enhances economic model interpretation by generating structured, publication-ready plots. 
-    It is ideal for GTAP researchers, policymakers, and analysts looking for intuitive data 
-    exploration and visual insights from GEMPACK outputs.
+    person("Pattawee", "Puangchit", email = "ppuangch@purdue.edu", role = c("aut", "cre"))
+Description: GTAPViz is an R package designed to streamline the processing and 
+    visualization of GTAP model results. While primarily built for GTAP simulations, 
+    it also supports other `.HAR` and `.SL4` datasets. As an extension of HARplus, 
+    GTAPViz simplifies GTAP data extraction and visualization, reducing manual effort 
+    and enhancing efficiency. With intuitive commands and automated adjustments, 
+    users can create, customize, and export high-quality visualizations for economic 
+    analysis and research reporting with minimal coding.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 BugReports: https://github.com/bodysbobb/GTAPViz/issues
 URL: https://bodysbobb.github.io/GTAPViz/

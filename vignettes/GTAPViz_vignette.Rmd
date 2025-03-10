@@ -1,5 +1,5 @@
 ---
-title: 'GTAPViz: Visualizing GTAP Model Results'
+title: 'GTAPViz: Visualizing GTAP Results from HAR and SL4 Files'
 author: "Pattawee Puangchit"
 date: "`r Sys.Date()`"
 output:
@@ -13,7 +13,7 @@ output:
     code_folding: show
     self_contained: true
 vignette: >
-  %\VignetteIndexEntry{GTAPViz: Visualizing GTAP Model Results}
+  %\VignetteIndexEntry{GTAPViz: Visualizing GTAP Results from HAR and SL4 Files}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -110,11 +110,17 @@ available for data manipulation to enhance figure illustration.
 
 This package streamlines the creation of figures and tables from **.HAR** and **.sl4** results, making academic presentations effortless. Some key features are:
 
-- **Automated adjustments** for plot dimensions, facet settings, and other elements, requiring minimal input.  
-- **Intuitive customization** of color tones, font sizes, and legend positions with simple, adaptable commands.  
-- **Full control without complexity**, allowing users to modify every aspect with a single command—no deep coding required.  
-- **PNG and PDF export**, enabling simultaneous saving in both formats for easy use in presentations and LaTeX.  
-- **Comprehensive documentation**, with an easy-to-follow vignette and a help function listing all plot modifications—adjust settings effortlessly without searching online.
+- **Automated Plot Adjustments** – Optimizes plot dimensions, facet settings, and layout dynamically with minimal user input.  
+
+- **Academic-Style Pivot Table** – Automatically generates tables alongside figures, making it easy to include both in academic papers.  
+
+- **Intuitive Customization** – Modify colors, fonts, legend positions, and other styling elements using simple, adaptable commands.  
+
+- **Full Customization Without Complexity** – Built on `ggplot2`, this package simplifies adjustments into intuitive commands like `TRUE/FALSE`, eliminating the need for deep coding.  
+
+- **Multiple Export Formats** – Save high-resolution figures in **PNG and PDF** formats simultaneously for presentations, publications, and LaTeX reports.  
+
+- **Comprehensive Documentation** – Includes a vignette and built-in help functions covering all customization options—no need to search online.  
 
 Before proceeding, ensure that `GTAPViz` is installed
 and loaded:
