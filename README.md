@@ -28,7 +28,7 @@ devtools::install_github("Bodysbobb/GTAPViz")
 
 ## **Comprehensive Documentation** 
 
-For full details on how to use this package and explore practical examples, see the [GTAPViz Vignette](https://bodysbobb.github.io/GTAPViz/articles/GTAPViz_plot.html) or [GitHub GTAPViz](https://bodysbobb.github.io/GTAPViz/).
+For full details on how to use this package and explore practical examples, see the [GTAPViz Vignette](https://rpubs.com/Bodysbob/1282495) or [GitHub GTAPViz](https://bodysbobb.github.io/GTAPViz/).
 
 For the R reference manual, see the [GTAPViz Reference Manual](https://github.com/Bodysbobb/GTAPViz/blob/main/inst/docs/GTAPViz_1.0.0.pdf).
 
