@@ -4,7 +4,7 @@ Version: 1.0.0
 Author: Pattawee Puangchit <ppuangch@purdue.edu>
 Authors@R: 
     person("Pattawee", "Puangchit", email = "ppuangch@purdue.edu", role = c("aut", "cre"))
-Description: GTAPViz is an R package designed to streamline the processing and 
+Description: An R package designed to streamline the processing and 
     visualization of GTAP model results. While primarily built for GTAP simulations, 
     it also supports other `.HAR` and `.SL4` datasets. As an extension of HARplus, 
     GTAPViz simplifies GTAP data extraction and visualization, reducing manual effort 
