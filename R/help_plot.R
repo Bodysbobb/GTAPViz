@@ -20,40 +20,40 @@
 #'
 #' @examples
 #' # Get all plot configurations with default settings
-#' all_configs <- get_plot_config()
+#' all_configs <- get_all_config()
 #'
 #' # Get only comparison plot configuration
-#' comp_config <- get_plot_config("default")
+#' comp_config <- get_all_config("default")
 #' @author Pattawee Puangchit
 #'
 #' @seealso \code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #' @export
 #'
-get_plot_config <- function(plot_style = "default", config = NULL,
-                            export_config = NULL, printing = FALSE) {
+get_all_config <- function(plot_style = "default", config = NULL,
+                           export_config = NULL, printing = FALSE) {
   valid_styles <- c("default")
   if (!plot_style %in% valid_styles) {
     stop("Plot style must be one of: 'default'")
   }
-
+  
   # If printing mode, we'll just print and return nothing
   if (printing) {
     # Print the plot style configuration
     get_plot_style_config(plot_type = plot_style, validate_custom = config, printing = TRUE)
-
+    
     # Add some separation between the two sections
     cat("\n\n")
-
+    
     # Print the export configuration
     get_export_config(printing = TRUE)
-
+    
     # Return invisibly to avoid printing any values
     return(invisible(NULL))
   }
-
+  
   # Normal (non-printing) mode continues here
   result <- list()
-
+  
   if (plot_style == "all") {
     result$plot_style_config <- list(
       comparison = .calculate_plot_style_config(config, "default")
@@ -64,10 +64,10 @@ get_plot_config <- function(plot_style = "default", config = NULL,
                                                       validate_custom = config,
                                                       as_dataframe = TRUE)
   }
-
+  
   # Get export configuration as dataframe
   result$export_config <- get_export_config(as_dataframe = TRUE)
-
+  
   return(result)
 }
 
@@ -221,7 +221,7 @@ get_plot_style_config <- function(plot_type = "default",
                                   as_dataframe = FALSE,
                                   printing = TRUE) {
   config <- .calculate_plot_style_config(NULL, plot_type)
-
+  
   param_docs <- list(
     show_title = "Logical. Show or hide the plot title.",
     title_face = "Character. Font face for title ('bold', 'plain', 'italic').",
@@ -271,6 +271,7 @@ get_plot_style_config <- function(plot_type = "default",
     panel_cols = "Numeric or NULL. Number of columns in panel layout.",
     theme = "ggplot2 theme object or NULL. Custom theme to apply.",
     color_tone = "Character or NULL. Base color tone for the plot (e.g., 'academic', 'purdue').",
+    color_palette_type = "Character. Type of color palette ('qualitative', 'sequential', or 'diverging'). Default: 'qualitative'",
     positive_color = "Character. Color for positive values.",
     negative_color = "Character. Color for negative values.",
     background_color = "Character. Background color of the plot.",
@@ -292,35 +293,35 @@ get_plot_style_config <- function(plot_type = "default",
     expansion_x_mult = "Numeric vector of length 2. Expansion multiplier for x-axis.",
     all_font_size = "Numeric. Master control for all font sizes. Values > 1 increase all fonts, values < 1 decrease all fonts."
   )
-
+  
   if (!is.null(parameter_name)) {
     if (parameter_name %in% names(config)) {
       result <- list(value = config[[parameter_name]])
-
+      
       if (show_docs && parameter_name %in% names(param_docs)) {
         result$documentation <- param_docs[[parameter_name]]
       }
-
+      
       return(result)
     } else {
       all_params <- names(config)
       distances <- stringdist::stringdist(parameter_name, all_params, method = "lv")
       closest_matches <- all_params[order(distances)][1:3]
-
+      
       warning(sprintf("Parameter '%s' not found. Did you mean: %s?",
                       parameter_name,
                       paste(closest_matches, collapse = ", ")))
-
+      
       return(NULL)
     }
   }
-
+  
   if (!is.null(validate_custom)) {
     if (!is.list(validate_custom)) {
       warning("validate_custom must be a list. Ignoring validation.")
     } else {
       invalid_params <- setdiff(names(validate_custom), names(config))
-
+      
       if (length(invalid_params) > 0) {
         suggestions <- lapply(invalid_params, function(param) {
           distances <- stringdist::stringdist(param, names(config), method = "lv")
@@ -330,46 +331,46 @@ get_plot_style_config <- function(plot_type = "default",
             suggestions = closest_matches
           )
         })
-
+        
         suggestion_msgs <- sapply(suggestions, function(sugg) {
           sprintf("- '%s': Did you mean %s?",
                   sugg$invalid,
                   paste(sprintf("'%s'", sugg$suggestions), collapse = ", "))
         })
-
+        
         warning(paste("Invalid parameters found in custom configuration:",
                       paste(suggestion_msgs, collapse = "\n"), sep = "\n"))
-
+        
         valid_params <- intersect(names(validate_custom), names(config))
         valid_custom <- validate_custom[valid_params]
-
+        
         return(valid_custom)
       } else {
         return(validate_custom)
       }
     }
   }
-
+  
   if (show_docs) {
     result <- lapply(names(config), function(param) {
       param_info <- list(value = config[[param]])
-
+      
       if (param %in% names(param_docs)) {
         param_info$documentation <- param_docs[[param]]
       }
-
+      
       return(param_info)
     })
-
+    
     names(result) <- names(config)
     return(result)
   }
-
+  
   # Create a dataframe for as_dataframe = TRUE
   if (as_dataframe) {
     # Count the total number of parameters
-    params_count <- 68 # Adjusted to the correct count
-
+    params_count <- 69 # Adjusted for the new color_palette_type parameter
+    
     # Create vectors with the exact same length
     topics <- character(params_count)
     arguments <- character(params_count)
@@ -377,9 +378,9 @@ get_plot_style_config <- function(plot_type = "default",
     input_formats <- character(params_count)
     descriptions <- character(params_count)
     examples <- character(params_count)
-
+    
     # Fill in the values (double check the counts!)
-
+    
     # Title section (7 parameters)
     topics[1:7] <- c("Title", "", "", "", "", "", "")
     arguments[1:7] <- c("show_title", "title_face", "title_size", "title_hjust", "add_unit_to_title", "title_margin", "title_format")
@@ -404,7 +405,7 @@ get_plot_style_config <- function(plot_type = "default",
       "title_margin = margin(t = 10, r = 0, b = 10, l = 0)",
       "title_format = list(\n  type = \"standard\", # options: standard/prefix/suffix/full/dynamic\n  text = \"\",\n  sep = \"\"\n)"
     )
-
+    
     # X-Axis section (10 parameters)
     idx <- 8:17
     topics[idx] <- c("X-Axis", rep("", length(idx)-1))
@@ -437,7 +438,7 @@ get_plot_style_config <- function(plot_type = "default",
       "x_axis_text_hjust = 0",
       "x_axis_description = \"\""
     )
-
+    
     # Y-Axis section (11 parameters)
     idx <- 18:28
     topics[idx] <- c("Y-Axis", rep("", length(idx)-1))
@@ -472,7 +473,7 @@ get_plot_style_config <- function(plot_type = "default",
       "y_axis_description = \"\"",
       "show_axis_titles_on_all_facets = TRUE"
     )
-
+    
     # Value Labels section (5 parameters)
     idx <- 29:33
     topics[idx] <- c("Value Labels", rep("", length(idx)-1))
@@ -493,7 +494,7 @@ get_plot_style_config <- function(plot_type = "default",
       "value_label_position = \"above\"",
       "value_label_decimal_places = 2"
     )
-
+    
     # Legend section (6 parameters)
     idx <- 34:39
     topics[idx] <- c("Legend", rep("", length(idx)-1))
@@ -516,7 +517,7 @@ get_plot_style_config <- function(plot_type = "default",
       "legend_text_face = \"plain\"",
       "legend_text_size = 14"
     )
-
+    
     # Panel Strip section (4 parameters)
     idx <- 40:43
     topics[idx] <- c("Panel Strip", rep("", length(idx)-1))
@@ -535,7 +536,7 @@ get_plot_style_config <- function(plot_type = "default",
       "strip_background = \"lightgrey\"",
       "strip_text_margin = margin(t = 10, r = 0, b = 10, l = 0)"
     )
-
+    
     # Panel Layout section (4 parameters)
     idx <- 44:47
     topics[idx] <- c("Panel Layout", rep("", length(idx)-1))
@@ -554,16 +555,17 @@ get_plot_style_config <- function(plot_type = "default",
       "panel_cols = NULL",
       "theme = NULL"
     )
-
-    # Colors section (9 parameters)
-    idx <- 48:56
+    
+    # Colors section (10 parameters) - Updated to include color_palette_type
+    idx <- 48:57
     topics[idx] <- c("Colors", rep("", length(idx)-1))
-    arguments[idx] <- c("color_tone", "positive_color", "negative_color", "background_color", "grid_color",
+    arguments[idx] <- c("color_tone", "color_palette_type", "positive_color", "negative_color", "background_color", "grid_color",
                         "show_grid_major_x", "show_grid_major_y", "show_grid_minor_x", "show_grid_minor_y")
-    default_values[idx] <- c("NULL", "#2E8B57", "#CD5C5C", "white", "grey90", "FALSE", "FALSE", "FALSE", "FALSE")
-    input_formats[idx] <- c("character", "character", "character", "character", "character", "logical", "logical", "logical", "logical")
+    default_values[idx] <- c("NULL", "\"qualitative\"", "#2E8B57", "#CD5C5C", "white", "grey90", "FALSE", "FALSE", "FALSE", "FALSE")
+    input_formats[idx] <- c("character", "character", "character", "character", "character", "character", "logical", "logical", "logical", "logical")
     descriptions[idx] <- c(
       "Base color tone for the plot (e.g., 'academic', 'purdue').",
+      "Type of color palette ('qualitative', 'sequential', or 'diverging').",
       "Color for positive values.",
       "Color for negative values.",
       "Background color of the plot.",
@@ -575,6 +577,7 @@ get_plot_style_config <- function(plot_type = "default",
     )
     examples[idx] <- c(
       "color_tone = NULL",
+      "color_palette_type = \"qualitative\"",
       "positive_color = \"#2E8B57\"",
       "negative_color = \"#CD5C5C\"",
       "background_color = \"white\"",
@@ -584,9 +587,9 @@ get_plot_style_config <- function(plot_type = "default",
       "show_grid_minor_x = FALSE",
       "show_grid_minor_y = FALSE"
     )
-
+    
     # Zero Line section (5 parameters)
-    idx <- 57:61
+    idx <- 58:62
     topics[idx] <- c("Zero Line", rep("", length(idx)-1))
     arguments[idx] <- c("show_zero_line", "zero_line_type", "zero_line_color", "zero_line_size", "zero_line_position")
     default_values[idx] <- c("TRUE", "dashed", "black", "0.5", "0")
@@ -605,9 +608,9 @@ get_plot_style_config <- function(plot_type = "default",
       "zero_line_size = 0.5",
       "zero_line_position = 0"
     )
-
+    
     # Bar Chart section (2 parameters)
-    idx <- 62:63
+    idx <- 63:64
     topics[idx] <- c("Bar Chart", rep("", length(idx)-1))
     arguments[idx] <- c("bar_width", "bar_spacing")
     default_values[idx] <- c("0.9", "0.9")
@@ -620,9 +623,9 @@ get_plot_style_config <- function(plot_type = "default",
       "bar_width = 0.9",
       "bar_spacing = 0.9"
     )
-
+    
     # Scale Settings section (2 parameters)
-    idx <- 64:65
+    idx <- 65:66
     topics[idx] <- c("Scale Settings", rep("", length(idx)-1))
     arguments[idx] <- c("scale_limit", "scale_increment")
     default_values[idx] <- c("NULL", "NULL")
@@ -635,9 +638,9 @@ get_plot_style_config <- function(plot_type = "default",
       "scale_limit = NULL",
       "scale_increment = NULL"
     )
-
+    
     # Scale Expansion section (2 parameters)
-    idx <- 66:67
+    idx <- 67:68
     topics[idx] <- c("Scale Expansion", rep("", length(idx)-1))
     arguments[idx] <- c("expansion_y_mult", "expansion_x_mult")
     default_values[idx] <- c("c(0.05, 0.1)", "c(0.05, 0.05)")
@@ -650,16 +653,16 @@ get_plot_style_config <- function(plot_type = "default",
       "expansion_y_mult = c(0.05, 0.1)",
       "expansion_x_mult = c(0.05, 0.05)"
     )
-
+    
     # Font Size Control section (1 parameter)
-    idx <- 68
+    idx <- 69
     topics[idx] <- "Font Size Control"
     arguments[idx] <- "all_font_size"
     default_values[idx] <- "1"
     input_formats[idx] <- "numeric"
     descriptions[idx] <- "Master control for all font sizes. Values > 1 increase all fonts, values < 1 decrease all fonts."
     examples[idx] <- "all_font_size = 1"
-
+    
     # Create the result dataframe
     result <- data.frame(
       Topic = topics,
@@ -670,15 +673,16 @@ get_plot_style_config <- function(plot_type = "default",
       Example = examples,
       stringsAsFactors = FALSE
     )
-
+    
     # Assign to plot_style_config in parent environment
     assign("plot_style_config", result, envir = parent.frame())
-
+    
     return(result)
   }
+  
   if (printing) {
     cat("my_style_config <- list(\n")
-
+    
     # Title settings
     cat("\n  # Title settings\n")
     cat("  show_title = ", ifelse(config$show_title, "TRUE", "FALSE"), ",\n", sep="")
@@ -686,12 +690,12 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  title_size = ", config$title_size, ",\n", sep="")
     cat("  title_hjust = ", config$title_hjust, ",\n", sep="")
     cat("  add_unit_to_title = ", ifelse(config$add_unit_to_title, "TRUE", "FALSE"), ",\n", sep="")
-
+    
     # Format margin objects with proper names
     margin_values <- as.numeric(config$title_margin)
     cat("  title_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
         ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
-
+    
     # Format title_format as a properly structured list
     tf <- config$title_format
     cat("  title_format = list(\n")
@@ -699,34 +703,34 @@ get_plot_style_config <- function(plot_type = "default",
     cat("    text = \"", .coalesce(tf$text, ""), "\",\n", sep="")
     cat("    sep = \"", .coalesce(tf$sep, ""), "\"\n", sep="")
     cat("  ),\n")
-
+    
     # X-Axis settings
     cat("\n  # X-Axis settings\n")
     cat("  show_x_axis_title = ", ifelse(config$show_x_axis_title, "TRUE", "FALSE"), ",\n", sep="")
     cat("  x_axis_title_face = \"", config$x_axis_title_face, "\",\n", sep="")
     cat("  x_axis_title_size = ", config$x_axis_title_size, ",\n", sep="")
-
+    
     margin_values <- as.numeric(config$x_axis_title_margin)
     cat("  x_axis_title_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
         ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
-
+    
     cat("  show_x_axis_labels = ", ifelse(config$show_x_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
     cat("  x_axis_text_face = \"", config$x_axis_text_face, "\",\n", sep="")
     cat("  x_axis_text_size = ", config$x_axis_text_size, ",\n", sep="")
     cat("  x_axis_text_angle = ", config$x_axis_text_angle, ",\n", sep="")
     cat("  x_axis_text_hjust = ", config$x_axis_text_hjust, ",\n", sep="")
     cat("  x_axis_description = \"", config$x_axis_description, "\",\n", sep="")
-
+    
     # Y-Axis settings
     cat("\n  # Y-Axis settings\n")
     cat("  show_y_axis_title = ", ifelse(config$show_y_axis_title, "TRUE", "FALSE"), ",\n", sep="")
     cat("  y_axis_title_face = \"", config$y_axis_title_face, "\",\n", sep="")
     cat("  y_axis_title_size = ", config$y_axis_title_size, ",\n", sep="")
-
+    
     margin_values <- as.numeric(config$y_axis_title_margin)
     cat("  y_axis_title_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
         ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
-
+    
     cat("  show_y_axis_labels = ", ifelse(config$show_y_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
     cat("  y_axis_text_face = \"", config$y_axis_text_face, "\",\n", sep="")
     cat("  y_axis_text_size = ", config$y_axis_text_size, ",\n", sep="")
@@ -734,7 +738,7 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  y_axis_text_hjust = ", config$y_axis_text_hjust, ",\n", sep="")
     cat("  y_axis_description = \"", config$y_axis_description, "\",\n", sep="")
     cat("  show_axis_titles_on_all_facets = ", ifelse(config$show_axis_titles_on_all_facets, "TRUE", "FALSE"), ",\n", sep="")
-
+    
     # Value Labels
     cat("\n  # Value Labels\n")
     cat("  show_value_labels = ", ifelse(config$show_value_labels, "TRUE", "FALSE"), ",\n", sep="")
@@ -742,7 +746,7 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  value_label_size = ", config$value_label_size, ",\n", sep="")
     cat("  value_label_position = \"", config$value_label_position, "\",\n", sep="")
     cat("  value_label_decimal_places = ", config$value_label_decimal_places, ",\n", sep="")
-
+    
     # Legend
     cat("\n  # Legend\n")
     cat("  show_legend = ", ifelse(config$show_legend, "TRUE", "FALSE"), ",\n", sep="")
@@ -751,27 +755,28 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  legend_title_face = \"", config$legend_title_face, "\",\n", sep="")
     cat("  legend_text_face = \"", config$legend_text_face, "\",\n", sep="")
     cat("  legend_text_size = ", config$legend_text_size, ",\n", sep="")
-
+    
     # Panel Strip
     cat("\n  # Panel Strip\n")
     cat("  strip_face = \"", config$strip_face, "\",\n", sep="")
     cat("  strip_text_size = ", config$strip_text_size, ",\n", sep="")
     cat("  strip_background = \"", config$strip_background, "\",\n", sep="")
-
+    
     margin_values <- as.numeric(config$strip_text_margin)
     cat("  strip_text_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
         ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
-
+    
     # Panel Layout
     cat("\n  # Panel Layout\n")
     cat("  panel_spacing = ", config$panel_spacing, ",\n", sep="")
     cat("  panel_rows = ", if(is.null(config$panel_rows)) "NULL" else config$panel_rows, ",\n", sep="")
     cat("  panel_cols = ", if(is.null(config$panel_cols)) "NULL" else config$panel_cols, ",\n", sep="")
     cat("  theme = ", if(is.null(config$theme)) "NULL" else "custom_theme", ",\n", sep="")
-
-    # Colors
+    
+    # Color
     cat("\n  # Colors\n")
     cat("  color_tone = ", if(is.null(config$color_tone)) "NULL" else paste0("\"", config$color_tone, "\""), ",\n", sep="")
+    cat("  color_palette_type = \"", config$color_palette_type, "\", #option: qualitative, sequential, diverging\n", sep="")
     cat("  positive_color = \"", config$positive_color, "\",\n", sep="")
     cat("  negative_color = \"", config$negative_color, "\",\n", sep="")
     cat("  background_color = \"", config$background_color, "\",\n", sep="")
@@ -780,7 +785,7 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  show_grid_major_y = ", ifelse(config$show_grid_major_y, "TRUE", "FALSE"), ",\n", sep="")
     cat("  show_grid_minor_x = ", ifelse(config$show_grid_minor_x, "TRUE", "FALSE"), ",\n", sep="")
     cat("  show_grid_minor_y = ", ifelse(config$show_grid_minor_y, "TRUE", "FALSE"), ",\n", sep="")
-
+    
     # Zero Line
     cat("\n  # Zero Line\n")
     cat("  show_zero_line = ", ifelse(config$show_zero_line, "TRUE", "FALSE"), ",\n", sep="")
@@ -788,12 +793,12 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  zero_line_color = \"", config$zero_line_color, "\",\n", sep="")
     cat("  zero_line_size = ", config$zero_line_size, ",\n", sep="")
     cat("  zero_line_position = ", config$zero_line_position, ",\n", sep="")
-
+    
     # Bar Chart
     cat("\n  # Bar Chart\n")
     cat("  bar_width = ", config$bar_width, ",\n", sep="")
     cat("  bar_spacing = ", config$bar_spacing, ",\n", sep="")
-
+    
     # Scale Settings
     cat("\n  # Scale Settings\n")
     if (is.null(config$scale_limit)) {
@@ -802,16 +807,16 @@ get_plot_style_config <- function(plot_type = "default",
       cat("  scale_limit = c(", paste(config$scale_limit, collapse=", "), "),\n", sep="")
     }
     cat("  scale_increment = ", if(is.null(config$scale_increment)) "NULL" else config$scale_increment, ",\n", sep="")
-
+    
     # Scale Expansion
     cat("\n  # Scale Expansion\n")
     cat("  expansion_y_mult = c(", paste(config$expansion_y_mult, collapse=", "), "),\n", sep="")
     cat("  expansion_x_mult = c(", paste(config$expansion_x_mult, collapse=", "), "),\n", sep="")
-
+    
     # Font Size Control
     cat("\n  # Font Size Control\n")
     cat("  all_font_size = ", config$all_font_size, ",\n", sep="")
-
+    
     # Data Sorting (if it exists)
     if ("sort_data_by_value" %in% names(config)) {
       cat("\n  # Data Sorting\n")
@@ -820,14 +825,14 @@ get_plot_style_config <- function(plot_type = "default",
       # Remove trailing comma from previous section
       cat("\b \b\n", sep="")
     }
-
+    
     cat(")\n\n")
     cat("# Example usage:\n")
     cat("# comparison_plot(data, x_axis_from = \"REG\", plot_style_config = my_style_config)\n")
-
+    
     return(invisible(config))
   }
-
+  
   return(c(list(plot_type = plot_type), config))
 }
 
@@ -875,7 +880,7 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
     bg = "white",
     limitsize = FALSE
   )
-
+  
   # Documentation for export_config parameters
   export_config_docs <- list(
     file_name = "Character. Base name for exported files. Default is 'gtap_plots'.",
@@ -885,41 +890,41 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
     bg = "Character. Background color. Default is 'white'.",
     limitsize = "Logical. Whether to limit size. Default is FALSE."
   )
-
+  
   # Add printing functionality
   if (printing) {
     cat("export_config <- list(\n")
-
+    
     # Print file_name
     cat("  file_name = \"", export_config_params$file_name, "\",\n", sep="")
-
+    
     # Print width
     cat("  width = ", if(is.null(export_config_params$width)) "NULL" else export_config_params$width, ",\n", sep="")
-
+    
     # Print height
     cat("  height = ", if(is.null(export_config_params$height)) "NULL" else export_config_params$height, ",\n", sep="")
-
+    
     # Print dpi
     cat("  dpi = ", export_config_params$dpi, ",\n", sep="")
-
+    
     # Print bg
     cat("  bg = \"", export_config_params$bg, "\",\n", sep="")
-
+    
     # Print limitsize (last item, no comma)
     cat("  limitsize = ", ifelse(export_config_params$limitsize, "TRUE", "FALSE"), "\n", sep="")
-
+    
     cat(")\n\n")
     cat("# Example usage:\n")
     cat("# comparison_plot(data, x_axis_from = \"REG\", export_config = export_config)\n")
-
+    
     return(invisible(export_config_params))
   }
-
+  
   # Create a dataframe for as_dataframe = TRUE
   if (as_dataframe) {
     # Count the total number of parameters
     params_count <- 6 # Number of export_config parameters
-
+    
     # Create vectors with the exact same length
     topics <- character(params_count)
     arguments <- character(params_count)
@@ -927,15 +932,15 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
     input_formats <- character(params_count)
     descriptions <- character(params_count)
     examples <- character(params_count)
-
+    
     # Fill in the values - all under "Export Config" topic
     topics[1:params_count] <- c("Export Config", rep("", params_count-1))
-
+    
     # Parameters
     arguments[1:params_count] <- c(
       "file_name", "width", "height", "dpi", "bg", "limitsize"
     )
-
+    
     # Default values
     default_values[1:params_count] <- c(
       "\"gtap_plots\"",
@@ -945,7 +950,7 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
       "\"white\"",
       "FALSE"
     )
-
+    
     # Input formats
     input_formats[1:params_count] <- c(
       "character",
@@ -955,7 +960,7 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
       "character",
       "logical"
     )
-
+    
     # Descriptions
     descriptions[1:params_count] <- c(
       "Base name for exported files. Default is 'gtap_plots'.",
@@ -965,7 +970,7 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
       "Background color. Default is 'white'.",
       "Whether to limit size. Default is FALSE."
     )
-
+    
     # Examples
     examples[1:params_count] <- c(
       "file_name = \"regional_impacts\"",
@@ -975,7 +980,7 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
       "bg = \"white\"",
       "limitsize = FALSE"
     )
-
+    
     # Create the result dataframe
     result <- data.frame(
       Topic = topics,
@@ -986,13 +991,13 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
       Example = examples,
       stringsAsFactors = FALSE
     )
-
+    
     # Assign to export_config in parent environment
     assign("export_config", result, envir = parent.frame())
-
+    
     return(result)
   }
-
+  
   # Return as a list
   return(list(
     export_config = export_config_params,
@@ -1143,7 +1148,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     add_unit_to_title = TRUE,
     title_margin = ggplot2::margin(10, 0, 10, 0),
     title_format = list(type = "standard", text = ""),
-
+    
     # X-Axis settings
     show_x_axis_title = TRUE,
     x_axis_title_face = "bold",
@@ -1155,7 +1160,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     x_axis_text_angle = 0,
     x_axis_text_hjust = 0,
     x_axis_description = "",
-
+    
     # Y-Axis settings
     show_y_axis_title = TRUE,
     y_axis_title_face = "bold",
@@ -1167,17 +1172,17 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     y_axis_text_angle = 0,
     y_axis_text_hjust = 0,
     y_axis_description = "",
-
+    
     # Axis Label across panel
     show_axis_titles_on_all_facets = TRUE,
-
+    
     # Value label settings
     show_value_labels = TRUE,
     value_label_face = "plain",
     value_label_size = 5,
     value_label_position = "above",
     value_label_decimal_places = 2,
-
+    
     # Legend settings
     show_legend = FALSE,
     show_legend_title = FALSE,
@@ -1185,21 +1190,22 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     legend_title_face = "bold",
     legend_text_face = "plain",
     legend_text_size = 14,
-
+    
     # Panel strip settings
     strip_face = "bold",
     strip_text_size = 16,
     strip_background = "lightgrey",
     strip_text_margin = ggplot2::margin(10, 0, 10, 0),
-
+    
     # Panel layout
     panel_spacing = 2,
     panel_rows = NULL,
     panel_cols = NULL,
     theme = NULL,
-
+    
     # Color settings
     color_tone = NULL,
+    color_palette_type = "qualitative",
     positive_color = "#2E8B57",
     negative_color = "#CD5C5C",
     background_color = "white",
@@ -1208,87 +1214,87 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     show_grid_major_y = FALSE,
     show_grid_minor_x = FALSE,
     show_grid_minor_y = FALSE,
-
+    
     # Zero line settings
     show_zero_line = TRUE,
     zero_line_type = "dashed",
     zero_line_color = "black",
     zero_line_size = 0.5,
     zero_line_position = 0,
-
+    
     # Bar chart settings
     bar_width = 0.9,
     bar_spacing = 0.9,
-
+    
     # Scale settings
     scale_limit = NULL,
     scale_increment = NULL,
-
+    
     # Scale expansion settings
     expansion_y_mult = c(0.05, 0.1),
     expansion_x_mult = c(0.05, 0.05),
-
+    
     # Font size settings
     all_font_size = 1,
-
+    
     # Sorting Data
     sort_data_by_value = FALSE
   )
-
+  
   # Select the appropriate default based on plot type
   default_config <- switch(plot_type,
                            "default" = style_default,
                            style_default)
-
+  
   # If no config is provided, return the default
   if (is.null(config)) {
     return(default_config)
   }
-
+  
   # Merge user config with defaults (user settings take precedence)
   final_config <- modifyList(default_config, config)
-
+  
   # Handle dynamic title format
   if (!is.null(final_config$title_format) &&
       final_config$title_format$type == "dynamic" &&
       !is.null(data)) {
-
+    
     # Get the columns specified for dynamic title
     cols_to_use <- final_config$title_format$text
-
+    
     # Ensure the columns exist in the data
     valid_cols <- cols_to_use[cols_to_use %in% names(data)]
-
+    
     if (length(valid_cols) > 0) {
       # Create title from unique values of specified columns
       dynamic_title <- paste(
         unique(do.call(paste, data[, valid_cols, drop = FALSE])),
         collapse = " - "
       )
-
+      
       # Override the text in title_format
       final_config$title_format$text <- dynamic_title
     }
   }
-
+  
   # Override font sizes with all_font_size if provided
   if (!is.null(final_config$all_font_size)) {
     font_sizes <- .calculate_font_sizes(NULL, NULL, final_config$all_font_size)
-
+    
     # Only override font sizes if not explicitly set in user config
     font_size_fields <- c(
       "title_size", "x_axis_title_size", "y_axis_title_size",
       "strip_text_size", "x_axis_text_size", "y_axis_text_size",
       "legend_title_size", "legend_text_size", "value_label_size"
     )
-
+    
     for (field in font_size_fields) {
       if (is.null(config) || is.null(config[[field]])) {
         final_config[[field]] <- font_sizes[[field]]
       }
     }
   }
-
+  
   return(final_config)
 }
 
@@ -1307,7 +1313,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #'
 .apply_plot_style_config <- function(p, config) {
-
+  
   # Apply theme modifications
   p <- p + ggplot2::theme(
     # Title settings
@@ -1321,7 +1327,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     } else {
       ggplot2::element_blank()
     },
-
+    
     # X axis title settings
     axis.title.x = if (config$show_x_axis_title) {
       ggplot2::element_text(
@@ -1332,7 +1338,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     } else {
       ggplot2::element_blank()
     },
-
+    
     # Y axis title settings
     axis.title.y = if (config$show_y_axis_title) {
       ggplot2::element_text(
@@ -1343,7 +1349,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     } else {
       ggplot2::element_blank()
     },
-
+    
     # X axis text settings
     axis.text.x = if (config$show_x_axis_labels) {
       ggplot2::element_text(
@@ -1355,7 +1361,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     } else {
       ggplot2::element_blank()
     },
-
+    
     # Y axis text settings
     axis.text.y = if (config$show_y_axis_labels) {
       ggplot2::element_text(
@@ -1367,7 +1373,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     } else {
       ggplot2::element_blank()
     },
-
+    
     # Legend settings
     legend.position = if (config$show_legend) config$legend_position else "none",
     legend.title = if (config$show_legend_title) {
@@ -1379,7 +1385,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       face = config$legend_text_face,
       size = config$legend_text_size
     ),
-
+    
     # Panel strip settings
     strip.text = ggplot2::element_text(
       face = config$strip_face,
@@ -1387,10 +1393,10 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       margin = config$strip_text_margin
     ),
     strip.background = ggplot2::element_rect(fill = config$strip_background),
-
+    
     # Panel spacing
     panel.spacing.x = ggplot2::unit(config$panel_spacing, "cm"),
-
+    
     # Background and grid settings
     plot.background = ggplot2::element_rect(fill = config$background_color, color = NA),
     panel.background = ggplot2::element_rect(fill = config$background_color, color = NA),
@@ -1415,7 +1421,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       ggplot2::element_blank()
     }
   )
-
+  
   # Apply zero line if configured
   if (config$show_zero_line) {
     # Remove any existing zero line (geom_hline with yintercept=0)
@@ -1427,7 +1433,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       }
       return(FALSE)
     })]
-
+    
     # Add the new zero line with configured properties
     p <- p + ggplot2::geom_hline(
       yintercept = config$zero_line_position,
@@ -1436,12 +1442,12 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       size = config$zero_line_size
     )
   }
-
+  
   # Apply custom theme if provided
   if (!is.null(config$theme)) {
     p <- p + config$theme
   }
-
+  
   return(p)
 }
 
@@ -1465,7 +1471,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 .calculate_font_sizes <- function(width, height, all_font_size = 1) {
   # Calculate scaling factor based on all_font_size
   factor <- all_font_size
-
+  
   # Define proportional font sizes at reference level of all_font_size
   font_sizes <- list(
     title_size = round(20 * factor),
@@ -1478,7 +1484,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     legend_text_size = round(10 * factor),
     value_label_size = round(5 * factor)
   )
-
+  
   return(font_sizes)
 }
 
@@ -1528,7 +1534,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     unit_name = NULL,
     style_config = NULL,
     data = NULL) {
-
+  
   # DETERMINE BASE TITLE
   if (is_macro_mode) {
     plot_title <- .coalesce(
@@ -1550,7 +1556,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       "GTAP Analysis"
     }
   }
-
+  
   # APPLY TITLE FORMAT
   if (!is.null(style_config$title_format)) {
     title_format <- style_config$title_format
@@ -1571,27 +1577,27 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
            "dynamic" = {
              if (!is.null(data) && !is.null(title_format$text)) {
                separator <- if (!is.null(title_format$sep)) title_format$sep else " - "
-
+               
                cols_to_use <- title_format$text
                valid_cols <- cols_to_use[cols_to_use %in% names(data)]
-
+               
                if (length(valid_cols) > 0) {
                  unique_values <- list()
                  for (col in valid_cols) {
                    vals <- unique(as.character(data[[col]]))
                    unique_values[[col]] <- vals
                  }
-
+                 
                  all_values <- unlist(unique_values)
                  deduped_values <- unique(all_values)
-
+                 
                  plot_title <- paste(deduped_values, collapse = separator)
                }
              }
            }
     )
   }
-
+  
   # ADD UNIT IF CONFIGURED
   if (style_config$add_unit_to_title && !is.null(unit_name)) {
     if (tolower(unit_name) == "percent") {
@@ -1600,13 +1606,13 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       plot_title <- paste0(plot_title, " (", unit_name, ")")
     }
   }
-
+  
   # CLEAN TITLE FOR EXPORT NAME
   clean_title <- gsub("[^a-zA-Z0-9\\s]", "", plot_title)
   export_name <- gsub("\\s+", "_", clean_title)
   export_name <- gsub("_+", "_", export_name)
   export_name <- gsub("^_|_$", "", export_name)
-
+  
   # ADD PLOT TYPE SUFFIX
   if (!is.null(plot_type)) {
     if (plot_type == "stack") {
@@ -1615,7 +1621,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       export_name <- paste0(export_name, "_unstack")
     }
   }
-
+  
   return(list(
     title = plot_title,
     export_name = export_name
@@ -1667,20 +1673,20 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     if (!(x_axis_from %in% names(data))) {
       stop(paste("Required column", x_axis_from, "not found in the data frame."))
     }
-
+    
     # Check stack_value_from if provided (for stack_plot)
     if (!is.null(stack_value_from) && !(stack_value_from %in% names(data))) {
       stop(paste("Required column", stack_value_from, "not found in the data frame."))
     }
-
+    
     # Check variable_col if provided
     if (!is.null(variable_col) && !(variable_col %in% names(data))) {
       stop(paste("Required column", variable_col, "not found in the data frame."))
     }
-
+    
     return(data)
   }
-
+  
   # If a list of data frames, find first matching data frame
   if (is.list(data)) {
     for (df_name in names(data)) {
@@ -1692,21 +1698,21 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
           if (!is.null(stack_value_from) && !(stack_value_from %in% names(df))) {
             next
           }
-
+          
           # Check variable_col if provided
           if (!is.null(variable_col) && !(variable_col %in% names(df))) {
             next
           }
-
+          
           return(df)
         }
       }
     }
-
+    
     # If no suitable data frame found
     stop(paste("No suitable data frame found with required column:", x_axis_from))
   }
-
+  
   stop("Input must be a data frame or a list of data frames.")
 }
 
@@ -1741,19 +1747,19 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
     return(invisible())
   }
-
+  
   if (!is.data.frame(data)) {
     return(invisible())
   }
-
+  
   for (param_name in names(params)) {
     param_value <- params[[param_name]]
-
+    
     # Skip if NULL or logical
     if (is.null(param_value) || is.logical(param_value)) {
       next
     }
-
+    
     # For list of values (like in split_by with multiple columns)
     if (is.character(param_value) && length(param_value) > 1) {
       for (single_value in param_value) {
@@ -1770,7 +1776,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       }
     }
   }
-
+  
   return(invisible())
 }
 
@@ -1795,16 +1801,16 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   if (col_name %in% names(data)) {
     return(col_name)  # Exact match
   }
-
+  
   idx <- which(tolower(names(data)) == tolower(col_name))
   if (length(idx) > 0) {
     return(names(data)[idx[1]])  # Case-insensitive match
   }
-
+  
   if (is_required) {
     stop(paste("Required column not found:", col_name))
   }
-
+  
   return(default_name)  # Return default or NULL
 }
 
@@ -1825,13 +1831,13 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 .check_unit_column <- function(data, unit_col = "Unit") {
   # Check if unit column exists
   actual_unit_col <- .find_column(data, unit_col)
-
+  
   if (is.null(actual_unit_col)) {
     warning(paste("Unit column", unit_col, "not found. Using default 'Unit'"))
     data$Unit <- "data"
     return(list(data = data, unit_col = "Unit"))
   }
-
+  
   return(list(data = data, unit_col = actual_unit_col))
 }
 
@@ -1854,25 +1860,25 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   if (is.null(split_by) || (is.logical(split_by) && !split_by)) {
     return(list(data = data, is_macro_mode = TRUE, split_by = NULL))
   }
-
+  
   # For single column split_by
   if (length(split_by) == 1) {
     actual_split_by <- .find_column(data, split_by)
-
+    
     if (is.null(actual_split_by)) {
       warning(paste("Split-by column", split_by, "not found. Using default values."))
       data[[split_by]] <- "Default"
       actual_split_by <- split_by
     }
-
+    
     return(list(data = data, is_macro_mode = FALSE, split_by = actual_split_by))
   }
-
+  
   # For multiple split_by columns
   actual_split_by <- character(length(split_by))
   for (i in seq_along(split_by)) {
     found_col <- .find_column(data, split_by[i])
-
+    
     if (is.null(found_col)) {
       warning(paste("Split-by column", split_by[i], "not found. Using default values."))
       data[[split_by[i]]] <- "Default"
@@ -1881,7 +1887,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       actual_split_by[i] <- found_col
     }
   }
-
+  
   return(list(data = data, is_macro_mode = FALSE, split_by = actual_split_by))
 }
 
@@ -1906,21 +1912,21 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
                                    var_name_by_description = TRUE, add_var_info = FALSE) {
   if (!is.data.frame(data) || !variable_col %in% names(data))
     return(data)
-
+  
   # If no Description column, return data unchanged
   if (!desc_col %in% names(data))
     return(data)
-
+  
   result <- data
-
+  
   for (i in seq_len(nrow(result))) {
     var_ <- result[[variable_col]][i]
     des_ <- result[[desc_col]][i]
-
+    
     # Handle missing or empty description
     if (is.na(des_) || !nzchar(des_))
       des_ <- var_
-
+    
     if (var_name_by_description && add_var_info) {
       # Both: Description (Variable)
       result[[variable_col]][i] <- paste0(des_, " (", var_, ")")
@@ -1936,7 +1942,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       # Variable only (default, do nothing)
     }
   }
-
+  
   return(result)
 }
 
@@ -1960,7 +1966,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #'
 .create_color_palette <- function(color_tone = NULL, n_colors = 5,
                                   palette_type = "qualitative") {
-
+  
   themed_palettes <- list(
     academic = list(
       qualitative = c("#4477AA", "#66CCEE", "#228833", "#CCBB44", "#EE6677", "#AA3377", "#BBBBBB"),
@@ -2047,7 +2053,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       sequential = c("#FFE4B5", "#FFD700", "#FFA500", "#FF8C00", "#D2691E", "#A0522D", "#8B0000"),
       diverging = c("#8B0000", "#D2691E", "#FFA07A", "#FFFFFF", "#87CEFA", "#4682B4", "#00008B")
     ),
-
+    
     # Add monochromatic palettes
     blue_mono = list(
       qualitative = c("#0D47A1", "#1565C0", "#1976D2", "#1E88E5", "#2196F3", "#42A5F5", "#64B5F6", "#90CAF9"),
@@ -2075,26 +2081,26 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       diverging = c(rep(c("#000000"), n_colors))
     )
   )
-
+  
   # Check if color_tone is a recognized theme
   if (!is.null(color_tone) && tolower(color_tone) %in% names(themed_palettes)) {
     palette <- themed_palettes[[tolower(color_tone)]][[palette_type]]
-
+    
     # Ensure we have the right number of colors
     if (length(palette) < n_colors) {
       palette <- grDevices::colorRampPalette(palette)(n_colors)
     } else if (length(palette) > n_colors) {
       palette <- palette[1:n_colors]
     }
-
+    
     return(palette)
   }
-
+  
   # For mono-color themes that aren't predefined
   if (!is.null(color_tone) && grepl("_mono$", tolower(color_tone))) {
     # Extract the base color before "_mono"
     base_color <- gsub("_mono$", "", tolower(color_tone))
-
+    
     # Try to interpret as a standard color name
     tryCatch({
       # Create a mono palette from the base color
@@ -2106,14 +2112,14 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
         } else {
           seq(0.5, 1.5, length.out = n_colors)
         }
-
+        
         colors <- sapply(darken_factor, function(factor) {
           r <- min(255, max(0, base_col[1,1] * factor))
           g <- min(255, max(0, base_col[2,1] * factor))
           b <- min(255, max(0, base_col[3,1] * factor))
           grDevices::rgb(r, g, b, maxColorValue = 255)
         })
-
+        
         return(colors)
       }
     }, error = function(e) {
@@ -2121,20 +2127,20 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       return(NULL)
     })
   }
-
+  
   # NEW: Try to interpret any standard R color
   if (!is.null(color_tone)) {
     tryCatch({
       # Try to validate if it's a valid R color
       base_col <- grDevices::col2rgb(color_tone)
-
+      
       # If we get here, it's a valid color - create a palette of shades
       darken_factor <- if (palette_type == "diverging") {
         seq(0.4, 1.3, length.out = n_colors)
       } else {
         seq(0.5, 1.5, length.out = n_colors)
       }
-
+      
       # Create different shades based on the base color
       colors <- sapply(darken_factor, function(factor) {
         r <- min(255, max(0, base_col[1,1] * factor))
@@ -2142,14 +2148,14 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
         b <- min(255, max(0, base_col[3,1] * factor))
         grDevices::rgb(r, g, b, maxColorValue = 255)
       })
-
+      
       return(colors)
     }, error = function(e) {
       # Color wasn't valid, return NULL
       return(NULL)
     })
   }
-
+  
   return(NULL)
 }
 
@@ -2161,7 +2167,8 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #' @param data A data frame containing the relevant plotting data.
 #' @param color_tone Character. Base color for generating shades, or a theme name.
 #' @param axis_col Column name used for determining the number of unique colors needed.
-#'
+#' @param palette_type Character. Optional color palette by default is qualitative.
+#' 
 #' @return A vector of colors in hexadecimal format, or NULL if color_tone is NULL.
 #'
 #' @importFrom colorspace hex2RGB polarLUV
@@ -2171,27 +2178,27 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #' @keywords internal
 #' @seealso \code{\link{comparison_plot}}
 #'
-.generate_comparison_colors <- function(data, color_tone = NULL, axis_col) {
+.generate_comparison_colors <- function(data, color_tone = NULL, axis_col, palette_type = "qualitative") {
   if(is.null(color_tone)) return(NULL)
-
+  
   n_colors <- length(unique(data[[axis_col]]))
-
+  
   themed_palette <- .create_color_palette(color_tone = color_tone, n_colors = n_colors,
-                                          palette_type = "qualitative")
-
+                                          palette_type = palette_type)
+  
   if (!is.null(themed_palette)) {
     return(themed_palette)
   }
-
+  
   base_color <- if(startsWith(color_tone, "#")) {
     color_tone
   } else {
     colorspace::hex(colorspace::sRGB(t(col2rgb(color_tone) / 255)))
   }
-
+  
   base_rgb <- colorspace::hex2RGB(base_color)
   base_hcl <- as(base_rgb, "polarLUV")
-
+  
   hue <- base_hcl@coords[, "H"]
   chroma_range <- seq(max(30, base_hcl@coords[, "C"] - 20),
                       min(100, base_hcl@coords[, "C"] + 20),
@@ -2199,7 +2206,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   luminance_range <- seq(max(30, base_hcl@coords[, "L"] - 20),
                          min(90, base_hcl@coords[, "L"] + 20),
                          length.out = n_colors)
-
+  
   sapply(1:n_colors, function(i) {
     colorspace::hex(colorspace::polarLUV(L = luminance_range[i],
                                          C = chroma_range[i],
@@ -2215,7 +2222,8 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #' @param positive_color Character. Hex code or color name for the positive color (default: "#2E8B57", sea green).
 #' @param negative_color Character. Hex code or color name for the negative color (default: "#CD5C5C", indian red).
 #' @param color_tone Character. Optional color tone to override the positive/negative colors.
-#'
+#' @param palette_type Character. Optional color palette by default is qualitative.
+#' 
 #' @return A named vector containing hex codes for different value categories.
 #'
 #' @importFrom grDevices col2rgb rgb
@@ -2224,11 +2232,13 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #' @keywords internal
 #' @seealso \code{\link{detail_plot}}
 #'
-.generate_color_palette <- function(positive_color = "#2E8B57", negative_color = "#CD5C5C", color_tone = NULL) {
+.generate_color_palette <- function(positive_color = "#2E8B57", negative_color = "#CD5C5C", 
+                                    color_tone = NULL, palette_type = "qualitative") {
   # If color_tone is specified, we use it to generate colors instead of positive/negative colors
   if (!is.null(color_tone)) {
-    mono_palette <- .create_color_palette(color_tone = color_tone, n_colors = 5, palette_type = "qualitative")
-
+    mono_palette <- .create_color_palette(color_tone = color_tone, n_colors = 5, 
+                                          palette_type = palette_type)
+    
     if (!is.null(mono_palette)) {
       if (length(mono_palette) >= 5) {
         # If we have at least 5 colors, use them directly
@@ -2242,22 +2252,22 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       } else if (length(mono_palette) == 1) {
         # For monochromatic palettes with a single color, use different lightness levels
         base_rgb <- col2rgb(mono_palette[1])
-
+        
         # Calculate lighter and darker variants
         lighter <- function(rgb_val, factor = 0.3) {
           pmax(0, pmin(255, rgb_val + (255 - rgb_val) * factor))
         }
-
+        
         darker <- function(rgb_val, factor = 0.3) {
           pmax(0, pmin(255, rgb_val * (1 - factor)))
         }
-
+        
         # Create variants with different lightness levels
         lighter1 <- rgb(lighter(base_rgb[1], 0.3), lighter(base_rgb[2], 0.3), lighter(base_rgb[3], 0.3), maxColorValue = 255)
         lighter2 <- rgb(lighter(base_rgb[1], 0.6), lighter(base_rgb[2], 0.6), lighter(base_rgb[3], 0.6), maxColorValue = 255)
         darker1 <- rgb(darker(base_rgb[1], 0.3), darker(base_rgb[2], 0.3), darker(base_rgb[3], 0.3), maxColorValue = 255)
         darker2 <- rgb(darker(base_rgb[1], 0.6), darker(base_rgb[2], 0.6), darker(base_rgb[3], 0.6), maxColorValue = 255)
-
+        
         return(c(
           "extreme_positive" = darker1,
           "normal_positive" = mono_palette[1],
@@ -2268,7 +2278,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       }
     }
   }
-
+  
   # If we don't have a color_tone or couldn't generate a palette from it,
   # fall back to the traditional positive/negative colors
   adjust_shade <- function(color, factor = 0.7) {
@@ -2276,7 +2286,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     lighter <- rgb_col + (255 - rgb_col) * (1 - factor)
     return(rgb(lighter[1], lighter[2], lighter[3], maxColorValue = 255))
   }
-
+  
   c(
     "extreme_positive" = positive_color,
     "normal_positive" = adjust_shade(positive_color),
@@ -2286,7 +2296,6 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   )
 }
 
-
 #' @title Generate Colors for Stacked Bar Components
 #'
 #' @description Generates a color palette for stacked bar components, ensuring good contrast between items.
@@ -2294,7 +2303,8 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #' @param data A data frame containing the stack value column.
 #' @param stack_value_from Column name containing the stack categories.
 #' @param color_tone Optional base color to influence the palette.
-#'
+#' @param palette_type Character. Optional color palette by default is qualitative.
+#' 
 #' @return A named vector of colors for each stack component.
 #' @importFrom colorspace hex2RGB hex polarLUV
 #' @importFrom grDevices hcl
@@ -2302,50 +2312,51 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #' @keywords internal
 #' @seealso \code{\link{stack_plot}}
 #'
-.generate_stack_colors <- function(data, stack_value_from, color_tone = NULL) {
+.generate_stack_colors <- function(data, stack_value_from, color_tone = NULL, palette_type = "qualitative") {
   components <- unique(data[[stack_value_from]])
   n_components <- length(components)
-
+  
   if (n_components <= 1) {
     return(setNames(c("#4477AA"), components))
   }
-
+  
   # Try to generate a diverse palette based on the provided color_tone
-  themed_palette <- .create_color_palette(color_tone = color_tone, n_colors = n_components, palette_type = "qualitative")
-
+  themed_palette <- .create_color_palette(color_tone = color_tone, n_colors = n_components, 
+                                          palette_type = palette_type)
+  
   if (!is.null(themed_palette)) {
     # Modify colors to increase distinction in the stack plot
     adjusted_colors <- colorspace::lighten(themed_palette, amount = seq(0.1, 0.5, length.out = n_components))
     return(setNames(adjusted_colors, components))
   }
-
+  
   # If color_tone is a standard color, generate variations with more differentiation
   if (!is.null(color_tone)) {
     tryCatch({
       base_col <- grDevices::col2rgb(color_tone) / 255  # Normalize to 0-1
       hue_shifts <- seq(0, 360, length.out = n_components + 1)[-1]  # Rotate hues
       saturation_shifts <- seq(0.6, 1, length.out = n_components)  # Vary saturation
-
+      
       colors <- sapply(seq_len(n_components), function(i) {
         hcl_col <- colorspace::HLS(base_col[1,1] * 360, base_col[2,1], base_col[3,1])
         grDevices::hcl(hue = (hcl_col@coords[1] + hue_shifts[i]) %% 360,
-                        chroma = saturation_shifts[i] * 100,
-                        luminance = hcl_col@coords[3] * 100)
+                       chroma = saturation_shifts[i] * 100,
+                       luminance = hcl_col@coords[3] * 100)
       })
-
+      
       return(setNames(colors, components))
     }, error = function(e) {
       # Fallback in case of any issues
     })
   }
-
+  
   # Default High-Contrast Palette for Stack Plot
   default_palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999")
-
+  
   if (n_components > length(default_palette)) {
     default_palette <- colorspace::rainbow_hcl(n_components, c = 100, l = 65)
   }
-
+  
   return(setNames(default_palette[1:n_components], components))
 }
 
@@ -2370,7 +2381,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
                                     panel_var = "Experiment") {
   # DETERMINE NUMBER OF PANELS
   num_panels <- length(unique(data[[panel_var]]))
-
+  
   # CASE 1: Only panel_rows is specified (panel_cols is NULL)
   if (!is.null(panel_rows) && is.null(panel_cols)) {
     panel_cols <- ceiling(num_panels / panel_rows)
@@ -2391,7 +2402,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
     return(list(rows = panel_rows, cols = panel_cols))
   }
-
+  
   # CASE 4: AUTO CALCULATE LAYOUT WHEN NEITHER DIMENSION IS SPECIFIED
   if (num_panels <= 1) {
     return(list(rows = 1, cols = 1))
@@ -2413,7 +2424,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
         factors <- c(factors, i)
       }
     }
-
+    
     if (length(factors) > 0) {
       best_factor <- factors[length(factors)]
       rows <- best_factor
@@ -2423,7 +2434,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       cols <- ceiling(sqrt(num_panels))
       rows <- ceiling(num_panels / cols)
     }
-
+    
     # Ensure layout is not too wide compared to height
     if (cols > 2 * rows) {
       new_cols <- ceiling(sqrt(num_panels))
@@ -2431,7 +2442,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       rows <- new_rows
       cols <- new_cols
     }
-
+    
     return(list(rows = rows, cols = cols))
   }
 }
@@ -2455,15 +2466,15 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   num_panels <- panel_layout$rows * panel_layout$cols
   base_width <- 20
   base_height <- 12
-
+  
   width <- if(num_panels <= 4) {
     base_width
   } else {
     min(base_width + (num_panels - 4) * 3.5, 50)
   }
-
+  
   height <- base_height * 0.75
-
+  
   return(list(width = width, height = height))
 }
 
@@ -2490,9 +2501,9 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   if (!is.list(dimensions) || is.null(dimensions$width) || is.null(dimensions$height)) {
     return(invisible(NULL))
   }
-
+  
   num_plots <- if (inherits(plots, "gg")) 1 else length(plots)
-
+  
   if (phase == "start") {
     message(sprintf(">>> Starting plot export process: %d plot(s) with dimensions (widthxheight): %.1f x %.1f inches",
                     num_plots, dimensions$width, dimensions$height))
@@ -2502,7 +2513,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
                     num_plots, dimensions$width, dimensions$height))
     message(sprintf(">>> DPI: %d", dpi))
   }
-
+  
   invisible(NULL)
 }
 
@@ -2542,60 +2553,60 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
                                 export_config = NULL,
                                 data = NULL,
                                 panel_layout = NULL) {
-
+  
   if (!export_picture) {
     return(invisible(plots))
   }
-
+  
   # Prepare export configuration
   if (is.null(export_config)) {
     export_config <- list()
   }
-
+  
   # Default export settings if not specified
   if (is.null(export_config$dpi)) export_config$dpi <- 300
   if (is.null(export_config$bg)) export_config$bg <- "white"
   if (is.null(export_config$limitsize)) export_config$limitsize <- FALSE
   if (is.null(export_config$file_name)) export_config$file_name <- "gtap_plots"
-
+  
   # Handle custom dimensions if provided
   if (is.null(export_config$width) || is.null(export_config$height)) {
     dimensions <- .calculate_plot_dimensions(data, panel_layout)
     export_config$width <- dimensions$width
     export_config$height <- dimensions$height
   }
-
+  
   # Display dimensions at the start of export process
   .display_export_dimensions(list(width = export_config$width, height = export_config$height), plots, "start", export_config$dpi)
-
+  
   # Create output directory if needed
   if (is.null(output_path)) {
     output_path <- getwd()
   }
-
+  
   if (!dir.exists(output_path)) {
     dir.create(output_path, recursive = TRUE)
   }
-
+  
   is_single_plot <- inherits(plots, "gg")
-
+  
   if (is_single_plot) {
     plots <- list(plot = plots)
   }
-
+  
   if (!is.list(plots) || length(plots) == 0) {
     stop("plots must be a ggplot object or a non-empty list of ggplot objects")
   }
-
+  
   if (!all(sapply(plots, function(p) inherits(p, "gg")))) {
     stop("All elements in plots must be ggplot objects")
   }
-
+  
   n_plots <- length(plots)
-
+  
   # For individual plots, use the export_config file name
   base_file_name <- export_config$file_name
-
+  
   is_merge_pdf <- FALSE
   if (is.character(export_as_pdf)) {
     if (tolower(export_as_pdf) == "merged") {
@@ -2603,14 +2614,14 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       export_as_pdf <- TRUE
     }
   }
-
+  
   if (export_as_pdf) {
     if (is_merge_pdf && n_plots >= 1) {
       # Determine the plot type based on the calling function
       calling_func <- sys.call(-1)[[1]]
       if (is.name(calling_func)) {
         calling_func <- as.character(calling_func)
-
+        
         if (grepl("comparison_plot", calling_func)) {
           pdf_base_name <- "Comparison_plot"
         } else if (grepl("detail_plot", calling_func)) {
@@ -2623,11 +2634,11 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       } else {
         pdf_base_name <- "Plots"
       }
-
+      
       # Add number of plots to the filename
       pdf_file_name <- paste0(pdf_base_name, "_", n_plots)
       pdf_path <- file.path(output_path, paste0(pdf_file_name, ".pdf"))
-
+      
       grDevices::pdf(
         file = pdf_path,
         width = export_config$width,
@@ -2635,20 +2646,20 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
         useDingbats = FALSE,
         title = pdf_file_name
       )
-
+      
       on.exit(grDevices::dev.off())
-
+      
       for (i in seq_along(plots)) {
         print(plots[[i]])
       }
-
+      
       message("Combined PDF exported to: ", pdf_path)
     } else {
       # Individual PDF export
       if (n_plots == 1) {
         p <- plots[[1]]
         pdf_path <- file.path(output_path, paste0(base_file_name, ".pdf"))
-
+        
         ggplot2::ggsave(
           filename = pdf_path,
           plot = p,
@@ -2659,16 +2670,16 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
           bg = export_config$bg,
           limitsize = export_config$limitsize
         )
-
+        
         message("PDF figure exported to: ", pdf_path)
       } else {
         # Multiple plots: use individual plot names
         for (i in seq_along(plots)) {
           p <- plots[[i]]
           plot_name <- names(plots)[[i]]
-
+          
           pdf_path <- file.path(output_path, paste0(plot_name, ".pdf"))
-
+          
           ggplot2::ggsave(
             filename = pdf_path,
             plot = p,
@@ -2679,21 +2690,21 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
             bg = export_config$bg,
             limitsize = export_config$limitsize
           )
-
+          
           message("PDF figure exported to: ", pdf_path)
         }
       }
     }
   }
-
+  
   if (export_picture) {
     # If there's only one plot, use the base filename without numbering
     if (n_plots == 1) {
       p <- plots[[1]]
       plot_name <- names(plots)[[1]]
-
+      
       png_path <- file.path(output_path, paste0(plot_name, ".png"))
-
+      
       ggplot2::ggsave(
         filename = png_path,
         plot = p,
@@ -2704,16 +2715,16 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
         bg = export_config$bg,
         limitsize = export_config$limitsize
       )
-
+      
       message("PNG figure exported to: ", png_path)
     } else {
       # Multiple plots: use individual plot names
       for (i in seq_along(plots)) {
         p <- plots[[i]]
         plot_name <- names(plots)[[i]]
-
+        
         png_path <- file.path(output_path, paste0(plot_name, ".png"))
-
+        
         ggplot2::ggsave(
           filename = png_path,
           plot = p,
@@ -2724,15 +2735,15 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
           bg = export_config$bg,
           limitsize = export_config$limitsize
         )
-
+        
         message("PNG figure exported to: ", png_path)
       }
     }
   }
-
+  
   # Display dimensions at the end of export process
   .display_export_dimensions(list(width = export_config$width, height = export_config$height), plots, "end", export_config$dpi)
-
+  
   # Always return NULL invisibly to suppress output
   return(invisible(NULL))
 }

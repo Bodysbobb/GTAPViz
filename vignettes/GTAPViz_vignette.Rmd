@@ -34,8 +34,8 @@ knitr::opts_chunk$set(
 rm(list=ls())
 #------------------Dev Period######################################
 # Directory
-#project.folder <- "C:/Users/b_pat/OneDrive - purdue.edu/GTAPViz Data"
-project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data"
+project.folder <- "C:/Users/b_pat/OneDrive - purdue.edu/GTAPViz Data"
+#project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data"
 
 input.folder <- paste0(project.folder, "/in")
 map.folder <- paste0(project.folder, "/map")
@@ -122,8 +122,7 @@ This package streamlines the creation of figures and tables from **.HAR** and **
 
 - **Comprehensive Documentation** – Includes a vignette and built-in help functions covering all customization options—no need to search online.  
 
-Before proceeding, ensure that `GTAPViz` is installed
-and loaded:
+Before proceeding, ensure that `GTAPViz` is installed and loaded:
 
 ```{r package, eval = FALSE}
 if (!requireNamespace("GTAPViz", quietly = TRUE)) {
@@ -632,131 +631,22 @@ export_config <- get_export_config(as_dataframe = TRUE)
 You can view all predefined palettes by using the following code: </p>
 ```{r color palette, eval=FALSE}
 # Get all palettes as a list
-all_palettes <- print_palette_colors("all")
+all_palettes <- get_color_palette("all")
 
 # Click or call a specific palette to view its colors
-all_palettes$winter()   # View the winter palette
-all_palettes$fall()     # View the fall palette
-all_palettes$gtap()     # View the GTAP palette
+all_palettes$winter("qualitative")   # View the winter palette
+all_palettes$fall("sequential")                 # View the fall palette
+all_palettes$gtap("diverging")     # View the GTAP palette
 ```
 
 <p> **Note:** You can also define any other color palette simply by using `"blue"`, `"red"`, or any other standard color name that works with `ggplot2`. </p>
 
 <p> Next, use the following code to create and apply your own plot style: </p>
 ```{r, eval = FALSE}
-get_plot_config(printing = TRUE)
+get_all_config(printing = TRUE)
 ```
 
-<p> You will get: </p>
-```{r my style config, eval = FALSE}
-my_style_config <- list(
-
-  # Title settings
-  show_title = TRUE,
-  title_face = "bold",
-  title_size = 20,
-  title_hjust = 0.5,
-  add_unit_to_title = TRUE,
-  title_margin = margin(t = 10, r = 0, b = 10, l = 0),
-  title_format = list(
-    type = "standard", #option: prefix, suffix, full, dynamic
-    text = "",
-    sep = ""
-  ),
-
-  # X-Axis settings
-  show_x_axis_title = TRUE,
-  x_axis_title_face = "bold",
-  x_axis_title_size = 16,
-  x_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),
-  show_x_axis_labels = TRUE,
-  x_axis_text_face = "plain",
-  x_axis_text_size = 14,
-  x_axis_text_angle = 0,
-  x_axis_text_hjust = 0,
-  x_axis_description = "",
-
-  # Y-Axis settings
-  show_y_axis_title = TRUE,
-  y_axis_title_face = "bold",
-  y_axis_title_size = 16,
-  y_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),
-  show_y_axis_labels = TRUE,
-  y_axis_text_face = "plain",
-  y_axis_text_size = 14,
-  y_axis_text_angle = 0,
-  y_axis_text_hjust = 0,
-  y_axis_description = "",
-  show_axis_titles_on_all_facets = TRUE,
-
-  # Value Labels
-  show_value_labels = TRUE,
-  value_label_face = "plain",
-  value_label_size = 5,
-  value_label_position = "above",
-  value_label_decimal_places = 2,
-
-  # Legend
-  show_legend = FALSE,
-  show_legend_title = FALSE,
-  legend_position = "bottom",
-  legend_title_face = "bold",
-  legend_text_face = "plain",
-  legend_text_size = 14,
-
-  # Panel Strip
-  strip_face = "bold",
-  strip_text_size = 16,
-  strip_background = "lightgrey",
-  strip_text_margin = margin(t = 10, r = 0, b = 10, l = 0),
-
-  # Panel Layout
-  panel_spacing = 2,
-  panel_rows = NULL,
-  panel_cols = NULL,
-  theme = NULL,
-
-  # Colors
-  color_tone = NULL,
-  positive_color = "#2E8B57",
-  negative_color = "#CD5C5C",
-  background_color = "white",
-  grid_color = "grey90",
-  show_grid_major_x = FALSE,
-  show_grid_major_y = FALSE,
-  show_grid_minor_x = FALSE,
-  show_grid_minor_y = FALSE,
-
-  # Zero Line
-  show_zero_line = TRUE,
-  zero_line_type = "dashed",
-  zero_line_color = "black",
-  zero_line_size = 0.5,
-  zero_line_position = 0,
-
-  # Bar Chart
-  bar_width = 0.9,
-  bar_spacing = 0.9,
-
-  # Scale Settings
-  scale_limit = NULL,
-  scale_increment = NULL,
-
-  # Scale Expansion
-  expansion_y_mult = c(0.05, 0.1),
-  expansion_x_mult = c(0.05, 0.05),
-
-  # Font Size Control
-  all_font_size = 1,
-
-  # Data Sorting
-  sort_data_by_value = FALSE
-)
-
-# Example usage:
-# comparison_plot(data, x_axis_from = "REG", 
-#                 plot_style_config = my_style_config)
-```
+**Please refer to another vignetter [Plot Configurations]() for more details and how to use it**
 
 </div>
 
@@ -807,6 +697,7 @@ comparison_plot(data = reg_data,
                 # See ?plot_style_config
                 plot_style_config = list(
                   color_tone = "purdue",
+                  color_palette_type = "qualitative",
                   add_unit_to_title = TRUE,
                   title_format = list(
                     type = "prefix",  
