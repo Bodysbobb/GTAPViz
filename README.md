@@ -27,3 +27,14 @@ devtools::install_github("Bodysbobb/GTAPViz")
 For full details on how to use this package and explore practical examples, see the [GTAPViz Vignette](https://bodysbobb.github.io/GTAPViz/articles/GTAPViz_plot.html).
 For the R reference manual, see the [GTAPViz Reference Manual](https://github.com/Bodysbobb/GTAPViz/blob/main/inst/docs/GTAPViz_1.0.0.pdf).
 
+
+# License
+
+HARplus is released under the **MIT License**. See the full license [here](LICENSE).
+
+# Author
+
+**Pattawee Puangchit**  
+Ph.D. Candidate, Agricultural Economics  
+Purdue University  
+Research Assistant at GTAP  
