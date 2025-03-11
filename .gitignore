@@ -1,9 +1,0 @@
-*.Rproj.user
-inst/GTAPDefault
-LICENSE
-*.Rproj
-*.Rhistory
-*.Rbuildignore
-.Rproj.user
-/doc/
-/Meta/
