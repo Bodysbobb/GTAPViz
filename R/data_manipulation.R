@@ -24,14 +24,24 @@
 #' @seealso \code{\link{convert_units}}, \code{\link{rename_value}}
 #'
 #' @examples
-#' \dontrun{
+#' # Load Sample Data:
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#'                                 package = "GTAPViz"))
+#'                                 
+#' # Get Data by Variable Name
+#' sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"), sl4_data1)
+#' 
 #' # Add mapping using GTAPv7 defaults
-#' gtap_data <- add_mapping_info(gtap_data, mapping = "GTAPv7")
+#' gtap_data <- add_mapping_info(sl4_data1, mapping = "GTAPv7")
 #'
 #' # Use an external mapping file
-#' gtap_data <- add_mapping_info(gtap_data, external_map = my_mapping, mapping = "Mix")
-#' }
-#'
+#' my_mapping <- data.frame(Variable = c("qgdp", "EV"), 
+#'                          Description = c("Real GDP", "Welfare"),
+#'                          Unit = c("percent", "millionUSD"))  # <- Fixed closing quote
+#'                          
+#' gtap_data <- add_mapping_info(sl4_data1, external_map = my_mapping, 
+#'                               mapping = "Mix")
+#' 
 add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
                              description_info = TRUE, unit_info = TRUE) {
   if (!is.null(mapping)) {
@@ -163,17 +173,22 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{rename_value}}, \code{\link{sort_plot_data}}
 #'
 #' @examples
-#' \dontrun{
+#' # Load Sample Data:
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#'                                 package = "GTAPViz"))
+#'                                 
+#' # Get Data by Variable Name
+#' sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
+#' 
 #' # Convert million USD to billion USD
-#' gtap_data <- convert_units(gtap_data,
+#' gtap_data <- convert_units(sl4_data1,
 #'   change_unit_from = "million USD",
 #'   change_unit_to = "billion USD",
 #'   adjustment = "/1000"
 #' )
 #'
 #' # Automatic conversion from percent to fraction
-#' gtap_data <- convert_units(gtap_data, scale_auto = "pct2frac")
-#' }
+#' gtap_data <- convert_units(sl4_data1, scale_auto = "pct2frac")
 #'
 convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
                           adjustment = NULL, value_col = "Value", unit_col = "Unit",
@@ -376,11 +391,17 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}
 #'
 #' @examples
-#' \dontrun{
+#' # Load Sample Data:
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#'                                 package = "GTAPViz"))
+#' # Get Data by Variable Name
+#' sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
+#' 
 #' # Rename variables in a dataset
-#' rename_map <- data.frame(OldName = c("old_var1", "old_var2"), NewName = c("new_var1", "new_var2"))
-#' gtap_data <- rename_value(gtap_data, column_name = "Variable", mapping.file = rename_map)
-#' }
+#' rename_map <- data.frame(OldName = c("qgdp", "EV"), 
+#'                         NewName = c("Real GDP", "Welfare"))
+#' gtap_data <- rename_value(sl4_data1, column_name = "Variable", 
+#'                           mapping.file = rename_map)
 #'
 rename_value <- function(data, column_name = NULL, mapping.file) {
   if (!all(c("OldName", "NewName") %in% names(mapping.file))) {
@@ -439,10 +460,14 @@ rename_value <- function(data, column_name = NULL, mapping.file) {
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}
 #'
 #' @examples
-#' \dontrun{
+#' # Load Sample Data:
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#'                                 package = "GTAPViz"))
+#' # Get Data by Variable Name
+#' sl4_data1 <- HARplus::get_data_by_var("qxs",sl4_data1)
+#' 
 #' # Rename bilateral trade columns in a GTAP dataset
-#' gtap_data <- rename_GTAP_bilateral(gtap_data)
-#' }
+#' gtap_data <- rename_GTAP_bilateral(sl4_data1)
 #'
 rename_GTAP_bilateral <- function(data) {
   rename_bilateral_cols <- function(df) {
@@ -486,7 +511,7 @@ rename_GTAP_bilateral <- function(data) {
 #' Works with data frames, lists of data frames, or nested data structures.
 #'
 #' @param data A data frame or list structure containing data to be sorted.
-#' @param cols Named list. Specifies columns to sort by and their ordering.
+#' @param sort_columns Named list. Specifies columns to sort by and their ordering.
 #'        Each element should be a character vector of values in desired order.
 #'        For example, `list(Region = c("USA", "EU", "CHN")`,
 #'                          `Experiment = c("Base", "Shock1", "Shock2"))`.
@@ -503,10 +528,25 @@ rename_GTAP_bilateral <- function(data) {
 #' @export
 #'
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_GTAP_bilateral}}
-#'
-sort_plot_data <- function(data, cols = NULL, sort_by_value_desc = NULL, convert_to_factor = TRUE) {
+#' 
+#' @examples
+#' 
+#' # Load Sample Data:
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#'                                 package = "GTAPViz"))
+#' # Get Data by Variable Name
+#' sl4_data1 <- HARplus::get_data_by_var(c("qgdp","EV"),sl4_data1)
+#' 
+#' # Creating Sorting Rule
+#' sorting_specs <- data.frame(REG = c("EastAsia", "SEAsia", "Oceania"))
+#' 
+#' # Sorting
+#' sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs, 
+#'                             sort_by_value_desc = FALSE)
+#' 
+sort_plot_data <- function(data, sort_columns = NULL, sort_by_value_desc = NULL, convert_to_factor = TRUE) {
   # If no sorting parameters provided, return the data as is
-  if (is.null(cols) && is.null(sort_by_value_desc)) {
+  if (is.null(sort_columns) && is.null(sort_by_value_desc)) {
     return(data)
   }
 
@@ -524,13 +564,13 @@ sort_plot_data <- function(data, cols = NULL, sort_by_value_desc = NULL, convert
     col_order_maps <- list()
 
     # Process column-based sorting
-    if (!is.null(cols)) {
-      for (col_name in names(cols)) {
+    if (!is.null(sort_columns)) {
+      for (col_name in names(sort_columns)) {
         if (!col_name %in% colnames(df)) {
           next
         }
 
-        col_values <- cols[[col_name]]
+        col_values <- sort_columns[[col_name]]
         if (is.character(col_values) && length(col_values) > 0) {
           # Get all unique values from the dataframe column
           all_values <- unique(df[[col_name]])

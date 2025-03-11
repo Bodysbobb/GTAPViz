@@ -86,33 +86,45 @@ Generates stacked bar charts to visualize value compositions across multiple dim
 The function supports stacked and unstacked presentations for decomposition analysis.
 }
 \examples{
-\dontrun{
-# Basic stacked bar chart by commodity with export options
-p1 <- stack_plot(
-  data = gtap_results,
-  x_axis_from = "REG",
-  stack_value_from = "COMM",
-  output_path = "results/stacked",
-  export_config = list(
-    file_name = "commodity_stacks",
-    width = 12,
-    height = 9
-  )
-)
+\donttest{
+# Input Path:
+input_path <- system.file("extdata/in", package = "GTAPViz")
+                                
+# GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+# Note: No need to add .sl4 to the experiment name 
+gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
+                            input_path = input_path, subtotal_level = FALSE,
+                            process_sl4_vars = NULL, process_har_vars = NULL,
+                            mapping_info = "GTAPv7", plot_data = TRUE)
+                            
+stack_plot(data = har.plot.data[["A"]],
+           x_axis_from = "REG",
+           stack_value_from = "COLUMN",
+           split_by = FALSE,
+           
+           show_total = TRUE,
+           unstack_plot = FALSE,
+           
+           var_name_by_description = TRUE,       
+           
+           invert_pane = FALSE,           
+           separate_figure = FALSE,
 
-# Welfare Decomposition with PDF export
-p2 <- stack_plot(
-  data = headerA,
-  x_axis_from = "Region",
-  stack_value_from = "COLUMN",
-  split_by = FALSE,
-  unstack_plot = TRUE,
-  show_total = TRUE,
-  export_as_pdf = TRUE,
-  export_config = list(
-    file_name = "welfare_decomposition"
-  )
-)
+           export_picture = TRUE,
+           export_as_pdf = "merged",
+           export_config = list(
+             width = 28,
+             height = 15
+           ),
+           output_path = "/your/folder/path",
+           
+           plot_style_config = list(
+             color_tone = "gtap",
+             panel_rows = 2,
+             panel_cols = NULL,
+             show_legend = TRUE,
+             show_axis_titles_on_all_facets = FALSE
+           ))
 }
 }
 \seealso{

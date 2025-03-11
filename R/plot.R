@@ -38,22 +38,35 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Input Path:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#'                                 
+#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+#' # Note: No need to add .sl4 to the experiment name 
+#' gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
+#'                             input_path = input_path, subtotal_level = FALSE,
+#'                             process_sl4_vars = NULL, process_har_vars = NULL,
+#'                             mapping_info = "GTAPv7", plot_data = TRUE)
+#' 
 #' # Basic usage with data frame
 #' p1 <- comparison_plot(
-#'   data = gtap_results,
-#'   x_axis_from = "REG",
-#'   panel_var = "Experiment"
+#'   data = sl4.plot.data[["1D"]][["Region"]],
+#'   x_axis_from = "Region",
+#'   panel_var = "Experiment",
+#'   filter_var = c("qgdp", "EV"),
+#'   output_path = "/your/folder/path"
 #' )
 #'
 #' # Split by commodity with custom styling and export options
 #' p2 <- comparison_plot(
-#'   data = gtap_results,
-#'   x_axis_from = "REG",
-#'   split_by = "COMM",
+#'   data = sl4.plot.data[["1D"]][["Region"]],
+#'   x_axis_from = "Region",
+#'   split_by = "Variable",
 #'   panel_var = "Experiment",
+#'   filter_var = c("qgdp", "EV"),
 #'   var_name_by_description = TRUE,
-#'   output_path = "results/plots",
+#'   output_path = "/your/folder/path",
 #'   export_as_pdf = TRUE,
 #'   export_config = list(
 #'     file_name = "commodity_impacts",
@@ -706,32 +719,48 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Basic usage showing all impacts with export options
-#' p1 <- detail_plot(
-#'   data = gtap_results,
-#'   x_axis_from = "REG",
-#'   variable_col = "Variable",
-#'   top_impact = NULL,
-#'   output_path = "results/detail_plots",
-#'   export_config = list(
-#'     file_name = "regional_impacts",
-#'     width = 14,
-#'     height = 10
-#'   )
-#' )
-#'
-#' # Show only top 10 impacts (balanced between positive and negative)
-#' p2 <- detail_plot(
-#'   data = gtap_results,
-#'   x_axis_from = "Sector",
-#'   split_by = "Region",
-#'   panel_var = "Experiment",
-#'   variable_col = "Variable",
-#'   top_impact = 10,
-#'   invert_pane = TRUE,
-#'   export_as_pdf = TRUE
-#' )
+#' 
+#' \donttest{
+#' # Input Path:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#'                                 
+#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+#' # Note: No need to add .sl4 to the experiment name 
+#' gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
+#'                             input_path = input_path, subtotal_level = FALSE,
+#'                             process_sl4_vars = NULL, process_har_vars = NULL,
+#'                             mapping_info = "GTAPv7", plot_data = TRUE)
+#' # Basic usage with data frame
+#' detail_plot(sl4.plot.data[["2D"]],
+#'             x_axis_from = "Sector",
+#'             split_by = "Region",
+#'             filter_var = "qo",
+#' 
+#'             top_impact = NULL,
+#'             var_name_by_description = TRUE,
+#'             
+#'             invert_pane = TRUE,
+#'             separate_figure = FALSE,
+#'             
+#'             export_config = list(
+#'               width = 45,
+#'               height = 20
+#'             ),
+#'             
+#'             export_picture = TRUE,
+#'             export_as_pdf = FALSE,   
+#'             output_path = "/your/folder/path",
+#'             
+#'             plot_style_config = list(
+#'               positive_color = "#2E8B57", 
+#'               negative_color = "#CD5C5C",
+#'               panel_rows = 1,
+#'               panel_cols = NULL,
+#'               show_axis_titles_on_all_facets = FALSE,
+#'               y_axis_text_size = 25,
+#'               bar_width = 0.6,
+#'               all_font_size = 1.1
+#'             ))
 #' }
 #'
 detail_plot <- function(data, filter_var = NULL,
@@ -1536,33 +1565,45 @@ detail_plot <- function(data, filter_var = NULL,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Basic stacked bar chart by commodity with export options
-#' p1 <- stack_plot(
-#'   data = gtap_results,
-#'   x_axis_from = "REG",
-#'   stack_value_from = "COMM",
-#'   output_path = "results/stacked",
-#'   export_config = list(
-#'     file_name = "commodity_stacks",
-#'     width = 12,
-#'     height = 9
-#'   )
-#' )
-#'
-#' # Welfare Decomposition with PDF export
-#' p2 <- stack_plot(
-#'   data = headerA,
-#'   x_axis_from = "Region",
-#'   stack_value_from = "COLUMN",
-#'   split_by = FALSE,
-#'   unstack_plot = TRUE,
-#'   show_total = TRUE,
-#'   export_as_pdf = TRUE,
-#'   export_config = list(
-#'     file_name = "welfare_decomposition"
-#'   )
-#' )
+#' \donttest{
+#' # Input Path:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#'                                 
+#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+#' # Note: No need to add .sl4 to the experiment name 
+#' gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
+#'                             input_path = input_path, subtotal_level = FALSE,
+#'                             process_sl4_vars = NULL, process_har_vars = NULL,
+#'                             mapping_info = "GTAPv7", plot_data = TRUE)
+#'                             
+#' stack_plot(data = har.plot.data[["A"]],
+#'            x_axis_from = "REG",
+#'            stack_value_from = "COLUMN",
+#'            split_by = FALSE,
+#'            
+#'            show_total = TRUE,
+#'            unstack_plot = FALSE,
+#'            
+#'            var_name_by_description = TRUE,       
+#'            
+#'            invert_pane = FALSE,           
+#'            separate_figure = FALSE,
+#' 
+#'            export_picture = TRUE,
+#'            export_as_pdf = "merged",
+#'            export_config = list(
+#'              width = 28,
+#'              height = 15
+#'            ),
+#'            output_path = "/your/folder/path",
+#'            
+#'            plot_style_config = list(
+#'              color_tone = "gtap",
+#'              panel_rows = 2,
+#'              panel_cols = NULL,
+#'              show_legend = TRUE,
+#'              show_axis_titles_on_all_facets = FALSE
+#'            ))
 #' }
 stack_plot <- function(data, filter_var = NULL,
                        x_axis_from,

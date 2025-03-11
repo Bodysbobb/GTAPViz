@@ -4,7 +4,12 @@
 \alias{.generate_comparison_colors}
 \title{Generate Comparison Colors for Bar Charts}
 \usage{
-.generate_comparison_colors(data, color_tone = NULL, axis_col)
+.generate_comparison_colors(
+  data,
+  color_tone = NULL,
+  axis_col,
+  palette_type = "qualitative"
+)
 }
 \arguments{
 \item{data}{A data frame containing the relevant plotting data.}
@@ -12,6 +17,8 @@
 \item{color_tone}{Character. Base color for generating shades, or a theme name.}
 
 \item{axis_col}{Column name used for determining the number of unique colors needed.}
+
+\item{palette_type}{Character. Optional color palette by default is qualitative.}
 }
 \value{
 A vector of colors in hexadecimal format, or NULL if color_tone is NULL.

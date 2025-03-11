@@ -21,11 +21,17 @@ Replaces specific values in a column based on a provided mapping file.
 Supports renaming across nested data structures and preserves factor levels.
 }
 \examples{
-\dontrun{
+# Load Sample Data:
+sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+                                package = "GTAPViz"))
+# Get Data by Variable Name
+sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
+
 # Rename variables in a dataset
-rename_map <- data.frame(OldName = c("old_var1", "old_var2"), NewName = c("new_var1", "new_var2"))
-gtap_data <- rename_value(gtap_data, column_name = "Variable", mapping.file = rename_map)
-}
+rename_map <- data.frame(OldName = c("qgdp", "EV"), 
+                        NewName = c("Real GDP", "Welfare"))
+gtap_data <- rename_value(sl4_data1, column_name = "Variable", 
+                          mapping.file = rename_map)
 
 }
 \seealso{

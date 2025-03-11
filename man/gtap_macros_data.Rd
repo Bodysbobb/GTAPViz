@@ -33,21 +33,15 @@ A sorted data frame containing processed GTAP macro data.
 Extracts scalar macroeconomic variables from multiple SL4 datasets and aggregates them into a structured data frame.
 }
 \examples{
-\dontrun{
-# Extract all variables
-macros <- gtap_macros_data(
-  input_path = "path/to/sl4/files",
-  experiment = c("EXP1", "EXP2"),
-  subtotal_level = FALSE
-)
 
-# Filter specific variables
-macros <- gtap_macros_data(
-  input_path = "path/to/sl4/files",
-  experiment = c("EXP1", "EXP2"),
-  select_var = c("qgdp", "pop", "gdpexp")
-)
-}
+# Input Path:
+input_path <- system.file("extdata/in", package = "GTAPViz")
+                                
+# GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+# Note: No need to add .sl4 to the experiment name 
+gtap_macro <- gtap_macros_data(NULL, experiment = c("EXP1", "EXP2"),
+                               input_path = input_path, subtotal_level = FALSE)
+
 }
 \seealso{
 \code{\link{add_mapping_info}}, \code{\link{auto_gtap_data}}

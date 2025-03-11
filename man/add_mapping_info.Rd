@@ -36,13 +36,23 @@ Supports external mappings or default GTAPv7 mappings, allowing users to enrich 
 standardized metadata.
 }
 \examples{
-\dontrun{
+# Load Sample Data:
+sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+                                package = "GTAPViz"))
+                                
+# Get Data by Variable Name
+sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"), sl4_data1)
+
 # Add mapping using GTAPv7 defaults
-gtap_data <- add_mapping_info(gtap_data, mapping = "GTAPv7")
+gtap_data <- add_mapping_info(sl4_data1, mapping = "GTAPv7")
 
 # Use an external mapping file
-gtap_data <- add_mapping_info(gtap_data, external_map = my_mapping, mapping = "Mix")
-}
+my_mapping <- data.frame(Variable = c("qgdp", "EV"), 
+                         Description = c("Real GDP", "Welfare"),
+                         Unit = c("percent", "millionUSD"))  # <- Fixed closing quote
+                         
+gtap_data <- add_mapping_info(sl4_data1, external_map = my_mapping, 
+                              mapping = "Mix")
 
 }
 \seealso{

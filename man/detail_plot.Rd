@@ -77,32 +77,48 @@ Generates detailed bar charts to visualize the distribution of impacts across mu
 The function supports top impact filtering, color coding, and flexible visualization settings.
 }
 \examples{
-\dontrun{
-# Basic usage showing all impacts with export options
-p1 <- detail_plot(
-  data = gtap_results,
-  x_axis_from = "REG",
-  variable_col = "Variable",
-  top_impact = NULL,
-  output_path = "results/detail_plots",
-  export_config = list(
-    file_name = "regional_impacts",
-    width = 14,
-    height = 10
-  )
-)
 
-# Show only top 10 impacts (balanced between positive and negative)
-p2 <- detail_plot(
-  data = gtap_results,
-  x_axis_from = "Sector",
-  split_by = "Region",
-  panel_var = "Experiment",
-  variable_col = "Variable",
-  top_impact = 10,
-  invert_pane = TRUE,
-  export_as_pdf = TRUE
-)
+\donttest{
+# Input Path:
+input_path <- system.file("extdata/in", package = "GTAPViz")
+                                
+# GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+# Note: No need to add .sl4 to the experiment name 
+gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
+                            input_path = input_path, subtotal_level = FALSE,
+                            process_sl4_vars = NULL, process_har_vars = NULL,
+                            mapping_info = "GTAPv7", plot_data = TRUE)
+# Basic usage with data frame
+detail_plot(sl4.plot.data[["2D"]],
+            x_axis_from = "Sector",
+            split_by = "Region",
+            filter_var = "qo",
+
+            top_impact = NULL,
+            var_name_by_description = TRUE,
+            
+            invert_pane = TRUE,
+            separate_figure = FALSE,
+            
+            export_config = list(
+              width = 45,
+              height = 20
+            ),
+            
+            export_picture = TRUE,
+            export_as_pdf = FALSE,   
+            output_path = "/your/folder/path",
+            
+            plot_style_config = list(
+              positive_color = "#2E8B57", 
+              negative_color = "#CD5C5C",
+              panel_rows = 1,
+              panel_cols = NULL,
+              show_axis_titles_on_all_facets = FALSE,
+              y_axis_text_size = 25,
+              bar_width = 0.6,
+              all_font_size = 1.1
+            ))
 }
 
 }

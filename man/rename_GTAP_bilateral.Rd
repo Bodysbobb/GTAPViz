@@ -17,10 +17,14 @@ Renames bilateral trade columns in GTAP data to standardized names,
 ensuring consistency in regional trade flows.
 }
 \examples{
-\dontrun{
+# Load Sample Data:
+sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+                                package = "GTAPViz"))
+# Get Data by Variable Name
+sl4_data1 <- HARplus::get_data_by_var("qxs",sl4_data1)
+
 # Rename bilateral trade columns in a GTAP dataset
-gtap_data <- rename_GTAP_bilateral(gtap_data)
-}
+gtap_data <- rename_GTAP_bilateral(sl4_data1)
 
 }
 \seealso{

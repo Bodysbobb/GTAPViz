@@ -51,17 +51,22 @@ If both `change_unit_from` and `scale_auto` are provided, the function prompts t
 to choose between manual and automatic conversion.
 }
 \examples{
-\dontrun{
+# Load Sample Data:
+sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+                                package = "GTAPViz"))
+                                
+# Get Data by Variable Name
+sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
+
 # Convert million USD to billion USD
-gtap_data <- convert_units(gtap_data,
+gtap_data <- convert_units(sl4_data1,
   change_unit_from = "million USD",
   change_unit_to = "billion USD",
   adjustment = "/1000"
 )
 
 # Automatic conversion from percent to fraction
-gtap_data <- convert_units(gtap_data, scale_auto = "pct2frac")
-}
+gtap_data <- convert_units(sl4_data1, scale_auto = "pct2frac")
 
 }
 \seealso{
