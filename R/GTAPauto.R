@@ -612,3 +612,123 @@ auto_gtap_data <- function(experiment,
 
   return(invisible(all_data))
 }
+
+
+
+# Dynamic GTAP Model (GTAP-RD) --------------------------------------------
+
+#' @title Generate Dynamic Input Names
+#'
+#' @description
+#' Constructs dynamic input names by combining a prefix, suffix, and a pattern sequence with a customizable separator.
+#' This function allows flexible naming patterns for automation and structured naming conventions.
+#'
+#' @param prefix Character. Optional prefix to prepend to the generated names. Default is NULL.
+#' @param suffix Character. Optional suffix to append to the generated names. Default is NULL.
+#' @param pattern Character, numeric vector, or sequence definition. Defines a sequence of values to include in the name.
+#'   - If character with format `"start:end"`, generates a numeric sequence from `start` to `end` (inclusive).
+#'   - If numeric vector of length 2, treats as `c(start, end)` for sequence generation.
+#'   - If a vector (numeric or character), uses the provided values as-is.
+#'   - If NULL, only prefix and suffix are used.
+#' @param increment Numeric. Step size for sequence generation when `pattern` defines a numeric range. Default is 1.
+#' @param separator Character. String used to separate components in the generated names. Default is "-".
+#'
+#' @return
+#' A character vector containing the generated names based on the provided inputs.
+#'
+#' @examples
+#' # Generate names with a numeric sequence
+#' dynamic_input_name(prefix = "Run", pattern = "1:5")
+#'
+#' # Generate names with a suffix
+#' dynamic_input_name(pattern = 1:3, suffix = "test")
+#'
+#' # Generate names with a custom separator
+#' dynamic_input_name(prefix = "Data", pattern = "10:50", increment = 10, separator = "_")
+#'
+#' @author Pattawee Puangchit
+#' @export
+#'
+dynamic_input_name <- function(prefix = NULL, suffix = NULL, pattern = NULL, increment = 1, separator = "-") {
+  # Check if at least one of prefix, suffix, or pattern is provided
+  if (is.null(prefix) && is.null(suffix) && is.null(pattern)) {
+    stop("At least one of prefix, suffix, or pattern must be provided")
+  }
+
+  # Process pattern if provided
+  if (!is.null(pattern)) {
+    # Check if pattern is in the format "start:end"
+    if (is.character(pattern) && grepl(":", pattern)) {
+      pattern_parts <- strsplit(pattern, ":")[[1]]
+      if (length(pattern_parts) == 2) {
+        start_val <- as.numeric(pattern_parts[1])
+        end_val <- as.numeric(pattern_parts[2])
+
+        if (!is.na(start_val) && !is.na(end_val)) {
+          # Create sequence based on start, end, and increment
+          if (start_val <= end_val) {
+            pattern_values <- seq(start_val, end_val, by = increment)
+          } else {
+            pattern_values <- seq(start_val, end_val, by = -increment)
+          }
+        } else {
+          stop("Invalid pattern format. Pattern should be 'start:end' with numeric values.")
+        }
+      } else {
+        stop("Invalid pattern format. Pattern should be 'start:end'.")
+      }
+    } else if (is.numeric(pattern) && length(pattern) == 2) {
+      # If pattern is a numeric vector of length 2
+      start_val <- pattern[1]
+      end_val <- pattern[2]
+
+      if (start_val <= end_val) {
+        pattern_values <- seq(start_val, end_val, by = increment)
+      } else {
+        pattern_values <- seq(start_val, end_val, by = -increment)
+      }
+    } else {
+      # Treat pattern as is (could be a character vector, numeric vector, etc.)
+      pattern_values <- pattern
+    }
+  } else {
+    pattern_values <- NULL
+  }
+
+  # Construct the strings
+  result <- character(0)
+
+  if (is.null(pattern_values)) {
+    # Just prefix and/or suffix
+    base_string <- ""
+    if (!is.null(prefix)) base_string <- prefix
+    if (!is.null(suffix)) {
+      if (base_string != "") base_string <- paste0(base_string, separator, suffix)
+      else base_string <- suffix
+    }
+    result <- base_string
+  } else {
+    # Construct strings with pattern values
+    for (val in pattern_values) {
+      base_string <- ""
+
+      if (!is.null(prefix)) base_string <- prefix
+
+      # Add pattern value
+      if (base_string != "") {
+        base_string <- paste0(base_string, separator, val)
+      } else {
+        base_string <- as.character(val)
+      }
+
+      # Add suffix if provided
+      if (!is.null(suffix)) {
+        base_string <- paste0(base_string, separator, suffix)
+      }
+
+      result <- c(result, base_string)
+    }
+  }
+
+  return(result)
+}

@@ -129,116 +129,226 @@
     validation_results$messages <- character()
   }
 
-  # SL4 & HAR File Check
-  files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
-  sl4_files <- files[grepl(sl4_file_suffix, files, ignore.case = TRUE)]
-  har_files <- files[grepl(har_file_suffix, files, ignore.case = TRUE)]
+  # Only perform file checks if the respective processing flag is TRUE
+  missing_file_warnings <- character()
 
-  sl4_bases <- tolower(trimws(sub(sl4_file_suffix, "", sl4_files, ignore.case = TRUE)))
-  har_bases <- tolower(trimws(sub(har_file_suffix, "", har_files, ignore.case = TRUE)))
+  # Check SL4 files if sl4var is TRUE
+  if (sl4var) {
+    files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
+    sl4_expected_files <- paste0(experiment, sl4_file_suffix)
+    sl4_missing_files <- sl4_expected_files[!sl4_expected_files %in% files]
 
-  matched_experiments <- intersect(tolower(experiment), sl4_bases)
-  missing_sl4 <- setdiff(tolower(experiment), sl4_bases)
-  missing_har <- setdiff(tolower(experiment), har_bases)
-  successful_cases <- length(matched_experiments)
-  total_requested <- length(experiment)
+    if (length(sl4_missing_files) > 0) {
+      missing_file_warnings <- c(missing_file_warnings,
+                                 "Missing SL4 files:",
+                                 paste(" -", sl4_missing_files))
+    }
+  }
 
-  if (length(missing_sl4) > 0 || length(missing_har) > 0) {
+  # Check HAR files if harvar is TRUE
+  if (harvar) {
+    files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
+    har_expected_files <- paste0(experiment, har_file_suffix)
+    har_missing_files <- har_expected_files[!har_expected_files %in% files]
+
+    if (length(har_missing_files) > 0) {
+      missing_file_warnings <- c(missing_file_warnings,
+                                 "Missing HAR files:",
+                                 paste(" -", har_missing_files))
+    }
+  }
+
+  # If there are missing files, show warnings and ask for confirmation
+  if (length(missing_file_warnings) > 0) {
     validation_results$status <- "warning"
 
-    if (length(missing_sl4) > 0 && sl4var) {
-      validation_results$messages <- c(validation_results$messages,
-                                       sprintf("Missing SL4 files for: %s",
-                                               paste(experiment[tolower(experiment) %in% missing_sl4], collapse = ", ")))
-    }
+    # Display specific warnings about missing files
+    cat(paste(missing_file_warnings, collapse = "\n"), "\n")
 
-    if (length(missing_har) > 0 && harvar) {
-      validation_results$messages <- c(validation_results$messages,
-                                       sprintf("Missing HAR files for: %s",
-                                               paste(experiment[tolower(experiment) %in% missing_har], collapse = ", ")))
-    }
-
-    cat(paste(validation_results$messages, collapse = "\n"), "\n")
+    # Ask if user wants to proceed despite missing files
     proceed_without_files <- .ask_confirmation("Do you want to proceed with missing files? (Y/N): ")
 
     if (!proceed_without_files) {
       validation_results$proceed <- FALSE
       return(validation_results)
     }
-
-    validation_results$messages <- character()
   }
 
-  # Mapping Info & SL4/HAR Maps
-  process_sl4 <- sl4var
-  process_har <- harvar
-
-  if (is.null(mapping_info)) {
-    mapping_info <- "GTAPv7"
-    message("mapping_info not specified, using default: GTAPv7")
-  }
-
+  # Mapping Info checks - only if mapping_info is "YES" or "MIX"
   if (toupper(mapping_info) %in% c("YES", "MIX")) {
+    mapping_warnings <- character()
 
-    check_mapping <- function(map_data, map_name) {
+    # Check SL4 mapping only if sl4var is TRUE
+    if (sl4var) {
       required_cols <- c("Variable", "Description", "Unit")
 
-      if (!is.null(map_data)) {
-        if (!is.data.frame(map_data)) {
-          validation_results$status <- "error"
-          validation_results$messages <- c(validation_results$messages,
-                                           sprintf("%s must be a valid data frame.", map_name))
-          validation_results$proceed <- FALSE
-          return(FALSE)
-        }
-
-        missing_cols <- setdiff(required_cols, names(map_data))
+      if (is.null(sl4map)) {
+        mapping_warnings <- c(mapping_warnings,
+                              "Missing sl4map data frame. This is required when mapping_info is 'Yes' or 'Mix'.")
+      } else if (!is.data.frame(sl4map)) {
+        validation_results$status <- "error"
+        validation_results$messages <- c(validation_results$messages,
+                                         "sl4map must be a valid data frame.")
+        validation_results$proceed <- FALSE
+        return(validation_results)
+      } else {
+        missing_cols <- setdiff(required_cols, names(sl4map))
         if (length(missing_cols) > 0) {
-          validation_results$status <- "warning"
-          validation_results$messages <- c(validation_results$messages,
-                                           sprintf("%s is missing column(s): %s",
-                                                   map_name, paste(missing_cols, collapse = ", ")),
-                                           "These are required for mapping_info = 'Yes' or 'Mix'.")
+          mapping_warnings <- c(mapping_warnings,
+                                sprintf("SL4 mapping is missing required column(s): %s",
+                                        paste(missing_cols, collapse = ", ")))
         }
       }
-      return(TRUE)
     }
 
-    check_mapping(sl4map, "sl4map")
-    check_mapping(harmap, "harmap")
+    # Check HAR mapping only if harvar is TRUE
+    if (harvar) {
+      required_cols <- c("Variable", "Description", "Unit")
 
-    if (validation_results$status == "warning") {
-      cat(paste(validation_results$messages, collapse = "\n"), "\n")
+      if (is.null(harmap)) {
+        mapping_warnings <- c(mapping_warnings,
+                              "Missing harmap data frame. This is required when mapping_info is 'Yes' or 'Mix'.")
+      } else if (!is.data.frame(harmap)) {
+        validation_results$status <- "error"
+        validation_results$messages <- c(validation_results$messages,
+                                         "harmap must be a valid data frame.")
+        validation_results$proceed <- FALSE
+        return(validation_results)
+      } else {
+        missing_cols <- setdiff(required_cols, names(harmap))
+        if (length(missing_cols) > 0) {
+          mapping_warnings <- c(mapping_warnings,
+                                sprintf("HAR mapping is missing required column(s): %s",
+                                        paste(missing_cols, collapse = ", ")))
+        }
+      }
+    }
+
+    if (length(mapping_warnings) > 0) {
+      validation_results$status <- "warning"
+
+      # Display specific mapping warnings
+      cat(paste(mapping_warnings, collapse = "\n"), "\n")
+      cat("These columns are required for mapping_info = 'Yes' or 'Mix'.\n")
+
       use_gtapv7 <- .ask_confirmation("Do you want to proceed using GTAPv7 definitions for missing values? (Y/N): ")
 
       if (!use_gtapv7) {
         validation_results$proceed <- FALSE
         return(validation_results)
       }
-
-      validation_results$messages <- character()
     }
   }
 
-  # Final Summary Message
-  if (successful_cases == total_requested) {
-    validation_results$messages <- c(validation_results$messages,
-                                     sprintf("All %d requested experiment files are found and successfully extracted.",
-                                             total_requested))
-  } else if (successful_cases > 0) {
-    validation_results$messages <- c(validation_results$messages,
-                                     sprintf("%d/%d experiment files found and extracted. Missing: %s",
-                                             successful_cases, total_requested,
-                                             paste(setdiff(experiment, matched_experiments), collapse = ", ")))
-  } else {
-    validation_results$status <- "error"
-    validation_results$messages <- c(validation_results$messages,
-                                     "No requested experiment files were found. Please check input files and paths.")
-    validation_results$proceed <- FALSE
-    return(validation_results)
+  # Count found files
+  successful_sl4 <- 0
+  successful_har <- 0
+
+  if (sl4var) {
+    files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
+    sl4_expected_files <- paste0(experiment, sl4_file_suffix)
+    successful_sl4 <- sum(sl4_expected_files %in% files)
   }
 
-  validation_results$messages <- c(validation_results$messages,
+  if (harvar) {
+    files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
+    har_expected_files <- paste0(experiment, har_file_suffix)
+    successful_har <- sum(har_expected_files %in% files)
+  }
+
+  # Final Summary Message
+  summary_messages <- character()
+
+  if (sl4var && harvar) {
+    # Calculate files that have both SL4 and HAR
+    files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
+    sl4_found <- experiment[paste0(experiment, sl4_file_suffix) %in% files]
+    har_found <- experiment[paste0(experiment, har_file_suffix) %in% files]
+    common_cases <- intersect(sl4_found, har_found)
+
+    if (length(common_cases) == length(experiment)) {
+      summary_messages <- c(summary_messages,
+                            sprintf("All %d requested experiment files are found with both SL4 and HAR data.",
+                                    length(experiment)))
+    } else if (length(common_cases) > 0) {
+      summary_messages <- c(summary_messages,
+                            sprintf("%d/%d experiments have both SL4 and HAR data: %s",
+                                    length(common_cases), length(experiment),
+                                    paste(common_cases, collapse = ", ")))
+
+      sl4_only <- setdiff(sl4_found, har_found)
+      har_only <- setdiff(har_found, sl4_found)
+
+      if (length(sl4_only) > 0) {
+        summary_messages <- c(summary_messages,
+                              sprintf("%d experiments have SL4 files only: %s",
+                                      length(sl4_only),
+                                      paste(sl4_only, collapse = ", ")))
+      }
+
+      if (length(har_only) > 0) {
+        summary_messages <- c(summary_messages,
+                              sprintf("%d experiments have HAR files only: %s",
+                                      length(har_only),
+                                      paste(har_only, collapse = ", ")))
+      }
+    } else {
+      if (successful_sl4 == 0 && successful_har == 0) {
+        validation_results$status <- "error"
+        validation_results$messages <- c(validation_results$messages,
+                                         "No requested experiment files were found. Please check input files and paths.")
+        validation_results$proceed <- FALSE
+        return(validation_results)
+      } else {
+        summary_messages <- c(summary_messages,
+                              "No experiments have both SL4 and HAR data available.")
+      }
+    }
+  } else if (sl4var) {
+    # Only SL4 is enabled
+    if (successful_sl4 == length(experiment)) {
+      summary_messages <- c(summary_messages,
+                            sprintf("All %d requested experiment SL4 files are found.",
+                                    length(experiment)))
+    } else if (successful_sl4 > 0) {
+      files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
+      sl4_found <- experiment[paste0(experiment, sl4_file_suffix) %in% files]
+
+      summary_messages <- c(summary_messages,
+                            sprintf("%d/%d experiment SL4 files found: %s",
+                                    successful_sl4, length(experiment),
+                                    paste(sl4_found, collapse = ", ")))
+    } else {
+      validation_results$status <- "error"
+      validation_results$messages <- c(validation_results$messages,
+                                       "No requested experiment SL4 files were found. Please check input files and paths.")
+      validation_results$proceed <- FALSE
+      return(validation_results)
+    }
+  } else if (harvar) {
+    # Only HAR is enabled
+    if (successful_har == length(experiment)) {
+      summary_messages <- c(summary_messages,
+                            sprintf("All %d requested experiment HAR files are found.",
+                                    length(experiment)))
+    } else if (successful_har > 0) {
+      files <- list.files(input_dir, full.names = FALSE, ignore.case = TRUE)
+      har_found <- experiment[paste0(experiment, har_file_suffix) %in% files]
+
+      summary_messages <- c(summary_messages,
+                            sprintf("%d/%d experiment HAR files found: %s",
+                                    successful_har, length(experiment),
+                                    paste(har_found, collapse = ", ")))
+    } else {
+      validation_results$status <- "error"
+      validation_results$messages <- c(validation_results$messages,
+                                       "No requested experiment HAR files were found. Please check input files and paths.")
+      validation_results$proceed <- FALSE
+      return(validation_results)
+    }
+  }
+
+  validation_results$messages <- c(summary_messages,
                                    sprintf("Mapping method used: %s", mapping_info))
 
   return(validation_results)
