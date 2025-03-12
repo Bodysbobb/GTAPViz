@@ -86,12 +86,11 @@ and exporting to Excel.
 \donttest{
 # Input Path:
 input_path <- system.file("extdata/in", package = "GTAPViz")
-                                
-# GTAP Macro Variables from 2 .sl4 Files named (EXP1)
-# Note: No need to add .sl4 to the experiment name 
-gtap_data <- auto_gtap_data(experiment = c("EXP1"),
+
+# Note: No need to add .sl4 to the experiment name
+gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
                             input_path = input_path, subtotal_level = FALSE,
-                            process_sl4_vars = NULL, process_har_vars = NULL,
+                            process_sl4_vars = c("qgdp", "EV"), process_har_vars = FALSE,
                             mapping_info = "GTAPv7", plot_data = TRUE)
 
 report_table(
@@ -110,7 +109,7 @@ report_table(
   var_name_by_description = TRUE,
   add_var_info = TRUE,
   add_group_line = FALSE,
-  
+
   separate_sheet_by = "Unit",
   export_table = TRUE,
   output_path = "/your/folder/path",

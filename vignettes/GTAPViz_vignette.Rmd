@@ -34,8 +34,8 @@ knitr::opts_chunk$set(
 rm(list=ls())
 #------------------Dev Period######################################
 # Directory
-project.folder <- "C:/Users/b_pat/OneDrive - purdue.edu/GTAPViz Data"
-#project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data"
+#project.folder <- "C:/Users/b_pat/OneDrive - purdue.edu/GTAPViz Data"
+project.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data"
 
 input.folder <- paste0(project.folder, "/in")
 map.folder <- paste0(project.folder, "/map")
