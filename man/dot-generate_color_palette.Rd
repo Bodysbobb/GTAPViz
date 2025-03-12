@@ -7,7 +7,8 @@
 .generate_color_palette(
   positive_color = "#2E8B57",
   negative_color = "#CD5C5C",
-  color_tone = NULL
+  color_tone = NULL,
+  palette_type = "qualitative"
 )
 }
 \arguments{
@@ -16,6 +17,8 @@
 \item{negative_color}{Character. Hex code or color name for the negative color (default: "#CD5C5C", indian red).}
 
 \item{color_tone}{Character. Optional color tone to override the positive/negative colors.}
+
+\item{palette_type}{Character. Optional color palette by default is qualitative.}
 }
 \value{
 A named vector containing hex codes for different value categories.

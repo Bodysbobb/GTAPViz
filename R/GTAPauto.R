@@ -19,38 +19,42 @@
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{auto_gtap_data}}
 #'
 #' @examples
-#' \dontrun{
-#' # Extract all variables
-#' macros <- gtap_macros_data(
-#'   input_path = "path/to/sl4/files",
-#'   experiment = c("EXP1", "EXP2"),
-#'   subtotal_level = FALSE
-#' )
+#' 
+#' # Input Path:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#'                                 
+#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+#' # Note: No need to add .sl4 to the experiment name 
+#' gtap_macro <- gtap_macros_data(NULL, experiment = c("EXP1", "EXP2"),
+#'                                input_path = input_path, subtotal_level = FALSE)
 #'
-#' # Filter specific variables
-#' macros <- gtap_macros_data(
-#'   input_path = "path/to/sl4/files",
-#'   experiment = c("EXP1", "EXP2"),
-#'   select_var = c("qgdp", "pop", "gdpexp")
-#' )
-#' }
 gtap_macros_data <- function(select_var = NULL,
                              experiment = NULL,
                              input_path = NULL,
                              output_path = NULL,
                              output_formats = NULL,
                              subtotal_level = FALSE) {
+  # Check for required inputs
+  if (is.null(experiment) || is.null(input_path)) {
+    stop("Both experiment and input_path must be specified")
+  }
+  
+  # Get macro variable list
   macro_vars <- macro_info$Variable
-
-  # Checking Input Files
+  
+  # Check if we have multiple experiments
   is_multiple_experiments <- function(experiment) {
     length(experiment) > 1
   }
   keep_unique_flag <- is_multiple_experiments(experiment)
-
-  macro.raw <- setNames(
+  
+  # Process the SL4 files using the approach from auto_gtap_data function
+  sl4_file_suffix <- ".sl4"
+  
+  # Load SL4 files and extract data
+  macro_raw <- setNames(
     lapply(experiment, function(scenario) {
-      sl4_path <- file.path(input_path, paste0(scenario, ".sl4"))
+      sl4_path <- file.path(input_path, paste0(scenario, sl4_file_suffix))
       if (file.exists(sl4_path)) {
         tryCatch({
           HARplus::load_sl4x(sl4_path, select_header = macro_vars)
@@ -65,50 +69,57 @@ gtap_macros_data <- function(select_var = NULL,
     }),
     experiment
   )
-
-  macro.raw <- macro.raw[!sapply(macro.raw, is.null)]
-
+  
+  # Remove NULL entries (failed loads)
+  macro_raw <- macro_raw[!sapply(macro_raw, is.null)]
+  
+  # Process data - using approach from auto_gtap_data
   GTAPMacros <- do.call(
     HARplus::get_data_by_var,
     c(
       list(
-        experiment = names(macro.raw),
+        experiment_names = names(macro_raw),
         subtotal_level = subtotal_level,
         merge_data = keep_unique_flag
       ),
-      macro.raw
+      macro_raw
     )
   )
-
+  
+  # Add mapping information
   GTAPMacros <- add_mapping_info(GTAPMacros, mapping = "GTAPv7")
-
+  
+  # Filter columns
   GTAPMacros_filtered <- .apply_to_dataframes(GTAPMacros, function(df) {
     df[, c("Variable", "Value", "Subtotal", "Experiment", "Description", "Unit"), drop = FALSE]
   })
-
+  
+  # Process based on number of experiments
   if (length(experiment) > 1) {
     GTAPMacros_final <- do.call(rbind, GTAPMacros_filtered)
   } else {
     GTAPMacros_final <- do.call(rbind, unlist(GTAPMacros_filtered, recursive = FALSE))
   }
   rownames(GTAPMacros_final) <- NULL
-
+  
   # Apply filtering by Variable if select_var is provided
   if (!is.null(select_var)) {
     GTAPMacros_final <- GTAPMacros_final[GTAPMacros_final$Variable %in% select_var, ]
   }
-
+  
+  # Sort the results
   GTAPMacros_final <- GTAPMacros_final[order(GTAPMacros_final$Experiment,
                                              GTAPMacros_final$Variable,
                                              GTAPMacros_final$Unit), ]
-
+  
+  # Export if needed
   if (!is.null(output_path) && !is.null(output_formats)) {
     export_formats <- .output_format(output_formats)
     if (length(export_formats) > 0) {
       if (!dir.exists(output_path)) {
         dir.create(output_path, recursive = TRUE)
       }
-
+      
       macro_list <- list(Macros = GTAPMacros_final)
       message("Exporting macro data...")
       HARplus::export_data(
@@ -122,7 +133,7 @@ gtap_macros_data <- function(select_var = NULL,
       message("Macro data exported to: ", output_path)
     }
   }
-
+  
   return(GTAPMacros_final)
 }
 
@@ -192,17 +203,16 @@ gtap_macros_data <- function(select_var = NULL,
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{gtap_macros_data}}
 #'
 #' @examples
-#' \dontrun{
-#' # Example usage
-#' result <- process_gtap_data(
-#'   experiment = c("Base", "Shock"),
-#'   project_path = "path/to/project",
-#'   process_sl4_vars = NULL,
-#'   process_har_vars = NULL,
-#'   plot_data = TRUE,
-#'   output_formats = c("csv", "rds")
-#' )
-#' }
+#' 
+#' # Input Path:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#'                                 
+#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+#' # Note: No need to add .sl4 to the experiment name 
+#' gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
+#'                             input_path = input_path, subtotal_level = FALSE,
+#'                             process_sl4_vars = NULL, process_har_vars = NULL,
+#'                             mapping_info = "GTAPv7", plot_data = TRUE)
 #'
 auto_gtap_data <- function(experiment,
                            project_path = NULL, input_path = NULL, output_path = NULL,

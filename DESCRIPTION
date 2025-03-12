@@ -6,7 +6,7 @@ Authors@R:
     person("Pattawee", "Puangchit", email = "ppuangch@purdue.edu", role = c("aut", "cre"))
 Description: An R package designed to streamline the processing and 
     visualization of GTAP model results. While primarily built for GTAP simulations, 
-    it also supports other `.HAR` and `.SL4` datasets. As an extension of HARplus, 
+    it also supports other '.HAR' and '.SL4' datasets. As an extension of HARplus, 
     GTAPViz simplifies GTAP data extraction and visualization, reducing manual effort 
     and enhancing efficiency. With intuitive commands and automated adjustments, 
     users can create, customize, and export high-quality visualizations for economic 

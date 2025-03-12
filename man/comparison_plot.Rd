@@ -27,8 +27,8 @@ comparison_plot(
 \arguments{
 \item{data}{A data frame or a list of data frames containing GTAP results.}
 
-\item{filter_var}{Vector or data frame. If a vector, filters the values in \code{x_axis_from}.
-If a data frame, filters \code{value_col} based on matching \code{variable_col} values.}
+\item{filter_var}{Vector or data frame. If a vector, filters the values in `x_axis_from`.
+If a data frame, filters `value_col` based on matching `variable_col` values.}
 
 \item{x_axis_from}{Character. Column name for x-axis categories (e.g., "REG", "Sector").}
 
@@ -59,12 +59,12 @@ Set to NULL for no splitting, suitable for macro-level analysis.}
 
 \item{export_config}{List. Export settings, including:
 \itemize{
-\item \code{width}: Output file width (in inches).
-\item \code{height}: Output file height (in inches).
-\item Additional settings—see \code{?get_export_config}.
+  \item `width`: Output file width (in inches).
+  \item `height`: Output file height (in inches).
+  \item Additional settings—see `?get_export_config`.
 }}
 
-\item{plot_style_config}{List. Custom plot styles—see \code{?get_plot_style_config}.}
+\item{plot_style_config}{List. Custom plot styles—see `?get_plot_style_config`.}
 }
 \value{
 A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
@@ -74,22 +74,35 @@ Generates comparative bar charts using GTAP data, allowing multiple visualizatio
 such as panel facets, split grouping, and customizable styles.
 }
 \examples{
-\dontrun{
+\donttest{
+# Input Path:
+input_path <- system.file("extdata/in", package = "GTAPViz")
+                                
+# GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+# Note: No need to add .sl4 to the experiment name 
+gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
+                            input_path = input_path, subtotal_level = FALSE,
+                            process_sl4_vars = NULL, process_har_vars = NULL,
+                            mapping_info = "GTAPv7", plot_data = TRUE)
+
 # Basic usage with data frame
 p1 <- comparison_plot(
-  data = gtap_results,
-  x_axis_from = "REG",
-  panel_var = "Experiment"
+  data = sl4.plot.data[["1D"]][["Region"]],
+  x_axis_from = "Region",
+  panel_var = "Experiment",
+  filter_var = c("qgdp", "EV"),
+  output_path = "/your/folder/path"
 )
 
 # Split by commodity with custom styling and export options
 p2 <- comparison_plot(
-  data = gtap_results,
-  x_axis_from = "REG",
-  split_by = "COMM",
+  data = sl4.plot.data[["1D"]][["Region"]],
+  x_axis_from = "Region",
+  split_by = "Variable",
   panel_var = "Experiment",
+  filter_var = c("qgdp", "EV"),
   var_name_by_description = TRUE,
-  output_path = "results/plots",
+  output_path = "/your/folder/path",
   export_as_pdf = TRUE,
   export_config = list(
     file_name = "commodity_impacts",

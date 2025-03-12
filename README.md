@@ -18,21 +18,26 @@ With intuitive commands and automated adjustments, users can create, customize, 
 - **Comprehensive Documentation** – Includes a vignette and built-in help functions covering all customization options—no need to search online.  
 
 
-## **Installation ** 
+## **Installation**
 
-GTAPViz can be installedfrom GitHub using the following command:
+GTAPViz can be installed from GitHub using the following command in R:
 
 ```r
 devtools::install_github("Bodysbobb/GTAPViz")
+```
+
+Then, you can access the package manual using:
+```r
+help(package = "GTAPViz")
 ```
 
 ## **Comprehensive Documentation** 
 
 For full details on how to use this package and explore practical examples, see the [GTAPViz Vignette](https://rpubs.com/Bodysbob/1282495) or [GitHub GTAPViz](https://bodysbobb.github.io/GTAPViz/).
 
-For the R reference manual, see the [GTAPViz Reference Manual](https://github.com/Bodysbobb/GTAPViz/blob/main/inst/docs/GTAPViz_1.0.0.pdf).
+For the R reference manual, see the [GTAPViz Reference Manual](https://bodysbobb.github.io/GTAPViz/GTAPViz_1.0.0.pdf).
 
-## **License & Author ** 
+## **License & Author** 
 
 GTAPViz is released under the **MIT License**. See the full **[license](LICENSE)**.  
 

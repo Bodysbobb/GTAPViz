@@ -19,22 +19,22 @@
 
 \item{output_path}{Character. The output directory path for saving the Excel file(s).}
 
-\item{separate_file}{Logical. If \code{TRUE}, each data frame is exported as a separate Excel file.
+\item{separate_file}{Logical. If `TRUE`, each data frame is exported as a separate Excel file.
 Otherwise, all data frames go into a single workbook.}
 
 \item{sheet_names}{Optional named list for custom sheet or file naming.}
 
-\item{repeat_label}{Logical. If \code{TRUE}, repeats merging in the first grouping column.}
+\item{repeat_label}{Logical. If `TRUE`, repeats merging in the first grouping column.}
 
 \item{workbook_name}{Character. The base file name for the single-workbook option.}
 
-\item{add_group_line}{Logical. If \code{TRUE}, places a black border to separate each group in the first column.}
+\item{add_group_line}{Logical. If `TRUE`, places a black border to separate each group in the first column.}
 }
 \description{
 Creates Excel workbooks from a list of data frames, applying styling, merging
 repeated grouping values, and optionally generating separate files or multiple
 sheets in a single file. This version also supports an optional black border
-after each group in the first column if \code{add_group_line = TRUE}.
+after each group in the first column if `add_group_line = TRUE`.
 }
 \author{
 Pattawee Puangchit

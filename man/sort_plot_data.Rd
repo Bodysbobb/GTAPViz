@@ -6,7 +6,7 @@
 \usage{
 sort_plot_data(
   data,
-  cols = NULL,
+  sort_columns = NULL,
   sort_by_value_desc = NULL,
   convert_to_factor = TRUE
 )
@@ -14,10 +14,10 @@ sort_plot_data(
 \arguments{
 \item{data}{A data frame or list structure containing data to be sorted.}
 
-\item{cols}{Named list. Specifies columns to sort by and their ordering.
+\item{sort_columns}{Named list. Specifies columns to sort by and their ordering.
 Each element should be a character vector of values in desired order.
-For example, \verb{list(Region = c("USA", "EU", "CHN")},
-\verb{Experiment = c("Base", "Shock1", "Shock2"))}.}
+For example, `list(Region = c("USA", "EU", "CHN")`,
+                  `Experiment = c("Base", "Shock1", "Shock2"))`.}
 
 \item{sort_by_value_desc}{Logical or NULL. Controls sorting by the "Value" column:
 - NULL (default): Don't sort by value, only use column-based sorting.
@@ -33,6 +33,22 @@ A data structure with the same form as the input, with all contained data frames
 \description{
 Sorts data for plotting using flexible options for column ordering and value-based sorting.
 Works with data frames, lists of data frames, or nested data structures.
+}
+\examples{
+
+# Load Sample Data:
+sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+                                package = "GTAPViz"))
+# Get Data by Variable Name
+sl4_data1 <- HARplus::get_data_by_var(c("qgdp","EV"),sl4_data1)
+
+# Creating Sorting Rule
+sorting_specs <- data.frame(REG = c("EastAsia", "SEAsia", "Oceania"))
+
+# Sorting
+sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs, 
+                            sort_by_value_desc = FALSE)
+
 }
 \seealso{
 \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_GTAP_bilateral}}

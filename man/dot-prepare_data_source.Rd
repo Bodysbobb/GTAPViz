@@ -30,8 +30,8 @@ columns exist before returning the data. Supports both single data frames and li
 frames.
 }
 \details{
-If \code{data} is a single data frame, the function checks whether the required columns exist.
-If \code{data} is a list of data frames, it attempts to find the first data frame containing the
+If `data` is a single data frame, the function checks whether the required columns exist.
+If `data` is a list of data frames, it attempts to find the first data frame containing the
 required columns. If no suitable data frame is found, the function stops with an error.
 }
 \examples{
@@ -47,7 +47,7 @@ prepared_data <- .prepare_data_source(
 }
 \seealso{
 \code{\link{comparison_plot}}, \code{\link{detail_plot}},
-\code{\link{stack_plot}}
+  \code{\link{stack_plot}}
 }
 \author{
 Pattawee Puangchit

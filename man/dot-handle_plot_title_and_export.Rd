@@ -21,15 +21,15 @@
 \arguments{
 \item{var_name}{Character or NULL. The name of the variable being plotted.}
 
-\item{sep_value}{Character or NULL. Separator value to combine with \code{var_name} if applicable.}
+\item{sep_value}{Character or NULL. Separator value to combine with `var_name` if applicable.}
 
 \item{x_value}{Character or NULL. X-axis value for additional context.}
 
 \item{plot_type}{Character or NULL. The type of plot, one of "comparison", "detail", "stack", or "unstack".}
 
-\item{is_macro_mode}{Logical. If \code{TRUE}, uses a simplified macro-style title.}
+\item{is_macro_mode}{Logical. If `TRUE`, uses a simplified macro-style title.}
 
-\item{split_by}{Character or NULL. Column used for splitting data; checked for duplication with \code{variable_col}.}
+\item{split_by}{Character or NULL. Column used for splitting data; checked for duplication with `variable_col`.}
 
 \item{x_axis_from}{Character or NULL. Source column for the X-axis.}
 
@@ -39,18 +39,18 @@
 
 \item{style_config}{List or NULL. Formatting options for the title, containing:
 \itemize{
-\item \code{title_format}: List specifying format type ("prefix", "suffix", "full", or "dynamic").
-\item \code{add_unit_to_title}: Logical indicating whether to append the unit name.
+  \item \code{title_format}: List specifying format type ("prefix", "suffix", "full", or "dynamic").
+  \item \code{add_unit_to_title}: Logical indicating whether to append the unit name.
 }}
 
 \item{data}{Data frame or NULL. Used for extracting values in dynamic title generation.}
 }
 \value{
 A named list containing:
-\itemize{
-\item \code{title}: The final formatted plot title.
-\item \code{export_name}: A cleaned, export-friendly version of the title.
-}
+  \itemize{
+    \item \code{title}: The final formatted plot title.
+    \item \code{export_name}: A cleaned, export-friendly version of the title.
+  }
 }
 \description{
 Generates a formatted plot title and an export-friendly filename based on the provided parameters.

@@ -26,12 +26,12 @@ If "merged", creates a single multi-page PDF. Default is FALSE.}
 
 \item{export_config}{List. Configuration parameters for export:
 \itemize{
-\item \code{width}: Plot width in inches.
-\item \code{height}: Plot height in inches.
-\item \code{dpi}: Resolution for PNG export (default: 300).
-\item \code{bg}: Background color (default: "white").
-\item \code{limitsize}: Whether to limit size (default: FALSE).
-\item \code{file_name}: Base name for exported files (default: "gtap_plots").
+  \item \code{width}: Plot width in inches.
+  \item \code{height}: Plot height in inches.
+  \item \code{dpi}: Resolution for PNG export (default: 300).
+  \item \code{bg}: Background color (default: "white").
+  \item \code{limitsize}: Whether to limit size (default: FALSE).
+  \item \code{file_name}: Base name for exported files (default: "gtap_plots").
 }}
 
 \item{data}{A data frame used for automatic dimension calculation if not specified in export_config.}

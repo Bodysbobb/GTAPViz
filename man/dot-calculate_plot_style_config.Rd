@@ -9,7 +9,7 @@
 \arguments{
 \item{config}{Optional list with custom style configuration parameters.}
 
-\item{plot_type}{Type of plot: \code{"default"}.}
+\item{plot_type}{Type of plot: `"default"`.}
 }
 \value{
 A list with complete style configuration for the specified plot type.

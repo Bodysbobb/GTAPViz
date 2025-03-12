@@ -43,16 +43,41 @@
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_value}}
 #'
 #' @examples
-#' \dontrun{
-#' # Create a detailed report table with wide-format pivoting
-#' report_data <- report_table(
-#'   data_list = my_data,
-#'   pivot_col = list("Variable" = "Value"),
+#' \donttest{
+#' # Input Path:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#'                                 
+#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1)
+#' # Note: No need to add .sl4 to the experiment name 
+#' gtap_data <- auto_gtap_data(experiment = c("EXP1"),
+#'                             input_path = input_path, subtotal_level = FALSE,
+#'                             process_sl4_vars = NULL, process_har_vars = NULL,
+#'                             mapping_info = "GTAPv7", plot_data = TRUE)
+#' 
+#' report_table(
+#'   data_list = sl4.plot.data[["1D"]],
+#'   pivot_col = list(Region = "Variable"),
+#'   group_by = list(
+#'     Region = list("Experiment", "Region")),
+#'   rename_cols = list("Experiment" = "Scenario"),
+#' 
+#'   total_column = FALSE,
+#'   decimal = 4,
+#'   subtotal_level = FALSE,
+#'   repeat_label = FALSE,
+#'   include_units = TRUE,
+#' 
+#'   var_name_by_description = TRUE,
+#'   add_var_info = TRUE,
+#'   add_group_line = FALSE,
+#'   
+#'   separate_sheet_by = "Unit",
 #'   export_table = TRUE,
-#'   output_path = "results/"
+#'   output_path = "/your/folder/path",
+#'   separate_file = FALSE,
+#'   workbook_name = "Comparison Table"
 #' )
 #' }
-#'
 report_table <- function(data_list,
                          pivot_col,
                          total_column = FALSE,

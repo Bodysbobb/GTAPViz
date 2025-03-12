@@ -4,7 +4,12 @@
 \alias{.generate_stack_colors}
 \title{Generate Colors for Stacked Bar Components}
 \usage{
-.generate_stack_colors(data, stack_value_from, color_tone = NULL)
+.generate_stack_colors(
+  data,
+  stack_value_from,
+  color_tone = NULL,
+  palette_type = "qualitative"
+)
 }
 \arguments{
 \item{data}{A data frame containing the stack value column.}
@@ -12,6 +17,8 @@
 \item{stack_value_from}{Column name containing the stack categories.}
 
 \item{color_tone}{Optional base color to influence the palette.}
+
+\item{palette_type}{Character. Optional color palette by default is qualitative.}
 }
 \value{
 A named vector of colors for each stack component.
