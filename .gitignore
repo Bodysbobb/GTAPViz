@@ -1,0 +1,11 @@
+*.Rproj.user
+inst/doc
+LICENSE
+*.Rproj
+*.Rhistory
+*.Rbuildignore
+docs
+*.Rhistory
+*.Rproj.user
+
+
