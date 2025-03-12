@@ -497,7 +497,6 @@ dynamic_input_name <- function(type = "prefix",
 }
 
 
-
 auto_gtap_dynamic <- function(experiment,
                               project_path = NULL, input_path = NULL, output_path = NULL,
                               sl4_suffix = "", har_suffix = "",
