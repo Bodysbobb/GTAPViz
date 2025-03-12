@@ -1,9 +1,0 @@
-setwd("D:/GitHub/GTAPViz/")
-devtools::build_vignettes()
-devtools::check()
-
-
-
-pkgdown::clean_site()  # Remove old files
-
-pkgdown::build_site()  # Rebuild everything
