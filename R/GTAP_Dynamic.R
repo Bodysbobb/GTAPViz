@@ -1,3 +1,77 @@
+#' @title Generate Dynamic Input Mapping for GTAP Simulations
+#'
+#' @description
+#' Creates a mapping data frame of simulation experiments to cases and periods
+#' for dynamic GE model analysis. Supports multiple naming conventions and
+#' period patterns.
+#'
+#' @param type Character. Naming pattern: "prefix" (default) or "suffix".
+#'   - "prefix": Pattern comes after base/policy identifier (e.g., base2020)
+#'   - "suffix": Pattern comes before base/policy identifier (e.g., 2020-base)
+#' @param base Character vector or NULL. Identifiers for baseline cases.
+#' @param pol Character vector or NULL. Identifiers for policy cases.
+#' @param base_rerun Character vector or NULL. Identifiers for baseline rerun cases.
+#' @param other Character vector or NULL. Identifiers for other case types.
+#' @param pattern Character or numeric. Pattern to be combined with case identifiers:
+#'   - "start:end" string: Creates sequence from start to end (e.g., "2020:2030")
+#'   - c(start, end) numeric: Creates sequence from start to end (e.g., c(2020, 2030))
+#'   - Character vector: Used directly as patterns
+#' @param increment Numeric. Step size for numeric sequences. Default is 1.
+#' @param separator Character. Separator used between pattern and case identifier in suffix mode.
+#'   Default is "-".
+#' @param period_pattern Logical. If TRUE, creates period ranges between consecutive patterns
+#'   (e.g., 2020-2025 from 2020, 2025, 2030). Default is FALSE.
+#' @param period_prefix Character. Prefix for period names. Default is "yr_".
+#' @param output Character. Name of the variable to assign the result to in the caller's environment.
+#'   Default is "mapping_name".
+#'
+#' @return
+#' A data frame with the following columns:
+#'   - \strong{Input}: Experiment identifier used in file names
+#'   - \strong{Case}: Type of simulation (base, pol, base_rerun, other)
+#'   - \strong{Period}: Time period identifier
+#' Also invisibly returns the same data frame.
+#'
+#' @author Pattawee Puangchit
+#' @export
+#'
+#' @seealso \code{\link{auto_gtap_dynamic}}, \code{\link{.auto_GTAPRd_info}}
+#'
+#' @examples
+#' \donttest{
+#' # Example 1: Generate mapping for years 2020, 2025, 2030 with base/policy cases
+#' dynamic_input_name(
+#'   type = "prefix",
+#'   base = "base",
+#'   pol = "pol",
+#'   pattern = "2020:2030:5"
+#' )
+#' # Creates mapping_name data frame with 6 rows:
+#' # base2020, base2025, base2030, pol2020, pol2025, pol2030
+#'
+#' # Example 2: Generate period patterns (e.g., for comparing between periods)
+#' dynamic_input_name(
+#'   type = "prefix",
+#'   base = "base",
+#'   pol = "pol",
+#'   pattern = "2020:2030:5",
+#'   period_pattern = TRUE,
+#'   output = "period_map"
+#' )
+#' # Creates period_map with periods like: yr_2020-2025, yr_2025-2030
+#'
+#' # Example 3: Use suffix mode with multiple identifiers
+#' dynamic_input_name(
+#'   type = "suffix",
+#'   base = c("bau", "baseline"),
+#'   pol = c("carbon", "tariff"),
+#'   pattern = c("v1", "v2", "v3"),
+#'   separator = "_",
+#'   output = "scenario_map"
+#' )
+#' # Creates scenario_map with entries like: v1_bau, v2_bau, v1_carbon, etc.
+#' }
+#'
 dynamic_input_name <- function(type = "prefix",
                                     base = NULL,
                                     pol = NULL,
@@ -156,6 +230,28 @@ dynamic_input_name <- function(type = "prefix",
 
 
 
+#' @title Aggregate Regions and Sectors in GTAP Data (Internal)
+#'
+#' @description
+#' Aggregates regions, sectors, or other dimensions in GTAP data structures based on provided
+#' mapping configurations. Works with data frames, lists, and nested structures.
+#'
+#' @param data_list A data frame or list containing GTAP data to be aggregated.
+#' @param agg_mapping A list containing aggregation mappings with dimensions as top level
+#'        and group names as second level.
+#' @param calculation Character. Operation for aggregation:
+#'        - "+" (default): Sum values in the same group
+#'        - "-": Subtract subsequent values from the first
+#'        - "*": Multiply values within groups
+#'        - "/": Divide subsequent values from the first
+#' @param add_world Logical. If TRUE, adds a "World" aggregate for regional dimensions.
+#'
+#' @return The input data structure with aggregated values added.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @seealso \code{\link{auto_gtap_dynamic}}, \code{\link{.create_agg_mapping}}
+#'
 .auto_GTAPRd_info <- function(data_list, external_map = NULL) {
   if (is.null(external_map)) {
     warning("external_map must be provided")
@@ -207,6 +303,30 @@ dynamic_input_name <- function(type = "prefix",
 }
 
 
+#' @title Calculate Deviations Between Policy and Base Scenarios (Internal)
+#'
+#' @description
+#' Computes deviations between policy and baseline scenarios in GTAP data.
+#' Supports different calculation methods for analysis of policy impacts.
+#'
+#' @param data_list A data frame or list containing GTAP data with Case column.
+#' @param base Character. The identifier for baseline scenario in the Case column.
+#'        Default is "base".
+#' @param policy Character. The identifier for policy scenario in the Case column.
+#'        Default is "pol".
+#' @param calculation Character. Operation for calculating deviations:
+#'        - "-" (default): Simple difference (policy minus base)
+#'        - "+": Sum of policy and base
+#'        - "*": Product of policy and base
+#'        - "/": Ratio of policy to base
+#'        - "%": Percentage change calculation ((policy-base)/base*100)
+#'
+#' @return The input data structure with deviation values added as a new case.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @seealso \code{\link{auto_gtap_dynamic}}, \code{\link{.auto_GTAPRd_info}}
+#'
 .gtap_rd_dev <- function(data_list, base = "base", policy = "pol", calculation = "-") {
   process_df <- function(df) {
     if (!is.data.frame(df) || nrow(df) == 0 || !"Case" %in% names(df)) {
@@ -280,6 +400,29 @@ dynamic_input_name <- function(type = "prefix",
   return(data_list)
 }
 
+
+#' @title Create Aggregation Mapping Structure (Internal)
+#'
+#' @description
+#' Creates a hierarchical mapping structure for use in region/sector aggregation
+#' from a data frame containing mapping information.
+#'
+#' @param mapping_file A data frame or path to a file containing mapping information.
+#'        Must have columns for dimension, item names, and group names.
+#' @param dimension_col Character. Name of column containing dimension information.
+#'        Default is "Dimension".
+#' @param item_col Character. Name of column containing original GTAP names.
+#'        Default is "GTAPName".
+#' @param group_col Character. Name of column containing aggregation group names.
+#'        Default is "Aggregate".
+#'
+#' @return A nested list where the top level is dimension names, second level is
+#'         group names, and values are character vectors of items in each group.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @seealso \code{\link{auto_gtap_dynamic}}, \code{\link{.gtap_rd_agg}}
+#'
 .create_agg_mapping <- function(mapping_file, dimension_col = "Dimension",
                                 item_col = "GTAPName", group_col = "Aggregate") {
 
@@ -343,6 +486,29 @@ dynamic_input_name <- function(type = "prefix",
 }
 
 
+
+#' @title Aggregate Regions and Sectors in GTAP Data (Internal)
+#'
+#' @description
+#' Aggregates regions, sectors, or other dimensions in GTAP data structures based on provided
+#' mapping configurations. Works with data frames, lists, and nested structures.
+#'
+#' @param data_list A data frame or list containing GTAP data to be aggregated.
+#' @param agg_mapping A list containing aggregation mappings with dimensions as top level
+#'        and group names as second level.
+#' @param calculation Character. Operation for aggregation:
+#'        - "+" (default): Sum values in the same group
+#'        - "-": Subtract subsequent values from the first
+#'        - "*": Multiply values within groups
+#'        - "/": Divide subsequent values from the first
+#' @param add_world Logical. If TRUE, adds a "World" aggregate for regional dimensions.
+#'
+#' @return The input data structure with aggregated values added.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @seealso \code{\link{auto_gtap_dynamic}}, \code{\link{.create_agg_mapping}}
+#'
 .gtap_rd_agg <- function(data_list, agg_mapping, calculation = "+", add_world = TRUE) {
   # Process a single dataframe with a specific pivot column
   process_df_with_pivot <- function(df, pivot_col, group_mappings) {
@@ -497,6 +663,124 @@ dynamic_input_name <- function(type = "prefix",
 }
 
 
+
+#' @title Process GTAP Dynamic Data with Extended Analysis Options
+#'
+#' @description
+#' Processes GTAP data from SL4 and HAR files with comprehensive support for dynamic analysis,
+#' regional aggregation, and deviation calculations across experiments.
+#'
+#' @details
+#' This function extends the base GTAP data processing workflow with additional capabilities
+#' for dynamic GE model analysis. It processes SL4 and HAR files, performs regional aggregation,
+#' calculates deviations between policy and baseline scenarios, and provides integrated mapping
+#' for periods and experiments.
+#'
+#' The function supports multiple options for aggregation and deviation calculations:
+#' \itemize{
+#'   \item \strong{Mapping}: Apply experiment-to-case mapping for dynamic analysis periods
+#'   \item \strong{Aggregation}: Create custom regional or sectoral groupings
+#'   \item \strong{Deviation}: Calculate differences between policy and baseline scenarios
+#' }
+#'
+#' @param experiment Character vector. Case names to process.
+#' @param project_path Character. Path to the project folder with "in" and "out" subfolders.
+#' @param input_path Character. Path to the input folder. Overrides `project_path/in` if specified.
+#' @param output_path Character. Path to the output folder. Overrides `project_path/out` if specified.
+#' @param sl4_suffix Character. Custom suffix for SL4 files (e.g., "" or "-custom").
+#' @param har_suffix Character. Custom suffix for HAR files (e.g., "-WEL").
+#' @param mapping_info Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".
+#' @param process_sl4_vars Data frame, NULL, or FALSE. Variables to extract from SL4 files.
+#'   - Set to NULL to extract all variables.
+#'   - Set to FALSE to skip SL4 processing.
+#' @param process_har_vars Data frame, NULL, or FALSE. Variables to extract from HAR files.
+#'   - Set to NULL to extract all variables.
+#'   - Set to FALSE to skip HAR processing.
+#' @param sl4_mapping_info Data frame or NULL. Mapping information for SL4 variables (with "Variable", "Description", and "Unit" columns).
+#' @param har_mapping_info Data frame or NULL. Mapping information for HAR variables (with "Variable", "Description", and "Unit" columns).
+#' @param sl4_extract_method Character. SL4 extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".
+#' @param har_extract_method Character. HAR extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".
+#' @param sl4_priority Optional list. Priority rules for SL4 data grouping.
+#' @param har_priority Optional list. Priority rules for HAR data grouping.
+#' @param region_select Optional character vector. Specifies regions to filter the data.
+#' @param sector_select Optional character vector. Specifies sectors to filter the data.
+#' @param subtotal_level Logical. If TRUE, includes subtotal data. Default is FALSE.
+#' @param plot_data Logical. If TRUE, prepares data for plotting and assigns to variables.
+#' @param output_formats Character vector or list. Exports data in these formats (valid: "csv", "stata", "rds", "txt").
+#' @param process_macro Logical. If TRUE, processes macro variables from SL4 files.
+#' @param sl4_output_name Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".
+#' @param har_output_name Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".
+#' @param macro_output_name Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".
+#' @param mapping_input Data frame. Maps experiment IDs to cases and periods. Must contain columns: "Input", "Case", and "Period".
+#' @param agg_mapping List. Mapping for regional or sectoral aggregation.
+#' @param aggregate Logical. If TRUE, performs regional/sectoral aggregation using `agg_mapping`.
+#' @param add_world Logical. If TRUE, adds "World" totals when aggregating regions.
+#' @param cal_deviation Logical. If TRUE, calculates deviations between policy and baseline scenarios.
+#' @param base_var Character. Case identifier for baseline scenario. Default is "base".
+#' @param policy_var Character. Case identifier for policy scenario. Default is "pol".
+#' @param calculation_agg Character. Operation for aggregation: "+", "-", "*", or "/". Default is "+".
+#' @param calculation_dev Character. Operation for deviation calculation: "-", "+", "*", "/" or "%". Default is "-".
+#'
+#' @return
+#' A list containing the processed datasets with enhanced information for dynamic analysis.
+#'
+#' @author Pattawee Puangchit
+#' @export
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{dynamic_input_name}}
+#'
+#' @examples
+#' \donttest{
+#' # Example 1: Basic processing with default settings
+#' results <- auto_gtap_dynamic(
+#'   experiment = c("base2020", "base2025", "pol2020", "pol2025"),
+#'   project_path = "path/to/project",
+#'   plot_data = TRUE
+#' )
+#'
+#' # Example 2: Process with mapping and aggregation
+#' # Create mapping for periods and cases
+#' dynamic_input_name(
+#'   type = "prefix",
+#'   base = "base",
+#'   pol = "pol",
+#'   pattern = "2020:2030:5",
+#'   period_pattern = TRUE,
+#'   output = "run_map"
+#' )
+#'
+#' # Define regional aggregation
+#' reg_mapping <- .create_agg_mapping(
+#'   data.frame(
+#'     Dimension = rep("REG", 3),
+#'     GTAPName = c("USA", "CAN", "MEX"),
+#'     Aggregate = rep("NAmerica", 3)
+#'   )
+#' )
+#'
+#' # Process data with aggregation and deviation calculation
+#' results <- auto_gtap_dynamic(
+#'   experiment = c("base2020", "base2025", "pol2020", "pol2025"),
+#'   project_path = "path/to/project",
+#'   mapping_input = run_map,
+#'   agg_mapping = reg_mapping,
+#'   aggregate = TRUE,
+#'   cal_deviation = TRUE,
+#'   plot_data = TRUE
+#' )
+#'
+#' # Example 3: Custom calculation methods
+#' results <- auto_gtap_dynamic(
+#'   experiment = c("base2020", "base2025", "pol2020", "pol2025"),
+#'   project_path = "path/to/project",
+#'   mapping_input = run_map,
+#'   agg_mapping = reg_mapping,
+#'   aggregate = TRUE,
+#'   cal_deviation = TRUE,
+#'   calculation_agg = "*",
+#'   calculation_dev = "%",  # Percentage change calculation
+#'   plot_data = TRUE
+#' )
+#' }
 auto_gtap_dynamic <- function(experiment,
                               project_path = NULL, input_path = NULL, output_path = NULL,
                               sl4_suffix = "", har_suffix = "",
