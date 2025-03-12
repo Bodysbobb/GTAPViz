@@ -158,22 +158,49 @@ Set to NULL for no splitting, suitable for macro-level analysis.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Input Path:</span></span></span>
+<span class="r-in"><span><span class="va">input_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/in"</span>, package <span class="op">=</span> <span class="st">"GTAPViz"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                </span></span>
+<span class="r-in"><span><span class="co"># GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)</span></span></span>
+<span class="r-in"><span><span class="co"># Note: No need to add .sl4 to the experiment name </span></span></span>
+<span class="r-in"><span><span class="va">gtap_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="auto_gtap_data.html">auto_gtap_data</a></span><span class="op">(</span>experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EXP1"</span>, <span class="st">"EXP2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                            input_path <span class="op">=</span> <span class="va">input_path</span>, subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                            process_sl4_vars <span class="op">=</span> <span class="cn">NULL</span>, process_har_vars <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>                            mapping_info <span class="op">=</span> <span class="st">"GTAPv7"</span>, plot_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> All 2 requested experiment files are found with both SL4 and HAR data.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mapping method used: GTAPv7 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing GTAP Macro Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing SL4 Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing QXS Bilateral Trade Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing HAR Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Summary of Processing:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP Macro Data processed successfully</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> SL4 Data processed successfully</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> HAR Data processed successfully</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP data processing completed successfully!</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Basic usage with data frame</span></span></span>
 <span class="r-in"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">comparison_plot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">gtap_results</span>,</span></span>
-<span class="r-in"><span>  x_axis_from <span class="op">=</span> <span class="st">"REG"</span>,</span></span>
-<span class="r-in"><span>  panel_var <span class="op">=</span> <span class="st">"Experiment"</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Region"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  x_axis_from <span class="op">=</span> <span class="st">"Region"</span>,</span></span>
+<span class="r-in"><span>  panel_var <span class="op">=</span> <span class="st">"Experiment"</span>,</span></span>
+<span class="r-in"><span>  filter_var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  output_path <span class="op">=</span> <span class="st">"/your/folder/path"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No matching data found for the specified filter_var values.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Split by commodity with custom styling and export options</span></span></span>
 <span class="r-in"><span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">comparison_plot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">gtap_results</span>,</span></span>
-<span class="r-in"><span>  x_axis_from <span class="op">=</span> <span class="st">"REG"</span>,</span></span>
-<span class="r-in"><span>  split_by <span class="op">=</span> <span class="st">"COMM"</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Region"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  x_axis_from <span class="op">=</span> <span class="st">"Region"</span>,</span></span>
+<span class="r-in"><span>  split_by <span class="op">=</span> <span class="st">"Variable"</span>,</span></span>
 <span class="r-in"><span>  panel_var <span class="op">=</span> <span class="st">"Experiment"</span>,</span></span>
+<span class="r-in"><span>  filter_var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  output_path <span class="op">=</span> <span class="st">"results/plots"</span>,</span></span>
+<span class="r-in"><span>  output_path <span class="op">=</span> <span class="st">"/your/folder/path"</span>,</span></span>
 <span class="r-in"><span>  export_as_pdf <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  export_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    file_name <span class="op">=</span> <span class="st">"commodity_impacts"</span>,</span></span>
@@ -186,7 +213,8 @@ Set to NULL for no splitting, suitable for macro-level analysis.</p></dd>
 <span class="r-in"><span>    show_grid_major_y <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No matching data found for the specified filter_var values.</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

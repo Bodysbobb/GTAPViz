@@ -177,16 +177,49 @@ value in the specified column gets its own sheet. Example: <code>separate_sheet_
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Create a detailed report table with wide-format pivoting</span></span></span>
-<span class="r-in"><span><span class="va">report_data</span> <span class="op">&lt;-</span> <span class="fu">report_table</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data_list <span class="op">=</span> <span class="va">my_data</span>,</span></span>
-<span class="r-in"><span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Variable"</span> <span class="op">=</span> <span class="st">"Value"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  export_table <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  output_path <span class="op">=</span> <span class="st">"results/"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Input Path:</span></span></span>
+<span class="r-in"><span><span class="va">input_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/in"</span>, package <span class="op">=</span> <span class="st">"GTAPViz"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Note: No need to add .sl4 to the experiment name</span></span></span>
+<span class="r-in"><span><span class="va">gtap_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="auto_gtap_data.html">auto_gtap_data</a></span><span class="op">(</span>experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EXP1"</span>, <span class="st">"EXP2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                            input_path <span class="op">=</span> <span class="va">input_path</span>, subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                            process_sl4_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span><span class="op">)</span>, process_har_vars <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                            mapping_info <span class="op">=</span> <span class="st">"GTAPv7"</span>, plot_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> All 2 requested experiment SL4 files are found.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mapping method used: GTAPv7 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing SL4 Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Summary of Processing:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> SL4 Data processed successfully</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP data processing completed successfully!</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">report_table</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data_list <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Region <span class="op">=</span> <span class="st">"Variable"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  group_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    Region <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Region"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  rename_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span> <span class="op">=</span> <span class="st">"Scenario"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  total_column <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  decimal <span class="op">=</span> <span class="fl">4</span>,</span></span>
+<span class="r-in"><span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  repeat_label <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  include_units <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  add_var_info <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  add_group_line <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  separate_sheet_by <span class="op">=</span> <span class="st">"Unit"</span>,</span></span>
+<span class="r-in"><span>  export_table <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  output_path <span class="op">=</span> <span class="st">"/your/folder/path"</span>,</span></span>
+<span class="r-in"><span>  separate_file <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  workbook_name <span class="op">=</span> <span class="st">"Comparison Table"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in report_table(data_list = sl4.plot.data[["1D"]], pivot_col = list(Region = "Variable"),     group_by = list(Region = list("Experiment", "Region")), rename_cols = list(Experiment = "Scenario"),     total_column = FALSE, decimal = 4, subtotal_level = FALSE,     repeat_label = FALSE, include_units = TRUE, var_name_by_description = TRUE,     add_var_info = TRUE, add_group_line = FALSE, separate_sheet_by = "Unit",     export_table = TRUE, output_path = "/your/folder/path", separate_file = FALSE,     workbook_name = "Comparison Table"):</span> data_list must be a list.</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

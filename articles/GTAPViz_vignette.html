@@ -60,7 +60,7 @@
                         <h4 data-toc-skip class="author">Pattawee
 Puangchit</h4>
             
-            <h4 data-toc-skip class="date">2025-03-10</h4>
+            <h4 data-toc-skip class="date">2025-03-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bodysbobb/GTAPViz/blob/main/vignettes/GTAPViz_vignette.Rmd" class="external-link"><code>vignettes/GTAPViz_vignette.Rmd</code></a></small>
       <div class="d-none name"><code>GTAPViz_vignette.Rmd</code></div>
@@ -704,12 +704,12 @@ You can view all predefined palettes by using the following code:
 </p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get all palettes as a list</span></span>
-<span><span class="va">all_palettes</span> <span class="op">&lt;-</span> <span class="fu">print_palette_colors</span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span></span>
+<span><span class="va">all_palettes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_color_palette.html">get_color_palette</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Click or call a specific palette to view its colors</span></span>
-<span><span class="va">all_palettes</span><span class="op">$</span><span class="fu">winter</span><span class="op">(</span><span class="op">)</span>   <span class="co"># View the winter palette</span></span>
-<span><span class="va">all_palettes</span><span class="op">$</span><span class="fu">fall</span><span class="op">(</span><span class="op">)</span>     <span class="co"># View the fall palette</span></span>
-<span><span class="va">all_palettes</span><span class="op">$</span><span class="fu">gtap</span><span class="op">(</span><span class="op">)</span>     <span class="co"># View the GTAP palette</span></span></code></pre></div>
+<span><span class="va">all_palettes</span><span class="op">$</span><span class="fu">winter</span><span class="op">(</span><span class="st">"qualitative"</span><span class="op">)</span>   <span class="co"># View the winter palette</span></span>
+<span><span class="va">all_palettes</span><span class="op">$</span><span class="fu">fall</span><span class="op">(</span><span class="st">"sequential"</span><span class="op">)</span>                 <span class="co"># View the fall palette</span></span>
+<span><span class="va">all_palettes</span><span class="op">$</span><span class="fu">gtap</span><span class="op">(</span><span class="st">"diverging"</span><span class="op">)</span>     <span class="co"># View the GTAP palette</span></span></code></pre></div>
 <p>
 <strong>Note:</strong> You can also define any other color palette
 simply by using <code>"blue"</code>, <code>"red"</code>, or any other
@@ -719,118 +719,9 @@ standard color name that works with <code>ggplot2</code>.
 Next, use the following code to create and apply your own plot style:
 </p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_plot_config.html">get_plot_config</a></span><span class="op">(</span>printing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>
-You will get:
-</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">my_style_config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span></span>
-<span>  <span class="co"># Title settings</span></span>
-<span>  show_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  title_face <span class="op">=</span> <span class="st">"bold"</span>,</span>
-<span>  title_size <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>  title_hjust <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  add_unit_to_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  title_margin <span class="op">=</span> <span class="fu">margin</span><span class="op">(</span>t <span class="op">=</span> <span class="fl">10</span>, r <span class="op">=</span> <span class="fl">0</span>, b <span class="op">=</span> <span class="fl">10</span>, l <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  title_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    type <span class="op">=</span> <span class="st">"standard"</span>, <span class="co">#option: prefix, suffix, full, dynamic</span></span>
-<span>    text <span class="op">=</span> <span class="st">""</span>,</span>
-<span>    sep <span class="op">=</span> <span class="st">""</span></span>
-<span>  <span class="op">)</span>,</span>
-<span></span>
-<span>  <span class="co"># X-Axis settings</span></span>
-<span>  show_x_axis_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  x_axis_title_face <span class="op">=</span> <span class="st">"bold"</span>,</span>
-<span>  x_axis_title_size <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  x_axis_title_margin <span class="op">=</span> <span class="fu">margin</span><span class="op">(</span>t <span class="op">=</span> <span class="fl">25</span>, r <span class="op">=</span> <span class="fl">25</span>, b <span class="op">=</span> <span class="fl">0</span>, l <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  show_x_axis_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  x_axis_text_face <span class="op">=</span> <span class="st">"plain"</span>,</span>
-<span>  x_axis_text_size <span class="op">=</span> <span class="fl">14</span>,</span>
-<span>  x_axis_text_angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  x_axis_text_hjust <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  x_axis_description <span class="op">=</span> <span class="st">""</span>,</span>
-<span></span>
-<span>  <span class="co"># Y-Axis settings</span></span>
-<span>  show_y_axis_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  y_axis_title_face <span class="op">=</span> <span class="st">"bold"</span>,</span>
-<span>  y_axis_title_size <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  y_axis_title_margin <span class="op">=</span> <span class="fu">margin</span><span class="op">(</span>t <span class="op">=</span> <span class="fl">25</span>, r <span class="op">=</span> <span class="fl">25</span>, b <span class="op">=</span> <span class="fl">0</span>, l <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  show_y_axis_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  y_axis_text_face <span class="op">=</span> <span class="st">"plain"</span>,</span>
-<span>  y_axis_text_size <span class="op">=</span> <span class="fl">14</span>,</span>
-<span>  y_axis_text_angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  y_axis_text_hjust <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  y_axis_description <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  show_axis_titles_on_all_facets <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span></span>
-<span>  <span class="co"># Value Labels</span></span>
-<span>  show_value_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  value_label_face <span class="op">=</span> <span class="st">"plain"</span>,</span>
-<span>  value_label_size <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  value_label_position <span class="op">=</span> <span class="st">"above"</span>,</span>
-<span>  value_label_decimal_places <span class="op">=</span> <span class="fl">2</span>,</span>
-<span></span>
-<span>  <span class="co"># Legend</span></span>
-<span>  show_legend <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  show_legend_title <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  legend_position <span class="op">=</span> <span class="st">"bottom"</span>,</span>
-<span>  legend_title_face <span class="op">=</span> <span class="st">"bold"</span>,</span>
-<span>  legend_text_face <span class="op">=</span> <span class="st">"plain"</span>,</span>
-<span>  legend_text_size <span class="op">=</span> <span class="fl">14</span>,</span>
-<span></span>
-<span>  <span class="co"># Panel Strip</span></span>
-<span>  strip_face <span class="op">=</span> <span class="st">"bold"</span>,</span>
-<span>  strip_text_size <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  strip_background <span class="op">=</span> <span class="st">"lightgrey"</span>,</span>
-<span>  strip_text_margin <span class="op">=</span> <span class="fu">margin</span><span class="op">(</span>t <span class="op">=</span> <span class="fl">10</span>, r <span class="op">=</span> <span class="fl">0</span>, b <span class="op">=</span> <span class="fl">10</span>, l <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
-<span></span>
-<span>  <span class="co"># Panel Layout</span></span>
-<span>  panel_spacing <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  panel_rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  panel_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span></span>
-<span>  <span class="co"># Colors</span></span>
-<span>  color_tone <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  positive_color <span class="op">=</span> <span class="st">"#2E8B57"</span>,</span>
-<span>  negative_color <span class="op">=</span> <span class="st">"#CD5C5C"</span>,</span>
-<span>  background_color <span class="op">=</span> <span class="st">"white"</span>,</span>
-<span>  grid_color <span class="op">=</span> <span class="st">"grey90"</span>,</span>
-<span>  show_grid_major_x <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  show_grid_major_y <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  show_grid_minor_x <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  show_grid_minor_y <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span></span>
-<span>  <span class="co"># Zero Line</span></span>
-<span>  show_zero_line <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  zero_line_type <span class="op">=</span> <span class="st">"dashed"</span>,</span>
-<span>  zero_line_color <span class="op">=</span> <span class="st">"black"</span>,</span>
-<span>  zero_line_size <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  zero_line_position <span class="op">=</span> <span class="fl">0</span>,</span>
-<span></span>
-<span>  <span class="co"># Bar Chart</span></span>
-<span>  bar_width <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span>  bar_spacing <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span></span>
-<span>  <span class="co"># Scale Settings</span></span>
-<span>  scale_limit <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  scale_increment <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span></span>
-<span>  <span class="co"># Scale Expansion</span></span>
-<span>  expansion_y_mult <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
-<span>  expansion_x_mult <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.05</span><span class="op">)</span>,</span>
-<span></span>
-<span>  <span class="co"># Font Size Control</span></span>
-<span>  all_font_size <span class="op">=</span> <span class="fl">1</span>,</span>
-<span></span>
-<span>  <span class="co"># Data Sorting</span></span>
-<span>  sort_data_by_value <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Example usage:</span></span>
-<span><span class="co"># comparison_plot(data, x_axis_from = "REG", </span></span>
-<span><span class="co">#                 plot_style_config = my_style_config)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_all_config.html">get_all_config</a></span><span class="op">(</span>printing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Please refer to another vignetter <a href="">Plot
+Configurations</a> for more details and how to use it</strong></p>
 </div>
 </div>
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;">
@@ -855,7 +746,7 @@ a few observations; too many can make it dense and unclear.</p></li>
 <p>For example, plotting <code>qgdp</code>, <code>ppriv</code>,
 <code>EV</code>, <code>tot</code>, and <code>u</code> generates six
 separate figures using the following command:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reg_data</span> <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Region"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/comparison_plot.html">comparison_plot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">reg_data</span>,</span>
@@ -886,6 +777,7 @@ separate figures using the following command:</p>
 <span>                <span class="co"># See ?plot_style_config</span></span>
 <span>                plot_style_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>                  color_tone <span class="op">=</span> <span class="st">"purdue"</span>,</span>
+<span>                  color_palette_type <span class="op">=</span> <span class="st">"qualitative"</span>,</span>
 <span>                  add_unit_to_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                  title_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>                    type <span class="op">=</span> <span class="st">"prefix"</span>,  </span>
@@ -896,7 +788,7 @@ separate figures using the following command:</p>
 <p>By default, you might not need to define as much, as the previous
 sample code assumes that you follow all the previous instructions. You
 may use the following command to get the exact same output:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/comparison_plot.html">comparison_plot</a></span><span class="op">(</span><span class="va">reg_data</span>,</span>
 <span>                x_axis_from <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span>                split_by <span class="op">=</span> <span class="st">"Variable"</span>,</span>
@@ -947,7 +839,7 @@ Extraction</a>.</p>
 <p>To plot this figure—the only difference from previous figures is
 changing <code>split_by = FALSE</code>—you can use the following
 command:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/comparison_plot.html">comparison_plot</a></span><span class="op">(</span><span class="va">GTAPMacro</span>,</span>
 <span>                x_axis_from <span class="op">=</span> <span class="st">"Variable"</span>,</span>
 <span>                split_by <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -996,7 +888,7 @@ dimension names.</p></li>
 </ul>
 <p>For example, the following command plots all variables with sectors
 on the x-axis for each region:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/detail_plot.html">detail_plot</a></span><span class="op">(</span><span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"2D"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>            x_axis_from <span class="op">=</span> <span class="st">"Sector"</span>,</span>
 <span>            split_by <span class="op">=</span> <span class="st">"Region"</span>,</span>
@@ -1077,7 +969,7 @@ other GTAP structural breakdowns.</p></li>
 multiple components, <strong>renaming and restructuring</strong> may be
 necessary before plotting. You can try the following code:</p>
 </div>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Rename Value if needed</span></span>
 <span><span class="va">wefare.decomp.rename</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  ColumnName <span class="op">=</span> <span class="st">"COLUMN"</span>,</span>
@@ -1097,7 +989,7 @@ necessary before plotting. You can try the following code:</p>
 <span><span class="va">har.plot.data</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/rename_dims.html" class="external-link">rename_dims</a></span><span class="op">(</span><span class="va">har.plot.data</span>, <span class="va">rename_col</span><span class="op">)</span></span></code></pre></div>
 <p>Then, you can use the following command to plot the decomposition
 figure:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stack_plot.html">stack_plot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">har.plot.data</span><span class="op">[[</span><span class="st">"A"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>           x_axis_from <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span>           stack_value_from <span class="op">=</span> <span class="st">"COLUMN"</span>,</span>
@@ -1141,7 +1033,7 @@ unstack_plot = FALSE)</span>
 </figcaption></figure><p>Another practical example is plotting the decomposition of terms of
 trade (header E1), which is also a good example of multi-dimensional
 plotting. You may try the following command:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stack_plot.html">stack_plot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">har.plot.data</span><span class="op">[[</span><span class="st">"E1"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>           x_axis_from <span class="op">=</span> <span class="st">"Commodity"</span>,</span>
 <span>           stack_value_from <span class="op">=</span> <span class="st">"PRICES"</span>,</span>
@@ -1205,12 +1097,12 @@ Before generating any tables, it is useful to review the function
 arguments to ensure you take full advantage of the available
 customization options:
 </p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">report_table</span></span></code></pre></div>
 <p>A limitation of this reporting table function is that the input data
 must be in a list format. The following code provides an example of how
 to convert data into this format:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>DataFrame <span class="op">=</span> <span class="va">DataFrame</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -1221,7 +1113,7 @@ of the reporting table function. However, additional arguments are
 available, which you can explore by running
 <code><a href="../reference/report_table.html">?report_table</a></code>.</p>
 <p>For example, using the following code settings:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
 <span>  data_list <span class="op">=</span> <span class="va">data_list</span>,</span>
 <span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Region <span class="op">=</span> <span class="st">"Variable"</span><span class="op">)</span>,</span>
@@ -1284,7 +1176,7 @@ before creating the report table (see <a href="#sec:rename-value">Renaming Value
 <div class="section level3">
 <h3 id="sec:comparison-table">Comparison Table<a class="anchor" aria-label="anchor" href="#sec:comparison-table"></a>
 </h3>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
 <span>  data_list <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"1D"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Region <span class="op">=</span> <span class="st">"Variable"</span><span class="op">)</span>,</span>
@@ -1318,7 +1210,7 @@ Comparison Table <br><span class="package-table-note">(separate_sheet_by = “Un
 <div class="section level3">
 <h3 id="sec:macro-table">GTAP Macro Table<a class="anchor" aria-label="anchor" href="#sec:macro-table"></a>
 </h3>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GTAPMacro</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GTAPMacro <span class="op">=</span> <span class="va">GTAPMacro</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
@@ -1355,7 +1247,7 @@ GTAP Macros Table <br><span class="package-table-note">(separate_sheet_by = FALS
 <div class="section level3">
 <h3 id="sec:detail-table">Detail Table<a class="anchor" aria-label="anchor" href="#sec:detail-table"></a>
 </h3>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
 <span>  data_list <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"2D"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  </span>
@@ -1392,7 +1284,7 @@ NULL, add_group_line = TRUE)</span>
 <div class="section level3">
 <h3 id="sec:decomp-table">Decomposition Table<a class="anchor" aria-label="anchor" href="#sec:decomp-table"></a>
 </h3>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
 <span>  data_list <span class="op">=</span> <span class="va">har.plot.data</span>,</span>
 <span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">"COLUMN"</span>, </span>
@@ -1441,7 +1333,7 @@ Decomposition Table <br><span class="package-table-note">(total_column
 <p>If you manually import data or need to adjust the
 <code>"Description"</code> and <code>"Unit"</code> columns, you can use
 the following command:</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mapping_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span>, <span class="st">"ppriv"</span><span class="op">)</span>,</span>
 <span>  Description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Real GDP Index"</span>, <span class="st">"Welfare Equivalents"</span>, <span class="st">"Consumer Price Index"</span><span class="op">)</span>,</span>
@@ -1480,7 +1372,7 @@ value.</li>
 dividing by 1,000.<br>
 • Convert <code>percent</code> to <code>proportion</code> by dividing by
 100.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">datasets</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/convert_units.html">convert_units</a></span><span class="op">(</span>change_unit_from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"million USD"</span>, <span class="st">"percent"</span><span class="op">)</span>,</span>
 <span>                          change_unit_to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"billion USD"</span>, <span class="st">"proportion"</span><span class="op">)</span>,</span>
 <span>                          adjustment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"/1000"</span>, <span class="st">"/100"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -1492,7 +1384,7 @@ dividing by 1,000.<br>
 names automatically—such as changing <code>REG</code> to
 <code>Region</code> or <code>COMM</code> to <code>Commodity</code>—use
 the following command:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating Mapping File</span></span>
 <span><span class="va">rename_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"REG"</span>, <span class="st">"COMM"</span>, <span class="st">"ACTS"</span><span class="op">)</span>,</span>
@@ -1513,7 +1405,7 @@ Excel and import it into R. The column names must be
 renaming country names in the <code>REG</code> column (e.g., changing
 <code>"USA"</code> to <code>"United States"</code> or <code>"CHN"</code>
 to <code>"China"</code>)—use the following command:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating Mapping File</span></span>
 <span><span class="va">rename.region</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  ColumnName <span class="op">=</span> <span class="st">"REG"</span>,</span>
@@ -1546,7 +1438,7 @@ descending order (<code>TRUE/FALSE/NULL</code>). See
 <code>?sorting_specs</code> for details.</p></li>
 </ul>
 <p>To apply sorting, use the following command:</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating Sorting File</span></span>
 <span><span class="va">sorting_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"US_All10_RetalTar"</span>, <span class="st">"US_All"</span>, <span class="st">"US_All10"</span>, <span class="st">"US_Specific"</span><span class="op">)</span>,</span>
@@ -1555,7 +1447,7 @@ descending order (<code>TRUE/FALSE/NULL</code>). See
 <span>      </span>
 <span><span class="va">regional_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sort_plot_data.html">sort_plot_data</a></span><span class="op">(</span></span>
 <span>  <span class="va">sl4.plot.data</span>,</span>
-<span>  cols <span class="op">=</span> <span class="va">sorting_specs</span><span class="op">$</span><span class="va">cols</span>,</span>
+<span>  sort_columns <span class="op">=</span> <span class="va">sorting_specs</span>,</span>
 <span>  sort_by_value_desc <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><strong>Note:</strong> This function performs <strong>sorting, not
@@ -1582,7 +1474,7 @@ automation does not recognize <code>"AREG"</code> as
 data list.</p>
 <p>To facilitate data extraction for plotting and reporting table
 creation, consider the following approach:</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/auto_gtap_data.html">auto_gtap_data</a></span><span class="op">(</span></span>
 <span>  <span class="co"># Input Main File Names</span></span>
 <span>  experiment <span class="op">=</span> <span class="va">experiment</span>, </span>
@@ -1648,7 +1540,7 @@ operations.</p></li>
 <code>"add_mapping_info"</code> (the <em>“Unit”</em> column is required
 for plotting).</p></li>
 </ol>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Step 1: Extracting Data</span></span>
 <span><span class="va">sl4data1</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP1.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">sl4data2</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP2.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
@@ -1677,7 +1569,7 @@ for plotting).</p></li>
 </h2>
 <p>Extract GTAP Macro variables from the <em>“Macros”</em> header in
 <code>.sl4</code> files using the following command:</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Macros</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gtap_macros_data.html">gtap_macros_data</a></span><span class="op">(</span></span>
 <span>  input_path <span class="op">=</span> <span class="va">input.folder</span>,</span>
 <span>  experiment <span class="op">=</span> <span class="va">experiment</span>,</span>

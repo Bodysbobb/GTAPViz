@@ -42,7 +42,12 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.generate_comparison_colors</span><span class="op">(</span><span class="va">data</span>, color_tone <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">axis_col</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.generate_comparison_colors</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  color_tone <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">axis_col</span>,</span>
+<span>  palette_type <span class="op">=</span> <span class="st">"qualitative"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -59,6 +64,10 @@
 
 <dt id="arg-axis-col">axis_col<a class="anchor" aria-label="anchor" href="#arg-axis-col"></a></dt>
 <dd><p>Column name used for determining the number of unique colors needed.</p></dd>
+
+
+<dt id="arg-palette-type">palette_type<a class="anchor" aria-label="anchor" href="#arg-palette-type"></a></dt>
+<dd><p>Character. Optional color palette by default is qualitative.</p></dd>
 
 </dl></div>
     <div class="section level2">
