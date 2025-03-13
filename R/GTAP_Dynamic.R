@@ -1083,11 +1083,65 @@ pivot_table_with_filter <- function(data,
     # Get all columns except the pivot column and value column
     id_cols <- setdiff(names(df), c(actual_pivot_col, val_col))
 
-    # Create wide format
-    df_wide <- tidyr::pivot_wider(df,
-                                  id_cols = dplyr::all_of(id_cols),
-                                  names_from = dplyr::all_of(actual_pivot_col),
-                                  values_from = dplyr::all_of(val_col))
+    # Check if VALPCT column exists
+    has_valpct <- "VALPCT" %in% names(df)
+
+    # If we have a VALPCT column, process separately for "value" and "percent"
+    if (has_valpct) {
+      # Split data by VALPCT
+      df_value <- df[df$VALPCT == "value", ]
+      df_percent <- df[df$VALPCT == "percent", ]
+
+      # Process each subset
+      if (nrow(df_value) > 0) {
+        df_value <- process_subset(df_value, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
+      }
+
+      if (nrow(df_percent) > 0) {
+        # For percentages, we need corresponding values for proper weighting
+        if (nrow(df_value) > 0) {
+          # For each group of id variables (excluding VALPCT and the pivot column)
+          id_cols_to_match <- setdiff(id_cols, "VALPCT")
+
+          # Create a unique key for matching rows
+          if (length(id_cols_to_match) > 0) {
+            df_value$._match_key_ <- apply(df_value[, id_cols_to_match, drop = FALSE], 1, paste, collapse = "|")
+            df_percent$._match_key_ <- apply(df_percent[, id_cols_to_match, drop = FALSE], 1, paste, collapse = "|")
+
+            # Process percentages with special handling for aggregation
+            df_percent <- process_percent_subset(df_percent, df_value, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
+
+            # Remove temporary columns
+            df_value$._match_key_ <- NULL
+            df_percent$._match_key_ <- NULL
+          } else {
+            # If no other identifying columns, just do regular processing
+            df_percent <- process_subset(df_percent, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
+          }
+        } else {
+          # Without value data, just do regular processing
+          df_percent <- process_subset(df_percent, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
+        }
+      }
+
+      # Combine results
+      return(rbind(df_value, df_percent))
+    } else {
+      # Standard processing for data without VALPCT column
+      return(process_subset(df, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world))
+    }
+  }
+
+  # Process a subset of data (value or percent)
+  process_subset <- function(df_subset, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world) {
+    # Create wide format with names_repair to handle duplicates
+    df_wide <- tidyr::pivot_wider(
+      df_subset,
+      id_cols = id_cols,
+      names_from = actual_pivot_col,
+      values_from = val_col,
+      names_repair = "make.unique"  # This handles duplicate names
+    )
 
     # Get the original columns (those created during pivot_wider)
     orig_cols <- setdiff(names(df_wide), id_cols)
@@ -1095,7 +1149,7 @@ pivot_table_with_filter <- function(data,
     # Add World aggregation automatically if pivot_col is a region/country column and add_world is TRUE
     if (add_world) {
       region_keywords <- c("reg", "region", "regions", "country", "countries")
-      is_region_col <- any(sapply(region_keywords, function(kw) grepl(kw, tolower(actual_pivot_col))))
+      is_region_col <- any(sapply(region_keywords, function(kw) grepl(kw, tolower(original_pivot_col_name))))
 
       if (is_region_col && !("World" %in% names(group_mappings))) {
         # Add World calculation (sum of all regions)
@@ -1105,48 +1159,55 @@ pivot_table_with_filter <- function(data,
 
     # Process each group in the mapping
     for (group_name in names(group_mappings)) {
-      # Extract items from the tibble
-      items_tibble <- group_mappings[[group_name]]
-      if (!is.null(items_tibble) && "GTAPName" %in% names(items_tibble)) {
-        items <- items_tibble$GTAPName
+      # Extract items from the mapping
+      items <- group_mappings[[group_name]]
+      if (is.list(items) && "GTAPName" %in% names(items)) {
+        items <- items$GTAPName
+      }
 
-        if (length(items) > 0) {
-          # Find matching columns
-          matched_cols <- character(0)
-          for (item in items) {
-            # Try exact match first
-            if (item %in% orig_cols) {
-              matched_cols <- c(matched_cols, item)
-            } else {
-              # Try case-insensitive match
-              for (col in orig_cols) {
-                if (tolower(item) == tolower(col)) {
-                  matched_cols <- c(matched_cols, col)
-                  break
-                }
-              }
-            }
+      if (length(items) > 0) {
+        # Find matching columns (accounting for potential .1, .2 suffixes from names_repair)
+        matched_cols <- character(0)
+        for (item in items) {
+          # Exact match first
+          exact_match <- orig_cols[orig_cols == item]
+          if (length(exact_match) > 0) {
+            matched_cols <- c(matched_cols, exact_match)
           }
 
-          if (length(matched_cols) > 0) {
-            # Calculate aggregate value based on calculation type
-            if (calculation == "+") {
-              df_wide[[group_name]] <- rowSums(df_wide[, matched_cols, drop = FALSE], na.rm = TRUE)
-            } else if (calculation == "-") {
-              df_wide[[group_name]] <- df_wide[[matched_cols[1]]]
-              for (i in 2:length(matched_cols)) {
-                df_wide[[group_name]] <- df_wide[[group_name]] - df_wide[[matched_cols[i]]]
-              }
-            } else if (calculation == "*") {
-              df_wide[[group_name]] <- 1
-              for (col in matched_cols) {
-                df_wide[[group_name]] <- df_wide[[group_name]] * df_wide[[col]]
-              }
-            } else if (calculation == "/") {
-              df_wide[[group_name]] <- df_wide[[matched_cols[1]]]
-              for (i in 2:length(matched_cols)) {
-                df_wide[[group_name]] <- df_wide[[group_name]] / df_wide[[matched_cols[i]]]
-              }
+          # Then try matching with potential suffixes from names_repair
+          repaired_matches <- orig_cols[startsWith(orig_cols, paste0(item, "."))]
+          if (length(repaired_matches) > 0) {
+            matched_cols <- c(matched_cols, repaired_matches)
+          }
+
+          # Then try case-insensitive match
+          for (col in orig_cols) {
+            col_base <- sub("\\.\\d+$", "", col)  # Remove potential .1, .2 suffix
+            if (tolower(item) == tolower(col_base) && !(col %in% matched_cols)) {
+              matched_cols <- c(matched_cols, col)
+            }
+          }
+        }
+
+        if (length(matched_cols) > 0) {
+          # Calculate aggregate value based on calculation type
+          if (calculation == "+") {
+            df_wide[[group_name]] <- rowSums(df_wide[, matched_cols, drop = FALSE], na.rm = TRUE)
+          } else if (calculation == "-") {
+            df_wide[[group_name]] <- df_wide[[matched_cols[1]]]
+            for (i in 2:length(matched_cols)) {
+              df_wide[[group_name]] <- df_wide[[group_name]] - df_wide[[matched_cols[i]]]
+            }
+          } else if (calculation == "*") {
+            df_wide[[group_name]] <- 1
+            for (col in matched_cols) {
+              df_wide[[group_name]] <- df_wide[[group_name]] * df_wide[[col]]
+            }
+          } else if (calculation == "/") {
+            df_wide[[group_name]] <- df_wide[[matched_cols[1]]]
+            for (i in 2:length(matched_cols)) {
+              df_wide[[group_name]] <- df_wide[[group_name]] / df_wide[[matched_cols[i]]]
             }
           }
         }
@@ -1160,12 +1221,134 @@ pivot_table_with_filter <- function(data,
     # Convert back to long format
     df_long <- tidyr::pivot_longer(
       df_wide,
-      cols = dplyr::all_of(all_value_cols),
+      cols = all_value_cols,
       names_to = original_pivot_col_name,
       values_to = val_col
     )
 
     return(df_long)
+  }
+
+  # Special processing for percentage data
+  process_percent_subset <- function(df_percent, df_value, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world) {
+    # First process like regular values
+    result <- process_subset(df_percent, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
+
+    # Get the value data in wide format for calculating weights
+    value_wide <- tidyr::pivot_wider(
+      df_value,
+      id_cols = setdiff(id_cols, "VALPCT"),
+      names_from = actual_pivot_col,
+      values_from = val_col,
+      names_repair = "make.unique"
+    )
+
+    # For each group in mapping, adjust the percentage values
+    for (group_name in names(group_mappings)) {
+      items <- group_mappings[[group_name]]
+      if (is.list(items) && "GTAPName" %in% names(items)) {
+        items <- items$GTAPName
+      }
+
+      # Check if this group exists in our processed results
+      group_rows <- result[[original_pivot_col_name]] == group_name
+      if (sum(group_rows) > 0) {
+        # Find the rows for each component of this group
+        for (key in unique(result$._match_key_[group_rows])) {
+          # Find matching rows in values data
+          value_row <- value_wide$._match_key_ == key
+          if (any(value_row)) {
+            # Find component items that exist in the value data
+            found_items <- character(0)
+            for (item in items) {
+              # Check if item exists in value data (accounting for possible .1, .2 suffixes)
+              item_cols <- names(value_wide)[startsWith(names(value_wide), item) | names(value_wide) == item]
+              item_cols <- setdiff(item_cols, c("._match_key_", id_cols))
+              if (length(item_cols) > 0) {
+                found_items <- c(found_items, item_cols)
+              }
+            }
+
+            if (length(found_items) > 0) {
+              # Calculate the aggregated value for this group
+              group_value <- sum(value_wide[value_row, found_items, drop = FALSE], na.rm = TRUE)
+
+              # Get matching rows in result for this key
+              result_rows <- result$._match_key_ == key & result[[original_pivot_col_name]] == group_name
+
+              if (sum(result_rows) > 0 && group_value > 0) {
+                # Calculate weighted percentage
+                weighted_pct <- 0
+                for (item in found_items) {
+                  # Find item value and percentage
+                  item_value <- value_wide[value_row, item, drop = TRUE]
+                  item_pct_rows <- result$._match_key_ == key & result[[original_pivot_col_name]] == sub("\\.\\d+$", "", item)
+
+                  if (any(item_pct_rows) && !is.na(item_value) && item_value > 0) {
+                    item_pct <- result[item_pct_rows, val_col, drop = TRUE]
+                    weighted_pct <- weighted_pct + (item_value / group_value) * item_pct
+                  }
+                }
+
+                # Update the group percentage
+                result[result_rows, val_col] <- weighted_pct
+              }
+            }
+          }
+        }
+      }
+    }
+
+    # Handle World percentage if needed
+    if (add_world) {
+      region_keywords <- c("reg", "region", "regions", "country", "countries")
+      is_region_col <- any(sapply(region_keywords, function(kw) grepl(kw, tolower(original_pivot_col_name))))
+
+      if (is_region_col && "World" %in% unique(result[[original_pivot_col_name]])) {
+        # Similar process for World but includes all regions
+        world_rows <- result[[original_pivot_col_name]] == "World"
+        if (sum(world_rows) > 0) {
+          for (key in unique(result$._match_key_[world_rows])) {
+            value_row <- value_wide$._match_key_ == key
+            if (any(value_row)) {
+              # Get all region columns (excluding meta columns and aggregated groups)
+              all_regions <- setdiff(names(value_wide), c("._match_key_", id_cols))
+              all_regions <- all_regions[!all_regions %in% names(group_mappings)]
+
+              if (length(all_regions) > 0) {
+                # Calculate world total
+                world_value <- sum(value_wide[value_row, all_regions, drop = FALSE], na.rm = TRUE)
+
+                # Update world percentage
+                if (world_value > 0) {
+                  weighted_pct <- 0
+                  for (region in all_regions) {
+                    region_value <- value_wide[value_row, region, drop = TRUE]
+                    region_pct_rows <- result$._match_key_ == key & result[[original_pivot_col_name]] == sub("\\.\\d+$", "", region)
+
+                    if (any(region_pct_rows) && !is.na(region_value) && region_value > 0) {
+                      region_pct <- result[region_pct_rows, val_col, drop = TRUE]
+                      weighted_pct <- weighted_pct + (region_value / world_value) * region_pct
+                    }
+                  }
+
+                  # Update World percentage
+                  result_rows <- result$._match_key_ == key & world_rows
+                  if (any(result_rows)) {
+                    result[result_rows, val_col] <- weighted_pct
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    # Remove temporary matching column
+    result$._match_key_ <- NULL
+
+    return(result)
   }
 
   # Process a single dataframe with all pivot columns in mapping
