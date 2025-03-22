@@ -816,6 +816,547 @@ pivot_table_with_filter <- function(data,
 }
 
 
+#' Import and Process GTAP Raw Data Files
+#'
+#' @description
+#' Reads GTAP raw data files (CSV or Excel) and processes them into structured data frames.
+#' This function parses GTAP variable codes, extracts relevant components, and organizes the data
+#' into three categories: 1D (region-specific), 2D (sector-region), and 3D (bilateral trade) variables.
+#'
+#' @param file_path Character. Path to the directory containing input files.
+#' @param input_names Character vector. Names of files to import (without extension).
+#' @param format Character. File format, either "csv" or "xlsx". Default is "csv".
+#' @param long_format Logical. If TRUE, converts the data to long format with Period and Value columns.
+#'                    If FALSE, maintains wide format with separate year columns. Default is FALSE.
+#' @param year_as_num Logical. If TRUE, removes "Y" prefix from Period column and converts to numeric.
+#'                    Only applicable when long_format=TRUE. Default is FALSE.
+#' @param starting_year Numeric or character. The earliest year to include. Can be specified with or without
+#'                      "Y" prefix (e.g., 2012, "2012", "Y2012"). Default is NULL (no filtering).
+#' @param ending_year Numeric or character. The latest year to include. Can be specified with or without
+#'                    "Y" prefix (e.g., 2024, "2024", "Y2024"). Default is NULL (no filtering).
+#'
+#' @examples
+#' \dontrun{
+#' # Basic usage with CSV files
+#' results <- gtapRD_raw_import(
+#'   file_path = "path/to/data/",
+#'   input_names = c("file1", "file2"),
+#'   format = "csv"
+#' )
+#'
+#' # Access different dimension data
+#' region_data <- results$`1D`
+#' sector_region_data <- results$`2D`
+#' bilateral_data <- results$`3D`
+#'
+#' # Convert to long format and remove Y prefix
+#' results_long <- gtapRD_raw_import(
+#'   file_path = "path/to/data/",
+#'   input_names = c("file1", "file2"),
+#'   format = "xlsx",
+#'   long_format = TRUE,
+#'   year_as_num = TRUE
+#' )
+#'
+#' # Filter to specific year range
+#' results_filtered <- gtapRD_raw_import(
+#'   file_path = "path/to/data/",
+#'   input_names = c("file1", "file2"),
+#'   starting_year = 2015,
+#'   ending_year = 2020
+#' )
+#' }
+#'
+#' @export
+#' @author Pattawee Puangchit
+gtapRD_raw_import <- function(file_path, input_names, format = "csv",
+                              long_format = FALSE, year_as_num = FALSE,
+                              starting_year = NULL, ending_year = NULL) {
+  # Input validation
+  if (missing(file_path) || !is.character(file_path) || length(file_path) != 1) {
+    stop("file_path must be a single character string")
+  }
+
+  if (missing(input_names) || !is.character(input_names) || length(input_names) == 0) {
+    stop("input_names must be a character vector with at least one file name")
+  }
+
+  if (!format %in% c("csv", "xlsx")) {
+    stop("format must be either 'csv' or 'xlsx'")
+  }
+
+  # Check if we're using year_as_num without long_format
+  if (year_as_num && !long_format) {
+    stop("Option year_as_num=TRUE can only be used with long_format=TRUE. Column names cannot be numeric in R.")
+  }
+
+  # Process starting_year and ending_year to ensure they're in the correct format
+  process_year <- function(year) {
+    if (is.null(year)) return(NULL)
+
+    # Convert to character
+    year_str <- as.character(year)
+
+    # Remove 'Y' or 'y' prefix if present
+    if (grepl("^[Yy]", year_str)) {
+      year_str <- substring(year_str, 2)
+    }
+
+    # Ensure it's a valid 4-digit year
+    if (!grepl("^\\d{4}$", year_str)) {
+      stop("Year must be a 4-digit number, with or without 'Y' prefix")
+    }
+
+    return(year_str)
+  }
+
+  # Process year inputs
+  starting_year <- process_year(starting_year)
+  ending_year <- process_year(ending_year)
+
+  # Load necessary packages
+  if (format == "xlsx" && !requireNamespace("readxl", quietly = TRUE)) {
+    stop("Package 'readxl' is required for xlsx format. Please install it.")
+  }
+
+  # Ensure file_path ends with a slash
+  if (!endsWith(file_path, "/") && !endsWith(file_path, "\\")) {
+    file_path <- paste0(file_path, "/")
+  }
+
+  # Check if directory exists
+  if (!dir.exists(file_path)) {
+    stop(paste("Directory", file_path, "does not exist"))
+  }
+
+  # Lists to store processed data
+  oneD_data <- NULL   # 1D: Region variables (qgdp, qinv, kb, ke, u)
+  twoD_data <- NULL   # 2D: Sector-region variables (qxw)
+  threeD_data <- NULL # 3D: Bilateral trade variables (tms, txs, qxs)
+
+  # Lists of variables to categorize
+  oneD_variables <- c("qgdp", "qinv", "kb", "ke", "u")
+  twoD_variables <- c("qxw")
+  threeD_variables <- c("tms", "txs", "qxs")
+
+  # Process each file one by one
+  for (i in seq_along(input_names)) {
+    file_name <- input_names[i]
+    scenario_name <- paste("Scenario", i)
+
+    # Construct full file path
+    full_path <- paste0(file_path, file_name, ".", format)
+
+    # Check if file exists
+    if (!file.exists(full_path)) {
+      warning(paste("File", full_path, "does not exist"))
+      next
+    }
+
+    # Read the file based on format
+    if (format == "csv") {
+      df <- tryCatch({
+        utils::read.csv(full_path, header = FALSE, check.names = FALSE, stringsAsFactors = FALSE)
+      }, error = function(e) {
+        warning(paste("Error reading file", full_path, ":", e$message))
+        return(NULL)
+      })
+    } else {
+      df <- tryCatch({
+        readxl::read_excel(full_path, col_names = FALSE)
+      }, error = function(e) {
+        warning(paste("Error reading file", full_path, ":", e$message))
+        return(NULL)
+      })
+      df <- as.data.frame(df)
+    }
+
+    # Check if the data frame is not empty
+    if (is.null(df) || nrow(df) <= 1 || ncol(df) == 0) {
+      warning(paste("File", full_path, "is empty or contains insufficient data"))
+      next
+    }
+
+    # First row becomes column names
+    colnames(df) <- as.character(df[1, ])
+
+    # Keep first column name as "Deviation" if it exists, otherwise name it
+    if (colnames(df)[1] != "Deviation") {
+      colnames(df)[1] <- "Deviation"
+    }
+
+    # Drop the first row (which is now column headers)
+    df <- df[-1, ]
+
+    # Reset row names
+    rownames(df) <- NULL
+
+    # Rename columns: extract year from column names (last part after "-")
+    new_colnames <- colnames(df)
+    for (i in 2:length(new_colnames)) {
+      # Extract year from the string
+      year_match <- regexpr("-[0-9]{4}$", new_colnames[i])
+      if (year_match > 0) {
+        year <- substr(new_colnames[i], year_match + 1, year_match + 4)
+        new_colnames[i] <- paste0("Y", year)
+      }
+    }
+    colnames(df) <- new_colnames
+
+    # Add scenario column
+    df$Scenario <- scenario_name
+
+    # Process 1D region-type variables (qgdp, qinv, kb, ke, u)
+    oneD_pattern <- paste0("^(", paste(oneD_variables, collapse = "|"), ")\\((.+)\\)$")
+    oneD_rows <- grep(oneD_pattern, df$Deviation)
+
+    if (length(oneD_rows) > 0) {
+      oneD_subset <- df[oneD_rows, ]
+
+      # Extract variable and region from Deviation column
+      variable_region <- regmatches(oneD_subset$Deviation,
+                                    regexec("^(.+)\\((.+)\\)$", oneD_subset$Deviation))
+
+      # Create new columns
+      oneD_subset$Variable <- sapply(variable_region, function(x) x[2])
+      oneD_subset$Region <- sapply(variable_region, function(x) x[3])
+
+      # Identify year columns
+      year_cols <- grep("^Y[0-9]{4}$", colnames(oneD_subset))
+      year_col_names <- colnames(oneD_subset)[year_cols]
+
+      # Filter year columns based on starting_year and ending_year
+      if (!is.null(starting_year) || !is.null(ending_year)) {
+        filtered_year_cols <- character(0)
+
+        for (year_col in year_col_names) {
+          # Extract year (remove 'Y' prefix)
+          year <- substring(year_col, 2)
+
+          # Check if year is within range
+          include_year <- TRUE
+          if (!is.null(starting_year) && year < starting_year) include_year <- FALSE
+          if (!is.null(ending_year) && year > ending_year) include_year <- FALSE
+
+          # Add to filtered list if within range
+          if (include_year) {
+            filtered_year_cols <- c(filtered_year_cols, year_col)
+          }
+        }
+
+        # Update year_col_names
+        year_col_names <- filtered_year_cols
+      }
+
+      # Convert year columns to numeric
+      for (col in year_col_names) {
+        oneD_subset[[col]] <- as.numeric(as.character(oneD_subset[[col]]))
+      }
+
+      # Reorganize columns
+      if (length(year_col_names) > 0) {
+        # Create a data frame with the required columns
+        file_oneD_data <- oneD_subset[, c("Variable", "Region", year_col_names, "Scenario")]
+
+        # Combine with existing data
+        if (is.null(oneD_data)) {
+          oneD_data <- file_oneD_data
+        } else {
+          # Ensure both data frames have the same columns (important for year filtering)
+          missing_cols <- setdiff(names(file_oneD_data), names(oneD_data))
+          for (col in missing_cols) {
+            oneD_data[[col]] <- NA
+          }
+
+          missing_cols <- setdiff(names(oneD_data), names(file_oneD_data))
+          for (col in missing_cols) {
+            file_oneD_data[[col]] <- NA
+          }
+
+          # Now rbind should work without issues
+          oneD_data <- rbind(oneD_data, file_oneD_data)
+        }
+      }
+    }
+
+    # Process 2D sector-region variables (qxw)
+    twoD_pattern <- paste0("^(", paste(twoD_variables, collapse = "|"), ")\\((.+):(.+)\\)$")
+    twoD_rows <- grep(twoD_pattern, df$Deviation)
+
+    if (length(twoD_rows) > 0) {
+      twoD_subset <- df[twoD_rows, ]
+
+      # Extract variable, sector, and region from Deviation column
+      var_sector_region <- regmatches(twoD_subset$Deviation,
+                                      regexec("^(.+)\\((.+):(.+)\\)$", twoD_subset$Deviation))
+
+      # Create new columns
+      twoD_subset$Variable <- sapply(var_sector_region, function(x) x[2])
+      twoD_subset$Sector <- sapply(var_sector_region, function(x) x[3])
+      twoD_subset$Region <- sapply(var_sector_region, function(x) x[4])
+
+      # Remove "c_" or "a_" prefix from Sector
+      twoD_subset$Sector <- gsub("^[ca]_", "", twoD_subset$Sector)
+
+      # Identify year columns
+      year_cols <- grep("^Y[0-9]{4}$", colnames(twoD_subset))
+      year_col_names <- colnames(twoD_subset)[year_cols]
+
+      # Filter year columns based on starting_year and ending_year
+      if (!is.null(starting_year) || !is.null(ending_year)) {
+        filtered_year_cols <- character(0)
+
+        for (year_col in year_col_names) {
+          # Extract year (remove 'Y' prefix)
+          year <- substring(year_col, 2)
+
+          # Check if year is within range
+          include_year <- TRUE
+          if (!is.null(starting_year) && year < starting_year) include_year <- FALSE
+          if (!is.null(ending_year) && year > ending_year) include_year <- FALSE
+
+          # Add to filtered list if within range
+          if (include_year) {
+            filtered_year_cols <- c(filtered_year_cols, year_col)
+          }
+        }
+
+        # Update year_col_names
+        year_col_names <- filtered_year_cols
+      }
+
+      # Convert year columns to numeric
+      for (col in year_col_names) {
+        twoD_subset[[col]] <- as.numeric(as.character(twoD_subset[[col]]))
+      }
+
+      # Reorganize columns
+      if (length(year_col_names) > 0) {
+        # Create a data frame with the required columns
+        file_twoD_data <- twoD_subset[, c("Variable", "Sector", "Region", year_col_names, "Scenario")]
+
+        # Combine with existing data
+        if (is.null(twoD_data)) {
+          twoD_data <- file_twoD_data
+        } else {
+          # Ensure both data frames have the same columns (important for year filtering)
+          missing_cols <- setdiff(names(file_twoD_data), names(twoD_data))
+          for (col in missing_cols) {
+            twoD_data[[col]] <- NA
+          }
+
+          missing_cols <- setdiff(names(twoD_data), names(file_twoD_data))
+          for (col in missing_cols) {
+            file_twoD_data[[col]] <- NA
+          }
+
+          # Now rbind should work without issues
+          twoD_data <- rbind(twoD_data, file_twoD_data)
+        }
+      }
+    }
+
+    # Process 3D bilateral trade variables (tms, txs, qxs)
+    threeD_pattern <- paste0("^(", paste(threeD_variables, collapse = "|"), ")\\((.+):(.+):(.+)\\)$")
+    threeD_rows <- grep(threeD_pattern, df$Deviation)
+
+    if (length(threeD_rows) > 0) {
+      threeD_subset <- df[threeD_rows, ]
+
+      # Extract variable, sector, source, and destination from Deviation column
+      var_sector_source_dest <- regmatches(threeD_subset$Deviation,
+                                           regexec("^(.+)\\((.+):(.+):(.+)\\)$", threeD_subset$Deviation))
+
+      # Create new columns
+      threeD_subset$Variable <- sapply(var_sector_source_dest, function(x) x[2])
+      threeD_subset$Sector <- sapply(var_sector_source_dest, function(x) x[3])
+      threeD_subset$Source <- sapply(var_sector_source_dest, function(x) x[4])
+      threeD_subset$Destination <- sapply(var_sector_source_dest, function(x) x[5])
+
+      # Remove "c_" or "a_" prefix from Sector
+      threeD_subset$Sector <- gsub("^[ca]_", "", threeD_subset$Sector)
+
+      # Create Bilateral column by combining Source and Destination
+      threeD_subset$Bilateral <- paste(threeD_subset$Source, threeD_subset$Destination, sep = "-")
+
+      # Identify year columns
+      year_cols <- grep("^Y[0-9]{4}$", colnames(threeD_subset))
+      year_col_names <- colnames(threeD_subset)[year_cols]
+
+      # Filter year columns based on starting_year and ending_year
+      if (!is.null(starting_year) || !is.null(ending_year)) {
+        filtered_year_cols <- character(0)
+
+        for (year_col in year_col_names) {
+          # Extract year (remove 'Y' prefix)
+          year <- substring(year_col, 2)
+
+          # Check if year is within range
+          include_year <- TRUE
+          if (!is.null(starting_year) && year < starting_year) include_year <- FALSE
+          if (!is.null(ending_year) && year > ending_year) include_year <- FALSE
+
+          # Add to filtered list if within range
+          if (include_year) {
+            filtered_year_cols <- c(filtered_year_cols, year_col)
+          }
+        }
+
+        # Update year_col_names
+        year_col_names <- filtered_year_cols
+      }
+
+      # Convert year columns to numeric
+      for (col in year_col_names) {
+        threeD_subset[[col]] <- as.numeric(as.character(threeD_subset[[col]]))
+      }
+
+      # Reorganize columns
+      if (length(year_col_names) > 0) {
+        # Create a data frame with the required columns
+        file_threeD_data <- threeD_subset[, c("Variable", "Sector", "Source", "Destination",
+                                              "Bilateral", year_col_names, "Scenario")]
+
+        # Combine with existing data
+        if (is.null(threeD_data)) {
+          threeD_data <- file_threeD_data
+        } else {
+          # Ensure both data frames have the same columns (important for year filtering)
+          missing_cols <- setdiff(names(file_threeD_data), names(threeD_data))
+          for (col in missing_cols) {
+            threeD_data[[col]] <- NA
+          }
+
+          missing_cols <- setdiff(names(threeD_data), names(file_threeD_data))
+          for (col in missing_cols) {
+            file_threeD_data[[col]] <- NA
+          }
+
+          # Now rbind should work without issues
+          threeD_data <- rbind(threeD_data, file_threeD_data)
+        }
+      }
+    }
+  }
+
+  # Remove Deviation column if it somehow made it through
+  if (!is.null(oneD_data) && "Deviation" %in% names(oneD_data)) {
+    oneD_data$Deviation <- NULL
+  }
+
+  if (!is.null(twoD_data) && "Deviation" %in% names(twoD_data)) {
+    twoD_data$Deviation <- NULL
+  }
+
+  if (!is.null(threeD_data) && "Deviation" %in% names(threeD_data)) {
+    threeD_data$Deviation <- NULL
+  }
+
+  # Convert to long format if requested
+  if (long_format) {
+    # Process 1D data
+    if (!is.null(oneD_data)) {
+      # Identify columns to use for pivoting
+      id_vars <- c("Variable", "Region", "Scenario")
+      year_cols <- grep("^Y[0-9]{4}$", names(oneD_data), value = TRUE)
+
+      # Convert to long format
+      oneD_long <- stats::reshape(
+        oneD_data,
+        direction = "long",
+        varying = year_cols,
+        v.names = "Value",
+        idvar = id_vars,
+        timevar = "Period",
+        times = year_cols
+      )
+
+      # Reset row names
+      rownames(oneD_long) <- NULL
+
+      # Remove "Y" from Period if requested
+      if (year_as_num) {
+        oneD_long$Period <- as.numeric(gsub("^Y", "", oneD_long$Period))
+      }
+
+      # Replace with long format
+      oneD_data <- oneD_long
+    }
+
+    # Process 2D data
+    if (!is.null(twoD_data)) {
+      # Identify columns to use for pivoting
+      id_vars <- c("Variable", "Sector", "Region", "Scenario")
+      year_cols <- grep("^Y[0-9]{4}$", names(twoD_data), value = TRUE)
+
+      # Convert to long format
+      twoD_long <- stats::reshape(
+        twoD_data,
+        direction = "long",
+        varying = year_cols,
+        v.names = "Value",
+        idvar = id_vars,
+        timevar = "Period",
+        times = year_cols
+      )
+
+      # Reset row names
+      rownames(twoD_long) <- NULL
+
+      # Remove "Y" from Period if requested
+      if (year_as_num) {
+        twoD_long$Period <- as.numeric(gsub("^Y", "", twoD_long$Period))
+      }
+
+      # Replace with long format
+      twoD_data <- twoD_long
+    }
+
+    # Process 3D data
+    if (!is.null(threeD_data)) {
+      # Identify columns to use for pivoting
+      id_vars <- c("Variable", "Sector", "Source", "Destination", "Bilateral", "Scenario")
+      year_cols <- grep("^Y[0-9]{4}$", names(threeD_data), value = TRUE)
+
+      # Convert to long format
+      threeD_long <- stats::reshape(
+        threeD_data,
+        direction = "long",
+        varying = year_cols,
+        v.names = "Value",
+        idvar = id_vars,
+        timevar = "Period",
+        times = year_cols
+      )
+
+      # Reset row names
+      rownames(threeD_long) <- NULL
+
+      # Remove "Y" from Period if requested
+      if (year_as_num) {
+        threeD_long$Period <- as.numeric(gsub("^Y", "", threeD_long$Period))
+      }
+
+      # Replace with long format
+      threeD_data <- threeD_long
+    }
+  }
+
+  # Check if any data was processed
+  if (is.null(oneD_data) && is.null(twoD_data) && is.null(threeD_data)) {
+    warning("No data was successfully processed")
+  }
+
+  # Create result structure
+  result <- list(
+    "1D" = oneD_data,
+    "2D" = twoD_data,
+    "3D" = threeD_data
+  )
+
+  return(result)
+}
+
 
 # Help Function -----------------------------------------------------------
 
@@ -1083,65 +1624,11 @@ pivot_table_with_filter <- function(data,
     # Get all columns except the pivot column and value column
     id_cols <- setdiff(names(df), c(actual_pivot_col, val_col))
 
-    # Check if VALPCT column exists
-    has_valpct <- "VALPCT" %in% names(df)
-
-    # If we have a VALPCT column, process separately for "value" and "percent"
-    if (has_valpct) {
-      # Split data by VALPCT
-      df_value <- df[df$VALPCT == "value", ]
-      df_percent <- df[df$VALPCT == "percent", ]
-
-      # Process each subset
-      if (nrow(df_value) > 0) {
-        df_value <- process_subset(df_value, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
-      }
-
-      if (nrow(df_percent) > 0) {
-        # For percentages, we need corresponding values for proper weighting
-        if (nrow(df_value) > 0) {
-          # For each group of id variables (excluding VALPCT and the pivot column)
-          id_cols_to_match <- setdiff(id_cols, "VALPCT")
-
-          # Create a unique key for matching rows
-          if (length(id_cols_to_match) > 0) {
-            df_value$._match_key_ <- apply(df_value[, id_cols_to_match, drop = FALSE], 1, paste, collapse = "|")
-            df_percent$._match_key_ <- apply(df_percent[, id_cols_to_match, drop = FALSE], 1, paste, collapse = "|")
-
-            # Process percentages with special handling for aggregation
-            df_percent <- process_percent_subset(df_percent, df_value, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
-
-            # Remove temporary columns
-            df_value$._match_key_ <- NULL
-            df_percent$._match_key_ <- NULL
-          } else {
-            # If no other identifying columns, just do regular processing
-            df_percent <- process_subset(df_percent, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
-          }
-        } else {
-          # Without value data, just do regular processing
-          df_percent <- process_subset(df_percent, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
-        }
-      }
-
-      # Combine results
-      return(rbind(df_value, df_percent))
-    } else {
-      # Standard processing for data without VALPCT column
-      return(process_subset(df, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world))
-    }
-  }
-
-  # Process a subset of data (value or percent)
-  process_subset <- function(df_subset, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world) {
-    # Create wide format with names_repair to handle duplicates
-    df_wide <- tidyr::pivot_wider(
-      df_subset,
-      id_cols = id_cols,
-      names_from = actual_pivot_col,
-      values_from = val_col,
-      names_repair = "make.unique"  # This handles duplicate names
-    )
+    # Create wide format
+    df_wide <- tidyr::pivot_wider(df,
+                                  id_cols = dplyr::all_of(id_cols),
+                                  names_from = dplyr::all_of(actual_pivot_col),
+                                  values_from = dplyr::all_of(val_col))
 
     # Get the original columns (those created during pivot_wider)
     orig_cols <- setdiff(names(df_wide), id_cols)
@@ -1149,7 +1636,7 @@ pivot_table_with_filter <- function(data,
     # Add World aggregation automatically if pivot_col is a region/country column and add_world is TRUE
     if (add_world) {
       region_keywords <- c("reg", "region", "regions", "country", "countries")
-      is_region_col <- any(sapply(region_keywords, function(kw) grepl(kw, tolower(original_pivot_col_name))))
+      is_region_col <- any(sapply(region_keywords, function(kw) grepl(kw, tolower(actual_pivot_col))))
 
       if (is_region_col && !("World" %in% names(group_mappings))) {
         # Add World calculation (sum of all regions)
@@ -1159,55 +1646,48 @@ pivot_table_with_filter <- function(data,
 
     # Process each group in the mapping
     for (group_name in names(group_mappings)) {
-      # Extract items from the mapping
-      items <- group_mappings[[group_name]]
-      if (is.list(items) && "GTAPName" %in% names(items)) {
-        items <- items$GTAPName
-      }
+      # Extract items from the tibble
+      items_tibble <- group_mappings[[group_name]]
+      if (!is.null(items_tibble) && "GTAPName" %in% names(items_tibble)) {
+        items <- items_tibble$GTAPName
 
-      if (length(items) > 0) {
-        # Find matching columns (accounting for potential .1, .2 suffixes from names_repair)
-        matched_cols <- character(0)
-        for (item in items) {
-          # Exact match first
-          exact_match <- orig_cols[orig_cols == item]
-          if (length(exact_match) > 0) {
-            matched_cols <- c(matched_cols, exact_match)
-          }
-
-          # Then try matching with potential suffixes from names_repair
-          repaired_matches <- orig_cols[startsWith(orig_cols, paste0(item, "."))]
-          if (length(repaired_matches) > 0) {
-            matched_cols <- c(matched_cols, repaired_matches)
-          }
-
-          # Then try case-insensitive match
-          for (col in orig_cols) {
-            col_base <- sub("\\.\\d+$", "", col)  # Remove potential .1, .2 suffix
-            if (tolower(item) == tolower(col_base) && !(col %in% matched_cols)) {
-              matched_cols <- c(matched_cols, col)
+        if (length(items) > 0) {
+          # Find matching columns
+          matched_cols <- character(0)
+          for (item in items) {
+            # Try exact match first
+            if (item %in% orig_cols) {
+              matched_cols <- c(matched_cols, item)
+            } else {
+              # Try case-insensitive match
+              for (col in orig_cols) {
+                if (tolower(item) == tolower(col)) {
+                  matched_cols <- c(matched_cols, col)
+                  break
+                }
+              }
             }
           }
-        }
 
-        if (length(matched_cols) > 0) {
-          # Calculate aggregate value based on calculation type
-          if (calculation == "+") {
-            df_wide[[group_name]] <- rowSums(df_wide[, matched_cols, drop = FALSE], na.rm = TRUE)
-          } else if (calculation == "-") {
-            df_wide[[group_name]] <- df_wide[[matched_cols[1]]]
-            for (i in 2:length(matched_cols)) {
-              df_wide[[group_name]] <- df_wide[[group_name]] - df_wide[[matched_cols[i]]]
-            }
-          } else if (calculation == "*") {
-            df_wide[[group_name]] <- 1
-            for (col in matched_cols) {
-              df_wide[[group_name]] <- df_wide[[group_name]] * df_wide[[col]]
-            }
-          } else if (calculation == "/") {
-            df_wide[[group_name]] <- df_wide[[matched_cols[1]]]
-            for (i in 2:length(matched_cols)) {
-              df_wide[[group_name]] <- df_wide[[group_name]] / df_wide[[matched_cols[i]]]
+          if (length(matched_cols) > 0) {
+            # Calculate aggregate value based on calculation type
+            if (calculation == "+") {
+              df_wide[[group_name]] <- rowSums(df_wide[, matched_cols, drop = FALSE], na.rm = TRUE)
+            } else if (calculation == "-") {
+              df_wide[[group_name]] <- df_wide[[matched_cols[1]]]
+              for (i in 2:length(matched_cols)) {
+                df_wide[[group_name]] <- df_wide[[group_name]] - df_wide[[matched_cols[i]]]
+              }
+            } else if (calculation == "*") {
+              df_wide[[group_name]] <- 1
+              for (col in matched_cols) {
+                df_wide[[group_name]] <- df_wide[[group_name]] * df_wide[[col]]
+              }
+            } else if (calculation == "/") {
+              df_wide[[group_name]] <- df_wide[[matched_cols[1]]]
+              for (i in 2:length(matched_cols)) {
+                df_wide[[group_name]] <- df_wide[[group_name]] / df_wide[[matched_cols[i]]]
+              }
             }
           }
         }
@@ -1221,134 +1701,12 @@ pivot_table_with_filter <- function(data,
     # Convert back to long format
     df_long <- tidyr::pivot_longer(
       df_wide,
-      cols = all_value_cols,
+      cols = dplyr::all_of(all_value_cols),
       names_to = original_pivot_col_name,
       values_to = val_col
     )
 
     return(df_long)
-  }
-
-  # Special processing for percentage data
-  process_percent_subset <- function(df_percent, df_value, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world) {
-    # First process like regular values
-    result <- process_subset(df_percent, actual_pivot_col, original_pivot_col_name, val_col, id_cols, group_mappings, add_world)
-
-    # Get the value data in wide format for calculating weights
-    value_wide <- tidyr::pivot_wider(
-      df_value,
-      id_cols = setdiff(id_cols, "VALPCT"),
-      names_from = actual_pivot_col,
-      values_from = val_col,
-      names_repair = "make.unique"
-    )
-
-    # For each group in mapping, adjust the percentage values
-    for (group_name in names(group_mappings)) {
-      items <- group_mappings[[group_name]]
-      if (is.list(items) && "GTAPName" %in% names(items)) {
-        items <- items$GTAPName
-      }
-
-      # Check if this group exists in our processed results
-      group_rows <- result[[original_pivot_col_name]] == group_name
-      if (sum(group_rows) > 0) {
-        # Find the rows for each component of this group
-        for (key in unique(result$._match_key_[group_rows])) {
-          # Find matching rows in values data
-          value_row <- value_wide$._match_key_ == key
-          if (any(value_row)) {
-            # Find component items that exist in the value data
-            found_items <- character(0)
-            for (item in items) {
-              # Check if item exists in value data (accounting for possible .1, .2 suffixes)
-              item_cols <- names(value_wide)[startsWith(names(value_wide), item) | names(value_wide) == item]
-              item_cols <- setdiff(item_cols, c("._match_key_", id_cols))
-              if (length(item_cols) > 0) {
-                found_items <- c(found_items, item_cols)
-              }
-            }
-
-            if (length(found_items) > 0) {
-              # Calculate the aggregated value for this group
-              group_value <- sum(value_wide[value_row, found_items, drop = FALSE], na.rm = TRUE)
-
-              # Get matching rows in result for this key
-              result_rows <- result$._match_key_ == key & result[[original_pivot_col_name]] == group_name
-
-              if (sum(result_rows) > 0 && group_value > 0) {
-                # Calculate weighted percentage
-                weighted_pct <- 0
-                for (item in found_items) {
-                  # Find item value and percentage
-                  item_value <- value_wide[value_row, item, drop = TRUE]
-                  item_pct_rows <- result$._match_key_ == key & result[[original_pivot_col_name]] == sub("\\.\\d+$", "", item)
-
-                  if (any(item_pct_rows) && !is.na(item_value) && item_value > 0) {
-                    item_pct <- result[item_pct_rows, val_col, drop = TRUE]
-                    weighted_pct <- weighted_pct + (item_value / group_value) * item_pct
-                  }
-                }
-
-                # Update the group percentage
-                result[result_rows, val_col] <- weighted_pct
-              }
-            }
-          }
-        }
-      }
-    }
-
-    # Handle World percentage if needed
-    if (add_world) {
-      region_keywords <- c("reg", "region", "regions", "country", "countries")
-      is_region_col <- any(sapply(region_keywords, function(kw) grepl(kw, tolower(original_pivot_col_name))))
-
-      if (is_region_col && "World" %in% unique(result[[original_pivot_col_name]])) {
-        # Similar process for World but includes all regions
-        world_rows <- result[[original_pivot_col_name]] == "World"
-        if (sum(world_rows) > 0) {
-          for (key in unique(result$._match_key_[world_rows])) {
-            value_row <- value_wide$._match_key_ == key
-            if (any(value_row)) {
-              # Get all region columns (excluding meta columns and aggregated groups)
-              all_regions <- setdiff(names(value_wide), c("._match_key_", id_cols))
-              all_regions <- all_regions[!all_regions %in% names(group_mappings)]
-
-              if (length(all_regions) > 0) {
-                # Calculate world total
-                world_value <- sum(value_wide[value_row, all_regions, drop = FALSE], na.rm = TRUE)
-
-                # Update world percentage
-                if (world_value > 0) {
-                  weighted_pct <- 0
-                  for (region in all_regions) {
-                    region_value <- value_wide[value_row, region, drop = TRUE]
-                    region_pct_rows <- result$._match_key_ == key & result[[original_pivot_col_name]] == sub("\\.\\d+$", "", region)
-
-                    if (any(region_pct_rows) && !is.na(region_value) && region_value > 0) {
-                      region_pct <- result[region_pct_rows, val_col, drop = TRUE]
-                      weighted_pct <- weighted_pct + (region_value / world_value) * region_pct
-                    }
-                  }
-
-                  # Update World percentage
-                  result_rows <- result$._match_key_ == key & world_rows
-                  if (any(result_rows)) {
-                    result[result_rows, val_col] <- weighted_pct
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    # Remove temporary matching column
-    result$._match_key_ <- NULL
-
-    return(result)
   }
 
   # Process a single dataframe with all pivot columns in mapping

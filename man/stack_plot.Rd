@@ -89,25 +89,25 @@ The function supports stacked and unstacked presentations for decomposition anal
 \donttest{
 # Input Path:
 input_path <- system.file("extdata/in", package = "GTAPViz")
-                                
+
 # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
-# Note: No need to add .sl4 to the experiment name 
+# Note: No need to add .sl4 to the experiment name
 gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
                             input_path = input_path, subtotal_level = FALSE,
                             process_sl4_vars = NULL, process_har_vars = NULL,
                             mapping_info = "GTAPv7", plot_data = TRUE)
-                            
+
 stack_plot(data = har.plot.data[["A"]],
            x_axis_from = "REG",
            stack_value_from = "COLUMN",
            split_by = FALSE,
-           
+
            show_total = TRUE,
            unstack_plot = FALSE,
-           
-           var_name_by_description = TRUE,       
-           
-           invert_pane = FALSE,           
+
+           var_name_by_description = TRUE,
+
+           invert_pane = FALSE,
            separate_figure = FALSE,
 
            export_picture = TRUE,
@@ -117,7 +117,7 @@ stack_plot(data = har.plot.data[["A"]],
              height = 15
            ),
            output_path = "/your/folder/path",
-           
+
            plot_style_config = list(
              color_tone = "gtap",
              panel_rows = 2,

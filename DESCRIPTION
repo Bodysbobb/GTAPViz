@@ -31,8 +31,6 @@ Imports:
     stringdist,
     readxl,
     stats
-Remotes: 
-    github::Bodysbobb/HARplus
 VignetteBuilder: knitr
 Suggests: 
     knitr,

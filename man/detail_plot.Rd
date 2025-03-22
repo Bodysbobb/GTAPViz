@@ -81,9 +81,9 @@ The function supports top impact filtering, color coding, and flexible visualiza
 \donttest{
 # Input Path:
 input_path <- system.file("extdata/in", package = "GTAPViz")
-                                
+
 # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
-# Note: No need to add .sl4 to the experiment name 
+# Note: No need to add .sl4 to the experiment name
 gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
                             input_path = input_path, subtotal_level = FALSE,
                             process_sl4_vars = NULL, process_har_vars = NULL,
@@ -96,21 +96,21 @@ detail_plot(sl4.plot.data[["2D"]],
 
             top_impact = NULL,
             var_name_by_description = TRUE,
-            
+
             invert_pane = TRUE,
             separate_figure = FALSE,
-            
+
             export_config = list(
               width = 45,
               height = 20
             ),
-            
+
             export_picture = TRUE,
-            export_as_pdf = FALSE,   
+            export_as_pdf = FALSE,
             output_path = "/your/folder/path",
-            
+
             plot_style_config = list(
-              positive_color = "#2E8B57", 
+              positive_color = "#2E8B57",
               negative_color = "#CD5C5C",
               panel_rows = 1,
               panel_cols = NULL,
