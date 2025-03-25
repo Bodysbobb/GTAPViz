@@ -370,6 +370,7 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @author Pattawee Puangchit
 #'
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{comparison_plot}}
 #'
 .create_single_comparison_plot <- function(data, x_axis_from, plot_title, unit,
@@ -1115,6 +1116,7 @@ detail_plot <- function(data, filter_var = NULL,
 #' @author Pattawee Puangchit
 #'
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{detail_plot}}
 #'
 .create_single_detail_plot <- function(data, x_axis_from, plot_title, unit,
@@ -1482,6 +1484,7 @@ detail_plot <- function(data, filter_var = NULL,
 #' @author Pattawee Puangchit
 #'
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{detail_plot}}
 #'
 .filter_top_impact_values_detail <- function(data, top_impact, group_col, panel_var, x_axis_from, variable_col, unit_col) {
@@ -1931,6 +1934,7 @@ stack_plot <- function(data, filter_var = NULL,
 #' @author Pattawee Puangchit
 #'
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{stack_plot}}
 #'
 .create_single_stacked_plot <- function(data, total_data, x_axis_from, stack_value_from,
@@ -2280,6 +2284,7 @@ stack_plot <- function(data, filter_var = NULL,
 #' @author Pattawee Puangchit
 #'
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{stack_plot}}
 .create_single_unstacked_plot <- function(data, total_data, x_axis_from, stack_value_from,
                                           plot_title, unit,
@@ -2603,6 +2608,7 @@ stack_plot <- function(data, filter_var = NULL,
 #' @return Data frame with calculated totals.
 #'
 #' @keywords internal
+#' @noRd
 #'
 .calculate_stack_totals <- function(data, x_axis_from, panel_var) {
   if (inherits(data, "list") && !is.data.frame(data)) {
@@ -2678,6 +2684,7 @@ stack_plot <- function(data, filter_var = NULL,
 #' @author Pattawee Puangchit
 #'
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{stack_plot}}
 #'
 .filter_top_impact_values_stack <- function(data, total_data, top_impact, group_col, panel_var, x_axis_from, variable_col, unit_col, stack_value_from) {
@@ -3130,6 +3137,7 @@ trend_plot <- function(data, filter_var = NULL,
 #' @return A ggplot2 object representing the trend plot.
 #'
 #' @keywords internal
+#' @noRd
 .create_single_trend_plot <- function(data, panel_var, group_by,
                                       plot_title, unit,
                                       invert_pane = FALSE,
