@@ -45,7 +45,7 @@ sl4map <- readxl::read_xlsx(paste0(map.folder, "/OutputMapping.xlsx"), sheet = "
 harmap <- readxl::read_xlsx(paste0(map.folder, "/OutputMapping.xlsx"), sheet = "HARFile")
 
 # 2. Experiment / Region / Sector Filter
-experiment <- c("US_All", "US_All_RetalTar", "US_All_ReduceTar50", "US_All_RegReduceTar50", "US_All10", "US_All10_RetalTar", "US_All10_ReduceTar50", "US_All10_RegReduceTar50")
+experiment <- c("US_All", "US_All_RetalTar", "US_All_ReduceTar50", "US_All_RegReduceTar50",  "ReduceTar50", "US_All10", "US_All10_RetalTar", "US_All10_ReduceTar50", "US_All10_RegReduceTar50", "ReduceTar50_to_USA")
 
 
 selected_regions <- c("USA", "CHN", "CAN", "ROW")
@@ -55,7 +55,7 @@ selected_sector <- NULL
 info.mode <- "Mix"
 
 # 4. Choosing Output: (CSV, STATA, R, TEXT) 
-csv.output <- "no"    
+csv.output <- "yes"    
 stata.output <- "no"  
 r.output <- "no"
 txt.output <- "no"   
@@ -68,7 +68,7 @@ devtools::load_all()
 
 # Extracting Data
 auto_gtap_data(
-  process_sl4_vars = "qxs", 
+  process_sl4_vars = "macros", 
   process_har_vars = harmap,
   sl4_mapping_info = sl4map,
   har_mapping_info = harmap,
@@ -78,6 +78,7 @@ auto_gtap_data(
   experiment = experiment, 
   mapping_info = info.mode,
   project_path = project.folder,
+  add_scenario_ranking = TRUE,
   plot_data = plot_data,
   output_formats = list(
     "csv" = csv.output,

@@ -9,6 +9,7 @@
 #' @return A character vector of valid output format names.
 #' @author Pattawee Puangchit
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{auto_gtap_data}}
 #'
 .output_format <- function(formats = NULL) {
@@ -72,6 +73,7 @@
 #'
 #' @author Pattawee Puangchit
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{auto_gtap_data}}
 #'
 .validate_gtap_files <- function(input_dir, output_dir,
@@ -361,6 +363,7 @@
 #' @return A logical value: TRUE if the user types "y" (case-insensitive), FALSE if "n".
 #' @author Pattawee Puangchit
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{auto_gtap_data}}
 #'
 .ask_confirmation <- function(prompt) {
@@ -385,6 +388,7 @@
 #' @return Invisible logical indicating success
 #'
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{auto_gtap_data}}
 #'
 .create_gtap_report <- function(data_list, output_path, filename = "Report_Table.xlsx") {
@@ -536,6 +540,7 @@
 #' @return Filtered data in the same structure as input.
 #' @author Pattawee Puangchit
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{auto_gtap_data}}
 #'
 .apply_filters <- function(data, region_select = NULL, experiment_select = NULL, sector_select = NULL) {
@@ -623,6 +628,7 @@
 #' @return A data structure with the same form as the input, with the function applied to all data frames
 #' @author Pattawee Puangchit
 #' @keywords internal
+#' @noRd
 #' @seealso \code{\link{auto_gtap_data}}
 #'
 .apply_to_dataframes <- function(data, .f, ...) {
@@ -648,4 +654,69 @@
   }
 
   return(process_list(data))
+}
+
+
+#' @title Add Scenario Ranking to GTAP Data
+#' @description Adds a numeric rank column (ScenarioRank) to GTAP data structures based on the
+#' order of experiments provided. This helps with sorting and visualization of experiments.
+#'
+#' @param data_list A data frame or list containing GTAP data to be enhanced.
+#' @param experiment Character vector of experiment names in the desired order.
+#' @param rank_column Character. Name of the column to add with ranking information. Default is "ScenarioRank".
+#' @param experiment_column Character. Name of the column containing experiment names. Default is "Experiment".
+#'
+#' @return The input data structure with an added ranking column.
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @noRd
+#' @seealso \code{\link{auto_gtap_data}}, \code{\link{auto_gtap_dynamic}}
+#'
+.add_scenario_rank <- function(data_list, experiment,
+                               rank_column = "ScenarioRank",
+                               experiment_column = "Experiment") {
+
+  experiment_ranks <- setNames(seq_along(experiment), experiment)
+
+  add_rank_to_df <- function(df, experiment_ranks, rank_column, experiment_column) {
+    if (!is.data.frame(df) || nrow(df) == 0 ||
+        !experiment_column %in% names(df)) {
+      return(df)
+    }
+
+    rank_values <- sapply(df[[experiment_column]], function(exp_name) {
+      if (exp_name %in% names(experiment_ranks)) {
+        return(experiment_ranks[[exp_name]])
+      } else {
+        return(NA_integer_)
+      }
+    })
+
+    temp_df <- df
+    temp_df[[experiment_column]] <- NULL
+
+    result_df <- data.frame(
+      rank_values,
+      df[[experiment_column]],
+      temp_df,
+      stringsAsFactors = FALSE,
+      check.names = FALSE
+    )
+
+    names(result_df)[1] <- rank_column
+    names(result_df)[2] <- experiment_column
+
+    result_df <- result_df[order(result_df[[rank_column]]), ]
+
+    return(result_df)
+  }
+
+  if (is.data.frame(data_list)) {
+    return(add_rank_to_df(data_list, experiment_ranks, rank_column, experiment_column))
+  } else if (is.list(data_list)) {
+    return(.apply_to_dataframes(data_list, add_rank_to_df,
+                                experiment_ranks, rank_column, experiment_column))
+  }
+
+  return(data_list)
 }

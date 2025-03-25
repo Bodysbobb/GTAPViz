@@ -139,7 +139,6 @@ gtap_macros_data <- function(select_var = NULL,
 
 # Auto Process GTAP Data --------------------------------------------------
 
-
 #' @title Process GTAP Data Automation with Flexible Output Options
 #'
 #' @description
@@ -194,6 +193,8 @@ gtap_macros_data <- function(select_var = NULL,
 #' @param sl4_output_name Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".
 #' @param har_output_name Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".
 #' @param macro_output_name Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".
+#' @param add_scenario_ranking Logical. If TRUE, adds a numeric ranking column to all data frames. Default is FALSE.
+#' @param rank_column Character. Name of the column to add with scenario ranking information. Default is "ScenarioRank".
 #'
 #' @return
 #' A processed dataset, with options for exporting and visualization.
@@ -226,7 +227,9 @@ auto_gtap_data <- function(experiment,
                            plot_data = FALSE, output_formats = NULL,
                            sl4_output_name = "sl4.plot.data",
                            har_output_name = "har.plot.data",
-                           macro_output_name = "GTAPMacro") {
+                           macro_output_name = "GTAPMacro",
+                           add_scenario_ranking = FALSE,
+                           rank_column = "ScenarioRank") {
 
   # Initial Setup--------------------------------------------------------------
   export_formats <- .output_format(output_formats)
@@ -330,6 +333,11 @@ auto_gtap_data <- function(experiment,
         experiment_select = experiment,
         sector_select = sector_select
       )
+    }
+
+    # Add scenario ranking if requested
+    if (add_scenario_ranking) {
+      data <- .add_scenario_rank(data, experiment, rank_column)
     }
 
     if (length(data) == 1 && is.list(data) && !is.data.frame(data)) {
@@ -497,6 +505,11 @@ auto_gtap_data <- function(experiment,
                                                  GTAPMacros_final$Variable,
                                                  GTAPMacros_final$Unit), ]
 
+      # Add scenario ranking if requested
+      if (add_scenario_ranking) {
+        GTAPMacros_final <- .add_scenario_rank(GTAPMacros_final, experiment, rank_column)
+      }
+
       rename_GTAP_bilateral(GTAPMacros_final)
     }, error = function(e) {
       process_log$macro <- sprintf("Error processing GTAP Macro Data: %s", e$message)
@@ -612,6 +625,7 @@ auto_gtap_data <- function(experiment,
   if (!is.null(process_log$macro)) message(process_log$macro)
   if (!is.null(process_log$sl4)) message(process_log$sl4)
   if (!is.null(process_log$har)) message(process_log$har)
+  if (!is.null(process_log$qxs)) message(process_log$qxs)
 
   if (all(vapply(process_log, function(x) grepl("successfully", x), logical(1)))) {
     message("\nGTAP data processing completed successfully!")
@@ -622,4 +636,3 @@ auto_gtap_data <- function(experiment,
 
   return(invisible(all_data))
 }
-
