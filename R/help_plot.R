@@ -195,6 +195,9 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #' ## **All Font Adjustment**
 #' - `all_font_size`: Numeric. Master control for all font sizes. Default: `1`
 #'
+#' ## **Plot Margin Settings**
+#' - `plot.margin`: ggplot2 `margin()` object. Margins around the entire plot. Default: `ggplot2::margin(10, 25, 10, 10)`
+#'
 #' @author Pattawee Puangchit
 #'
 #' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
@@ -369,7 +372,7 @@ get_plot_style_config <- function(plot_type = "default",
   # Create a dataframe for as_dataframe = TRUE
   if (as_dataframe) {
     # Count the total number of parameters
-    params_count <- 69 # Adjusted for the new color_palette_type parameter
+    params_count <- 71
 
     # Create vectors with the exact same length
     topics <- character(params_count)
@@ -663,6 +666,24 @@ get_plot_style_config <- function(plot_type = "default",
     descriptions[idx] <- "Master control for all font sizes. Values > 1 increase all fonts, values < 1 decrease all fonts."
     examples[idx] <- "all_font_size = 1"
 
+    # Data Sorting section (1 parameter)
+    idx <- 70
+    topics[idx] <- "Data Sorting"
+    arguments[idx] <- "sort_data_by_value"
+    default_values[idx] <- "FALSE"
+    input_formats[idx] <- "logical"
+    descriptions[idx] <- "Whether to sort data by value for better visualization."
+    examples[idx] <- "sort_data_by_value = TRUE"
+
+    # Plot Margin section (1 parameter)
+    idx <- 71
+    topics[idx] <- "Plot Margin"
+    arguments[idx] <- "plot.margin"
+    default_values[idx] <- "margin(t=10, r=25, b=10, l=10)"
+    input_formats[idx] <- "unit"
+    descriptions[idx] <- "Margins around the entire plot (top, right, bottom, left)."
+    examples[idx] <- "plot.margin = margin(t = 10, r = 25, b = 10, l = 10)"
+
     # Create the result dataframe
     result <- data.frame(
       Topic = topics,
@@ -817,14 +838,15 @@ get_plot_style_config <- function(plot_type = "default",
     cat("\n  # Font Size Control\n")
     cat("  all_font_size = ", config$all_font_size, ",\n", sep="")
 
-    # Data Sorting (if it exists)
-    if ("sort_data_by_value" %in% names(config)) {
-      cat("\n  # Data Sorting\n")
-      cat("  sort_data_by_value = ", ifelse(config$sort_data_by_value, "TRUE", "FALSE"), "\n", sep="")
-    } else {
-      # Remove trailing comma from previous section
-      cat("\b \b\n", sep="")
-    }
+    # Data Sorting
+    cat("\n  # Data Sorting\n")
+    cat("  sort_data_by_value = ", ifelse(config$sort_data_by_value, "TRUE", "FALSE"), ",\n", sep="")
+
+    # Plot Margin Settings
+    cat("\n  # Plot Margin\n")
+    margin_values <- as.numeric(config$plot.margin)
+    cat("  plot.margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
+        ", b = ", margin_values[3], ", l = ", margin_values[4], ")\n", sep="")
 
     cat(")\n\n")
     cat("# Example usage:\n")
@@ -1239,7 +1261,10 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     all_font_size = 1,
 
     # Sorting Data
-    sort_data_by_value = FALSE
+    sort_data_by_value = FALSE,
+
+    # Plot Margin
+    plot.margin = ggplot2::margin(10, 25, 10, 10)
   )
 
   # Select the appropriate default based on plot type
@@ -1421,7 +1446,10 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       ggplot2::element_line(color = config$grid_color)
     } else {
       ggplot2::element_blank()
-    }
+    },
+
+    # Plot margin settings
+    plot.margin = config$plot.margin
   )
 
   # Apply zero line if configured

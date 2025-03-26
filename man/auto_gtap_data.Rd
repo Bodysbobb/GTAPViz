@@ -27,7 +27,9 @@ auto_gtap_data(
   output_formats = NULL,
   sl4_output_name = "sl4.plot.data",
   har_output_name = "har.plot.data",
-  macro_output_name = "GTAPMacro"
+  macro_output_name = "GTAPMacro",
+  add_scenario_ranking = FALSE,
+  rank_column = "ScenarioRank"
 )
 }
 \arguments{
@@ -80,6 +82,10 @@ auto_gtap_data(
 \item{har_output_name}{Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".}
 
 \item{macro_output_name}{Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".}
+
+\item{add_scenario_ranking}{Logical. If TRUE, adds a numeric ranking column to all data frames. Default is FALSE.}
+
+\item{rank_column}{Character. Name of the column to add with scenario ranking information. Default is "ScenarioRank".}
 }
 \value{
 A processed dataset, with options for exporting and visualization.

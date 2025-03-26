@@ -139,6 +139,9 @@ The parameters are grouped as follows:
 
 ## **All Font Adjustment**
 - `all_font_size`: Numeric. Master control for all font sizes. Default: `1`
+
+## **Plot Margin Settings**
+- `plot.margin`: ggplot2 `margin()` object. Margins around the entire plot. Default: `ggplot2::margin(10, 25, 10, 10)`
 }
 \examples{
 # Get alldefault configuration

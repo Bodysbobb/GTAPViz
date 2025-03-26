@@ -33,45 +33,13 @@ Only applicable when long_format=TRUE. Default is FALSE.}
 \item{ending_year}{Numeric or character. The latest year to include. Can be specified with or without
 "Y" prefix (e.g., 2024, "2024", "Y2024"). Default is NULL (no filtering).}
 }
-\value{
-A list with two components:
-\describe{
-  \item{Region}{Data frame containing parsed region-specific variables (qgdp, qinv, kb, ke, u).}
-  \item{Sector}{Data frame containing parsed sector-specific variables (tms, txs, qxs) with additional
-                columns for Source, Sector, Destination.}
-}
-}
 \description{
 Reads GTAP raw data files (CSV or Excel) and processes them into structured data frames.
 This function parses GTAP variable codes, extracts relevant components, and organizes the data
-into two categories: region-specific variables and sector-specific variables.
-}
-\details{
-The function processes GTAP variable codes as follows:
-
-\itemize{
-  \item Region variables (qgdp, qinv, kb, ke, u):
-    \itemize{
-      \item Format: variable(region), e.g., qgdp(USA)
-      \item "Variable" column contains the variable name (e.g., qgdp)
-      \item "Region" column contains the region code (e.g., USA)
-    }
-  \item Sector variables (tms, txs, qxs):
-    \itemize{
-      \item Format: variable(sector:destination), e.g., qxs(c_pdr:EU27)
-      \item "Variable" and "Source" columns contain the variable name (e.g., qxs)
-      \item "Sector" column contains the sector code with "c_" or "a_" prefix removed (e.g., pdr)
-      \item "Destination" column contains the destination region (e.g., EU27)
-      \item "Region" column combines Source and Destination with a dash (e.g., qxs-EU27)
-    }
-}
-
-The first row of each input file is used as column headers. Column names in the format
-"xxx-yyyy" (where yyyy is a 4-digit year) are converted to "Yyyy". A "Scenario" column
-is added with values "Scenario 1", "Scenario 2", etc., corresponding to the order of files.
+into three categories: 1D (region-specific), 2D (sector-region), and 3D (bilateral trade) variables.
 }
 \examples{
-\donttest{
+\dontrun{
 # Basic usage with CSV files
 results <- gtapRD_raw_import(
   file_path = "path/to/data/",
@@ -79,9 +47,10 @@ results <- gtapRD_raw_import(
   format = "csv"
 )
 
-# Access region and sector data
-region_data <- results$Region
-sector_data <- results$Sector
+# Access different dimension data
+region_data <- results$`1D`
+sector_region_data <- results$`2D`
+bilateral_data <- results$`3D`
 
 # Convert to long format and remove Y prefix
 results_long <- gtapRD_raw_import(
@@ -101,4 +70,7 @@ results_filtered <- gtapRD_raw_import(
 )
 }
 
+}
+\author{
+Pattawee Puangchit
 }

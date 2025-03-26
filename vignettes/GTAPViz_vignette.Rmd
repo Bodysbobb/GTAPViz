@@ -55,25 +55,25 @@ selected_sector <- NULL
 info.mode <- "Mix"
 
 # 4. Choosing Output: (CSV, STATA, R, TEXT) 
-csv.output <- "yes"    
+csv.output <- "no"    
 stata.output <- "no"  
 r.output <- "no"
 txt.output <- "no"   
 
 # 5. For Plotting: (TRUE/FALSE)
-plot_data = FALSE
+plot_data = TRUE
 
 setwd <- "D:/GitHub/GTAPViz/R"
 devtools::load_all()
 
 # Extracting Data
 auto_gtap_data(
-  process_sl4_vars = "macros", 
+  process_sl4_vars = sl4map, 
   process_har_vars = harmap,
   sl4_mapping_info = sl4map,
   har_mapping_info = harmap,
-  region_select = NULL,
-  sector_select = NULL,
+  region_select = selected_regions,
+  sector_select = selected_sector,
   subtotal_level = FALSE,
   experiment = experiment, 
   mapping_info = info.mode,
@@ -703,7 +703,8 @@ comparison_plot(data = reg_data,
                     type = "prefix",  
                     text = "Impact on"
                   ),
-                  panel_rows = 2
+                  panel_rows = 2,
+                  plot.margin = ggplot2::margin(10, 25, 10, 10)
                 ))
 ```
 
