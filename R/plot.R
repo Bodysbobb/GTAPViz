@@ -10,8 +10,8 @@
 #' @param filter_var Vector or data frame. If a vector, filters the values in `x_axis_from`.
 #' If a data frame, filters `value_col` based on matching `variable_col` values.
 #' @param x_axis_from Character. Column name for x-axis categories (e.g., "REG", "Sector").
-#' @param split_by Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-#' Set to NULL for no splitting, suitable for macro-level analysis.
+#' @param split_by Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
+#' NULL creates a single aggregated plot, appropriate for macro-level analysis.
 #' @param panel_var Character. Column for panel facets (default: "Experiment").
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
@@ -464,10 +464,10 @@ comparison_plot <- function(data, filter_var = NULL,
   # CREATE THE BASIC PLOT
   if (invert_pane) {
     # For horizontal bars (flipped coordinates)
-    p <- ggplot2::ggplot(data, ggplot2::aes_string(
-      y = x_var,
-      x = "Value",
-      fill = x_var)) +
+    p <- ggplot2::ggplot(data, ggplot2::aes(
+      y = .data[[x_var]],
+      x = .data[["Value"]],
+      fill = .data[[x_var]])) +
       ggplot2::geom_bar(stat = "identity",
                         position = ggplot2::position_dodge(width = bar_spacing),
                         width = bar_width)
@@ -479,7 +479,7 @@ comparison_plot <- function(data, filter_var = NULL,
 
       p <- p + ggplot2::geom_text(
         ggplot2::aes(x = label_position,
-                     label = sprintf(paste0("%.", decimal_places, "f"), Value)),
+                     label = sprintf(paste0("%.", decimal_places, "f"), .data[["Value"]])),
         position = ggplot2::position_dodge(width = bar_spacing),
         size = value_size,
         color = "black"
@@ -506,15 +506,15 @@ comparison_plot <- function(data, filter_var = NULL,
         xintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     }
   } else {
     # For vertical bars (normal orientation)
-    p <- ggplot2::ggplot(data, ggplot2::aes_string(
-      x = x_var,
-      y = "Value",
-      fill = x_var)) +
+    p <- ggplot2::ggplot(data, ggplot2::aes(
+      x = .data[[x_var]],
+      y = .data[["Value"]],
+      fill = .data[[x_var]])) +
       ggplot2::geom_bar(stat = "identity",
                         position = ggplot2::position_dodge(width = bar_spacing),
                         width = bar_width)
@@ -526,7 +526,7 @@ comparison_plot <- function(data, filter_var = NULL,
 
       p <- p + ggplot2::geom_text(
         ggplot2::aes(y = label_position,
-                     label = sprintf(paste0("%.", decimal_places, "f"), Value)),
+                     label = sprintf(paste0("%.", decimal_places, "f"), .data[["Value"]])),
         position = ggplot2::position_dodge(width = bar_spacing),
         size = value_size,
         color = "black"
@@ -553,7 +553,7 @@ comparison_plot <- function(data, filter_var = NULL,
         yintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     }
   }
@@ -691,8 +691,8 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @param filter_var Vector or data frame. If a vector, filters the values in `x_axis_from`.
 #' If a data frame, filters `value_col` based on matching `variable_col` values.
 #' @param x_axis_from Character. Column name for x-axis categories (e.g., "REG", "Sector").
-#' @param split_by Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-#' Set to NULL for no splitting, suitable for macro-level analysis.
+#' @param split_by Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
+#' NULL creates a single aggregated plot, appropriate for macro-level analysis.
 #' @param panel_var Character. Column for panel facets (default: "Experiment").
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
@@ -792,7 +792,7 @@ detail_plot <- function(data, filter_var = NULL,
     desc_col = desc_col
   ))
 
-  # PREPARE DATA SOURCE
+  # PREPARE DATA SOURCE - Using the same approach as comparison_plot
   data <- .prepare_data_source(data, x_axis_from, variable_col = variable_col)
 
   # CHECK FOR REQUIRED COLUMNS
@@ -883,7 +883,7 @@ detail_plot <- function(data, filter_var = NULL,
   base_style_config <- list(
     panel_rows = panel_layout$rows,
     panel_cols = panel_layout$cols,
-    all_font_size <- .coalesce(plot_style_config$all_font_size, 1)
+    all_font_size = if(!is.null(plot_style_config$all_font_size)) plot_style_config$all_font_size else 1
   )
 
   # Calculate plot style configuration
@@ -1090,8 +1090,8 @@ detail_plot <- function(data, filter_var = NULL,
     panel_layout = panel_layout
   )
 
-  # RETURN SINGLE PLOT OR LIST OF PLOTS
-  return(invisible(NULL))
+  # RETURN PLOTS INVISIBLY
+  return(invisible(plot_list))
 }
 
 
@@ -1241,10 +1241,10 @@ detail_plot <- function(data, filter_var = NULL,
       ggplot2::geom_hline(yintercept = 1:n_vars + 0.5, color = "gray70", linewidth = 0.4) +
       ggplot2::geom_col(
         data = data,
-        mapping = ggplot2::aes_string(
-          y = x_factor_col,
-          x = "Value",
-          fill = "value_category"
+        mapping = ggplot2::aes(
+          y = .data[[x_factor_col]],
+          x = .data[["Value"]],
+          fill = .data[["value_category"]]
         ),
         width = style_config$bar_width
       )
@@ -1253,10 +1253,10 @@ detail_plot <- function(data, filter_var = NULL,
     if (style_config$show_value_labels) {
       p <- p + ggplot2::geom_text(
         data = data,
-        mapping = ggplot2::aes_string(
-          y = x_factor_col,
-          x = "Value",
-          label = "Label"
+        mapping = ggplot2::aes(
+          y = .data[[x_factor_col]],
+          x = .data[["Value"]],
+          label = .data[["Label"]]
         ),
         hjust = ifelse(data$Value >= 0, -0.2, 1.2),
         size = style_config$value_label_size
@@ -1284,10 +1284,10 @@ detail_plot <- function(data, filter_var = NULL,
       ggplot2::geom_vline(xintercept = 1:n_vars + 0.5, color = "gray70", linewidth = 0.4) +
       ggplot2::geom_col(
         data = data,
-        mapping = ggplot2::aes_string(
-          x = x_factor_col,
-          y = "Value",
-          fill = "value_category"
+        mapping = ggplot2::aes(
+          x = .data[[x_factor_col]],
+          y = .data[["Value"]],
+          fill = .data[["value_category"]]
         ),
         width = style_config$bar_width
       )
@@ -1296,10 +1296,10 @@ detail_plot <- function(data, filter_var = NULL,
     if (style_config$show_value_labels) {
       p <- p + ggplot2::geom_text(
         data = data,
-        mapping = ggplot2::aes_string(
-          x = x_factor_col,
-          y = "Value",
-          label = "Label"
+        mapping = ggplot2::aes(
+          x = .data[[x_factor_col]],
+          y = .data[["Value"]],
+          label = .data[["Label"]]
         ),
         vjust = ifelse(data$Value >= 0, -0.5, 1.5),
         size = style_config$value_label_size
@@ -1335,7 +1335,7 @@ detail_plot <- function(data, filter_var = NULL,
         xintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     } else {
       # Zero line is horizontal for vertical bars
@@ -1343,7 +1343,7 @@ detail_plot <- function(data, filter_var = NULL,
         yintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     }
   }
@@ -1366,10 +1366,10 @@ detail_plot <- function(data, filter_var = NULL,
     p <- p + do.call(ggplot2::facet_wrap, facet_args)
   }
 
-  # FIRST APPLY BASE THEME STYLING
+  # APPLY THEME STYLING
   p <- .apply_plot_style_config(p, style_config)
 
-  # THEN SET AXIS LABELS (after theme is applied)
+  # HANDLE AXIS LABELS BASED ON ORIENTATION
   if (invert_pane) {
     # For horizontal bars, x is Value axis and y is Categories axis
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
@@ -1565,8 +1565,8 @@ detail_plot <- function(data, filter_var = NULL,
 #' If a data frame, filters `value_col` based on matching `variable_col` values.
 #' @param x_axis_from Character. Column name for x-axis categories (e.g., "REG", "Sector").
 #' @param stack_value_from Character. Column containing stack component categories (e.g., "COMM" for commodities).
-#' @param split_by Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-#' Set to NULL for no splitting, suitable for macro-level analysis.
+#' @param split_by Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
+#' NULL creates a single aggregated plot, appropriate for macro-level analysis.
 #' @param panel_var Character. Column for panel facets (default: "Experiment").
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
@@ -2025,10 +2025,10 @@ stack_plot <- function(data, filter_var = NULL,
     p <- ggplot2::ggplot() +
       ggplot2::geom_col(
         data = data,
-        ggplot2::aes_string(
-          y = x_axis_from,
-          x = "Value",
-          fill = stack_value_from
+        ggplot2::aes(
+          y = .data[[x_axis_from]],
+          x = .data[["Value"]],
+          fill = .data[[stack_value_from]]
         ),
         position = "stack",
         width = style_config$bar_width
@@ -2042,7 +2042,7 @@ stack_plot <- function(data, filter_var = NULL,
       p <- p + ggplot2::geom_text(
         data = total_data,
         ggplot2::aes(
-          y = !!rlang::sym(x_axis_from),
+          y = .data[[x_axis_from]],
           x = ifelse(Total >= 0,
                      PositiveTotal + abs(Total) * 0.15,
                      NegativeTotal - abs(Total) * 0.15),
@@ -2061,7 +2061,7 @@ stack_plot <- function(data, filter_var = NULL,
         xintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     }
 
@@ -2084,10 +2084,10 @@ stack_plot <- function(data, filter_var = NULL,
     p <- ggplot2::ggplot() +
       ggplot2::geom_col(
         data = data,
-        ggplot2::aes_string(
-          x = x_axis_from,
-          y = "Value",
-          fill = stack_value_from
+        ggplot2::aes(
+          x = .data[[x_axis_from]],
+          y = .data[["Value"]],
+          fill = .data[[stack_value_from]]
         ),
         position = "stack",
         width = style_config$bar_width
@@ -2101,7 +2101,7 @@ stack_plot <- function(data, filter_var = NULL,
       p <- p + ggplot2::geom_text(
         data = total_data,
         ggplot2::aes(
-          x = !!rlang::sym(x_axis_from),
+          x = .data[[x_axis_from]],
           y = ifelse(Total >= 0,
                      PositiveTotal + abs(Total) * 0.05,
                      NegativeTotal - abs(Total) * 0.05),
@@ -2119,7 +2119,7 @@ stack_plot <- function(data, filter_var = NULL,
         yintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     }
 
@@ -2162,6 +2162,24 @@ stack_plot <- function(data, filter_var = NULL,
 
   # APPLY THEME STYLING
   p <- .apply_plot_style_config(p, style_config)
+
+  # Set up legend
+  if (style_config$show_legend) {
+    p <- p + ggplot2::theme(
+      legend.position = style_config$legend_position,
+      legend.title = if (style_config$show_legend_title) {
+        ggplot2::element_text(face = style_config$legend_title_face)
+      } else {
+        ggplot2::element_blank()
+      },
+      legend.text = ggplot2::element_text(
+        face = style_config$legend_text_face,
+        size = style_config$legend_text_size
+      )
+    )
+  } else {
+    p <- p + ggplot2::theme(legend.position = "none")
+  }
 
   # HANDLE AXIS LABELS BASED ON ORIENTATION
   if (invert_pane) {
@@ -2378,10 +2396,10 @@ stack_plot <- function(data, filter_var = NULL,
     p <- ggplot2::ggplot() +
       ggplot2::geom_col(
         data = data,
-        ggplot2::aes_string(
-          y = stack_value_from,
-          x = "Value",
-          fill = stack_value_from
+        ggplot2::aes(
+          y = .data[[stack_value_from]],
+          x = .data[["Value"]],
+          fill = .data[[stack_value_from]]
         ),
         width = style_config$bar_width
       )
@@ -2390,10 +2408,10 @@ stack_plot <- function(data, filter_var = NULL,
     if (style_config$show_value_labels) {
       p <- p + ggplot2::geom_text(
         data = data,
-        ggplot2::aes_string(
-          y = stack_value_from,
-          x = "Value",
-          label = "Label"
+        ggplot2::aes(
+          y = .data[[stack_value_from]],
+          x = .data[["Value"]],
+          label = .data[["Label"]]
         ),
         hjust = ifelse(data$Value >= 0, -0.2, 1.2),
         size = style_config$value_label_size
@@ -2406,7 +2424,7 @@ stack_plot <- function(data, filter_var = NULL,
         xintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     }
 
@@ -2429,10 +2447,10 @@ stack_plot <- function(data, filter_var = NULL,
     p <- ggplot2::ggplot() +
       ggplot2::geom_col(
         data = data,
-        ggplot2::aes_string(
-          x = stack_value_from,
-          y = "Value",
-          fill = stack_value_from
+        ggplot2::aes(
+          x = .data[[stack_value_from]],
+          y = .data[["Value"]],
+          fill = .data[[stack_value_from]]
         ),
         width = style_config$bar_width
       )
@@ -2441,10 +2459,10 @@ stack_plot <- function(data, filter_var = NULL,
     if (style_config$show_value_labels) {
       p <- p + ggplot2::geom_text(
         data = data,
-        ggplot2::aes_string(
-          x = stack_value_from,
-          y = "Value",
-          label = "Label"
+        ggplot2::aes(
+          x = .data[[stack_value_from]],
+          y = .data[["Value"]],
+          label = .data[["Label"]]
         ),
         vjust = ifelse(data$Value >= 0, -0.5, 1.5),
         size = style_config$value_label_size
@@ -2457,7 +2475,7 @@ stack_plot <- function(data, filter_var = NULL,
         yintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     }
 
@@ -2776,8 +2794,8 @@ stack_plot <- function(data, filter_var = NULL,
 #'   If a data frame, filters `variable_col` based on matching values.
 #' @param panel_var Character. Column containing time variable for x-axis (e.g., "Year").
 #' @param group_by Character. Column for grouping lines (e.g., "REG" or "Country").
-#' @param split_by Character or vector. Column name(s) for data splitting (e.g., "COMM").
-#'   Set to NULL for no splitting, suitable for macro-level analysis.
+#' @param split_by Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
+#' NULL creates a single aggregated plot, appropriate for macro-level analysis.
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
 #' @param desc_col Character. Column containing variable descriptions (default: "Description").
@@ -3200,12 +3218,12 @@ trend_plot <- function(data, filter_var = NULL,
   # CREATE THE BASIC PLOT
   if (invert_pane) {
     # For inverted coordinates (x and y swapped)
-    p <- ggplot2::ggplot(data, ggplot2::aes_string(
-      y = panel_var,
-      x = "Value",
-      color = group_by,
-      group = group_by)) +
-      ggplot2::geom_line(size = line_size)
+    p <- ggplot2::ggplot(data, ggplot2::aes(
+      y = .data[[panel_var]],
+      x = .data[["Value"]],
+      color = .data[[group_by]],
+      group = .data[[group_by]])) +
+      ggplot2::geom_line(linewidth = line_size)
 
     if (add_points) {
       p <- p + ggplot2::geom_point(size = point_size)
@@ -3213,7 +3231,7 @@ trend_plot <- function(data, filter_var = NULL,
 
     if (add_smooth) {
       p <- p + ggplot2::geom_smooth(method = smooth_method, se = FALSE,
-                                    linetype = "dashed", alpha = 0.7)
+                                    linetype = "dashed", linewidth = 0.7)
     }
 
     # APPLY SCALE TO VALUE AXIS (X-AXIS)
@@ -3236,17 +3254,17 @@ trend_plot <- function(data, filter_var = NULL,
         xintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     }
   } else {
     # For normal orientation (x is time, y is value)
-    p <- ggplot2::ggplot(data, ggplot2::aes_string(
-      x = panel_var,
-      y = "Value",
-      color = group_by,
-      group = group_by)) +
-      ggplot2::geom_line(size = line_size)
+    p <- ggplot2::ggplot(data, ggplot2::aes(
+      x = .data[[panel_var]],
+      y = .data[["Value"]],
+      color = .data[[group_by]],
+      group = .data[[group_by]])) +
+      ggplot2::geom_line(linewidth = line_size)
 
     if (add_points) {
       p <- p + ggplot2::geom_point(size = point_size)
@@ -3254,7 +3272,7 @@ trend_plot <- function(data, filter_var = NULL,
 
     if (add_smooth) {
       p <- p + ggplot2::geom_smooth(method = smooth_method, se = FALSE,
-                                    linetype = "dashed", alpha = 0.7)
+                                    linetype = "dashed", linewidth = 0.7)
     }
 
     # APPLY SCALE TO VALUE AXIS (Y-AXIS)
@@ -3277,7 +3295,7 @@ trend_plot <- function(data, filter_var = NULL,
         yintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
         color = style_config$zero_line_color,
-        size = style_config$zero_line_size
+        linewidth = style_config$zero_line_size
       )
     }
   }

@@ -32,8 +32,8 @@ If a data frame, filters `value_col` based on matching `variable_col` values.}
 
 \item{x_axis_from}{Character. Column name for x-axis categories (e.g., "REG", "Sector").}
 
-\item{split_by}{Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-Set to NULL for no splitting, suitable for macro-level analysis.}
+\item{split_by}{Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
+NULL creates a single aggregated plot, appropriate for macro-level analysis.}
 
 \item{panel_var}{Character. Column for panel facets (default: "Experiment").}
 

@@ -38,8 +38,8 @@ If a data frame, filters `value_col` based on matching `variable_col` values.}
 
 \item{stack_value_from}{Character. Column containing stack component categories (e.g., "COMM" for commodities).}
 
-\item{split_by}{Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-Set to NULL for no splitting, suitable for macro-level analysis.}
+\item{split_by}{Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
+NULL creates a single aggregated plot, appropriate for macro-level analysis.}
 
 \item{panel_var}{Character. Column for panel facets (default: "Experiment").}
 

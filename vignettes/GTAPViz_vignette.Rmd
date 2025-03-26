@@ -810,7 +810,7 @@ This figure visualizes large-scale data, displaying all sectors (*COMM*, *ACTS*)
 For example, the following command plots all variables with sectors on the x-axis for each region:  
 
 ```{r Detail Plot, eval = FALSE}
-detail_plot(sl4.plot.data[["2D"]],
+detail_plot(sl4.plot.data[["2D"]][["Sector"]],
             x_axis_from = "Sector",
             split_by = "Region",
 

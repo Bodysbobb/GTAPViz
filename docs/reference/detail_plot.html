@@ -85,8 +85,8 @@ If a data frame, filters `value_col` based on matching `variable_col` values.</p
 
 
 <dt id="arg-split-by">split_by<a class="anchor" aria-label="anchor" href="#arg-split-by"></a></dt>
-<dd><p>Character or vector. Column name(s) for data splitting (e.g., "COMM", "REG", "ACTS").
-Set to NULL for no splitting, suitable for macro-level analysis.</p></dd>
+<dd><p>Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
+NULL creates a single aggregated plot, appropriate for macro-level analysis.</p></dd>
 
 
 <dt id="arg-panel-var">panel_var<a class="anchor" aria-label="anchor" href="#arg-panel-var"></a></dt>
@@ -167,9 +167,9 @@ Set to NULL for no splitting, suitable for macro-level analysis.</p></dd>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Input Path:</span></span></span>
 <span class="r-in"><span><span class="va">input_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/in"</span>, package <span class="op">=</span> <span class="st">"GTAPViz"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>                                </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)</span></span></span>
-<span class="r-in"><span><span class="co"># Note: No need to add .sl4 to the experiment name </span></span></span>
+<span class="r-in"><span><span class="co"># Note: No need to add .sl4 to the experiment name</span></span></span>
 <span class="r-in"><span><span class="va">gtap_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="auto_gtap_data.html">auto_gtap_data</a></span><span class="op">(</span>experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EXP1"</span>, <span class="st">"EXP2"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                            input_path <span class="op">=</span> <span class="va">input_path</span>, subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                            process_sl4_vars <span class="op">=</span> <span class="cn">NULL</span>, process_har_vars <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
@@ -185,6 +185,7 @@ Set to NULL for no splitting, suitable for macro-level analysis.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP Macro Data processed successfully</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> SL4 Data processed successfully</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> HAR Data processed successfully</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> QXS Bilateral Data processed successfully</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP data processing completed successfully!</span>
 <span class="r-in"><span><span class="co"># Basic usage with data frame</span></span></span>
@@ -195,21 +196,21 @@ Set to NULL for no splitting, suitable for macro-level analysis.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>            top_impact <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>            var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>            </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>            invert_pane <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>            separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>            </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>            export_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>              width <span class="op">=</span> <span class="fl">45</span>,</span></span>
 <span class="r-in"><span>              height <span class="op">=</span> <span class="fl">20</span></span></span>
 <span class="r-in"><span>            <span class="op">)</span>,</span></span>
-<span class="r-in"><span>            </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>            export_picture <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>            export_as_pdf <span class="op">=</span> <span class="cn">FALSE</span>,   </span></span>
+<span class="r-in"><span>            export_as_pdf <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>            output_path <span class="op">=</span> <span class="st">"/your/folder/path"</span>,</span></span>
-<span class="r-in"><span>            </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>            plot_style_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>              positive_color <span class="op">=</span> <span class="st">"#2E8B57"</span>, </span></span>
+<span class="r-in"><span>              positive_color <span class="op">=</span> <span class="st">"#2E8B57"</span>,</span></span>
 <span class="r-in"><span>              negative_color <span class="op">=</span> <span class="st">"#CD5C5C"</span>,</span></span>
 <span class="r-in"><span>              panel_rows <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>              panel_cols <span class="op">=</span> <span class="cn">NULL</span>,</span></span>

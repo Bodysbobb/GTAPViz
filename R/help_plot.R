@@ -1324,6 +1324,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   return(final_config)
 }
 
+
 #' @title Apply Plot Style Configuration to a ggplot Object
 #'
 #' @description Applies a style configuration to a ggplot object. This is an internal function
@@ -1446,10 +1447,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       ggplot2::element_line(color = config$grid_color)
     } else {
       ggplot2::element_blank()
-    },
-
-    # Plot margin settings
-    plot.margin = config$plot.margin
+    }
   )
 
   # Apply zero line if configured
@@ -1469,7 +1467,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       yintercept = config$zero_line_position,
       linetype = config$zero_line_type,
       color = config$zero_line_color,
-      size = config$zero_line_size
+      linewidth = config$zero_line_size
     )
   }
 

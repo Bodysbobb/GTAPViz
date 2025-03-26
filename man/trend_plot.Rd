@@ -39,8 +39,8 @@ If a data frame, filters `variable_col` based on matching values.}
 
 \item{group_by}{Character. Column for grouping lines (e.g., "REG" or "Country").}
 
-\item{split_by}{Character or vector. Column name(s) for data splitting (e.g., "COMM").
-Set to NULL for no splitting, suitable for macro-level analysis.}
+\item{split_by}{Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
+NULL creates a single aggregated plot, appropriate for macro-level analysis.}
 
 \item{variable_col}{Character. Column containing variable identifiers (default: "Variable").}
 

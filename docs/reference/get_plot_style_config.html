@@ -178,6 +178,8 @@ The parameters are grouped as follows:</p>
 - `expansion_x_mult`: Numeric vector. X-axis expansion. Default: `c(0.05, 0.05)`</p>
 <p>## **All Font Adjustment**
 - `all_font_size`: Numeric. Master control for all font sizes. Default: `1`</p>
+<p>## **Plot Margin Settings**
+- `plot.margin`: ggplot2 `margin()` object. Margins around the entire plot. Default: `ggplot2::margin(10, 25, 10, 10)`</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -294,7 +296,10 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   all_font_size = 1,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   # Data Sorting</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   sort_data_by_value = FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sort_data_by_value = FALSE,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Plot Margin</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   plot.margin = margin(t = 10, r = 25, b = 10, l = 10)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Example usage:</span>

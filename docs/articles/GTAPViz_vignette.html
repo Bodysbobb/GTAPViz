@@ -60,7 +60,7 @@
                         <h4 data-toc-skip class="author">Pattawee
 Puangchit</h4>
             
-            <h4 data-toc-skip class="date">2025-03-12</h4>
+            <h4 data-toc-skip class="date">2025-03-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bodysbobb/GTAPViz/blob/HEAD/vignettes/GTAPViz_vignette.Rmd" class="external-link"><code>vignettes/GTAPViz_vignette.Rmd</code></a></small>
       <div class="d-none name"><code>GTAPViz_vignette.Rmd</code></div>
@@ -600,7 +600,7 @@ automated data extraction method using the following command:</p>
 <span>    <span class="st">"rds"</span> <span class="op">=</span> <span class="va">r.output</span>,</span>
 <span>    <span class="st">"txt"</span> <span class="op">=</span> <span class="va">txt.output</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The default process for extracting data in automation uses
-<code><a href="https://rdrr.io/pkg/HARplus/man/group_data_by_dims.html" class="external-link">HARplus::group_data_by_dims</a></code> for <code>.sl4</code> and
+<code><a href="https://bodysbobb.github.io/HARplus/reference/group_data_by_dims.html" class="external-link">HARplus::group_data_by_dims</a></code> for <code>.sl4</code> and
 <code>get_data_by_var</code> for <code>.har</code>.</p>
 <div class="tip-box">
 <p>💡 <strong>Tip:</strong> The process in <code><a href="../reference/auto_gtap_data.html">?auto_gtap_data</a></code>
@@ -783,7 +783,8 @@ separate figures using the following command:</p>
 <span>                    type <span class="op">=</span> <span class="st">"prefix"</span>,  </span>
 <span>                    text <span class="op">=</span> <span class="st">"Impact on"</span></span>
 <span>                  <span class="op">)</span>,</span>
-<span>                  panel_rows <span class="op">=</span> <span class="fl">2</span></span>
+<span>                  panel_rows <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                  plot.margin <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">margin</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">25</span>, <span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span></span>
 <span>                <span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>By default, you might not need to define as much, as the previous
 sample code assumes that you follow all the previous instructions. You
@@ -889,7 +890,7 @@ dimension names.</p></li>
 <p>For example, the following command plots all variables with sectors
 on the x-axis for each region:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/detail_plot.html">detail_plot</a></span><span class="op">(</span><span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"2D"</span><span class="op">]</span><span class="op">]</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/detail_plot.html">detail_plot</a></span><span class="op">(</span><span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"2D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Sector"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>            x_axis_from <span class="op">=</span> <span class="st">"Sector"</span>,</span>
 <span>            split_by <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span></span>
@@ -986,7 +987,7 @@ necessary before plotting. You can try the following code:</p>
 <span>  new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Region"</span>, <span class="st">"Commodity"</span>, <span class="st">"Activity"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="va">har.plot.data</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/HARplus/man/rename_dims.html" class="external-link">rename_dims</a></span><span class="op">(</span><span class="va">har.plot.data</span>, <span class="va">rename_col</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">har.plot.data</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/rename_dims.html" class="external-link">rename_dims</a></span><span class="op">(</span><span class="va">har.plot.data</span>, <span class="va">rename_col</span><span class="op">)</span></span></code></pre></div>
 <p>Then, you can use the following command to plot the decomposition
 figure:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
@@ -1391,7 +1392,7 @@ the following command:</p>
 <span>  new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Region"</span>, <span class="st">"Commodity"</span>, <span class="st">"Activity"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="va">har.plot.data</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/HARplus/man/rename_dims.html" class="external-link">rename_dims</a></span><span class="op">(</span><span class="va">har.plot.data</span>, <span class="va">rename_col</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">har.plot.data</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/rename_dims.html" class="external-link">rename_dims</a></span><span class="op">(</span><span class="va">har.plot.data</span>, <span class="va">rename_col</span><span class="op">)</span></span></code></pre></div>
 <div class="tip-box">
 <p>💡 <strong>Tip:</strong> You can create this mapping dataframe in
 Excel and import it into R. The column names must be
@@ -1542,9 +1543,9 @@ for plotting).</p></li>
 </ol>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Step 1: Extracting Data</span></span>
-<span><span class="va">sl4data1</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/HARplus/man/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP1.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">sl4data2</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/HARplus/man/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP2.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">sl4data</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/HARplus/man/get_data_by_dims.html" class="external-link">get_data_by_dims</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="va">sl4data1</span>, <span class="va">sl4data2</span>, merge_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">sl4data1</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP1.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sl4data2</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP2.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sl4data</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/get_data_by_dims.html" class="external-link">get_data_by_dims</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="va">sl4data1</span>, <span class="va">sl4data2</span>, merge_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Step 2: Filtering Data using Dataframe and lapply</span></span>
 <span><span class="va">manual.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">sl4data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
