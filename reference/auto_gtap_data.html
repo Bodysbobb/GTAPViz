@@ -65,7 +65,9 @@
 <span>  output_formats <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sl4_output_name <span class="op">=</span> <span class="st">"sl4.plot.data"</span>,</span>
 <span>  har_output_name <span class="op">=</span> <span class="st">"har.plot.data"</span>,</span>
-<span>  macro_output_name <span class="op">=</span> <span class="st">"GTAPMacro"</span></span>
+<span>  macro_output_name <span class="op">=</span> <span class="st">"GTAPMacro"</span>,</span>
+<span>  add_scenario_ranking <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  rank_column <span class="op">=</span> <span class="st">"ScenarioRank"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -167,6 +169,14 @@
 
 <dt id="arg-macro-output-name">macro_output_name<a class="anchor" aria-label="anchor" href="#arg-macro-output-name"></a></dt>
 <dd><p>Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".</p></dd>
+
+
+<dt id="arg-add-scenario-ranking">add_scenario_ranking<a class="anchor" aria-label="anchor" href="#arg-add-scenario-ranking"></a></dt>
+<dd><p>Logical. If TRUE, adds a numeric ranking column to all data frames. Default is FALSE.</p></dd>
+
+
+<dt id="arg-rank-column">rank_column<a class="anchor" aria-label="anchor" href="#arg-rank-column"></a></dt>
+<dd><p>Character. Name of the column to add with scenario ranking information. Default is "ScenarioRank".</p></dd>
 
 </dl></div>
     <div class="section level2">
