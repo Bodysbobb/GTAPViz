@@ -1320,6 +1320,62 @@ NULL, add_group_line = TRUE)</span>
 <figcaption class="package-table-caption">
 Decomposition Table <br><span class="package-table-note">(total_column
 = TRUE, separate_sheet_by = “Region”)</span>
+</figcaption></figure>
+</div>
+<div class="section level3">
+<h3 id="sec:pivot-table">Interactive Pivot Tables<a class="anchor" aria-label="anchor" href="#sec:pivot-table"></a>
+</h3>
+<p>One of the most powerful features of GTAPViz is the ability to create
+interactive Excel pivot tables directly from your simulation results.
+This functionality, provided through the
+<code><a href="../reference/pivot_table_with_filter.html">pivot_table_with_filter()</a></code> function, allows you to:</p>
+<ul>
+<li>Convert your processed data into a dynamic Excel pivot table</li>
+<li>Apply filters, rows, and column dimensions interactively</li>
+<li>Modify the aggregation and visualization after export</li>
+<li>Share results with colleagues who might not use R</li>
+</ul>
+<p>Unlike static report tables created with <code><a href="../reference/report_table.html">report_table()</a></code>,
+pivot tables remain fully interactive in Excel, allowing users to:</p>
+<ul>
+<li><p><strong>Comprehensive Filtering</strong><br>
+Incorporate multiple filtering dimensions to enhance analytical
+flexibility and allow users to explore data from various
+perspectives.</p></li>
+<li><p><strong>Strategic Dimension Placement</strong><br>
+Carefully assign dimensions to rows and columns to prioritize meaningful
+comparisons and streamline interpretation.</p></li>
+<li><p><strong>Retention of Raw Data</strong><br>
+The raw dataset is always included, enabling downstream
+users—particularly those using Excel—to reconstruct or customize pivot
+tables as needed.</p></li>
+<li><p><strong>User-Oriented Design</strong><br>
+When preparing outputs for non-R users, ensure the pivot table is
+intuitively organized and easy to navigate.</p></li>
+<li><p><strong>Enhanced Readability with Descriptive
+Labels</strong><br>
+Enabling <code>var_name_by_description = TRUE</code> ensures variable
+descriptions are used in place of codes, thereby improving clarity and
+accessibility.</p></li>
+</ul>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pivot_table_with_filter.html">pivot_table_with_filter</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"2D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Sector"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Variable"</span>, <span class="st">"Unit"</span><span class="op">)</span>,    <span class="co"># Allow filtering by variable type and unit</span></span>
+<span>  rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Region"</span>, <span class="st">"Sector"</span><span class="op">)</span>,      <span class="co"># Regions and sectors as row fields</span></span>
+<span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Experiment"</span><span class="op">)</span>,            <span class="co"># Experiments as column fields</span></span>
+<span>  data_fields <span class="op">=</span> <span class="st">"Value"</span>,             <span class="co"># Values to be aggregated</span></span>
+<span>  raw_sheet_name <span class="op">=</span> <span class="st">"Raw_Data"</span>,       <span class="co"># Sheet name for raw data</span></span>
+<span>  pivot_sheet_name <span class="op">=</span> <span class="st">"Sector_Pivot"</span>, <span class="co"># Sheet name for pivot table</span></span>
+<span>  export <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>  workbook_name <span class="op">=</span> <span class="st">"Sectoral_Impact_Analysis.xlsx"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<figure class="package-table"><div class="package-table-box">
+<p><img src="https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/PivotTable.png" width="100%"></p>
+</div>
+<figcaption class="package-table-caption">
+Pivot Table with Filter
 </figcaption></figure><div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
 
 </div>
@@ -1334,7 +1390,7 @@ Decomposition Table <br><span class="package-table-note">(total_column
 <p>If you manually import data or need to adjust the
 <code>"Description"</code> and <code>"Unit"</code> columns, you can use
 the following command:</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mapping_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span>, <span class="st">"ppriv"</span><span class="op">)</span>,</span>
 <span>  Description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Real GDP Index"</span>, <span class="st">"Welfare Equivalents"</span>, <span class="st">"Consumer Price Index"</span><span class="op">)</span>,</span>
@@ -1373,7 +1429,7 @@ value.</li>
 dividing by 1,000.<br>
 • Convert <code>percent</code> to <code>proportion</code> by dividing by
 100.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">datasets</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/convert_units.html">convert_units</a></span><span class="op">(</span>change_unit_from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"million USD"</span>, <span class="st">"percent"</span><span class="op">)</span>,</span>
 <span>                          change_unit_to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"billion USD"</span>, <span class="st">"proportion"</span><span class="op">)</span>,</span>
 <span>                          adjustment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"/1000"</span>, <span class="st">"/100"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -1385,7 +1441,7 @@ dividing by 1,000.<br>
 names automatically—such as changing <code>REG</code> to
 <code>Region</code> or <code>COMM</code> to <code>Commodity</code>—use
 the following command:</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating Mapping File</span></span>
 <span><span class="va">rename_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"REG"</span>, <span class="st">"COMM"</span>, <span class="st">"ACTS"</span><span class="op">)</span>,</span>
@@ -1406,7 +1462,7 @@ Excel and import it into R. The column names must be
 renaming country names in the <code>REG</code> column (e.g., changing
 <code>"USA"</code> to <code>"United States"</code> or <code>"CHN"</code>
 to <code>"China"</code>)—use the following command:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating Mapping File</span></span>
 <span><span class="va">rename.region</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  ColumnName <span class="op">=</span> <span class="st">"REG"</span>,</span>
@@ -1439,7 +1495,7 @@ descending order (<code>TRUE/FALSE/NULL</code>). See
 <code>?sorting_specs</code> for details.</p></li>
 </ul>
 <p>To apply sorting, use the following command:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating Sorting File</span></span>
 <span><span class="va">sorting_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"US_All10_RetalTar"</span>, <span class="st">"US_All"</span>, <span class="st">"US_All10"</span>, <span class="st">"US_Specific"</span><span class="op">)</span>,</span>
@@ -1475,7 +1531,7 @@ automation does not recognize <code>"AREG"</code> as
 data list.</p>
 <p>To facilitate data extraction for plotting and reporting table
 creation, consider the following approach:</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/auto_gtap_data.html">auto_gtap_data</a></span><span class="op">(</span></span>
 <span>  <span class="co"># Input Main File Names</span></span>
 <span>  experiment <span class="op">=</span> <span class="va">experiment</span>, </span>
@@ -1541,7 +1597,7 @@ operations.</p></li>
 <code>"add_mapping_info"</code> (the <em>“Unit”</em> column is required
 for plotting).</p></li>
 </ol>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Step 1: Extracting Data</span></span>
 <span><span class="va">sl4data1</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP1.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">sl4data2</span> <span class="op">&lt;-</span> <span class="fu">HARplus</span><span class="fu">::</span><span class="fu"><a href="https://bodysbobb.github.io/HARplus/reference/load_sl4x.html" class="external-link">load_sl4x</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"EXP2.sl4"</span>, package <span class="op">=</span> <span class="st">"HARplus"</span><span class="op">)</span><span class="op">)</span></span>
@@ -1570,7 +1626,7 @@ for plotting).</p></li>
 </h2>
 <p>Extract GTAP Macro variables from the <em>“Macros”</em> header in
 <code>.sl4</code> files using the following command:</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Macros</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gtap_macros_data.html">gtap_macros_data</a></span><span class="op">(</span></span>
 <span>  input_path <span class="op">=</span> <span class="va">input.folder</span>,</span>
 <span>  experiment <span class="op">=</span> <span class="va">experiment</span>,</span>
