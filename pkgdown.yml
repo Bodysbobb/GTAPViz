@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   GTAPViz_vignette: GTAPViz_vignette.html
-last_built: 2025-03-27T06:21Z
+last_built: 2025-03-27T06:26Z
 urls:
   reference: https://bodysbobb.github.io/GTAPViz/reference
   article: https://bodysbobb.github.io/GTAPViz/articles
