@@ -11,7 +11,7 @@
 
 <meta name="author" content="Pattawee Puangchit" />
 
-<meta name="date" content="2025-03-09" />
+<meta name="date" content="2025-03-27" />
 
 <title>GTAPViz: Visualizing GTAP Results from HAR and SL4 Files</title>
 
@@ -1399,212 +1399,7 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1, h2, h3, h4, h5, h6 {
-color: #003366;
-font-weight: bold;
-}
-
-body { font-size: 18px; }
-h1 { font-size: 34px; }
-h2 { font-size: 28px; }
-h3 { font-size: 24px; }
-h4 { font-size: 20px; }
-code, pre { font-size: 16px; }
-#TOC a { font-size: 17px; }
-
-.center-figure {
-display: flex;
-flex-direction: column;
-align-items: center;
-text-align: center;
-margin: 20px auto;
-counter-increment: fig-num;
-}
-
-.figure-note {
-font-size: 90%;
-color: #555;
-text-align: center;
-margin-top: 5px;
-font-style: italic;
-}
-
-.auto-fig {
-margin-top: 10px; 
-text-align: center;
-font-style: italic;
-}
-
-.auto-fig::before {
-content: "Figure " counter(fig-num) ": ";
-font-weight: bold;
-}
-
-.code-box, .table-box {
-border: 1px solid #ccc;
-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-padding: 10px;
-border-radius: 5px;
-width: fit-content;
-background-color: #FAFAFA;
-display: inline-block;
-text-align: left;
-}
-
-.code-box pre, .table-box pre {
-background-color: transparent !important;
-font-family: monospace;
-color: #000000;
-padding: 0;
-margin: 0;
-white-space: pre;
-}
-
-.code-box pre code, .table-box pre code {
-background-color: transparent !important;
-padding: 0;
-margin: 0;
-border: none;
-display: block;
-}
-
-.table-box table {
-border-collapse: collapse;
-width: 100%;
-}
-
-.table-box th, .table-box td {
-border: 1px solid #ABB2BF;
-padding: 8px;
-text-align: left;
-}
-
-body {
-counter-reset: fig-num package-plot-num package-table-num;
-}
-
-section, div.section, .level1, .level2, .level3, .level4, .level5, .level6 {
-
-}
-
-.package-figure {
-display: flex;
-flex-direction: column;
-align-items: center;
-text-align: center;
-margin: 20px auto;
-counter-increment: package-plot-num;
-}
-
-.package-figure figcaption::before {
-content: "Plot " counter(package-plot-num) ": ";
-font-weight: bold;
-}
-
-.package-figure-box {
-border: 1px solid #ccc;
-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-padding: 10px;
-border-radius: 5px;
-background-color: #FAFAFA;
-display: inline-block;
-text-align: center;
-width: fit-content;
-}
-
-.package-figure-box img {
-max-width: 100%;
-height: auto;
-display: block;
-}
-
-.package-fig-note {
-font-size: 90%;
-color: #555;
-font-style: italic;
-}
-
-.package-table {
-display: flex;
-flex-direction: column;
-align-items: center;
-text-align: center;
-margin: 20px auto;
-counter-increment: package-table-num;
-}
-
-.package-table figcaption::before {
-content: "Table " counter(package-table-num) ": ";
-font-weight: bold;
-}
-
-.package-table-box {
-border: 1px solid #ccc;
-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-padding: 10px;
-border-radius: 5px;
-background-color: #FAFAFA;
-display: inline-block;
-text-align: center;
-width: fit-content;
-}
-
-.package-table-box img {
-max-width: 100%;
-height: auto;
-display: block;
-}
-
-.package-table-note {
-font-size: 90%;
-color: #555;
-font-style: italic;
-}
-
-.tip-box {
-background-color: #E8F4FD; 
-border-left: 5px solid #5B9BD5; 
-padding: 10px 15px; 
-margin: 15px 0; 
-border-radius: 4px; 
-font-size: 16px; 
-}
-.tip-icon {
-font-weight: bold;
-margin-right: 5px;
-}
-
-.info-box {
-background-color: #FDF8E4;
-border-left: 5px solid #E8A317;
-padding: 15px 20px;
-margin: 20px 0;
-border-radius: 6px;
-font-size: 17px;
-font-weight: 400;
-color: #5C3D00;
-box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-}
-.info-box h1,
-.info-box h2,
-.info-box h3,
-.info-box h4,
-.info-box h5,
-.info-box h6 {
-color: #5C3D00;
-}
-.info-box code {
-background-color: transparent; 
-color: #2A2A2A; 
-padding: 0; 
-border-radius: 0; 
-font-weight: normal; 
-font-size: inherit; 
-border: none; 
-box-shadow: none; 
-}
-</style>
+<style type="text/css">h1, h2, h3, h4, h5, h6 {color: #003366;font-weight: bold;}body { font-size: 18px; }h1 { font-size: 34px; }h2 { font-size: 28px; }h3 { font-size: 24px; }h4 { font-size: 20px; }code, pre { font-size: 16px; }#TOC a { font-size: 17px; }.center-figure {display: flex;flex-direction: column;align-items: center;text-align: center;margin: 20px auto;counter-increment: fig-num;}.figure-note {font-size: 90%;color: #555;text-align: center;margin-top: 5px;font-style: italic;}.auto-fig {margin-top: 10px; text-align: center;font-style: italic;}.auto-fig::before {content: "Figure " counter(fig-num) ": ";font-weight: bold;}.code-box, .table-box {border: 1px solid #ccc;box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);padding: 10px;border-radius: 5px;width: fit-content;background-color: #FAFAFA;display: inline-block;text-align: left;}.code-box pre, .table-box pre {background-color: transparent !important;font-family: monospace;color: #000000;padding: 0;margin: 0;white-space: pre;}.code-box pre code, .table-box pre code {background-color: transparent !important;padding: 0;margin: 0;border: none;display: block;}.table-box table {border-collapse: collapse;width: 100%;}.table-box th, .table-box td {border: 1px solid #ABB2BF;padding: 8px;text-align: left;}body {counter-reset: fig-num package-plot-num package-table-num;}section, div.section, .level1, .level2, .level3, .level4, .level5, .level6 {}.package-figure {display: flex;flex-direction: column;align-items: center;text-align: center;margin: 20px auto;counter-increment: package-plot-num;}.package-figure figcaption::before {content: "Plot " counter(package-plot-num) ": ";font-weight: bold;}.package-figure-box {border: 1px solid #ccc;box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);padding: 10px;border-radius: 5px;background-color: #FAFAFA;display: inline-block;text-align: center;width: fit-content;}.package-figure-box img {max-width: 100%;height: auto;display: block;}.package-fig-note {font-size: 90%;color: #555;font-style: italic;}.package-table {display: flex;flex-direction: column;align-items: center;text-align: center;margin: 20px auto;counter-increment: package-table-num;}.package-table figcaption::before {content: "Table " counter(package-table-num) ": ";font-weight: bold;}.package-table-box {border: 1px solid #ccc;box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);padding: 10px;border-radius: 5px;background-color: #FAFAFA;display: inline-block;text-align: center;width: fit-content;}.package-table-box img {max-width: 100%;height: auto;display: block;}.package-table-note {font-size: 90%;color: #555;font-style: italic;}.tip-box {background-color: #E8F4FD; border-left: 5px solid #5B9BD5; padding: 10px 15px; margin: 15px 0; border-radius: 4px; font-size: 16px; }.tip-icon {font-weight: bold;margin-right: 5px;}.info-box {background-color: #FDF8E4;border-left: 5px solid #E8A317;padding: 15px 20px;margin: 20px 0;border-radius: 6px;font-size: 17px;font-weight: 400;color: #5C3D00;box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);}.info-box h1,.info-box h2,.info-box h3,.info-box h4,.info-box h5,.info-box h6 {color: #5C3D00;}.info-box code {background-color: transparent; color: #2A2A2A; padding: 0; border-radius: 0; font-weight: normal; font-size: inherit; border: none; box-shadow: none; }</style>
 
 
 
@@ -1776,7 +1571,7 @@ border-radius: 0px;
 <h1 class="title toc-ignore">GTAPViz: Visualizing GTAP Results from HAR
 and SL4 Files</h1>
 <h4 class="author">Pattawee Puangchit</h4>
-<h4 class="date">2025-03-09</h4>
+<h4 class="date">2025-03-27</h4>
 
 </div>
 
@@ -2390,12 +2185,12 @@ package.<br />
 You can view all predefined palettes by using the following code:
 </p>
 <pre class="r"><code># Get all palettes as a list
-all_palettes &lt;- print_palette_colors(&quot;all&quot;)
+all_palettes &lt;- get_color_palette(&quot;all&quot;)
 
 # Click or call a specific palette to view its colors
-all_palettes$winter()   # View the winter palette
-all_palettes$fall()     # View the fall palette
-all_palettes$gtap()     # View the GTAP palette</code></pre>
+all_palettes$winter(&quot;qualitative&quot;)   # View the winter palette
+all_palettes$fall(&quot;sequential&quot;)                 # View the fall palette
+all_palettes$gtap(&quot;diverging&quot;)     # View the GTAP palette</code></pre>
 <p>
 <strong>Note:</strong> You can also define any other color palette
 simply by using <code>&quot;blue&quot;</code>, <code>&quot;red&quot;</code>, or any other
@@ -2404,117 +2199,9 @@ standard color name that works with <code>ggplot2</code>.
 <p>
 Next, use the following code to create and apply your own plot style:
 </p>
-<pre class="r"><code>get_plot_config(printing = TRUE)</code></pre>
-<p>
-You will get:
-</p>
-<pre class="r"><code>my_style_config &lt;- list(
-
-  # Title settings
-  show_title = TRUE,
-  title_face = &quot;bold&quot;,
-  title_size = 20,
-  title_hjust = 0.5,
-  add_unit_to_title = TRUE,
-  title_margin = margin(t = 10, r = 0, b = 10, l = 0),
-  title_format = list(
-    type = &quot;standard&quot;, #option: prefix, suffix, full, dynamic
-    text = &quot;&quot;,
-    sep = &quot;&quot;
-  ),
-
-  # X-Axis settings
-  show_x_axis_title = TRUE,
-  x_axis_title_face = &quot;bold&quot;,
-  x_axis_title_size = 16,
-  x_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),
-  show_x_axis_labels = TRUE,
-  x_axis_text_face = &quot;plain&quot;,
-  x_axis_text_size = 14,
-  x_axis_text_angle = 0,
-  x_axis_text_hjust = 0,
-  x_axis_description = &quot;&quot;,
-
-  # Y-Axis settings
-  show_y_axis_title = TRUE,
-  y_axis_title_face = &quot;bold&quot;,
-  y_axis_title_size = 16,
-  y_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),
-  show_y_axis_labels = TRUE,
-  y_axis_text_face = &quot;plain&quot;,
-  y_axis_text_size = 14,
-  y_axis_text_angle = 0,
-  y_axis_text_hjust = 0,
-  y_axis_description = &quot;&quot;,
-  show_axis_titles_on_all_facets = TRUE,
-
-  # Value Labels
-  show_value_labels = TRUE,
-  value_label_face = &quot;plain&quot;,
-  value_label_size = 5,
-  value_label_position = &quot;above&quot;,
-  value_label_decimal_places = 2,
-
-  # Legend
-  show_legend = FALSE,
-  show_legend_title = FALSE,
-  legend_position = &quot;bottom&quot;,
-  legend_title_face = &quot;bold&quot;,
-  legend_text_face = &quot;plain&quot;,
-  legend_text_size = 14,
-
-  # Panel Strip
-  strip_face = &quot;bold&quot;,
-  strip_text_size = 16,
-  strip_background = &quot;lightgrey&quot;,
-  strip_text_margin = margin(t = 10, r = 0, b = 10, l = 0),
-
-  # Panel Layout
-  panel_spacing = 2,
-  panel_rows = NULL,
-  panel_cols = NULL,
-  theme = NULL,
-
-  # Colors
-  color_tone = NULL,
-  positive_color = &quot;#2E8B57&quot;,
-  negative_color = &quot;#CD5C5C&quot;,
-  background_color = &quot;white&quot;,
-  grid_color = &quot;grey90&quot;,
-  show_grid_major_x = FALSE,
-  show_grid_major_y = FALSE,
-  show_grid_minor_x = FALSE,
-  show_grid_minor_y = FALSE,
-
-  # Zero Line
-  show_zero_line = TRUE,
-  zero_line_type = &quot;dashed&quot;,
-  zero_line_color = &quot;black&quot;,
-  zero_line_size = 0.5,
-  zero_line_position = 0,
-
-  # Bar Chart
-  bar_width = 0.9,
-  bar_spacing = 0.9,
-
-  # Scale Settings
-  scale_limit = NULL,
-  scale_increment = NULL,
-
-  # Scale Expansion
-  expansion_y_mult = c(0.05, 0.1),
-  expansion_x_mult = c(0.05, 0.05),
-
-  # Font Size Control
-  all_font_size = 1,
-
-  # Data Sorting
-  sort_data_by_value = FALSE
-)
-
-# Example usage:
-# comparison_plot(data, x_axis_from = &quot;REG&quot;, 
-#                 plot_style_config = my_style_config)</code></pre>
+<pre class="r"><code>get_all_config(printing = TRUE)</code></pre>
+<p><strong>Please refer to another vignetter <a href>Plot
+Configurations</a> for more details and how to use it</strong></p>
 </div>
 </div>
 <div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;">
@@ -2567,12 +2254,14 @@ comparison_plot(data = reg_data,
                 # See ?plot_style_config
                 plot_style_config = list(
                   color_tone = &quot;purdue&quot;,
+                  color_palette_type = &quot;qualitative&quot;,
                   add_unit_to_title = TRUE,
                   title_format = list(
                     type = &quot;prefix&quot;,  
                     text = &quot;Impact on&quot;
                   ),
-                  panel_rows = 2
+                  panel_rows = 2,
+                  plot.margin = ggplot2::margin(10, 25, 10, 10)
                 ))</code></pre>
 <p>By default, you might not need to define as much, as the previous
 sample code assumes that you follow all the previous instructions. You
@@ -2681,7 +2370,7 @@ dimension names.</p></li>
 </ul>
 <p>For example, the following command plots all variables with sectors
 on the x-axis for each region:</p>
-<pre class="r"><code>detail_plot(sl4.plot.data[[&quot;2D&quot;]],
+<pre class="r"><code>detail_plot(sl4.plot.data[[&quot;2D&quot;]][[&quot;Sector&quot;]],
             x_axis_from = &quot;Sector&quot;,
             split_by = &quot;Region&quot;,
 
@@ -3111,6 +2800,63 @@ Decomposition Table <br> <span class="package-table-note">(total_column
 = TRUE, separate_sheet_by = “Region”)</span>
 </figcaption>
 </figure>
+</div>
+<div id="sec:pivot-table" class="section level2" number="9.5">
+<h2><span class="header-section-number">9.5</span> Interactive Pivot
+Tables</h2>
+<p>One of the most powerful features of GTAPViz is the ability to create
+interactive Excel pivot tables directly from your simulation results.
+This functionality, provided through the
+<code>pivot_table_with_filter()</code> function, allows you to:</p>
+<ul>
+<li>Convert your processed data into a dynamic Excel pivot table</li>
+<li>Apply filters, rows, and column dimensions interactively</li>
+<li>Modify the aggregation and visualization after export</li>
+<li>Share results with colleagues who might not use R</li>
+</ul>
+<p>Unlike static report tables created with <code>report_table()</code>,
+pivot tables remain fully interactive in Excel, allowing users to:</p>
+<ul>
+<li><p><strong>Comprehensive Filtering</strong><br />
+Incorporate multiple filtering dimensions to enhance analytical
+flexibility and allow users to explore data from various
+perspectives.</p></li>
+<li><p><strong>Strategic Dimension Placement</strong><br />
+Carefully assign dimensions to rows and columns to prioritize meaningful
+comparisons and streamline interpretation.</p></li>
+<li><p><strong>Retention of Raw Data</strong><br />
+The raw dataset is always included, enabling downstream
+users—particularly those using Excel—to reconstruct or customize pivot
+tables as needed.</p></li>
+<li><p><strong>User-Oriented Design</strong><br />
+When preparing outputs for non-R users, ensure the pivot table is
+intuitively organized and easy to navigate.</p></li>
+<li><p><strong>Enhanced Readability with Descriptive
+Labels</strong><br />
+Enabling <code>var_name_by_description = TRUE</code> ensures variable
+descriptions are used in place of codes, thereby improving clarity and
+accessibility.</p></li>
+</ul>
+<pre class="r"><code>pivot_table_with_filter(
+  data = sl4.plot.data[[&quot;2D&quot;]][[&quot;Sector&quot;]],
+  filter = c(&quot;Variable&quot;, &quot;Unit&quot;),    # Allow filtering by variable type and unit
+  rows = c(&quot;Region&quot;, &quot;Sector&quot;),      # Regions and sectors as row fields
+  cols = c(&quot;Experiment&quot;),            # Experiments as column fields
+  data_fields = &quot;Value&quot;,             # Values to be aggregated
+  raw_sheet_name = &quot;Raw_Data&quot;,       # Sheet name for raw data
+  pivot_sheet_name = &quot;Sector_Pivot&quot;, # Sheet name for pivot table
+  export = TRUE,
+  output_path = output.folder,
+  workbook_name = &quot;Sectoral_Impact_Analysis.xlsx&quot;
+)</code></pre>
+<figure class="package-table">
+<div class="package-table-box">
+<p><img role="img" src="data:text/plain; charset=utf-8;charset=utf-8,404%3A%20Not%20Found" width="100%" /></p>
+</div>
+<figcaption class="package-table-caption">
+Pivot Table with Filter
+</figcaption>
+</figure>
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
 
 </div>
@@ -3230,7 +2976,7 @@ sorting_specs &lt;- data.frame(
       
 regional_data &lt;- sort_plot_data(
   sl4.plot.data,
-  cols = sorting_specs$cols,
+  sort_columns = sorting_specs,
   sort_by_value_desc = NULL
 )</code></pre>
 <p><strong>Note:</strong> This function performs <strong>sorting, not

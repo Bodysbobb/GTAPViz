@@ -1221,6 +1221,55 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 ```
 </div> <figcaption class="package-table-caption"> Decomposition Table <br> <span class="package-table-note">(total_column = TRUE, separate_sheet_by = "Region")</span> </figcaption> </figure> 
 
+
+## Interactive Pivot Tables {#sec:pivot-table}
+
+One of the most powerful features of GTAPViz is the ability to create interactive Excel pivot tables directly from your simulation results. This functionality, provided through the `pivot_table_with_filter()` function, allows you to:
+
+- Convert your processed data into a dynamic Excel pivot table
+- Apply filters, rows, and column dimensions interactively
+- Modify the aggregation and visualization after export
+- Share results with colleagues who might not use R
+
+Unlike static report tables created with `report_table()`, pivot tables remain fully interactive in Excel, allowing users to:
+
+- **Comprehensive Filtering**  
+  Incorporate multiple filtering dimensions to enhance analytical flexibility and allow users to explore data from various perspectives.
+
+- **Strategic Dimension Placement**  
+  Carefully assign dimensions to rows and columns to prioritize meaningful comparisons and streamline interpretation.
+
+- **Retention of Raw Data**  
+  The raw dataset is always included, enabling downstream users—particularly those using Excel—to reconstruct or customize pivot tables as needed.
+
+- **User-Oriented Design**  
+  When preparing outputs for non-R users, ensure the pivot table is intuitively organized and easy to navigate.
+
+- **Enhanced Readability with Descriptive Labels**  
+  Enabling `var_name_by_description = TRUE` ensures variable descriptions are used in place of codes, thereby improving clarity and accessibility.
+
+```{r Pivot Table with Filter, eval=FALSE}
+pivot_table_with_filter(
+  data = sl4.plot.data[["2D"]][["Sector"]],
+  filter = c("Variable", "Unit"),    # Allow filtering by variable type and unit
+  rows = c("Region", "Sector"),      # Regions and sectors as row fields
+  cols = c("Experiment"),            # Experiments as column fields
+  data_fields = "Value",             # Values to be aggregated
+  raw_sheet_name = "Raw_Data",       # Sheet name for raw data
+  pivot_sheet_name = "Sector_Pivot", # Sheet name for pivot table
+  export = TRUE,
+  output_path = output.folder,
+  workbook_name = "Sectoral_Impact_Analysis.xlsx"
+)
+```
+
+<figure class="package-table">
+  <div class="package-table-box">
+```{r example pivot table, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/PivotTable.png")
+```
+</div> <figcaption class="package-table-caption">Pivot Table with Filter</figcaption> </figure>
+
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
 # Additional Utilities {#sec:additional-utilities}
