@@ -32,7 +32,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Export Data as an Excel Pivot Table</h1>
-      <small class="dont-index">Source: <a href="https://github.com/bodysbobb/GTAPViz/blob/HEAD/R/GTAP_Dynamic.R" class="external-link"><code>R/GTAP_Dynamic.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bodysbobb/GTAPViz/blob/HEAD/R/table.R" class="external-link"><code>R/table.R</code></a></small>
       <div class="d-none name"><code>pivot_table_with_filter.Rd</code></div>
     </div>
 
@@ -50,7 +50,7 @@
 <span>  data_fields <span class="op">=</span> <span class="st">"Value"</span>,</span>
 <span>  raw_sheet_name <span class="op">=</span> <span class="st">"RawData"</span>,</span>
 <span>  pivot_sheet_name <span class="op">=</span> <span class="st">"PivotTable"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="st">"A3"</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A5"</span>,</span>
 <span>  export <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  output_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  workbook_name <span class="op">=</span> <span class="st">"GTAP_PivotTable.xlsx"</span></span>
@@ -115,6 +115,10 @@
 - A raw data sheet (`raw_sheet_name`) containing the provided dataset.
 - A pivot table sheet (`pivot_sheet_name`) generated based on specified row, column, and data fields.</p>
 <p>If `export = TRUE`, the function saves the workbook to the specified `output_path`.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
+    <p>Pattawee Puangchit</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

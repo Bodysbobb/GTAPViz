@@ -1,4 +1,4 @@
-name: Document
+name: Publish Document
 title:
 username:
 account: rpubs
@@ -6,5 +6,5 @@ server: rpubs.com
 hostUrl: rpubs.com
 appId: https://api.rpubs.com/api/v1/document/1289755/b9bf4a12f4e54579bb252f92500e58c1
 bundleId: https://api.rpubs.com/api/v1/document/1289755/b9bf4a12f4e54579bb252f92500e58c1
-url: http://rpubs.com/publish/claim/1289755/5a659a1a838f41c7bb87f46e3d193ce9
+url: http://rpubs.com/Bodysbob/1289755
 version: 1

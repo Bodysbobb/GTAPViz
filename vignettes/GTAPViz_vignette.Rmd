@@ -1224,13 +1224,6 @@ knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/mai
 
 ## Interactive Pivot Tables {#sec:pivot-table}
 
-One of the most powerful features of GTAPViz is the ability to create interactive Excel pivot tables directly from your simulation results. This functionality, provided through the `pivot_table_with_filter()` function, allows you to:
-
-- Convert your processed data into a dynamic Excel pivot table
-- Apply filters, rows, and column dimensions interactively
-- Modify the aggregation and visualization after export
-- Share results with colleagues who might not use R
-
 Unlike static report tables created with `report_table()`, pivot tables remain fully interactive in Excel, allowing users to:
 
 - **Comprehensive Filtering**  

@@ -33,7 +33,7 @@ help(package = "GTAPViz")
 
 ## **Comprehensive Documentation** 
 
-For full details on how to use this package and explore practical examples, see the [GTAPViz Vignette](https://rpubs.com/Bodysbob/1282495) or [GitHub GTAPViz](https://bodysbobb.github.io/GTAPViz/).
+For full details on how to use this package and explore practical examples, see the [GTAPViz Vignette](https://rpubs.com/Bodysbob/1289755) or [GitHub GTAPViz](https://bodysbobb.github.io/GTAPViz/).
 
 For the R reference manual, see the [GTAPViz Reference Manual](https://bodysbobb.github.io/GTAPViz/GTAPViz_1.0.0.pdf).
 
