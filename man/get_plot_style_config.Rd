@@ -107,7 +107,7 @@ The parameters are grouped as follows:
 - `panel_cols`: Numeric or `NULL`. Number of columns in panel layout. Default: `NULL`
 - `theme`: ggplot2 theme object or `NULL`. Custom ggplot theme. Default: `NULL`
 
-## **Color Settings**
+## **Color and Grid Settings**
 - `color_tone`: Character or `NULL`. Base color theme. Default: `NULL`
 - `positive_color`: Character. Color for positive values. Default: `"#2E8B57"`
 - `negative_color`: Character. Color for negative values. Default: `"#CD5C5C"`

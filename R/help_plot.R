@@ -162,7 +162,7 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #' - `panel_cols`: Numeric or `NULL`. Number of columns in panel layout. Default: `NULL`
 #' - `theme`: ggplot2 theme object or `NULL`. Custom ggplot theme. Default: `NULL`
 #'
-#' ## **Color Settings**
+#' ## **Color and Grid Settings**
 #' - `color_tone`: Character or `NULL`. Base color theme. Default: `NULL`
 #' - `positive_color`: Character. Color for positive values. Default: `"#2E8B57"`
 #' - `negative_color`: Character. Color for negative values. Default: `"#CD5C5C"`
@@ -795,7 +795,7 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  theme = ", if(is.null(config$theme)) "NULL" else "custom_theme", ",\n", sep="")
 
     # Color
-    cat("\n  # Colors\n")
+    cat("\n  # Colors and Grid \n")
     cat("  color_tone = ", if(is.null(config$color_tone)) "NULL" else paste0("\"", config$color_tone, "\""), ",\n", sep="")
     cat("  color_palette_type = \"", config$color_palette_type, "\", #option: qualitative, sequential, diverging\n", sep="")
     cat("  positive_color = \"", config$positive_color, "\",\n", sep="")
@@ -915,7 +915,7 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
 
   # Add printing functionality
   if (printing) {
-    cat("export_config <- list(\n")
+    cat("my_export_config <- list(\n")
 
     # Print file_name
     cat("  file_name = \"", export_config_params$file_name, "\",\n", sep="")
