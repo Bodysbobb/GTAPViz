@@ -346,7 +346,7 @@ comparison_plot <- function(data, filter_var = NULL,
   )
 
   # RETURN SINGLE PLOT OR LIST OF PLOTS
-  return(invisible(NULL))
+  return(invisible(plot_list))
 }
 
 
@@ -1915,7 +1915,7 @@ stack_plot <- function(data, filter_var = NULL,
   )
 
   # RETURN SINGLE PLOT OR LIST OF PLOTS
-  return(invisible(NULL))
+  return(invisible(plot_list))
 }
 
 
