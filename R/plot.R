@@ -1885,9 +1885,18 @@ stack_plot <- function(data, filter_var = NULL,
   if (is.null(export_config) || is.null(export_config$file_name)) {
     export_config <- .coalesce(export_config, list())
 
+    # Extract data source information for PDF naming
+    data_source_info <- ""
+    if (variable_col %in% names(data) && length(unique(data[[variable_col]])) == 1) {
+      data_source_info <- paste0("_", unique(data[[variable_col]])[1])
+    } else if (!is.null(split_by) && split_by %in% names(data) && length(unique(data[[split_by]])) == 1) {
+      data_source_info <- paste0("_", unique(data[[split_by]])[1])
+    }
+
+    data_source_info <- gsub("[^a-zA-Z0-9_]", "", data_source_info)
     plot_type_name <- if (unstack_plot) "Unstacked_plots" else "Stacked_plots"
     n_plots <- length(plot_list)
-    export_config$file_name <- paste0(plot_type_name, "_", n_plots)
+    export_config$file_name <- paste0(plot_type_name, data_source_info, "_", n_plots)
   }
 
   # Add calculated dimensions to export_config

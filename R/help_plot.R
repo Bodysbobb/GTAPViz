@@ -1587,6 +1587,24 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
   }
 
+  # For unstacked plots, include x_value in title if provided
+  if (plot_type == "unstack" && !is.null(x_value)) {
+    if (!is.null(x_axis_from)) {
+      title_prefix <- paste0(x_axis_from, ": ", x_value)
+      if (!is.null(plot_title) && nzchar(plot_title)) {
+        plot_title <- paste0(title_prefix, " - ", plot_title)
+      } else {
+        plot_title <- title_prefix
+      }
+    } else {
+      if (!is.null(plot_title) && nzchar(plot_title)) {
+        plot_title <- paste0(x_value, " - ", plot_title)
+      } else {
+        plot_title <- x_value
+      }
+    }
+  }
+
   # APPLY TITLE FORMAT
   if (!is.null(style_config$title_format)) {
     title_format <- style_config$title_format
@@ -1642,6 +1660,13 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   export_name <- gsub("\\s+", "_", clean_title)
   export_name <- gsub("_+", "_", export_name)
   export_name <- gsub("^_|_$", "", export_name)
+
+  # Add unique identifiers for unstacked plots
+  if (plot_type == "unstack" && !is.null(x_value)) {
+    x_clean <- gsub("[^a-zA-Z0-9\\s]", "", x_value)
+    x_clean <- gsub("\\s+", "_", x_clean)
+    export_name <- paste0(export_name, "_", x_clean)
+  }
 
   # ADD PLOT TYPE SUFFIX
   if (!is.null(plot_type)) {
