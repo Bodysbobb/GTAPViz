@@ -21,12 +21,11 @@ or to look up specific parameters. Also provides parameter validation for custom
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/GTAPViz_vignette.html">Comprehensive Manuscript</a></li>
-    <li><a class="dropdown-item" href="../articles/GTAPViz_Plot_Catalog.html">Advanced Output Catalog</a></li>
+    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/GTAPViz_Advanced_Configurations/">Advanced Output Catalog</a></li>
   </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-references" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">References</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-references"><li><a class="dropdown-item" href="../reference/index.html">Function Reference</a></li>
-    <li><a class="dropdown-item" href="../GTAPViz_1.0.0.pdf">PDF Manual</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/Bodysbobb/GTAPViz" aria-label="GitHub Repository"><span class="fa fab fa-github"></span></a></li>
       </ul></div>
@@ -206,7 +205,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   title_size = 20,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   title_hjust = 0.5,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   add_unit_to_title = TRUE,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   title_margin = margin(t = 10, r = 0, b = 10, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   title_margin = c(10, 0, 10, 0), #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   title_format = list(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     type = "standard", #option: prefix, suffix, full, dynamic</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     text = "",</span>
@@ -217,7 +216,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   show_x_axis_title = TRUE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_face = "bold",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_size = 16,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_margin = c(25, 25, 0, 0), #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   show_x_axis_labels = TRUE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_text_face = "plain",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_text_size = 14,</span>
@@ -229,7 +228,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   show_y_axis_title = TRUE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_face = "bold",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_size = 16,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_margin = c(25, 25, 0, 0), #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   show_y_axis_labels = TRUE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_text_face = "plain",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_text_size = 14,</span>
@@ -257,7 +256,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   strip_face = "bold",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   strip_text_size = 16,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   strip_background = "lightgrey",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   strip_text_margin = margin(t = 10, r = 0, b = 10, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   strip_text_margin = c(10, 0, 10, 0), #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   # Panel Layout</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   panel_spacing = 2,</span>
@@ -265,7 +264,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   panel_cols = NULL,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   theme = NULL,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   # Colors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # Colors and Grid </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color_tone = NULL,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color_palette_type = "qualitative", #option: qualitative, sequential, diverging</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   positive_color = "#2E8B57",</span>
@@ -303,7 +302,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   sort_data_by_value = FALSE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   # Plot Margin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   plot.margin = margin(t = 10, r = 25, b = 10, l = 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   plot.margin = c(10, 25, 10, 10) #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Example usage:</span>

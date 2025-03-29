@@ -19,12 +19,11 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/GTAPViz_vignette.html">Comprehensive Manuscript</a></li>
-    <li><a class="dropdown-item" href="../articles/GTAPViz_Plot_Catalog.html">Advanced Output Catalog</a></li>
+    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/GTAPViz_Advanced_Configurations/">Advanced Output Catalog</a></li>
   </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-references" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">References</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-references"><li><a class="dropdown-item" href="../reference/index.html">Function Reference</a></li>
-    <li><a class="dropdown-item" href="../GTAPViz_1.0.0.pdf">PDF Manual</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/Bodysbobb/GTAPViz" aria-label="GitHub Repository"><span class="fa fab fa-github"></span></a></li>
       </ul></div>
@@ -125,6 +124,54 @@
     <p>Pattawee Puangchit</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Input Path</span></span></span>
+<span class="r-in"><span><span class="va">input_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/in"</span>, package <span class="op">=</span> <span class="st">"GTAPViz"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Prepares data from SL4 files for EXP1 and EXP2</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="auto_gtap_data.html">auto_gtap_data</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EXP1"</span>, <span class="st">"EXP2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  input_path <span class="op">=</span> <span class="va">input_path</span>,</span></span>
+<span class="r-in"><span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  process_sl4_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qo"</span>, <span class="st">"qgdp"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  process_har_vars <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  mapping_info <span class="op">=</span> <span class="st">"GTAPv7"</span>,</span></span>
+<span class="r-in"><span>  plot_data <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> All 2 requested experiment SL4 files are found.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mapping method used: GTAPv7 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing SL4 Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Summary of Processing:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> SL4 Data processed successfully</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP data processing completed successfully!</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate comparison table</span></span></span>
+<span class="r-in"><span><span class="fu">pivot_table_with_filter</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"2D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Sector"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Variable"</span>, <span class="st">"Unit"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Region"</span>, <span class="st">"Sector"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Experiment"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data_fields <span class="op">=</span> <span class="st">"Value"</span>,</span></span>
+<span class="r-in"><span>  raw_sheet_name <span class="op">=</span> <span class="st">"Raw_Data"</span>,</span></span>
+<span class="r-in"><span>  pivot_sheet_name <span class="op">=</span> <span class="st">"Sector_Pivot"</span>,</span></span>
+<span class="r-in"><span>  export <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  output_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  workbook_name <span class="op">=</span> <span class="st">"Sectoral_Impact_Analysis.xlsx"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Excel file with pivot table exported to: C:\temp\RtmpKUGIWN/Sectoral_Impact_Analysis.xlsx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Raw_Data, Sector_Pivot </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
