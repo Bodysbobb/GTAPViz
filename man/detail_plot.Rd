@@ -15,13 +15,13 @@ detail_plot(
   desc_col = "Description",
   var_name_by_description = FALSE,
   add_var_info = FALSE,
+  top_impact = NULL,
+  invert_pane = FALSE,
+  separate_figure = FALSE,
   output_path = NULL,
   export_picture = TRUE,
   export_as_pdf = FALSE,
   export_config = NULL,
-  top_impact = NULL,
-  separate_figure = FALSE,
-  invert_pane = FALSE,
   plot_style_config = NULL
 )
 }
@@ -48,6 +48,12 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.}
 
 \item{add_var_info}{Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).}
 
+\item{top_impact}{Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.}
+
+\item{invert_pane}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
+
+\item{separate_figure}{Logical. If TRUE, generates separate figures per panel value (default: FALSE).}
+
 \item{output_path}{Character. Directory path for saving output files. If NULL, plots are only returned in R.}
 
 \item{export_picture}{Logical. If TRUE, exports plots as image files (default: TRUE).}
@@ -60,12 +66,6 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.}
   \item `height`: Output file height (in inches).
   \item Additional settings—see `?get_export_config`.
 }}
-
-\item{top_impact}{Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.}
-
-\item{separate_figure}{Logical. If TRUE, generates separate figures per panel value (default: FALSE).}
-
-\item{invert_pane}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
 
 \item{plot_style_config}{List. Custom plot styles—see `?get_plot_style_config`.}
 }

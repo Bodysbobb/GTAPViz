@@ -78,7 +78,7 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #' Returns configuration settings for plot styles, with options to view as a structured dataframe
 #' or to look up specific parameters. Also provides parameter validation for custom configurations.
 #'
-#' @param plot_type Character. Type of plot: "comparison" (default), "detail", or "stack".
+#' @param plot_type Character. Type of plot: "default" (default).
 #' @param parameter_name Character or NULL. Name of specific parameter to return information about.
 #' @param show_docs Logical. Whether to include documentation in the output.
 #' @param validate_custom List or NULL. Custom configuration settings to validate.
@@ -102,7 +102,7 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #' - `title_size`: Numeric. Font size of title. Default: `20`
 #' - `title_hjust`: Numeric. Horizontal alignment (0 = left, 1 = right). Default: `0.5`
 #' - `add_unit_to_title`: Logical. Append unit to title if applicable. Default: `TRUE`
-#' - `title_margin`: ggplot2 `margin()` object. Default: `ggplot2::margin(10, 0, 10, 0)`
+#' - `title_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(10, 0, 10, 0)`
 #' - `title_format`: List or NULL. Formatting options for the title, with elements:
 #'   \itemize{
 #'     \item \code{type}: Character. One of "prefix", "suffix", "full", or "dynamic".
@@ -111,10 +111,10 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #'   }
 #'
 #' ## **X-Axis Settings**
-#' - `show_x_axis_title`: Logical. Show or hide x-axis title. Default: `FALSE`
+#' - `show_x_axis_title`: Logical. Show or hide x-axis title. Default: `TRUE`
 #' - `x_axis_title_face`: Character. Font face for x-axis title. Default: `"bold"`
 #' - `x_axis_title_size`: Numeric. Font size of x-axis title. Default: `16`
-#' - `x_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(t = 20)`
+#' - `x_axis_title_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(25, 25, 0, 0)`
 #' - `show_x_axis_labels`: Logical. Show or hide x-axis labels. Default: `TRUE`
 #' - `x_axis_text_face`: Character. Font face for x-axis labels. Default: `"bold"`
 #' - `x_axis_text_size`: Numeric. Font size of x-axis labels. Default: `14`
@@ -126,7 +126,7 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #' - `show_y_axis_title`: Logical. Show or hide y-axis title. Default: `TRUE`
 #' - `y_axis_title_face`: Character. Font face for y-axis title. Default: `"bold"`
 #' - `y_axis_title_size`: Numeric. Font size of y-axis title. Default: `16`
-#' - `y_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(r = 20)`
+#' - `y_axis_title_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(25, 25, 0, 0)`
 #' - `show_y_axis_labels`: Logical. Show or hide y-axis labels. Default: `TRUE`
 #' - `y_axis_text_face`: Character. Font face for y-axis labels. Default: `"plain"`
 #' - `y_axis_text_size`: Numeric. Font size of y-axis labels. Default: `14`
@@ -154,7 +154,7 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #' - `strip_face`: Character. Font face for panel strip. Default: `"bold"`
 #' - `strip_text_size`: Numeric. Font size for panel strip. Default: `16`
 #' - `strip_background`: Character. Background color of strip. Default: `"lightgrey"`
-#' - `strip_text_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(10, 0, 10, 0)`
+#' - `strip_text_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(10, 0, 10, 0)`
 #'
 #' ## **Panel Layout**
 #' - `panel_spacing`: Numeric. Spacing between panels. Default: `2`
@@ -196,7 +196,7 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #' - `all_font_size`: Numeric. Master control for all font sizes. Default: `1`
 #'
 #' ## **Plot Margin Settings**
-#' - `plot.margin`: ggplot2 `margin()` object. Margins around the entire plot. Default: `ggplot2::margin(10, 25, 10, 10)`
+#' - `plot.margin`: Numeric vector `c(top, right, bottom, left)`. Margins around the entire plot. Default: `c(10, 25, 10, 10)`
 #'
 #' @author Pattawee Puangchit
 #'
@@ -204,7 +204,7 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #' @export
 #'
 #' @examples
-#' # Get alldefault configuration
+#' # Get all default configuration
 #' get_plot_style_config(printing = TRUE)
 #'
 #' # Get information about a specific parameter
@@ -214,7 +214,7 @@ get_all_config <- function(plot_style = "default", config = NULL,
 #' config_df <- get_plot_style_config("default", as_dataframe = TRUE)
 #'
 #' # Validate custom configuration
-#' custom_config <- list(title_size = 24, bar_width = 0.7)
+#' custom_config <- list(title_size = 24, bar_width = 0.7, plot.margin = c(10, 50, 10, 10))
 #' validated <- get_plot_style_config("default", validate_custom = custom_config)
 #'
 get_plot_style_config <- function(plot_type = "default",
@@ -231,12 +231,12 @@ get_plot_style_config <- function(plot_type = "default",
     title_size = "Numeric. Font size of title.",
     title_hjust = "Numeric. Horizontal justification of title (0 = left, 1 = right).",
     add_unit_to_title = "Logical. Add unit information to title.",
-    title_margin = "ggplot2 margin object. Margin around title.",
+    title_margin = "Numeric vector c(top, right, bottom, left). Margin around title.",
     title_format = "List with components: 'type' (options: 'standard', 'prefix', 'suffix', 'full', 'dynamic'), 'text' (content to display or column names for dynamic titles), and 'sep' (separator for dynamic titles, default: ' - ').",
     show_x_axis_title = "Logical. Show or hide the x-axis title.",
     x_axis_title_face = "Character. Font face for x-axis title.",
     x_axis_title_size = "Numeric. Font size of x-axis title.",
-    x_axis_title_margin = "ggplot2 margin object. Margin around x-axis title.",
+    x_axis_title_margin = "Numeric vector c(top, right, bottom, left). Margin around x-axis title.",
     show_x_axis_labels = "Logical. Show or hide x-axis tick labels.",
     x_axis_text_face = "Character. Font face for x-axis tick labels.",
     x_axis_text_size = "Numeric. Font size of x-axis tick labels.",
@@ -246,7 +246,7 @@ get_plot_style_config <- function(plot_type = "default",
     show_y_axis_title = "Logical. Show or hide the y-axis title.",
     y_axis_title_face = "Character. Font face for y-axis title.",
     y_axis_title_size = "Numeric. Font size of y-axis title.",
-    y_axis_title_margin = "ggplot2 margin object. Margin around y-axis title.",
+    y_axis_title_margin = "Numeric vector c(top, right, bottom, left). Margin around y-axis title.",
     show_y_axis_labels = "Logical. Show or hide y-axis tick labels.",
     y_axis_text_face = "Character. Font face for y-axis tick labels.",
     y_axis_text_size = "Numeric. Font size of y-axis tick labels.",
@@ -268,7 +268,7 @@ get_plot_style_config <- function(plot_type = "default",
     strip_face = "Character. Font face for panel strip labels.",
     strip_text_size = "Numeric. Font size of panel strip labels.",
     strip_background = "Character. Background color of panel strips.",
-    strip_text_margin = "ggplot2 margin object. Margin around panel strip labels.",
+    strip_text_margin = "Numeric vector c(top, right, bottom, left). Margin around panel strip labels.",
     panel_spacing = "Numeric. Spacing between panels in centimeters.",
     panel_rows = "Numeric or NULL. Number of rows in panel layout.",
     panel_cols = "Numeric or NULL. Number of columns in panel layout.",
@@ -294,7 +294,8 @@ get_plot_style_config <- function(plot_type = "default",
     scale_increment = "Numeric. Step size for axis tick marks.",
     expansion_y_mult = "Numeric vector of length 2. Expansion multiplier for y-axis.",
     expansion_x_mult = "Numeric vector of length 2. Expansion multiplier for x-axis.",
-    all_font_size = "Numeric. Master control for all font sizes. Values > 1 increase all fonts, values < 1 decrease all fonts."
+    all_font_size = "Numeric. Master control for all font sizes. Values > 1 increase all fonts, values < 1 decrease all fonts.",
+    plot.margin = "Numeric vector c(top, right, bottom, left). Margins around the entire plot."
   )
 
   if (!is.null(parameter_name)) {
@@ -387,16 +388,16 @@ get_plot_style_config <- function(plot_type = "default",
     # Title section (7 parameters)
     topics[1:7] <- c("Title", "", "", "", "", "", "")
     arguments[1:7] <- c("show_title", "title_face", "title_size", "title_hjust", "add_unit_to_title", "title_margin", "title_format")
-    default_values[1:7] <- c("TRUE", "bold", "20", "0.5", "TRUE", "margin(t=10, r=0, b=10, l=0)",
+    default_values[1:7] <- c("TRUE", "bold", "20", "0.5", "TRUE", "c(10, 0, 10, 0)",
                              "list(type=\"standard\" [options: standard/prefix/suffix/full/dynamic], text=\"\", sep=\" - \")")
-    input_formats[1:7] <- c("logical", "character", "numeric", "numeric", "logical", "unit", "list")
+    input_formats[1:7] <- c("logical", "character", "numeric", "numeric", "logical", "numeric vector", "list")
     descriptions[1:7] <- c(
       "Show or hide the plot title.",
       "Font face for title ('bold', 'plain', 'italic').",
       "Font size of title.",
       "Horizontal justification of title (0 = left, 1 = right).",
       "Add unit information to title.",
-      "Margin around title.",
+      "Margin around title (top, right, bottom, left).",
       "List with components: 'type' (options: 'standard', 'prefix', 'suffix', 'full', 'dynamic'), 'text' (content to display or column names for dynamic titles), and 'sep' (separator for dynamic titles, default: ' - ')."
     )
     examples[1:7] <- c(
@@ -405,7 +406,7 @@ get_plot_style_config <- function(plot_type = "default",
       "title_size = 20",
       "title_hjust = 0.5",
       "add_unit_to_title = TRUE",
-      "title_margin = margin(t = 10, r = 0, b = 10, l = 0)",
+      "title_margin = c(10, 0, 10, 0)",
       "title_format = list(\n  type = \"standard\", # options: standard/prefix/suffix/full/dynamic\n  text = \"\",\n  sep = \"\"\n)"
     )
 
@@ -415,13 +416,13 @@ get_plot_style_config <- function(plot_type = "default",
     arguments[idx] <- c("show_x_axis_title", "x_axis_title_face", "x_axis_title_size", "x_axis_title_margin",
                         "show_x_axis_labels", "x_axis_text_face", "x_axis_text_size", "x_axis_text_angle",
                         "x_axis_text_hjust", "x_axis_description")
-    default_values[idx] <- c("TRUE", "bold", "16", "margin(t=25, r=25, b=0, l=0)", "TRUE", "plain", "14", "0", "0", "")
-    input_formats[idx] <- c("logical", "character", "numeric", "unit", "logical", "character", "numeric", "numeric", "numeric", "character")
+    default_values[idx] <- c("TRUE", "bold", "16", "c(25, 25, 0, 0)", "TRUE", "plain", "14", "0", "0", "")
+    input_formats[idx] <- c("logical", "character", "numeric", "numeric vector", "logical", "character", "numeric", "numeric", "numeric", "character")
     descriptions[idx] <- c(
       "Show or hide the x-axis title.",
       "Font face for x-axis title.",
       "Font size of x-axis title.",
-      "Margin around x-axis title.",
+      "Margin around x-axis title (top, right, bottom, left).",
       "Show or hide x-axis tick labels.",
       "Font face for x-axis tick labels.",
       "Font size of x-axis tick labels.",
@@ -433,7 +434,7 @@ get_plot_style_config <- function(plot_type = "default",
       "show_x_axis_title = TRUE",
       "x_axis_title_face = \"bold\"",
       "x_axis_title_size = 16",
-      "x_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0)",
+      "x_axis_title_margin = c(25, 25, 0, 0)",
       "show_x_axis_labels = TRUE",
       "x_axis_text_face = \"plain\"",
       "x_axis_text_size = 14",
@@ -448,13 +449,13 @@ get_plot_style_config <- function(plot_type = "default",
     arguments[idx] <- c("show_y_axis_title", "y_axis_title_face", "y_axis_title_size", "y_axis_title_margin",
                         "show_y_axis_labels", "y_axis_text_face", "y_axis_text_size", "y_axis_text_angle",
                         "y_axis_text_hjust", "y_axis_description", "show_axis_titles_on_all_facets")
-    default_values[idx] <- c("TRUE", "bold", "16", "margin(t=25, r=25, b=0, l=0)", "TRUE", "plain", "14", "0", "0", "", "TRUE")
-    input_formats[idx] <- c("logical", "character", "numeric", "unit", "logical", "character", "numeric", "numeric", "numeric", "character", "logical")
+    default_values[idx] <- c("TRUE", "bold", "16", "c(25, 25, 0, 0)", "TRUE", "plain", "14", "0", "0", "", "TRUE")
+    input_formats[idx] <- c("logical", "character", "numeric", "numeric vector", "logical", "character", "numeric", "numeric", "numeric", "character", "logical")
     descriptions[idx] <- c(
       "Show or hide the y-axis title.",
       "Font face for y-axis title.",
       "Font size of y-axis title.",
-      "Margin around y-axis title.",
+      "Margin around y-axis title (top, right, bottom, left).",
       "Show or hide y-axis tick labels.",
       "Font face for y-axis tick labels.",
       "Font size of y-axis tick labels.",
@@ -467,7 +468,7 @@ get_plot_style_config <- function(plot_type = "default",
       "show_y_axis_title = TRUE",
       "y_axis_title_face = \"bold\"",
       "y_axis_title_size = 16",
-      "y_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0)",
+      "y_axis_title_margin = c(25, 25, 0, 0)",
       "show_y_axis_labels = TRUE",
       "y_axis_text_face = \"plain\"",
       "y_axis_text_size = 14",
@@ -525,19 +526,19 @@ get_plot_style_config <- function(plot_type = "default",
     idx <- 40:43
     topics[idx] <- c("Panel Strip", rep("", length(idx)-1))
     arguments[idx] <- c("strip_face", "strip_text_size", "strip_background", "strip_text_margin")
-    default_values[idx] <- c("bold", "16", "lightgrey", "margin(t=10, r=0, b=10, l=0)")
-    input_formats[idx] <- c("character", "numeric", "character", "unit")
+    default_values[idx] <- c("bold", "16", "lightgrey", "c(10, 0, 10, 0)")
+    input_formats[idx] <- c("character", "numeric", "character", "numeric vector")
     descriptions[idx] <- c(
       "Font face for panel strip labels.",
       "Font size of panel strip labels.",
       "Background color of panel strips.",
-      "Margin around panel strip labels."
+      "Margin around panel strip labels (top, right, bottom, left)."
     )
     examples[idx] <- c(
       "strip_face = \"bold\"",
       "strip_text_size = 16",
       "strip_background = \"lightgrey\"",
-      "strip_text_margin = margin(t = 10, r = 0, b = 10, l = 0)"
+      "strip_text_margin = c(10, 0, 10, 0)"
     )
 
     # Panel Layout section (4 parameters)
@@ -679,10 +680,10 @@ get_plot_style_config <- function(plot_type = "default",
     idx <- 71
     topics[idx] <- "Plot Margin"
     arguments[idx] <- "plot.margin"
-    default_values[idx] <- "margin(t=10, r=25, b=10, l=10)"
-    input_formats[idx] <- "unit"
+    default_values[idx] <- "c(10, 25, 10, 10)"
+    input_formats[idx] <- "numeric vector"
     descriptions[idx] <- "Margins around the entire plot (top, right, bottom, left)."
-    examples[idx] <- "plot.margin = margin(t = 10, r = 25, b = 10, l = 10)"
+    examples[idx] <- "plot.margin = c(10, 25, 10, 10)"
 
     # Create the result dataframe
     result <- data.frame(
@@ -712,10 +713,10 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  title_hjust = ", config$title_hjust, ",\n", sep="")
     cat("  add_unit_to_title = ", ifelse(config$add_unit_to_title, "TRUE", "FALSE"), ",\n", sep="")
 
-    # Format margin objects with proper names
+    # Format margin objects as simple vectors with description
     margin_values <- as.numeric(config$title_margin)
-    cat("  title_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
-        ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
+    cat("  title_margin = c(", margin_values[1], ", ", margin_values[2],
+        ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
 
     # Format title_format as a properly structured list
     tf <- config$title_format
@@ -732,8 +733,8 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  x_axis_title_size = ", config$x_axis_title_size, ",\n", sep="")
 
     margin_values <- as.numeric(config$x_axis_title_margin)
-    cat("  x_axis_title_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
-        ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
+    cat("  x_axis_title_margin = c(", margin_values[1], ", ", margin_values[2],
+        ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
 
     cat("  show_x_axis_labels = ", ifelse(config$show_x_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
     cat("  x_axis_text_face = \"", config$x_axis_text_face, "\",\n", sep="")
@@ -749,8 +750,8 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  y_axis_title_size = ", config$y_axis_title_size, ",\n", sep="")
 
     margin_values <- as.numeric(config$y_axis_title_margin)
-    cat("  y_axis_title_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
-        ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
+    cat("  y_axis_title_margin = c(", margin_values[1], ", ", margin_values[2],
+        ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
 
     cat("  show_y_axis_labels = ", ifelse(config$show_y_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
     cat("  y_axis_text_face = \"", config$y_axis_text_face, "\",\n", sep="")
@@ -784,8 +785,8 @@ get_plot_style_config <- function(plot_type = "default",
     cat("  strip_background = \"", config$strip_background, "\",\n", sep="")
 
     margin_values <- as.numeric(config$strip_text_margin)
-    cat("  strip_text_margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
-        ", b = ", margin_values[3], ", l = ", margin_values[4], "),\n", sep="")
+    cat("  strip_text_margin = c(", margin_values[1], ", ", margin_values[2],
+        ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
 
     # Panel Layout
     cat("\n  # Panel Layout\n")
@@ -845,8 +846,8 @@ get_plot_style_config <- function(plot_type = "default",
     # Plot Margin Settings
     cat("\n  # Plot Margin\n")
     margin_values <- as.numeric(config$plot.margin)
-    cat("  plot.margin = margin(t = ", margin_values[1], ", r = ", margin_values[2],
-        ", b = ", margin_values[3], ", l = ", margin_values[4], ")\n", sep="")
+    cat("  plot.margin = c(", margin_values[1], ", ", margin_values[2],
+        ", ", margin_values[3], ", ", margin_values[4], ") #c(top, right, bottom, left)\n", sep="")
 
     cat(")\n\n")
     cat("# Example usage:\n")
@@ -937,7 +938,7 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
 
     cat(")\n\n")
     cat("# Example usage:\n")
-    cat("# comparison_plot(data, x_axis_from = \"REG\", export_config = export_config)\n")
+    cat("# comparison_plot(data, x_axis_from = \"REG\", export_config = my_export_config)\n")
 
     return(invisible(export_config_params))
   }
@@ -1169,14 +1170,14 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     title_size = 20,
     title_hjust = 0.5,
     add_unit_to_title = TRUE,
-    title_margin = ggplot2::margin(10, 0, 10, 0),
+    title_margin = c(10, 0, 10, 0),
     title_format = list(type = "standard", text = ""),
 
     # X-Axis settings
     show_x_axis_title = TRUE,
     x_axis_title_face = "bold",
     x_axis_title_size = 16,
-    x_axis_title_margin = ggplot2::margin(t = 25, r = 25, b = 0, l = 0),
+    x_axis_title_margin = c(25, 25, 0, 0),
     show_x_axis_labels = TRUE,
     x_axis_text_face = "plain",
     x_axis_text_size = 14,
@@ -1188,7 +1189,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     show_y_axis_title = TRUE,
     y_axis_title_face = "bold",
     y_axis_title_size = 16,
-    y_axis_title_margin = ggplot2::margin(t = 25, r = 25, b = 0, l = 0),
+    y_axis_title_margin = c(25, 25, 0, 0),
     show_y_axis_labels = TRUE,
     y_axis_text_face = "plain",
     y_axis_text_size = 14,
@@ -1218,7 +1219,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     strip_face = "bold",
     strip_text_size = 16,
     strip_background = "lightgrey",
-    strip_text_margin = ggplot2::margin(10, 0, 10, 0),
+    strip_text_margin = c(10, 0, 10, 0),
 
     # Panel layout
     panel_spacing = 2,
@@ -1264,7 +1265,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     sort_data_by_value = FALSE,
 
     # Plot Margin
-    plot.margin = ggplot2::margin(10, 25, 10, 10)
+    plot.margin = c(10, 25, 10, 10)
   )
 
   # Select the appropriate default based on plot type
@@ -1279,20 +1280,6 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 
   # Merge user config with defaults (user settings take precedence)
   final_config <- modifyList(default_config, config)
-
-  # If user provided plot.margin as a list, convert it to a margin object
-  if (!is.null(final_config$plot.margin) && !inherits(final_config$plot.margin, "margin")) {
-    if (is.list(final_config$plot.margin)) {
-      # Try to convert from list to margin
-      margin_args <- c(
-        final_config$plot.margin$t,
-        final_config$plot.margin$r,
-        final_config$plot.margin$b,
-        final_config$plot.margin$l
-      )
-      final_config$plot.margin <- do.call(ggplot2::margin, as.list(margin_args))
-    }
-  }
 
   # Handle dynamic title format
   if (!is.null(final_config$title_format) &&
@@ -1355,6 +1342,20 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #'
 .apply_plot_style_config <- function(p, config) {
+  # Helper function to convert numeric vector to margin object
+  vector_to_margin <- function(vec) {
+    if (is.numeric(vec) && length(vec) == 4) {
+      return(ggplot2::margin(t = vec[1], r = vec[2], b = vec[3], l = vec[4]))
+    }
+    return(vec)
+  }
+
+  # Convert numeric margin vectors to ggplot2 margin objects
+  title_margin <- vector_to_margin(config$title_margin)
+  x_title_margin <- vector_to_margin(config$x_axis_title_margin)
+  y_title_margin <- vector_to_margin(config$y_axis_title_margin)
+  strip_margin <- vector_to_margin(config$strip_text_margin)
+  plot_margin <- vector_to_margin(config$plot.margin)
 
   # Apply theme modifications
   p <- p + ggplot2::theme(
@@ -1364,7 +1365,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
         hjust = config$title_hjust,
         size = config$title_size,
         face = config$title_face,
-        margin = config$title_margin
+        margin = title_margin
       )
     } else {
       ggplot2::element_blank()
@@ -1375,7 +1376,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       ggplot2::element_text(
         size = config$x_axis_title_size,
         face = config$x_axis_title_face,
-        margin = config$x_axis_title_margin
+        margin = x_title_margin
       )
     } else {
       ggplot2::element_blank()
@@ -1386,7 +1387,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       ggplot2::element_text(
         size = config$y_axis_title_size,
         face = config$y_axis_title_face,
-        margin = config$y_axis_title_margin
+        margin = y_title_margin
       )
     } else {
       ggplot2::element_blank()
@@ -1432,7 +1433,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     strip.text = ggplot2::element_text(
       face = config$strip_face,
       size = config$strip_text_size,
-      margin = config$strip_text_margin
+      margin = strip_margin
     ),
     strip.background = ggplot2::element_rect(fill = config$strip_background),
 
@@ -1465,9 +1466,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   )
 
   # Explicitly apply plot margin as a separate theme element to ensure it's not overridden
-  if (!is.null(config$plot.margin)) {
-    p <- p + ggplot2::theme(plot.margin = config$plot.margin)
-  }
+  p <- p + ggplot2::theme(plot.margin = plot_margin)
 
   # Apply zero line if configured
   if (config$show_zero_line) {
@@ -1607,19 +1606,15 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
   }
 
-  # Flag to track if we're using a dynamic title
-  is_dynamic_title <- FALSE
+  dynamic_title_has_unit <- FALSE
 
   if (!is.null(style_config$title_format)) {
     title_format <- style_config$title_format
 
-    # For "dynamic" and "full" types, completely replace the default title
     if (title_format$type == "dynamic") {
-      is_dynamic_title <- TRUE
       if (!is.null(data) && !is.null(title_format$text) && nrow(data) > 0) {
         if (!requireNamespace("glue", quietly = TRUE)) {
           warning("The 'glue' package is required for dynamic titles but is not installed. Using standard title format.")
-          is_dynamic_title <- FALSE
         } else {
           referenced_cols <- regmatches(
             title_format$text,
@@ -1628,12 +1623,17 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 
           if (length(referenced_cols) > 0 && length(referenced_cols[[1]]) > 0) {
             referenced_cols <- gsub("\\{|\\}", "", referenced_cols[[1]])
+
+            # Check if "Unit" is included in the dynamic template
+            if (any(referenced_cols %in% c("Unit", "unit", "UNIT"))) {
+              dynamic_title_has_unit <- TRUE
+            }
+
             missing_cols <- setdiff(referenced_cols, names(data))
 
             if (length(missing_cols) > 0) {
               warning(paste("Columns referenced in dynamic title template but not found in data:",
                             paste(missing_cols, collapse=", ")))
-              is_dynamic_title <- FALSE
             } else {
               plot_title <- glue::glue_data(data[1, ], title_format$text)
             }
@@ -1656,8 +1656,12 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
   }
 
-  # Only add unit to title if we're not using a dynamic title
-  if (!is_dynamic_title && style_config$add_unit_to_title && !is.null(unit_name)) {
+  # Add unit to title if:
+  # 1. We're not using dynamic title OR
+  # 2. We're using dynamic title but it doesn't include unit AND add_unit_to_title is TRUE
+  if ((title_format$type != "dynamic" ||
+       (title_format$type == "dynamic" && !dynamic_title_has_unit)) &&
+      style_config$add_unit_to_title && !is.null(unit_name)) {
     if (tolower(unit_name) == "percent") {
       plot_title <- paste0(plot_title, " (%)")
     } else {
@@ -1669,8 +1673,6 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     plot_title <- paste0(plot_title, " - ", panel_val)
   }
 
-  # For export filename, we continue to use the standard approach
-  # This keeps export_name independent of the dynamic title formatting
   parentheses_content <- list()
   export_name <- plot_title
 

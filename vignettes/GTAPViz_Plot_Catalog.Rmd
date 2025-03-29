@@ -107,6 +107,7 @@ har.plot.data <- rename_value(har.plot.data, mapping.file = wefare.decomp.rename
 
 # Extract Data
 decomposition_data = har.plot.data[["A"]]
+
 ```
 
 # Introduction {#sec:introduction}
@@ -151,7 +152,7 @@ selectInput("var_filter",
             width = '300px')
 
 # Server: Filtered DataTable
-renderDataTable({
+DT::renderDataTable({
   filtered_data <- subset(region_data, Variable == input$var_filter)
 
   datatable(
@@ -198,7 +199,7 @@ selectInput("sector_var_filter",
             width = '300px')
 
 # Server: Filtered DataTable
-renderDataTable({
+DT::renderDataTable({
   filtered_data <- subset(sector_data, Variable == input$sector_var_filter)
 
   datatable(
@@ -250,7 +251,7 @@ decomposition_data = har.plot.data[["A"]]
 
 
 ```{r decomposition_table, echo=FALSE}
-renderDataTable({
+DT::renderDataTable({
   datatable(
     decomposition_data,
     filter = "top",  # still enables filters for all columns
@@ -291,24 +292,40 @@ get_plot_style_config(printing = TRUE)
 
 ## Plot Titles
 
-Plot titles are always auto-generated using values from the following columns which can be redefined as needed to match the structure of your dataset:
+### Default Plot Title
 
-- `variable_col`: the variable name (default: `"Variable"`)  
-- `desc_col`: the variable description (default: `"Description"`)  
+By default, plot titles are **auto-generated** using values from the following columns. These can be redefined as needed to match the structure of your dataset:
+
+- `variable_col`: the variable name (default: `"Variable"`)
+
+- `split_by`: the column used to split plots (default: `NULL`)
+
 - `unit_col`: the unit of measurement (default: `"Unit"`)
 
-Use `var_name_by_description` and `add_var_info` to control whether the plot title displays the variable name, its description, or both (e.g., in parentheses).
-
-The full `title_format` structure, **defined within the `plot_style_config` list**, is as follows:
+- `panel_var`: the experiment name (used when `separate_figure = TRUE`, default: `"Experiment"`)
 
 <details>
-<summary class="toggle-summary">Click to show `title_format` structure</summary>
+<summary class="toggle-summary">💡 Tip: Plot Title</summary>
 
-```{r Plot Title Format, echo=TRUE}
-title_format = list(
-  type = "standard", # option: prefix, suffix, full, dynamic
-  text = "",
-  sep = ""
+<div class="tip-box">
+1. `var_name_by_description` replaces the variable name (`variable_col`) with its description from `desc_col`. <br>
+2. `add_var_info` controls whether the plot title displays the variable name, its description, or both (e.g., "Real GDP (qgdp)").
+</div>
+</details>
+
+### Plot Title Format
+
+`title_format`, defined within `plot_style_config`, is specifically designed to modify the plot title.
+
+
+```{r Plot Title Format, echo=TRUE, eval=FALSE}
+plot_style_config = list(
+  
+  title_format = list(
+    type = "standard", # option: prefix, suffix, full, dynamic
+    text = "",
+    sep = ""
+  )
 )
 ```
 
@@ -322,11 +339,131 @@ Users can define `title_format` using one of five title types:
 
 - `"full"`: Replaces the auto-generated title entirely with the specified `text`.  
 
-- `"dynamic"`: Constructs the title using values from user-specified columns provided in `text`.  
-  For example, `text = c("Variable", "Description", "Region")` will generate a title from the values in those columns, in order.  
-  *Note:* Titles are generated from the **values** in the specified columns, not the column names themselves.
+- `"dynamic"`: Creates a custom title from a template combining column values and user-defined text.
+
+<details>
+<summary class="toggle-summary">💡 Tip: Plot Title Format</summary>
+
+<div class="tip-box">
+It is highly recommended to include `add_unit_to_title` in `plot_style_config`.
+
+```{r Plot Title Format with Unit, echo=TRUE, eval=FALSE}
+plot_style_config = list(
+  title_format = list(
+    type = "standard",
+    text = "",
+    sep = ""
+  ),
+  add_unit_to_title = TRUE
+)
+```
+</div>
 
 </details>
+
+```{r dynamic title, include=FALSE, echo=FALSE}
+dynamic_title <- region_data
+dynamic_title <- subset(dynamic_title, select = -c(Dimension, ScenarioRank, Value))
+dynamic_title <- dynamic_title[order(dynamic_title$Region), ]
+dynamic_title[["Default Title"]] <- glue::glue_data(dynamic_title, "{Variable} ({Unit})")
+dynamic_title[["Prefix Title"]] <- glue::glue_data(dynamic_title, "Impact on {Variable} ({Unit})")
+dynamic_title[["Suffix Title"]] <- glue::glue_data(dynamic_title, "{Variable} ({Unit}) Impacts")
+dynamic_title[["Full Title"]] <- glue::glue_data(dynamic_title, "Impact on Variables in Units")
+dynamic_title[["Dynamic Title"]] <- glue::glue_data(dynamic_title, "Impact on {Variable} in {Region} ({Unit})")
+dynamic_title[["Auto Add Unit to Title"]] <- glue::glue_data(
+  dynamic_title,
+  "Impact on {Variable} in {Region} ({ifelse(tolower(Unit) == 'percent', '%', Unit)})"
+)
+dynamic_title <- dynamic_title[1:40, ]
+```
+
+The table below shows example plot titles; the last column contains the titles that would be used in the visualizations, assuming the plot function is called as follows:
+
+```{r Plot sample for title, eval=FALSE}
+comparison_plot(data = region_data,
+                x_axis_from = "Region",  
+                split_by = "Variable",
+                panel_var = "Experiment",
+                variable_col = "Variable",
+                unit_col = "Unit",
+                desc_col = "Description",
+```
+
+
+```{r plot-title-ui, echo=FALSE}
+# UI Dropdown
+selectInput("title_style", "Select Plot Title Format:",
+            choices = c("Default", "Prefix/Suffix", "Full", "Dynamic", "Auto Add Unit to Title"),
+            selected = "Default", width = "300px")
+```
+
+```{r plot-title-outputs, echo=FALSE}
+# Reactive outputs must be defined inside a Shiny chunk
+observe({
+  output$title_explainer <- renderUI({
+    if (input$title_style == "Dynamic") {
+      tags$p("Creates a customized title using a template string, where you can insert values from your data frame columns using curly braces `{}`.")
+    } else if (input$title_style == "Auto Add Unit to Title") {
+      tags$p("I highly recommend using the `add_unit_to_title` option under `plot_style_config` instead of manually adding the `Unit` column to the title. This option automatically converts \"Percent\" to the `%` symbol and wraps it in parentheses.")
+    }
+  })
+
+  output$title_code <- renderUI({
+    code_block <- switch(input$title_style,
+      "Default" = 'title_format = list(\n  type = "standard"\n)',
+      "Prefix/Suffix" = '# Prefix Sample\ntitle_format = list(\n  type = "prefix",\n  text = "Impact on",\n  sep = ""\n)\n\n# Suffix Sample\ntitle_format = list(\n  type = "suffix",\n  text = "Impacts",\n  sep = ""\n)',
+      "Full" = 'title_format = list(\n  type = "full",\n  text = "Impact on Variables in Units",\n  sep = ""\n)',
+      "Dynamic" = 'title_format = list(\n  type = "full",\n  text = "Impact on {Variable} in {Region} ({Unit})",\n  sep = ""\n)',
+      "Auto Add Unit to Title" = 'plot_style_config = list(\n  title_format = list(\n    type = "dynamic",\n    text = "Impact on {Variable} in {Region}",\n    sep = ""\n  ),\n  add_unit_to_title = TRUE\n)'
+    )
+
+    tags$pre(style = "background-color:#f8f9fa; border:1px solid #ccc; padding:10px; font-family: monospace; white-space: pre-wrap;",
+             code_block)
+  })
+
+  output$title_notes <- renderUI({
+    if (input$title_style == "Dynamic") {
+      tags$ul(
+        tags$li("{Variable}, {Region}, and {Unit} are placeholders that will be replaced with the corresponding values from each observation."),
+        tags$li('Fixed text such as "Impact on" and "in" remains constant and will appear in all plot titles.')
+      )
+    }
+  })
+
+  output$title_table <- DT::renderDataTable({
+    show_cols <- switch(input$title_style,
+      "Default" = c("Region", "Experiment", "Variable", "Unit", "Description", "Default Title"),
+      "Prefix/Suffix" = c("Region", "Experiment", "Variable", "Unit", "Description", "Prefix Title", "Suffix Title"),
+      "Full" = c("Region", "Experiment", "Variable", "Unit", "Description", "Full Title"),
+      "Dynamic" = c("Region", "Experiment", "Variable", "Unit", "Description", "Dynamic Title"),
+      "Auto Add Unit to Title" = c("Region", "Experiment", "Variable", "Unit", "Description", "Auto Add Unit to Title")
+    )
+
+    DT::datatable(
+      dynamic_title[, show_cols],
+      filter = "none",
+      options = list(
+        pageLength = 10,
+        autoWidth = TRUE,
+        scrollX = TRUE,
+        dom = 'tip',
+        columnDefs = list(list(className = 'dt-left', targets = "_all"))
+      ),
+      rownames = FALSE,
+      class = 'compact cell-border stripe small-font'
+    )
+  })
+})
+```
+
+```{r plot-title-uioutputs, echo=FALSE}
+uiOutput("title_explainer")
+uiOutput("title_code")
+uiOutput("title_notes")
+DT::dataTableOutput("title_table")
+```
+
+
 
 ## Exported Figure
 
@@ -377,7 +514,7 @@ comparison_plot(data = region_data,
 
 All examples of the `comparison_plot` function in this section use one-dimensional data (`region_data`) for visualization.
 
-## Example 1
+## Example 1 (Default)
 
 This example demonstrates the default function settings:
 
@@ -392,8 +529,7 @@ This example demonstrates the default function settings:
 
 - `separate_figure = FALSE`: All variables are displayed within a single figure using a multi-panel layout, rather than generating separate figures.
 
-
-```{r Comparison Plot}
+```{r Comparison Plot Sample}
 plotA <- comparison_plot(data = region_data,
                           filter_var = NULL,    
                           x_axis_from = "Region",  
@@ -403,11 +539,11 @@ plotA <- comparison_plot(data = region_data,
                           unit_col = "Unit",
                           desc_col = "Description",
                           invert_pane = FALSE,
-                          separate_figure = TRUE,
+                          separate_figure = FALSE,
                           var_name_by_description = FALSE,
                           add_var_info = FALSE,
                           output_path = output.folder,
-                          export_picture = TRUE,
+                          export_picture = FALSE,
                           export_as_pdf = FALSE,
                         
                           # See ?export_config
@@ -421,36 +557,43 @@ plotA <- comparison_plot(data = region_data,
                             color_tone = "gtap",
                             add_unit_to_title = TRUE,
                             title_format = list(
-                              type = "dynamic",  
-                              text = "Impact on {Variable} for the {Region} ({Unit})"
+                              type = "prefix",  
+                              text = "Impact on"
                             ),
                             panel_rows = 2,
                             bar_width = 0.4,
                             bar_spacing = 0.6,
                             x_axis_text_angle = 45,
-                            plot.margin = ggplot2::margin(10, 50, 10, 10)
+                            plot.margin = c(10, 50, 10, 10)
                           )
                         )
 ```
 
+For this example, the total number of output plots is calculated as `split_by = 4`, resulting in **4 figures** being generated.
 
 ```{r interactive-plotAEXP1, echo=FALSE}
-selectInput("plot_choiceA1", "Comparison Plot - Example 1", choices = names(plotA))
-textOutput("plot_title")
-renderText({
-  paste("Exported Filename:", input$plot_choiceA1)
+selectInput("plot_choiceA1", "Example 1 - Outputs", choices = names(plotA))
+uiOutput("plot_title")
+
+renderUI({
+  HTML(paste0("<b>Exported Filename:</b> ", input$plot_choiceA1))
 })
+
 renderPlot({
   plotA[[input$plot_choiceA1]]
-}, width = 1200, height = 720) 
+}, width = 1600, height = 860)
 ```
 
 
-## Example 2
+## Example 2 (`invert_pane`)
 
 Same as example 1 only that `invert_pane = TRUE`
 
-```{r, include=FALSE}
+**The number of plots generated in this example matches that of Example 1.**
+
+<details>
+<summary class="toggle-code-summary">[Click to show/hide code]</summary>
+```{r PlotA2}
 plotA2 <- comparison_plot(data = region_data,
                           filter_var = NULL,    
                           x_axis_from = "Region",  
@@ -485,18 +628,19 @@ plotA2 <- comparison_plot(data = region_data,
                             bar_width = 0.4,
                             bar_spacing = 0.6,
                             x_axis_text_angle = 45,
-                            plot.margin = ggplot2::margin(10, 50, 10, 10)
+                            plot.margin = c(10, 50, 10, 10)
                           )
                         )
 ```
 
+</details>
+
 ```{r interactive-plotAEXP2, echo=FALSE}
-selectInput("plot_choiceA2", "Comparison Plot - Example 2", choices = names(plotA2))
+selectInput("plot_choiceA2", "Example 2 - Outputs", choices = names(plotA2))
+uiOutput("plot_title")
 
-textOutput("plot_title")
-
-renderText({
-  paste("Exported Filename:", input$plot_choiceA2)
+renderUI({
+  HTML(paste0("<b>Exported Filename:</b> ", input$plot_choiceA2))
 })
 
 renderPlot({
@@ -505,13 +649,15 @@ renderPlot({
 ```
 
 
-## Example 3
+## Example 3 (`separate_figure`)
 
 This example is identical to Example 1, except that `separate_figure = TRUE`.  
-In this case, the output will be automatically split by `panel_var` (which defaults to the `"Experiment"` column), resulting in a total of 4 × 4 = 16 separate figures.
 
+In this case, the output will be automatically split by `panel_var` (which defaults to the `"Experiment"` column), calculated as `split_by` × `panel_var` = `4 × 4`, resulting in **16 figures** being generated.
 
-```{r, include=FALSE}
+<details>
+<summary class="toggle-code-summary">[Click to show/hide code]</summary>
+```{r plotA3}
 plotA3 <- comparison_plot(data = region_data,
                           filter_var = NULL,    
                           x_axis_from = "Region",  
@@ -546,18 +692,18 @@ plotA3 <- comparison_plot(data = region_data,
                             bar_width = 0.4,
                             bar_spacing = 0.6,
                             x_axis_text_angle = 45,
-                            plot.margin = ggplot2::margin(10, 50, 10, 10)
+                            plot.margin = c(10, 50, 10, 10)
                           )
                         )
 ```
+</details>
 
 ```{r interactive-plotAEXP3, echo=FALSE}
-selectInput("plot_choiceA3", "Comparison Plot - Example 3", choices = names(plotA3), width = '500px')
+selectInput("plot_choiceA3", "Example 3 - Outputs", choices = names(plotA3), width = '500px')
+uiOutput("plot_title")
 
-textOutput("plot_title")
-
-renderText({
-  paste("Exported Filename:", input$plot_choiceA3)
+renderUI({
+  HTML(paste0("<b>Exported Filename:</b> ", input$plot_choiceA3))
 })
 
 renderPlot({
@@ -567,42 +713,59 @@ renderPlot({
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
+
 # Detail Plot {#sec:detail-plot}
 
 All examples of the `detail_plot` function in this section use two-dimensional data (`sector_data`) for visualization.
 
-## Example 1
+## Example 4 (`filter_var`)
 
 This example demonstrates the benchmark settings for `detail_plot`:
 
+- `filter_var = "qo"`: Plots only the `qo` variable, excluding `qxw`.  
+
 - `x_axis_from = "Sector"`: The x-axis represents all 10 sectors.  
+
 - `split_by = "Region"`: Generates a separate panel for each region. With 10 regions, the result is 10 subplots.  
+
 - `panel_var = "Experiment"`: Defines the simulation scenarios, consisting of four experiments.  
+
 - `invert_pane = TRUE`: Displays the x-axis vertically (i.e., treated as the y-axis), improving readability.  
+
 - `separate_figure = FALSE`: All variables are displayed in a single figure using a multi-panel layout, rather than generating separate figures.
 
+**Optional:**  
+
+- `var_name_by_description = TRUE`: Use the description instead of the variable name in the plot title.  
+
+- `add_var_info = TRUE`: Append the GTAP variable name in parentheses.
+
+<details>
+<summary class="toggle-summary">💡 Tip: Detail Plot</summary>
+
 <div class="tip-box">
-💡 <strong>Tip:</strong> <br>
-For `detail_plot`, it is recommended to set `invert_pane = TRUE` to enhance readability—especially when visualizing complex sectoral components such as `COMM` and `ACTS`.
+<strong>Tip:</strong><br>
+1. Use `invert_pane = TRUE` to improve readability, especially for complex components like `COMM` and `ACTS`.<br>
+2. The plot supports `positive_color` and `negative_color` to visually distinguish value signs; colors are automatically shaded based on value intensity.
 </div>
 
+</details>
 
-```{r Detail Plot, eval = FALSE}
-
+```{r Detail Plot}
 plotB <- detail_plot(data = sector_data,
-                     filter_var = NULL,
+                     filter_var = "qo",
                      x_axis_from = "Sector",
                      split_by = "Region",
                      panel_var = "Experiment",
                      variable_col = "Variable",
                      unit_col = "Unit",
                      desc_col = "Description",
-                     var_name_by_description = FALSE,
-                     add_var_info = FALSE,
+                     var_name_by_description = TRUE,
+                     add_var_info = TRUE,
 
                      top_impact = NULL,
                      separate_figure = FALSE,
-                     invert_pane = FALSE,
+                     invert_pane = TRUE,
                      
                      output_path = output.folder,
                      export_picture = FALSE,
@@ -617,15 +780,88 @@ plotB <- detail_plot(data = sector_data,
                        panel_rows = 1,
                        panel_cols = NULL,
                        show_axis_titles_on_all_facets = FALSE,
-                       y_axis_text_size = 25,
-                       x_axis_text_size = 25,
-                       x_axis_title_size = 25,
-                       y_axis_title_size = 25,
                        bar_width = 0.6,
-                       all_font_size = 1.1
+                       all_font_size = 1.2
                        )
                      )
 
+```
+
+
+For this example, the total number of output plots is calculated as `split_by × variable_col = 10 × 1`, resulting in **10 figures** being generated.
+
+```{r interactive-plotBEXP4, echo=FALSE}
+selectInput("plot_choiceB", "Example 4 - Outputs", choices = names(plotB), width = '500px')
+uiOutput("plot_title")
+
+renderUI({
+  HTML(paste0("<b>Exported Filename:</b> ", input$plot_choiceB))
+})
+
+renderPlot({
+  plotB[[input$plot_choiceB]]
+}, width = 1600, height = 860)
+```
+
+
+## Example 5 (`top_impact`)
+
+Same as example 4 only that `top_impact = 5`
+
+**The number of plots generated in this example matches that of Example 4.**
+
+<details>
+<summary class="toggle-code-summary">[Click to show/hide code]</summary>
+
+```{r Detail PlotB2}
+plotB2 <- detail_plot(data = sector_data,
+                     filter_var = "qo",
+                     x_axis_from = "Sector",
+                     split_by = "Region",
+                     panel_var = "Experiment",
+                     variable_col = "Variable",
+                     unit_col = "Unit",
+                     desc_col = "Description",
+                     var_name_by_description = TRUE,
+                     add_var_info = TRUE,
+
+                     top_impact = 5,
+                     separate_figure = FALSE,
+                     invert_pane = TRUE,
+                     
+                     output_path = output.folder,
+                     export_picture = FALSE,
+                     export_as_pdf = FALSE,
+                     export_config = list(
+                       width = 25,
+                       height = 20),
+                     
+                     plot_style_config = list(
+                       positive_color = "#2E8B57", 
+                       negative_color = "#CD5C5C",
+                       panel_rows = 1,
+                       panel_cols = NULL,
+                       show_axis_titles_on_all_facets = TRUE,
+                       bar_width = 0.6,
+                       all_font_size = 1.2
+                       )
+                     )
+
+```
+
+</details>
+
+```{r interactive-plotBEXP5, echo=FALSE}
+selectInput("plot_choiceB2", "Example 5 - Outputs", choices = names(plotB2), width = '500px')
+uiOutput("plot_title")
+
+renderUI({
+  HTML(paste0("<b>Exported Filename:</b> ", input$plot_choiceB2))
+})
+
+renderPlot({
+  plotB2[[input$plot_choiceB2]]
+}, width = 1600, height = 860)
 ```
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>

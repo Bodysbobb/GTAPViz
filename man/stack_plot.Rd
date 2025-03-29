@@ -14,17 +14,17 @@ stack_plot(
   variable_col = "Variable",
   unit_col = "Unit",
   desc_col = "Description",
+  var_name_by_description = FALSE,
+  add_var_info = FALSE,
+  show_total = TRUE,
+  unstack_plot = FALSE,
+  top_impact = NULL,
   invert_pane = FALSE,
   separate_figure = FALSE,
-  unstack_plot = FALSE,
   output_path = NULL,
   export_picture = TRUE,
   export_as_pdf = FALSE,
   export_config = NULL,
-  var_name_by_description = FALSE,
-  add_var_info = FALSE,
-  show_total = TRUE,
-  top_impact = NULL,
   plot_style_config = NULL
 )
 }
@@ -49,11 +49,19 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.}
 
 \item{desc_col}{Character. Column containing variable descriptions (default: "Description").}
 
+\item{var_name_by_description}{Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).}
+
+\item{add_var_info}{Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).}
+
+\item{show_total}{Logical. If TRUE, displays total values above stacked bars (default: TRUE).}
+
+\item{unstack_plot}{Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).}
+
+\item{top_impact}{Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.}
+
 \item{invert_pane}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
 
 \item{separate_figure}{Logical. If TRUE, generates separate figures per panel value (default: FALSE).}
-
-\item{unstack_plot}{Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).}
 
 \item{output_path}{Character. Directory path for saving output files. If NULL, plots are only returned in R.}
 
@@ -67,14 +75,6 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.}
   \item `height`: Output file height (in inches).
   \item Additional settings—see `?get_export_config`.
 }}
-
-\item{var_name_by_description}{Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).}
-
-\item{add_var_info}{Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).}
-
-\item{show_total}{Logical. If TRUE, displays total values above stacked bars (default: TRUE).}
-
-\item{top_impact}{Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.}
 
 \item{plot_style_config}{List. Custom plot styles—see `?get_plot_style_config`.}
 }

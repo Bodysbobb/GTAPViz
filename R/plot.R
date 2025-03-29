@@ -126,7 +126,8 @@ comparison_plot <- function(data, filter_var = NULL,
     if (is.data.frame(filter_var) && variable_col %in% names(filter_var)) {
       data <- data[data[[variable_col]] %in% filter_var[[variable_col]], ]
     } else {
-      data <- data[data[[x_axis_from]] %in% filter_var, ]
+      # Corrected to filter by variable_col instead of x_axis_from
+      data <- data[data[[variable_col]] %in% filter_var, ]
     }
 
     if (nrow(data) == 0) {
@@ -644,11 +645,11 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
 #' @param desc_col Character. Column containing variable descriptions (default: "Description").
-#' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.
-#' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
-#' @param invert_pane Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
 #' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
 #' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
+#' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.
+#' @param invert_pane Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
+#' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
 #' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
 #' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
 #' @param export_as_pdf Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).
@@ -720,13 +721,13 @@ detail_plot <- function(data, filter_var = NULL,
                         desc_col = "Description",
                         var_name_by_description = FALSE,
                         add_var_info = FALSE,
+                        top_impact = NULL,
+                        invert_pane = FALSE,
+                        separate_figure = FALSE,
                         output_path = NULL,
                         export_picture = TRUE,
                         export_as_pdf = FALSE,
                         export_config = NULL,
-                        top_impact = NULL,
-                        separate_figure = FALSE,
-                        invert_pane = FALSE,
                         plot_style_config = NULL) {
 
   # Validate the column parameters
@@ -762,7 +763,7 @@ detail_plot <- function(data, filter_var = NULL,
     if (is.data.frame(filter_var) && variable_col %in% names(filter_var)) {
       data <- data[data[[variable_col]] %in% filter_var[[variable_col]], ]
     } else {
-      data <- data[data[[x_axis_from]] %in% filter_var, ]
+      data <- data[data[[variable_col]] %in% filter_var, ]
     }
 
     if (nrow(data) == 0) {
@@ -1441,13 +1442,13 @@ detail_plot <- function(data, filter_var = NULL,
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
 #' @param desc_col Character. Column containing variable descriptions (default: "Description").
-#' @param unstack_plot Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).
+#' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
+#' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
 #' @param show_total Logical. If TRUE, displays total values above stacked bars (default: TRUE).
+#' @param unstack_plot Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).
 #' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.
 #' @param invert_pane Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
 #' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
-#' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
-#' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
 #' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
 #' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
 #' @param export_as_pdf Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).
@@ -1514,17 +1515,17 @@ stack_plot <- function(data, filter_var = NULL,
                        variable_col = "Variable",
                        unit_col = "Unit",
                        desc_col = "Description",
+                       var_name_by_description = FALSE,
+                       add_var_info = FALSE,
+                       show_total = TRUE,
+                       unstack_plot = FALSE,
+                       top_impact = NULL,
                        invert_pane = FALSE,
                        separate_figure = FALSE,
-                       unstack_plot = FALSE,
                        output_path = NULL,
                        export_picture = TRUE,
                        export_as_pdf = FALSE,
                        export_config = NULL,
-                       var_name_by_description = FALSE,
-                       add_var_info = FALSE,
-                       show_total = TRUE,
-                       top_impact = NULL,
                        plot_style_config = NULL) {
 
   # Validate the column parameters
@@ -1552,7 +1553,8 @@ stack_plot <- function(data, filter_var = NULL,
     if (is.data.frame(filter_var) && variable_col %in% names(filter_var)) {
       data <- data[data[[variable_col]] %in% filter_var[[variable_col]], ]
     } else {
-      data <- data[data[[x_axis_from]] %in% filter_var, ]
+      # Corrected to filter by variable_col instead of x_axis_from
+      data <- data[data[[variable_col]] %in% filter_var, ]
     }
 
     if (nrow(data) == 0) {

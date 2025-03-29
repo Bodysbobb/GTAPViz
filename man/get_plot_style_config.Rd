@@ -14,7 +14,7 @@ get_plot_style_config(
 )
 }
 \arguments{
-\item{plot_type}{Character. Type of plot: "comparison" (default), "detail", or "stack".}
+\item{plot_type}{Character. Type of plot: "default" (default).}
 
 \item{parameter_name}{Character or NULL. Name of specific parameter to return information about.}
 
@@ -47,7 +47,7 @@ The parameters are grouped as follows:
 - `title_size`: Numeric. Font size of title. Default: `20`
 - `title_hjust`: Numeric. Horizontal alignment (0 = left, 1 = right). Default: `0.5`
 - `add_unit_to_title`: Logical. Append unit to title if applicable. Default: `TRUE`
-- `title_margin`: ggplot2 `margin()` object. Default: `ggplot2::margin(10, 0, 10, 0)`
+- `title_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(10, 0, 10, 0)`
 - `title_format`: List or NULL. Formatting options for the title, with elements:
   \itemize{
     \item \code{type}: Character. One of "prefix", "suffix", "full", or "dynamic".
@@ -56,10 +56,10 @@ The parameters are grouped as follows:
   }
 
 ## **X-Axis Settings**
-- `show_x_axis_title`: Logical. Show or hide x-axis title. Default: `FALSE`
+- `show_x_axis_title`: Logical. Show or hide x-axis title. Default: `TRUE`
 - `x_axis_title_face`: Character. Font face for x-axis title. Default: `"bold"`
 - `x_axis_title_size`: Numeric. Font size of x-axis title. Default: `16`
-- `x_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(t = 20)`
+- `x_axis_title_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(25, 25, 0, 0)`
 - `show_x_axis_labels`: Logical. Show or hide x-axis labels. Default: `TRUE`
 - `x_axis_text_face`: Character. Font face for x-axis labels. Default: `"bold"`
 - `x_axis_text_size`: Numeric. Font size of x-axis labels. Default: `14`
@@ -71,7 +71,7 @@ The parameters are grouped as follows:
 - `show_y_axis_title`: Logical. Show or hide y-axis title. Default: `TRUE`
 - `y_axis_title_face`: Character. Font face for y-axis title. Default: `"bold"`
 - `y_axis_title_size`: Numeric. Font size of y-axis title. Default: `16`
-- `y_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(r = 20)`
+- `y_axis_title_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(25, 25, 0, 0)`
 - `show_y_axis_labels`: Logical. Show or hide y-axis labels. Default: `TRUE`
 - `y_axis_text_face`: Character. Font face for y-axis labels. Default: `"plain"`
 - `y_axis_text_size`: Numeric. Font size of y-axis labels. Default: `14`
@@ -99,7 +99,7 @@ The parameters are grouped as follows:
 - `strip_face`: Character. Font face for panel strip. Default: `"bold"`
 - `strip_text_size`: Numeric. Font size for panel strip. Default: `16`
 - `strip_background`: Character. Background color of strip. Default: `"lightgrey"`
-- `strip_text_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(10, 0, 10, 0)`
+- `strip_text_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(10, 0, 10, 0)`
 
 ## **Panel Layout**
 - `panel_spacing`: Numeric. Spacing between panels. Default: `2`
@@ -141,10 +141,10 @@ The parameters are grouped as follows:
 - `all_font_size`: Numeric. Master control for all font sizes. Default: `1`
 
 ## **Plot Margin Settings**
-- `plot.margin`: ggplot2 `margin()` object. Margins around the entire plot. Default: `ggplot2::margin(10, 25, 10, 10)`
+- `plot.margin`: Numeric vector `c(top, right, bottom, left)`. Margins around the entire plot. Default: `c(10, 25, 10, 10)`
 }
 \examples{
-# Get alldefault configuration
+# Get all default configuration
 get_plot_style_config(printing = TRUE)
 
 # Get information about a specific parameter
@@ -154,7 +154,7 @@ param_info <- get_plot_style_config("default", "bar_width")
 config_df <- get_plot_style_config("default", as_dataframe = TRUE)
 
 # Validate custom configuration
-custom_config <- list(title_size = 24, bar_width = 0.7)
+custom_config <- list(title_size = 24, bar_width = 0.7, plot.margin = c(10, 50, 10, 10))
 validated <- get_plot_style_config("default", validate_custom = custom_config)
 
 }

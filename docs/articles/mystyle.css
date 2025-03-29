@@ -266,3 +266,23 @@ table.dataTable {
   display: block;
   margin-bottom: 6px;
 }
+
+.shiny-plot-output img {
+  width: auto !important;
+  height: auto !important;
+  max-width: 900px;
+  display: block;
+  margin: auto;
+}
+
+.toggle-code-summary {
+  font-family: monospace;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+  border-left: 4px solid #bbb;
+  padding: 6px 12px;
+  margin: 10px 0;
+  background-color: #f5f5f5;  /* Light subtle grey */
+  border-radius: 4px;
+}
