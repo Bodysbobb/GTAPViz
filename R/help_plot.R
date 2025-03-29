@@ -1585,6 +1585,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     separate_figure = FALSE,
     panel_val = NULL) {
 
+  # Generate basic title without panel value
   if (is_macro_mode) {
     plot_title <- .coalesce(
       var_name,
@@ -1656,9 +1657,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
   }
 
-  # Add unit to title if:
-  # 1. We're not using dynamic title OR
-  # 2. We're using dynamic title but it doesn't include unit AND add_unit_to_title is TRUE
+  # Add unit to title if appropriate
   if ((title_format$type != "dynamic" ||
        (title_format$type == "dynamic" && !dynamic_title_has_unit)) &&
       style_config$add_unit_to_title && !is.null(unit_name)) {
@@ -1669,13 +1668,19 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
   }
 
+  # Store the base title before adding panel value
+  base_title <- plot_title
+
+  # Add panel value to plot title if needed
   if (separate_figure && !is.null(panel_val)) {
-    plot_title <- paste0(plot_title, " - ", panel_val)
+    plot_title <- paste0(base_title, " - ", panel_val)
   }
 
-  parentheses_content <- list()
-  export_name <- plot_title
+  # Create initial export name from base title (without panel value)
+  export_name <- base_title
 
+  # Process parentheses in export name
+  parentheses_content <- list()
   parentheses_pattern <- "\\(([^()]*)\\)"
   matches <- gregexpr(parentheses_pattern, export_name)
   match_list <- regmatches(export_name, matches)
@@ -1688,8 +1693,10 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
   }
 
+  # Clean export name
   export_name <- gsub("[^a-zA-Z0-9\\s_]", " ", export_name)
 
+  # Restore parentheses
   for (placeholder in names(parentheses_content)) {
     export_name <- sub(placeholder, parentheses_content[[placeholder]], export_name, fixed = TRUE)
   }
@@ -1697,18 +1704,17 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   export_name <- gsub("\\s+", " ", export_name)
   export_name <- trimws(export_name)
 
+  # Add panel value as parenthetical suffix
   if (separate_figure && !is.null(panel_val)) {
-    # Remove panel_val if it appears at the end of the export_name
-    panel_pattern <- paste0(" - ", panel_val, "$")
-    export_name <- gsub(panel_pattern, "", export_name)
-
     clean_panel_val <- gsub("[^a-zA-Z0-9\\s]", " ", panel_val)
     clean_panel_val <- gsub("\\s+", " ", clean_panel_val)
     clean_panel_val <- trimws(clean_panel_val)
 
-    export_name <- paste(export_name, paste0("(", clean_panel_val, ")"))
+    # Add panel value in parentheses to export name
+    export_name <- paste0(export_name, " (", clean_panel_val, ")")
   }
 
+  # Add plot type suffix if needed
   if (!is.null(plot_type)) {
     if (plot_type == "stack") {
       export_name <- paste(export_name, "stack")
