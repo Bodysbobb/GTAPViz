@@ -1698,6 +1698,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   export_name <- trimws(export_name)
 
   if (separate_figure && !is.null(panel_val)) {
+    # Remove panel_val if it appears at the end of the export_name
     panel_pattern <- paste0(" - ", panel_val, "$")
     export_name <- gsub(panel_pattern, "", export_name)
 
