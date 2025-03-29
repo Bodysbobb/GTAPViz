@@ -24,8 +24,10 @@ navbar:
       menu:
         - text: "Comprehensive Manuscript"
           href: articles/GTAPViz_vignette.html
-        - text: "Advanced Output Catalog"
-          href: https://pattawee.shinyapps.io/GTAPViz_Advanced_Configurations/
+        - text: "Advanced Plot Configurations and Outputs"
+          href: https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/
+        - text: "Advanced Table Configurations and Outputs"
+          href: https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/
     reference:
       text: "References"
       menu:
