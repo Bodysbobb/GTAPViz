@@ -1736,7 +1736,6 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 #'
 #' @keywords internal
 #' @noRd
-#' generate_custom_title_column(df, template = "Impact on {Variable} in {Region} ({Unit})")
 .generate_custom_title_column <- function(df, template, new_col = "Title") {
   if (!requireNamespace("glue", quietly = TRUE)) {
     stop("The 'glue' package is required but not installed. Please install it with install.packages('glue').")
