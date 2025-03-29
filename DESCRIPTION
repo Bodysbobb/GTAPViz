@@ -24,20 +24,17 @@ Imports:
     openxlsx,
     colorspace,
     grDevices,
-    rlang,
     scales,
     utils,
     methods,
     stringdist,
-    readxl,
     stats,
-    glue
+    glue,
+    openxlsx2
 VignetteBuilder: knitr
 Suggests: 
     knitr,
     rmarkdown,
-    devtools,
-    shiny,
-    DT
+    devtools
 Depends: 
     R (>= 3.5)

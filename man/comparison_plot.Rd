@@ -91,7 +91,9 @@ p1 <- comparison_plot(
   x_axis_from = "Region",
   panel_var = "Experiment",
   filter_var = c("qgdp", "EV"),
-  output_path = "/your/folder/path"
+  output_path = tempdir(),
+  export_picture = FALSE,
+  export_as_pdf = FALSE,
 )
 
 # Split by commodity with custom styling and export options
@@ -102,8 +104,9 @@ p2 <- comparison_plot(
   panel_var = "Experiment",
   filter_var = c("qgdp", "EV"),
   var_name_by_description = TRUE,
-  output_path = "/your/folder/path",
-  export_as_pdf = TRUE,
+  output_path = tempdir(),
+  export_picture = FALSE,
+  export_as_pdf = FALSE,
   export_config = list(
     file_name = "commodity_impacts",
     width = 12,

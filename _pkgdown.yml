@@ -25,7 +25,7 @@ navbar:
         - text: "Comprehensive Manuscript"
           href: articles/GTAPViz_vignette.html
         - text: "Advanced Output Catalog"
-          href: https://pattawee.shinyapps.io/GTAPViz_Advanced_Config/
+          href: https://pattawee.shinyapps.io/GTAPViz_Advanced_Configurations/
     reference:
       text: "References"
       menu:

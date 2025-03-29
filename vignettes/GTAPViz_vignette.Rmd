@@ -63,8 +63,8 @@ txt.output <- "no"
 # 5. For Plotting: (TRUE/FALSE)
 plot_data = TRUE
 
-#setwd <- "D:/GitHub/GTAPViz/R"
-#devtools::load_all()
+setwd <- "D:/GitHub/GTAPViz/R"
+devtools::load_all()
 
 # Extracting Data
 auto_gtap_data(

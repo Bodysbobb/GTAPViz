@@ -110,13 +110,13 @@ stack_plot(data = har.plot.data[["A"]],
            invert_pane = FALSE,
            separate_figure = FALSE,
 
-           export_picture = TRUE,
-           export_as_pdf = "merged",
+           export_picture = FALSE,
+           export_as_pdf = FALSE,
            export_config = list(
              width = 28,
              height = 15
            ),
-           output_path = "/your/folder/path",
+           output_path = tempdir(),
 
            plot_style_config = list(
              color_tone = "gtap",

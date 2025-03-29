@@ -105,9 +105,9 @@ detail_plot(sl4.plot.data[["2D"]],
               height = 20
             ),
 
-            export_picture = TRUE,
+            export_picture = FALSE,
             export_as_pdf = FALSE,
-            output_path = "/your/folder/path",
+            output_path = tempdir(),
 
             plot_style_config = list(
               positive_color = "#2E8B57",

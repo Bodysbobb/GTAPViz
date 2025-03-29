@@ -44,20 +44,25 @@
 #'
 #' @examples
 #' \donttest{
-#' # Input Path:
+#' # Input Path
 #' input_path <- system.file("extdata/in", package = "GTAPViz")
 #'
-#' # Note: No need to add .sl4 to the experiment name
-#' gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
-#'                             input_path = input_path, subtotal_level = FALSE,
-#'                             process_sl4_vars = c("qgdp", "EV"), process_har_vars = FALSE,
-#'                             mapping_info = "GTAPv7", plot_data = TRUE)
+#' # Prepares data from SL4 files for EXP1 and EXP2
+#' auto_gtap_data(
+#'   experiment = c("EXP1", "EXP2"),
+#'   input_path = input_path,
+#'   subtotal_level = FALSE,
+#'   process_sl4_vars = c("qgdp", "EV"),
+#'   process_har_vars = FALSE,
+#'   mapping_info = "GTAPv7",
+#'   plot_data = TRUE
+#' )
 #'
+#' # Generate comparison table
 #' report_table(
 #'   data_list = sl4.plot.data[["1D"]],
 #'   pivot_col = list(Region = "Variable"),
-#'   group_by = list(
-#'     Region = list("Experiment", "Region")),
+#'   group_by = list(Region = list("Experiment", "Region")),
 #'   rename_cols = list("Experiment" = "Scenario"),
 #'
 #'   total_column = FALSE,
@@ -71,8 +76,8 @@
 #'   add_group_line = FALSE,
 #'
 #'   separate_sheet_by = "Unit",
-#'   export_table = TRUE,
-#'   output_path = "/your/folder/path",
+#'   export_table = FALSE,
+#'   output_path = tempdir(),
 #'   separate_file = FALSE,
 #'   workbook_name = "Comparison Table"
 #' )
@@ -307,6 +312,7 @@ report_table <- function(data_list,
 #' - Sorting is applied to ensure proper column arrangement.
 #'
 #' @keywords internal
+#' @noRd
 #' @author Pattawee Puangchit
 #'
 .process_detail_data <- function(df, wide_col, group_cols,
@@ -398,6 +404,7 @@ report_table <- function(data_list,
 #' @param add_group_line Logical. If `TRUE`, places a black border to separate each group in the first column.
 #'
 #' @keywords internal
+#' @noRd
 #' @author Pattawee Puangchit
 #'
 .export_detail_tables <- function(result_list, output_path, separate_file, sheet_names,
@@ -631,8 +638,41 @@ report_table <- function(data_list,
 #' - A pivot table sheet (`pivot_sheet_name`) generated based on specified row, column, and data fields.
 #'
 #' If `export = TRUE`, the function saves the workbook to the specified `output_path`.
+#'
 #' @author Pattawee Puangchit
 #' @export
+#'
+#' @examples
+#' \donttest{
+#' # Input Path
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#'
+#' # Prepares data from SL4 files for EXP1 and EXP2
+#' auto_gtap_data(
+#'   experiment = c("EXP1", "EXP2"),
+#'   input_path = input_path,
+#'   subtotal_level = FALSE,
+#'   process_sl4_vars = c("qo"),
+#'   process_har_vars = FALSE,
+#'   mapping_info = "GTAPv7",
+#'   plot_data = TRUE
+#' )
+#'
+#' # Generate comparison table
+#' pivot_table_with_filter(
+#'   data = sl4.plot.data[["2D"]][["Sector"]],
+#'   filter = c("Variable", "Unit"),
+#'   rows = c("Region", "Sector"),
+#'   cols = c("Experiment"),
+#'   data_fields = "Value",
+#'   raw_sheet_name = "Raw_Data",
+#'   pivot_sheet_name = "Sector_Pivot",
+#'   export = TRUE,
+#'   output_path = tempdir(),
+#'   workbook_name = "Sectoral_Impact_Analysis.xlsx"
+#' )
+#' }
+#'
 pivot_table_with_filter <- function(data,
                                     filter = NULL,
                                     rows = NULL,

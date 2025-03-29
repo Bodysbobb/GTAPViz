@@ -54,6 +54,38 @@ This function creates an Excel workbook with:
 
 If `export = TRUE`, the function saves the workbook to the specified `output_path`.
 }
+\examples{
+\donttest{
+# Input Path
+input_path <- system.file("extdata/in", package = "GTAPViz")
+
+# Prepares data from SL4 files for EXP1 and EXP2
+auto_gtap_data(
+  experiment = c("EXP1", "EXP2"),
+  input_path = input_path,
+  subtotal_level = FALSE,
+  process_sl4_vars = c("qo"),
+  process_har_vars = FALSE,
+  mapping_info = "GTAPv7",
+  plot_data = TRUE
+)
+
+# Generate comparison table
+pivot_table_with_filter(
+  data = sl4.plot.data[["2D"]][["Sector"]],
+  filter = c("Variable", "Unit"),
+  rows = c("Region", "Sector"),
+  cols = c("Experiment"),
+  data_fields = "Value",
+  raw_sheet_name = "Raw_Data",
+  pivot_sheet_name = "Sector_Pivot",
+  export = TRUE,
+  output_path = tempdir(),
+  workbook_name = "Sectoral_Impact_Analysis.xlsx"
+)
+}
+
+}
 \author{
 Pattawee Puangchit
 }

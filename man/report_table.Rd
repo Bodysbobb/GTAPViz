@@ -84,20 +84,25 @@ and exporting to Excel.
 }
 \examples{
 \donttest{
-# Input Path:
+# Input Path
 input_path <- system.file("extdata/in", package = "GTAPViz")
 
-# Note: No need to add .sl4 to the experiment name
-gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
-                            input_path = input_path, subtotal_level = FALSE,
-                            process_sl4_vars = c("qgdp", "EV"), process_har_vars = FALSE,
-                            mapping_info = "GTAPv7", plot_data = TRUE)
+# Prepares data from SL4 files for EXP1 and EXP2
+auto_gtap_data(
+  experiment = c("EXP1", "EXP2"),
+  input_path = input_path,
+  subtotal_level = FALSE,
+  process_sl4_vars = c("qgdp", "EV"),
+  process_har_vars = FALSE,
+  mapping_info = "GTAPv7",
+  plot_data = TRUE
+)
 
+# Generate comparison table
 report_table(
   data_list = sl4.plot.data[["1D"]],
   pivot_col = list(Region = "Variable"),
-  group_by = list(
-    Region = list("Experiment", "Region")),
+  group_by = list(Region = list("Experiment", "Region")),
   rename_cols = list("Experiment" = "Scenario"),
 
   total_column = FALSE,
@@ -111,8 +116,8 @@ report_table(
   add_group_line = FALSE,
 
   separate_sheet_by = "Unit",
-  export_table = TRUE,
-  output_path = "/your/folder/path",
+  export_table = FALSE,
+  output_path = tempdir(),
   separate_file = FALSE,
   workbook_name = "Comparison Table"
 )
