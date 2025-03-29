@@ -18,7 +18,11 @@ The function supports stacked and unstacked presentations for decomposition anal
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/index.html">Vignettes</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/GTAPViz_vignette.html">Comprehensive Manuscript</a></li>
+    <li><a class="dropdown-item" href="../articles/GTAPViz_Plot_Catalog.html">Advanced Output Catalog</a></li>
+  </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-references" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">References</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-references"><li><a class="dropdown-item" href="../reference/index.html">Function Reference</a></li>
@@ -55,17 +59,17 @@ The function supports stacked and unstacked presentations for decomposition anal
 <span>  variable_col <span class="op">=</span> <span class="st">"Variable"</span>,</span>
 <span>  unit_col <span class="op">=</span> <span class="st">"Unit"</span>,</span>
 <span>  desc_col <span class="op">=</span> <span class="st">"Description"</span>,</span>
+<span>  var_name_by_description <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add_var_info <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_total <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  unstack_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  top_impact <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  invert_pane <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  unstack_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  export_picture <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  export_as_pdf <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  export_config <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  var_name_by_description <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  add_var_info <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  show_total <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  top_impact <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot_style_config <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -112,16 +116,32 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <dd><p>Character. Column containing variable descriptions (default: "Description").</p></dd>
 
 
+<dt id="arg-var-name-by-description">var_name_by_description<a class="anchor" aria-label="anchor" href="#arg-var-name-by-description"></a></dt>
+<dd><p>Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).</p></dd>
+
+
+<dt id="arg-add-var-info">add_var_info<a class="anchor" aria-label="anchor" href="#arg-add-var-info"></a></dt>
+<dd><p>Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).</p></dd>
+
+
+<dt id="arg-show-total">show_total<a class="anchor" aria-label="anchor" href="#arg-show-total"></a></dt>
+<dd><p>Logical. If TRUE, displays total values above stacked bars (default: TRUE).</p></dd>
+
+
+<dt id="arg-unstack-plot">unstack_plot<a class="anchor" aria-label="anchor" href="#arg-unstack-plot"></a></dt>
+<dd><p>Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).</p></dd>
+
+
+<dt id="arg-top-impact">top_impact<a class="anchor" aria-label="anchor" href="#arg-top-impact"></a></dt>
+<dd><p>Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.</p></dd>
+
+
 <dt id="arg-invert-pane">invert_pane<a class="anchor" aria-label="anchor" href="#arg-invert-pane"></a></dt>
 <dd><p>Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).</p></dd>
 
 
 <dt id="arg-separate-figure">separate_figure<a class="anchor" aria-label="anchor" href="#arg-separate-figure"></a></dt>
 <dd><p>Logical. If TRUE, generates separate figures per panel value (default: FALSE).</p></dd>
-
-
-<dt id="arg-unstack-plot">unstack_plot<a class="anchor" aria-label="anchor" href="#arg-unstack-plot"></a></dt>
-<dd><p>Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).</p></dd>
 
 
 <dt id="arg-output-path">output_path<a class="anchor" aria-label="anchor" href="#arg-output-path"></a></dt>
@@ -141,22 +161,6 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <li><p>`height`: Output file height (in inches).</p></li>
 <li><p>Additional settings—see `?get_export_config`.</p></li>
 </ul></dd>
-
-
-<dt id="arg-var-name-by-description">var_name_by_description<a class="anchor" aria-label="anchor" href="#arg-var-name-by-description"></a></dt>
-<dd><p>Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).</p></dd>
-
-
-<dt id="arg-add-var-info">add_var_info<a class="anchor" aria-label="anchor" href="#arg-add-var-info"></a></dt>
-<dd><p>Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).</p></dd>
-
-
-<dt id="arg-show-total">show_total<a class="anchor" aria-label="anchor" href="#arg-show-total"></a></dt>
-<dd><p>Logical. If TRUE, displays total values above stacked bars (default: TRUE).</p></dd>
-
-
-<dt id="arg-top-impact">top_impact<a class="anchor" aria-label="anchor" href="#arg-top-impact"></a></dt>
-<dd><p>Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.</p></dd>
 
 
 <dt id="arg-plot-style-config">plot_style_config<a class="anchor" aria-label="anchor" href="#arg-plot-style-config"></a></dt>

@@ -259,6 +259,20 @@ table.dataTable {
   width: 100% !important;
 }
 
+div.dataTables_scrollHead table,
+div.dataTables_scrollBody table {
+  width: 100% !important;
+  table-layout: auto !important;
+}
+
+.dataTable th,
+.dataTable td {
+  text-align: left !important;
+  vertical-align: top !important;
+  white-space: normal !important;
+  word-wrap: break-word;
+}
+
 .select-label {
   font-size: 14px;
   font-weight: bold;

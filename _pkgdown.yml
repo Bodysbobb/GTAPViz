@@ -1,4 +1,5 @@
 url: https://bodysbobb.github.io/GTAPViz/
+
 template:
   bootstrap: 5
   bootswatch: flatly
@@ -6,36 +7,42 @@ template:
     in_header: |
       <link rel="stylesheet" href="mystyle.css">
       <meta name="google-site-verification" content="8QKloLN9mSrDsTaZuR4KAEAmti-k3mYCBZpMVgq2RO8" />
+
 home:
   title: GTAPViz - Visualizing GTAP Results from HAR and SL4 Files
+
 navbar:
   structure:
-    left:  [home, articles, reference]
+    left: [home, articles, reference]
     right: [github]
   components:
     home:
       text: "Home"
       href: index.html
+    articles:
+      text: "Vignettes"
+      menu:
+        - text: "Comprehensive Manuscript"
+          href: articles/GTAPViz_vignette.html
+        - text: "Advanced Output Catalog"
+          href: https://pattawee.shinyapps.io/GTAPViz_Advanced_Config/
     reference:
       text: "References"
       menu:
-      - text: "Function Reference"
-        href: reference/index.html
-      - text: "PDF Manual"
-        href: GTAPViz_1.0.0.pdf
-    articles:
-      text: "Vignettes"
-      href: articles/index.html
+        - text: "Function Reference"
+          href: reference/index.html
     github:
       icon: fab fa-github
       href: https://github.com/Bodysbobb/GTAPViz
       aria-label: "GitHub Repository"
+
 toc:
   depth: 3
   collapse: true
   float: true
   smooth_scroll: true
+
 articles:
-  - title: "GTAPViz Vignette"
+  - title: "GTAPViz Vignettes"
     contents:
       - GTAPViz_vignette

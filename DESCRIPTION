@@ -36,6 +36,8 @@ VignetteBuilder: knitr
 Suggests: 
     knitr,
     rmarkdown,
-    devtools
+    devtools,
+    shiny,
+    DT
 Depends: 
     R (>= 3.5)

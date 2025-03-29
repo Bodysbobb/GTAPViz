@@ -1,5 +1,5 @@
 ---
-title: 'GTAPViz: Visualizing GTAP Results from HAR and SL4 Files'
+title: "Comprehensive Manuscript: A Step-by-Step Guide"
 author: "Pattawee Puangchit"
 date: "`r Sys.Date()`"
 output:
@@ -13,7 +13,7 @@ output:
     code_folding: show
     self_contained: true
 vignette: >
-  %\VignetteIndexEntry{GTAPViz: Visualizing GTAP Results from HAR and SL4 Files}
+  %\VignetteIndexEntry{Comprehensive Manuscript: A Step-by-Step Guide}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -63,8 +63,8 @@ txt.output <- "no"
 # 5. For Plotting: (TRUE/FALSE)
 plot_data = TRUE
 
-setwd <- "D:/GitHub/GTAPViz/R"
-devtools::load_all()
+#setwd <- "D:/GitHub/GTAPViz/R"
+#devtools::load_all()
 
 # Extracting Data
 auto_gtap_data(

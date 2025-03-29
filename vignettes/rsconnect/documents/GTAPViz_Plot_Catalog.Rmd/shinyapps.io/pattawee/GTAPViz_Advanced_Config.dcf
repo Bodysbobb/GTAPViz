@@ -1,0 +1,13 @@
+name: GTAPViz_Advanced_Config
+title: GTAPViz_Advanced_Config
+username: pattawee
+account: pattawee
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14371915
+bundleId: 10022285
+url: https://pattawee.shinyapps.io/GTAPViz_Advanced_Config/
+version: 1
+asMultiple: TRUE
+asStatic: FALSE
+ignoredFiles: GTAPViz_vignette.Rmd
