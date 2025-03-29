@@ -7,23 +7,14 @@
 <url><loc>https://bodysbobb.github.io/GTAPViz/index.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/add_mapping_info.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/auto_gtap_data.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/auto_gtap_dynamic.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/comparison_plot.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/convert_units.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/detail_plot.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-auto_GTAPRd_info.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-coalesce.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-create_agg_mapping.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-export_detail_tables.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-gtap_rd_agg.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-gtap_rd_dev.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dot-process_detail_data.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/dynamic_input_name.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/get_all_config.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/get_color_palette.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/get_export_config.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/get_plot_style_config.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/gtapRD_raw_import.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/gtap_macros_data.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/index.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/pivot_table_with_filter.html</loc></url>
@@ -32,6 +23,5 @@
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/report_table.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/sort_plot_data.html</loc></url>
 <url><loc>https://bodysbobb.github.io/GTAPViz/reference/stack_plot.html</loc></url>
-<url><loc>https://bodysbobb.github.io/GTAPViz/reference/trend_plot.html</loc></url>
 </urlset>
 

@@ -21,7 +21,7 @@ The function supports stacked and unstacked presentations for decomposition anal
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/GTAPViz_vignette.html">Comprehensive Manuscript</a></li>
-    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/GTAPViz_Advanced_Config/">Advanced Output Catalog</a></li>
+    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/GTAPViz_Advanced_Configurations/">Advanced Output Catalog</a></li>
   </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-references" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">References</button>
@@ -219,13 +219,13 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <span class="r-in"><span>           invert_pane <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>           separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>           export_picture <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>           export_as_pdf <span class="op">=</span> <span class="st">"merged"</span>,</span></span>
+<span class="r-in"><span>           export_picture <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>           export_as_pdf <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>           export_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>             width <span class="op">=</span> <span class="fl">28</span>,</span></span>
 <span class="r-in"><span>             height <span class="op">=</span> <span class="fl">15</span></span></span>
 <span class="r-in"><span>           <span class="op">)</span>,</span></span>
-<span class="r-in"><span>           output_path <span class="op">=</span> <span class="st">"/your/folder/path"</span>,</span></span>
+<span class="r-in"><span>           output_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>           plot_style_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>             color_tone <span class="op">=</span> <span class="st">"gtap"</span>,</span></span>
@@ -234,10 +234,6 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <span class="r-in"><span>             show_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>             show_axis_titles_on_all_facets <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span>           <span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; Starting plot export process: 1 plot(s) with dimensions (widthxheight): 28.0 x 15.0 inches</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; DPI: 300</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot create dir '/your', reason 'Permission denied'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in grDevices::pdf(file = pdf_path, width = export_config$width,     height = export_config$height, useDingbats = FALSE, title = pdf_file_name):</span> cannot open file '/your/folder/path/Stack_plot_1.pdf'</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
