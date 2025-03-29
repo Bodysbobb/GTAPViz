@@ -18,11 +18,14 @@ or to look up specific parameters. Also provides parameter validation for custom
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/index.html">Vignettes</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/GTAPViz_vignette.html">Comprehensive Manuscript</a></li>
+    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/GTAPViz_Advanced_Config/">Advanced Output Catalog</a></li>
+  </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-references" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">References</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-references"><li><a class="dropdown-item" href="../reference/index.html">Function Reference</a></li>
-    <li><a class="dropdown-item" href="../GTAPViz_1.0.0.pdf">PDF Manual</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/Bodysbobb/GTAPViz" aria-label="GitHub Repository"><span class="fa fab fa-github"></span></a></li>
       </ul></div>
@@ -60,7 +63,7 @@ or to look up specific parameters. Also provides parameter validation for custom
 
 
 <dl><dt id="arg-plot-type">plot_type<a class="anchor" aria-label="anchor" href="#arg-plot-type"></a></dt>
-<dd><p>Character. Type of plot: "comparison" (default), "detail", or "stack".</p></dd>
+<dd><p>Character. Type of plot: "default" (default).</p></dd>
 
 
 <dt id="arg-parameter-name">parameter_name<a class="anchor" aria-label="anchor" href="#arg-parameter-name"></a></dt>
@@ -101,15 +104,15 @@ The parameters are grouped as follows:</p>
 - `title_size`: Numeric. Font size of title. Default: `20`
 - `title_hjust`: Numeric. Horizontal alignment (0 = left, 1 = right). Default: `0.5`
 - `add_unit_to_title`: Logical. Append unit to title if applicable. Default: `TRUE`
-- `title_margin`: ggplot2 `margin()` object. Default: `ggplot2::margin(10, 0, 10, 0)`
+- `title_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(10, 0, 10, 0)`
 - `title_format`: List or NULL. Formatting options for the title, with elements:</p><ul><li><p><code>type</code>: Character. One of "prefix", "suffix", "full", or "dynamic".</p></li>
 <li><p><code>text</code>: Character. Text to add, or column names used for dynamic titles.</p></li>
 <li><p><code>sep</code>: Character. Separator used for dynamic titles. Default: " - ".</p></li>
 </ul><p>## **X-Axis Settings**
-- `show_x_axis_title`: Logical. Show or hide x-axis title. Default: `FALSE`
+- `show_x_axis_title`: Logical. Show or hide x-axis title. Default: `TRUE`
 - `x_axis_title_face`: Character. Font face for x-axis title. Default: `"bold"`
 - `x_axis_title_size`: Numeric. Font size of x-axis title. Default: `16`
-- `x_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(t = 20)`
+- `x_axis_title_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(25, 25, 0, 0)`
 - `show_x_axis_labels`: Logical. Show or hide x-axis labels. Default: `TRUE`
 - `x_axis_text_face`: Character. Font face for x-axis labels. Default: `"bold"`
 - `x_axis_text_size`: Numeric. Font size of x-axis labels. Default: `14`
@@ -120,7 +123,7 @@ The parameters are grouped as follows:</p>
 - `show_y_axis_title`: Logical. Show or hide y-axis title. Default: `TRUE`
 - `y_axis_title_face`: Character. Font face for y-axis title. Default: `"bold"`
 - `y_axis_title_size`: Numeric. Font size of y-axis title. Default: `16`
-- `y_axis_title_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(r = 20)`
+- `y_axis_title_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(25, 25, 0, 0)`
 - `show_y_axis_labels`: Logical. Show or hide y-axis labels. Default: `TRUE`
 - `y_axis_text_face`: Character. Font face for y-axis labels. Default: `"plain"`
 - `y_axis_text_size`: Numeric. Font size of y-axis labels. Default: `14`
@@ -145,7 +148,7 @@ The parameters are grouped as follows:</p>
 - `strip_face`: Character. Font face for panel strip. Default: `"bold"`
 - `strip_text_size`: Numeric. Font size for panel strip. Default: `16`
 - `strip_background`: Character. Background color of strip. Default: `"lightgrey"`
-- `strip_text_margin`: ggplot2 `margin()`. Default: `ggplot2::margin(10, 0, 10, 0)`</p>
+- `strip_text_margin`: Numeric vector `c(top, right, bottom, left)`. Default: `c(10, 0, 10, 0)`</p>
 <p>## **Panel Layout**
 - `panel_spacing`: Numeric. Spacing between panels. Default: `2`
 - `panel_rows`: Numeric or `NULL`. Number of rows in panel layout. Default: `NULL`
@@ -179,7 +182,7 @@ The parameters are grouped as follows:</p>
 <p>## **All Font Adjustment**
 - `all_font_size`: Numeric. Master control for all font sizes. Default: `1`</p>
 <p>## **Plot Margin Settings**
-- `plot.margin`: ggplot2 `margin()` object. Margins around the entire plot. Default: `ggplot2::margin(10, 25, 10, 10)`</p>
+- `plot.margin`: Numeric vector `c(top, right, bottom, left)`. Margins around the entire plot. Default: `c(10, 25, 10, 10)`</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -192,7 +195,7 @@ The parameters are grouped as follows:</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Get alldefault configuration</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Get all default configuration</span></span></span>
 <span class="r-in"><span><span class="fu">get_plot_style_config</span><span class="op">(</span>printing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> my_style_config &lt;- list(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -202,7 +205,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   title_size = 20,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   title_hjust = 0.5,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   add_unit_to_title = TRUE,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   title_margin = margin(t = 10, r = 0, b = 10, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   title_margin = c(10, 0, 10, 0), #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   title_format = list(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     type = "standard", #option: prefix, suffix, full, dynamic</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     text = "",</span>
@@ -213,7 +216,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   show_x_axis_title = TRUE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_face = "bold",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_size = 16,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_title_margin = c(25, 25, 0, 0), #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   show_x_axis_labels = TRUE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_text_face = "plain",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x_axis_text_size = 14,</span>
@@ -225,7 +228,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   show_y_axis_title = TRUE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_face = "bold",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_size = 16,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_margin = margin(t = 25, r = 25, b = 0, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_title_margin = c(25, 25, 0, 0), #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   show_y_axis_labels = TRUE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_text_face = "plain",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   y_axis_text_size = 14,</span>
@@ -253,7 +256,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   strip_face = "bold",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   strip_text_size = 16,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   strip_background = "lightgrey",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   strip_text_margin = margin(t = 10, r = 0, b = 10, l = 0),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   strip_text_margin = c(10, 0, 10, 0), #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   # Panel Layout</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   panel_spacing = 2,</span>
@@ -299,7 +302,7 @@ The parameters are grouped as follows:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   sort_data_by_value = FALSE,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   # Plot Margin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   plot.margin = margin(t = 10, r = 25, b = 10, l = 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   plot.margin = c(10, 25, 10, 10) #c(top, right, bottom, left)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Example usage:</span>
@@ -312,7 +315,7 @@ The parameters are grouped as follows:</p>
 <span class="r-in"><span><span class="va">config_df</span> <span class="op">&lt;-</span> <span class="fu">get_plot_style_config</span><span class="op">(</span><span class="st">"default"</span>, as_dataframe <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Validate custom configuration</span></span></span>
-<span class="r-in"><span><span class="va">custom_config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>title_size <span class="op">=</span> <span class="fl">24</span>, bar_width <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">custom_config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>title_size <span class="op">=</span> <span class="fl">24</span>, bar_width <span class="op">=</span> <span class="fl">0.7</span>, plot.margin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">validated</span> <span class="op">&lt;-</span> <span class="fu">get_plot_style_config</span><span class="op">(</span><span class="st">"default"</span>, validate_custom <span class="op">=</span> <span class="va">custom_config</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
