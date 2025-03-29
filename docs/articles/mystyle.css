@@ -230,3 +230,39 @@ section, div.section, .level1, .level2, .level3, .level4, .level5, .level6 {
   border: none; /* Removes border */
   box-shadow: none; /* Removes box effect */
 }
+
+.toggle-summary {
+  font-weight: bold;
+  color: #004488;       /* Dark blue (you can change this) */
+  background-color: #f0f8ff;  /* Light background to highlight */
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+select.form-control {
+  width: 600px !important;
+  max-width: 100%;
+}
+
+/* Label above selectInput */
+.select-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 6px;
+  display: block;
+}
+
+table.dataTable {
+  font-size: 12px;
+  width: 100% !important;
+}
+
+.select-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #003366;
+  display: block;
+  margin-bottom: 6px;
+}

@@ -1280,6 +1280,20 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   # Merge user config with defaults (user settings take precedence)
   final_config <- modifyList(default_config, config)
 
+  # If user provided plot.margin as a list, convert it to a margin object
+  if (!is.null(final_config$plot.margin) && !inherits(final_config$plot.margin, "margin")) {
+    if (is.list(final_config$plot.margin)) {
+      # Try to convert from list to margin
+      margin_args <- c(
+        final_config$plot.margin$t,
+        final_config$plot.margin$r,
+        final_config$plot.margin$b,
+        final_config$plot.margin$l
+      )
+      final_config$plot.margin <- do.call(ggplot2::margin, as.list(margin_args))
+    }
+  }
+
   # Handle dynamic title format
   if (!is.null(final_config$title_format) &&
       final_config$title_format$type == "dynamic" &&
@@ -1450,6 +1464,11 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
   )
 
+  # Explicitly apply plot margin as a separate theme element to ensure it's not overridden
+  if (!is.null(config$plot.margin)) {
+    p <- p + ggplot2::theme(plot.margin = config$plot.margin)
+  }
+
   # Apply zero line if configured
   if (config$show_zero_line) {
     # Remove any existing zero line (geom_hline with yintercept=0)
@@ -1556,16 +1575,17 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     var_name = NULL,
     sep_value = NULL,
     x_value = NULL,
-    plot_type = NULL,  # "comparison", "detail", "stack", "unstack"
+    plot_type = NULL,
     is_macro_mode = FALSE,
     split_by = NULL,
     x_axis_from = NULL,
     variable_col = NULL,
     unit_name = NULL,
     style_config = NULL,
-    data = NULL) {
+    data = NULL,
+    separate_figure = FALSE,
+    panel_val = NULL) {
 
-  # DETERMINE BASE TITLE
   if (is_macro_mode) {
     plot_title <- .coalesce(
       var_name,
@@ -1587,67 +1607,57 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
   }
 
-  # For unstacked plots, include x_value in title if provided
-  if (plot_type == "unstack" && !is.null(x_value)) {
-    if (!is.null(x_axis_from)) {
-      title_prefix <- paste0(x_axis_from, ": ", x_value)
-      if (!is.null(plot_title) && nzchar(plot_title)) {
-        plot_title <- paste0(title_prefix, " - ", plot_title)
-      } else {
-        plot_title <- title_prefix
+  # Flag to track if we're using a dynamic title
+  is_dynamic_title <- FALSE
+
+  if (!is.null(style_config$title_format)) {
+    title_format <- style_config$title_format
+
+    # For "dynamic" and "full" types, completely replace the default title
+    if (title_format$type == "dynamic") {
+      is_dynamic_title <- TRUE
+      if (!is.null(data) && !is.null(title_format$text) && nrow(data) > 0) {
+        if (!requireNamespace("glue", quietly = TRUE)) {
+          warning("The 'glue' package is required for dynamic titles but is not installed. Using standard title format.")
+          is_dynamic_title <- FALSE
+        } else {
+          referenced_cols <- regmatches(
+            title_format$text,
+            gregexpr("\\{([^}]+)\\}", title_format$text)
+          )
+
+          if (length(referenced_cols) > 0 && length(referenced_cols[[1]]) > 0) {
+            referenced_cols <- gsub("\\{|\\}", "", referenced_cols[[1]])
+            missing_cols <- setdiff(referenced_cols, names(data))
+
+            if (length(missing_cols) > 0) {
+              warning(paste("Columns referenced in dynamic title template but not found in data:",
+                            paste(missing_cols, collapse=", ")))
+              is_dynamic_title <- FALSE
+            } else {
+              plot_title <- glue::glue_data(data[1, ], title_format$text)
+            }
+          } else {
+            plot_title <- title_format$text
+          }
+        }
       }
-    } else {
-      if (!is.null(plot_title) && nzchar(plot_title)) {
-        plot_title <- paste0(x_value, " - ", plot_title)
-      } else {
-        plot_title <- x_value
-      }
+    }
+    else if (title_format$type == "full") {
+      plot_title <- title_format$text
+    }
+    else if (title_format$type == "prefix") {
+      separator <- if (!is.null(title_format$sep)) title_format$sep else " "
+      plot_title <- paste0(title_format$text, separator, plot_title)
+    }
+    else if (title_format$type == "suffix") {
+      separator <- if (!is.null(title_format$sep)) title_format$sep else " "
+      plot_title <- paste0(plot_title, separator, title_format$text)
     }
   }
 
-  # APPLY TITLE FORMAT
-  if (!is.null(style_config$title_format)) {
-    title_format <- style_config$title_format
-    switch(title_format$type,
-           "prefix" = {
-             # Use separator if defined, otherwise use space
-             separator <- if (!is.null(title_format$sep)) title_format$sep else " "
-             plot_title <- paste0(title_format$text, separator, plot_title)
-           },
-           "suffix" = {
-             # Use separator if defined, otherwise use space
-             separator <- if (!is.null(title_format$sep)) title_format$sep else " "
-             plot_title <- paste0(plot_title, separator, title_format$text)
-           },
-           "full" = {
-             plot_title <- title_format$text
-           },
-           "dynamic" = {
-             if (!is.null(data) && !is.null(title_format$text)) {
-               separator <- if (!is.null(title_format$sep)) title_format$sep else " - "
-
-               cols_to_use <- title_format$text
-               valid_cols <- cols_to_use[cols_to_use %in% names(data)]
-
-               if (length(valid_cols) > 0) {
-                 unique_values <- list()
-                 for (col in valid_cols) {
-                   vals <- unique(as.character(data[[col]]))
-                   unique_values[[col]] <- vals
-                 }
-
-                 all_values <- unlist(unique_values)
-                 deduped_values <- unique(all_values)
-
-                 plot_title <- paste(deduped_values, collapse = separator)
-               }
-             }
-           }
-    )
-  }
-
-  # ADD UNIT IF CONFIGURED
-  if (style_config$add_unit_to_title && !is.null(unit_name)) {
+  # Only add unit to title if we're not using a dynamic title
+  if (!is_dynamic_title && style_config$add_unit_to_title && !is.null(unit_name)) {
     if (tolower(unit_name) == "percent") {
       plot_title <- paste0(plot_title, " (%)")
     } else {
@@ -1655,25 +1665,52 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     }
   }
 
-  # CLEAN TITLE FOR EXPORT NAME
-  clean_title <- gsub("[^a-zA-Z0-9\\s]", "", plot_title)
-  export_name <- gsub("\\s+", "_", clean_title)
-  export_name <- gsub("_+", "_", export_name)
-  export_name <- gsub("^_|_$", "", export_name)
-
-  # Add unique identifiers for unstacked plots
-  if (plot_type == "unstack" && !is.null(x_value)) {
-    x_clean <- gsub("[^a-zA-Z0-9\\s]", "", x_value)
-    x_clean <- gsub("\\s+", "_", x_clean)
-    export_name <- paste0(export_name, "_", x_clean)
+  if (separate_figure && !is.null(panel_val)) {
+    plot_title <- paste0(plot_title, " - ", panel_val)
   }
 
-  # ADD PLOT TYPE SUFFIX
+  # For export filename, we continue to use the standard approach
+  # This keeps export_name independent of the dynamic title formatting
+  parentheses_content <- list()
+  export_name <- plot_title
+
+  parentheses_pattern <- "\\(([^()]*)\\)"
+  matches <- gregexpr(parentheses_pattern, export_name)
+  match_list <- regmatches(export_name, matches)
+
+  if (length(match_list) > 0 && length(match_list[[1]]) > 0) {
+    for (i in seq_along(match_list[[1]])) {
+      placeholder <- paste0("__PLACEHOLDER_", i, "__")
+      parentheses_content[[placeholder]] <- match_list[[1]][i]
+      export_name <- sub(match_list[[1]][i], placeholder, export_name, fixed = TRUE)
+    }
+  }
+
+  export_name <- gsub("[^a-zA-Z0-9\\s_]", " ", export_name)
+
+  for (placeholder in names(parentheses_content)) {
+    export_name <- sub(placeholder, parentheses_content[[placeholder]], export_name, fixed = TRUE)
+  }
+
+  export_name <- gsub("\\s+", " ", export_name)
+  export_name <- trimws(export_name)
+
+  if (separate_figure && !is.null(panel_val)) {
+    panel_pattern <- paste0(" - ", panel_val, "$")
+    export_name <- gsub(panel_pattern, "", export_name)
+
+    clean_panel_val <- gsub("[^a-zA-Z0-9\\s]", " ", panel_val)
+    clean_panel_val <- gsub("\\s+", " ", clean_panel_val)
+    clean_panel_val <- trimws(clean_panel_val)
+
+    export_name <- paste(export_name, paste0("(", clean_panel_val, ")"))
+  }
+
   if (!is.null(plot_type)) {
     if (plot_type == "stack") {
-      export_name <- paste0(export_name, "_stack")
+      export_name <- paste(export_name, "stack")
     } else if (plot_type == "unstack") {
-      export_name <- paste0(export_name, "_unstack")
+      export_name <- paste(export_name, "unstack")
     }
   }
 
@@ -1683,6 +1720,31 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   ))
 }
 
+#' Generate a Custom Title Column Using a Glue Template (Internal)
+#'
+#' @description
+#' Creates a new column in the data frame based on a user-defined glue-style template.
+#' This allows dynamic construction of titles using column values.
+#'
+#' @param df A data frame.
+#' @param template A string template using `{}` to refer to column names (e.g., "Impact on {Variable} in {Region} ({Unit})").
+#' @param new_col Character. Name of the new column to be created. Default is "Title".
+#'
+#' @return The original data frame with an added column based on the template.
+#'
+#' @importFrom glue glue_data
+#'
+#' @keywords internal
+#' @noRd
+#' generate_custom_title_column(df, template = "Impact on {Variable} in {Region} ({Unit})")
+.generate_custom_title_column <- function(df, template, new_col = "Title") {
+  if (!requireNamespace("glue", quietly = TRUE)) {
+    stop("The 'glue' package is required but not installed. Please install it with install.packages('glue').")
+  }
+
+  df[[new_col]] <- glue::glue_data(df, template)
+  return(df)
+}
 
 #' @title Prepare Data Source for Plotting
 #'
@@ -2717,7 +2779,9 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       # Individual PDF export
       if (n_plots == 1) {
         p <- plots[[1]]
-        pdf_path <- file.path(output_path, paste0(base_file_name, ".pdf"))
+        plot_name <- names(plots)[[1]]
+        # Use the plot name directly - preserve spaces
+        pdf_path <- file.path(output_path, paste0(plot_name, ".pdf"))
 
         ggplot2::ggsave(
           filename = pdf_path,
@@ -2736,7 +2800,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
         for (i in seq_along(plots)) {
           p <- plots[[i]]
           plot_name <- names(plots)[[i]]
-
+          # Use the plot name directly - preserve spaces
           pdf_path <- file.path(output_path, paste0(plot_name, ".pdf"))
 
           ggplot2::ggsave(
@@ -2761,7 +2825,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     if (n_plots == 1) {
       p <- plots[[1]]
       plot_name <- names(plots)[[1]]
-
+      # Use the plot name directly - preserve spaces
       png_path <- file.path(output_path, paste0(plot_name, ".png"))
 
       ggplot2::ggsave(
@@ -2781,7 +2845,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       for (i in seq_along(plots)) {
         p <- plots[[i]]
         plot_name <- names(plots)[[i]]
-
+        # Use the plot name directly - preserve spaces
         png_path <- file.path(output_path, paste0(plot_name, ".png"))
 
         ggplot2::ggsave(

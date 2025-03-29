@@ -30,7 +30,8 @@ Imports:
     methods,
     stringdist,
     readxl,
-    stats
+    stats,
+    glue
 VignetteBuilder: knitr
 Suggests: 
     knitr,

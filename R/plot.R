@@ -202,7 +202,9 @@ comparison_plot <- function(data, filter_var = NULL,
             variable_col = variable_col,
             unit_name = unit_name,
             style_config = style_config,
-            data = panel_data
+            data = panel_data,
+            separate_figure = separate_figure,
+            panel_val = panel_val
           )
 
           p <- .create_single_comparison_plot(
@@ -276,7 +278,9 @@ comparison_plot <- function(data, filter_var = NULL,
               variable_col = variable_col,
               unit_name = unit_name,
               style_config = style_config,
-              data = panel_data
+              data = panel_data,
+              separate_figure = separate_figure,
+              panel_val = panel_val
             )
 
             p <- .create_single_comparison_plot(
@@ -373,6 +377,7 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @noRd
 #' @seealso \code{\link{comparison_plot}}
 #'
+
 .create_single_comparison_plot <- function(data, x_axis_from, plot_title, unit,
                                            panel_rows, panel_cols,
                                            panel_var = "Experiment",
@@ -580,50 +585,19 @@ comparison_plot <- function(data, filter_var = NULL,
 
   # APPLY THEME STYLING
   p <- p + ggplot2::theme_minimal()
-  p <- .apply_plot_style_config(p, style_config)
 
-  # HANDLE AXIS LABELS BASED ON ORIENTATION
+  # Handle axis labels BEFORE applying style config
   if (invert_pane) {
     # For horizontal bars, x is Value axis and y is Categories axis
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
       p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_y_axis_title) {
       # Only categories axis title visible
       p <- p + ggplot2::labs(title = plot_title, x = "", y = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_x_axis_title) {
       # Only value axis title visible
       p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
     } else {
       # No axis titles
       p <- p + ggplot2::labs(title = plot_title, x = "", y = "")
@@ -633,47 +607,20 @@ comparison_plot <- function(data, filter_var = NULL,
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
       p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_x_axis_title) {
       # Only categories axis title visible
       p <- p + ggplot2::labs(title = plot_title, y = "", x = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_y_axis_title) {
       # Only value axis title visible
       p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
     } else {
       # No axis titles
       p <- p + ggplot2::labs(title = plot_title, y = "", x = "")
     }
   }
+
+  # Apply style config LAST
+  p <- .apply_plot_style_config(p, style_config)
 
   return(p)
 }
@@ -922,7 +869,9 @@ detail_plot <- function(data, filter_var = NULL,
               variable_col = variable_col,
               unit_name = unit_name,
               style_config = style_config,
-              data = panel_data
+              data = panel_data,
+              separate_figure = separate_figure,
+              panel_val = panel_val
             )
 
             p <- .create_single_detail_plot(
@@ -1013,7 +962,9 @@ detail_plot <- function(data, filter_var = NULL,
                 variable_col = variable_col,
                 unit_name = unit_name,
                 style_config = style_config,
-                data = panel_data
+                data = panel_data,
+                separate_figure = separate_figure,
+                panel_val = panel_val
               )
 
               p <- .create_single_detail_plot(
@@ -1327,27 +1278,6 @@ detail_plot <- function(data, filter_var = NULL,
     ggplot2::scale_fill_manual(values = color_palette, guide = "none") +
     ggplot2::theme_minimal()
 
-  # ADD ZERO LINE - need to handle differently based on orientation
-  if (style_config$show_zero_line) {
-    if (invert_pane) {
-      # Zero line is vertical for horizontal bars
-      p <- p + ggplot2::geom_vline(
-        xintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        linewidth = style_config$zero_line_size
-      )
-    } else {
-      # Zero line is horizontal for vertical bars
-      p <- p + ggplot2::geom_hline(
-        yintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        linewidth = style_config$zero_line_size
-      )
-    }
-  }
-
   # ADD FACETS IF NEEDED
   if (n_panels > 1) {
     facet_args <- list(
@@ -1366,51 +1296,18 @@ detail_plot <- function(data, filter_var = NULL,
     p <- p + do.call(ggplot2::facet_wrap, facet_args)
   }
 
-  # APPLY THEME STYLING
-  p <- .apply_plot_style_config(p, style_config)
-
-  # HANDLE AXIS LABELS BASED ON ORIENTATION
+  # Handle axis labels BEFORE applying style config
   if (invert_pane) {
     # For horizontal bars, x is Value axis and y is Categories axis
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
       p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_y_axis_title) {
       # Only categories axis title visible
       p <- p + ggplot2::labs(title = plot_title, x = "", y = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_x_axis_title) {
       # Only value axis title visible
       p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
     } else {
       # No axis titles
       p <- p + ggplot2::labs(title = plot_title, x = "", y = "")
@@ -1420,47 +1317,20 @@ detail_plot <- function(data, filter_var = NULL,
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
       p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_x_axis_title) {
       # Only categories axis title visible
       p <- p + ggplot2::labs(title = plot_title, y = "", x = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_y_axis_title) {
       # Only value axis title visible
       p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
     } else {
       # No axis titles
       p <- p + ggplot2::labs(title = plot_title, y = "", x = "")
     }
   }
+
+  # Apply style config LAST
+  p <- .apply_plot_style_config(p, style_config)
 
   return(p)
 }
@@ -1724,7 +1594,7 @@ stack_plot <- function(data, filter_var = NULL,
   base_style_config <- list(
     panel_rows = panel_layout$rows,
     panel_cols = panel_layout$cols,
-    all_font_size <- .coalesce(plot_style_config$all_font_size, 1)
+    all_font_size = .coalesce(plot_style_config$all_font_size, 1)
   )
 
   # Calculate plot style configuration
@@ -1815,23 +1685,138 @@ stack_plot <- function(data, filter_var = NULL,
           x_data <- filtered_data[filtered_data[[x_axis_from]] == x_val, ]
           x_totals <- total_data[total_data[[x_axis_from]] == x_val, ]
 
+          if (separate_figure) {
+            panel_values <- unique(x_data[[panel_var]])
+
+            for (panel_val in panel_values) {
+              panel_x_data <- x_data[x_data[[panel_var]] == panel_val, ]
+              panel_x_totals <- x_totals[x_totals[[panel_var]] == panel_val, ]
+
+              title_info <- .handle_plot_title_and_export(
+                var_name = NULL,
+                sep_value = sep_value,
+                x_value = x_val,
+                plot_type = "unstack",
+                is_macro_mode = is_macro_mode,
+                split_by = split_by,
+                x_axis_from = x_axis_from,
+                variable_col = variable_col,
+                unit_name = unit_name,
+                style_config = style_config,
+                data = panel_x_data,
+                separate_figure = TRUE,
+                panel_val = panel_val
+              )
+
+              p <- .create_single_unstacked_plot(
+                data = panel_x_data,
+                total_data = panel_x_totals,
+                x_axis_from = x_axis_from,
+                stack_value_from = stack_value_from,
+                plot_title = title_info$title,
+                unit = y_axis_label,
+                panel_rows = style_config$panel_rows,
+                panel_cols = style_config$panel_cols,
+                panel_var = panel_var,
+                invert_pane = invert_pane,
+                top_impact = top_impact,
+                plot_style_config = style_config
+              )
+
+              plot_list[[title_info$export_name]] <- p
+            }
+          } else {
+            title_info <- .handle_plot_title_and_export(
+              var_name = NULL,
+              sep_value = sep_value,
+              x_value = x_val,
+              plot_type = "unstack",
+              is_macro_mode = is_macro_mode,
+              split_by = split_by,
+              x_axis_from = x_axis_from,
+              variable_col = variable_col,
+              unit_name = unit_name,
+              style_config = style_config,
+              data = x_data
+            )
+
+            p <- .create_single_unstacked_plot(
+              data = x_data,
+              total_data = x_totals,
+              x_axis_from = x_axis_from,
+              stack_value_from = stack_value_from,
+              plot_title = title_info$title,
+              unit = y_axis_label,
+              panel_rows = style_config$panel_rows,
+              panel_cols = style_config$panel_cols,
+              panel_var = panel_var,
+              invert_pane = invert_pane,
+              top_impact = top_impact,
+              plot_style_config = style_config
+            )
+
+            plot_list[[title_info$export_name]] <- p
+          }
+        }
+      } else {
+        # For stacked plots
+        if (separate_figure) {
+          panel_values <- unique(filtered_data[[panel_var]])
+
+          for (panel_val in panel_values) {
+            panel_data <- filtered_data[filtered_data[[panel_var]] == panel_val, ]
+            panel_totals <- total_data[total_data[[panel_var]] == panel_val, ]
+
+            title_info <- .handle_plot_title_and_export(
+              var_name = NULL,
+              sep_value = sep_value,
+              plot_type = "stack",
+              is_macro_mode = is_macro_mode,
+              split_by = split_by,
+              x_axis_from = x_axis_from,
+              variable_col = variable_col,
+              unit_name = unit_name,
+              style_config = style_config,
+              data = panel_data,
+              separate_figure = TRUE,
+              panel_val = panel_val
+            )
+
+            p <- .create_single_stacked_plot(
+              data = panel_data,
+              total_data = panel_totals,
+              x_axis_from = x_axis_from,
+              stack_value_from = stack_value_from,
+              plot_title = title_info$title,
+              unit = y_axis_label,
+              panel_rows = style_config$panel_rows,
+              panel_cols = style_config$panel_cols,
+              panel_var = panel_var,
+              show_total = show_total,
+              invert_pane = invert_pane,
+              top_impact = top_impact,
+              plot_style_config = style_config
+            )
+
+            plot_list[[title_info$export_name]] <- p
+          }
+        } else {
           title_info <- .handle_plot_title_and_export(
             var_name = NULL,
             sep_value = sep_value,
-            x_value = x_val,
-            plot_type = "unstack",
+            plot_type = "stack",
             is_macro_mode = is_macro_mode,
             split_by = split_by,
             x_axis_from = x_axis_from,
             variable_col = variable_col,
             unit_name = unit_name,
             style_config = style_config,
-            data = x_data
+            data = filtered_data
           )
 
-          p <- .create_single_unstacked_plot(
-            data = x_data,
-            total_data = x_totals,
+          p <- .create_single_stacked_plot(
+            data = filtered_data,
+            total_data = total_data,
             x_axis_from = x_axis_from,
             stack_value_from = stack_value_from,
             plot_title = title_info$title,
@@ -1839,6 +1824,7 @@ stack_plot <- function(data, filter_var = NULL,
             panel_rows = style_config$panel_rows,
             panel_cols = style_config$panel_cols,
             panel_var = panel_var,
+            show_total = show_total,
             invert_pane = invert_pane,
             top_impact = top_impact,
             plot_style_config = style_config
@@ -1846,37 +1832,6 @@ stack_plot <- function(data, filter_var = NULL,
 
           plot_list[[title_info$export_name]] <- p
         }
-      } else {
-        title_info <- .handle_plot_title_and_export(
-          var_name = NULL,
-          sep_value = sep_value,
-          plot_type = "stack",
-          is_macro_mode = is_macro_mode,
-          split_by = split_by,
-          x_axis_from = x_axis_from,
-          variable_col = variable_col,
-          unit_name = unit_name,
-          style_config = style_config,
-          data = filtered_data
-        )
-
-        p <- .create_single_stacked_plot(
-          data = filtered_data,
-          total_data = total_data,
-          x_axis_from = x_axis_from,
-          stack_value_from = stack_value_from,
-          plot_title = title_info$title,
-          unit = y_axis_label,
-          panel_rows = style_config$panel_rows,
-          panel_cols = style_config$panel_cols,
-          panel_var = panel_var,
-          show_total = show_total,
-          invert_pane = invert_pane,
-          top_impact = top_impact,
-          plot_style_config = style_config
-        )
-
-        plot_list[[title_info$export_name]] <- p
       }
     }
   }
@@ -2064,16 +2019,6 @@ stack_plot <- function(data, filter_var = NULL,
       )
     }
 
-    # ADD ZERO LINE IF CONFIGURED (VERTICAL FOR HORIZONTAL BARS)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_vline(
-        xintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        linewidth = style_config$zero_line_size
-      )
-    }
-
     # APPLY SCALE TO VALUE AXIS (X-AXIS)
     scale_args <- list(
       limits = y_limit,
@@ -2122,16 +2067,6 @@ stack_plot <- function(data, filter_var = NULL,
       )
     }
 
-    # ADD ZERO LINE IF CONFIGURED (HORIZONTAL FOR VERTICAL BARS)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_hline(
-        yintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        linewidth = style_config$zero_line_size
-      )
-    }
-
     # APPLY SCALE TO VALUE AXIS (Y-AXIS)
     scale_args <- list(
       limits = y_limit,
@@ -2169,10 +2104,7 @@ stack_plot <- function(data, filter_var = NULL,
   p <- p + ggplot2::scale_fill_manual(values = color_palette) +
     ggplot2::theme_minimal()
 
-  # APPLY THEME STYLING
-  p <- .apply_plot_style_config(p, style_config)
-
-  # Set up legend
+  # Set up legend before applying style config
   if (style_config$show_legend) {
     p <- p + ggplot2::theme(
       legend.position = style_config$legend_position,
@@ -2196,42 +2128,12 @@ stack_plot <- function(data, filter_var = NULL,
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
       p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_y_axis_title) {
       # Only categories axis title visible
       p <- p + ggplot2::labs(title = plot_title, x = "", y = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_x_axis_title) {
       # Only value axis title visible
       p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
     } else {
       # No axis titles
       p <- p + ggplot2::labs(title = plot_title, x = "", y = "")
@@ -2241,47 +2143,20 @@ stack_plot <- function(data, filter_var = NULL,
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
       p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_x_axis_title) {
       # Only categories axis title visible
       p <- p + ggplot2::labs(title = plot_title, y = "", x = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_y_axis_title) {
       # Only value axis title visible
       p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
     } else {
       # No axis titles
       p <- p + ggplot2::labs(title = plot_title, y = "", x = "")
     }
   }
+
+  # Apply style config LAST
+  p <- .apply_plot_style_config(p, style_config)
 
   return(p)
 }
@@ -2427,16 +2302,6 @@ stack_plot <- function(data, filter_var = NULL,
       )
     }
 
-    # ADD ZERO LINE IF CONFIGURED (VERTICAL FOR HORIZONTAL BARS)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_vline(
-        xintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        linewidth = style_config$zero_line_size
-      )
-    }
-
     # APPLY SCALE TO VALUE AXIS (X-AXIS)
     scale_args <- list(
       limits = y_limit,
@@ -2478,16 +2343,6 @@ stack_plot <- function(data, filter_var = NULL,
       )
     }
 
-    # ADD ZERO LINE IF CONFIGURED (HORIZONTAL FOR VERTICAL BARS)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_hline(
-        yintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        linewidth = style_config$zero_line_size
-      )
-    }
-
     # APPLY SCALE TO VALUE AXIS (Y-AXIS)
     scale_args <- list(
       limits = y_limit,
@@ -2503,6 +2358,7 @@ stack_plot <- function(data, filter_var = NULL,
     p <- p + do.call(ggplot2::scale_y_continuous, scale_args)
   }
 
+  # ADD FACETS IF NEEDED
   # ADD FACETS IF NEEDED
   if (n_panels > 1) {
     facet_args <- list(
@@ -2525,51 +2381,18 @@ stack_plot <- function(data, filter_var = NULL,
   p <- p + ggplot2::scale_fill_manual(values = color_palette) +
     ggplot2::theme_minimal()
 
-  # APPLY THEME STYLING
-  p <- .apply_plot_style_config(p, style_config)
-
   # HANDLE AXIS LABELS BASED ON ORIENTATION
   if (invert_pane) {
     # For horizontal bars, x is Value axis and y is Categories axis
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
       p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_y_axis_title) {
       # Only categories axis title visible
       p <- p + ggplot2::labs(title = plot_title, x = "", y = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_x_axis_title) {
       # Only value axis title visible
       p <- p + ggplot2::labs(title = plot_title, x = y_axis_label, y = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
     } else {
       # No axis titles
       p <- p + ggplot2::labs(title = plot_title, x = "", y = "")
@@ -2579,47 +2402,20 @@ stack_plot <- function(data, filter_var = NULL,
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
       p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = x_axis_label)
-
-      # Force both axis titles to be visible
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        ),
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_x_axis_title) {
       # Only categories axis title visible
       p <- p + ggplot2::labs(title = plot_title, y = "", x = x_axis_label)
-
-      p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(
-          size = style_config$x_axis_title_size,
-          face = style_config$x_axis_title_face,
-          margin = style_config$x_axis_title_margin
-        )
-      )
     } else if (style_config$show_y_axis_title) {
       # Only value axis title visible
       p <- p + ggplot2::labs(title = plot_title, y = y_axis_label, x = "")
-
-      p <- p + ggplot2::theme(
-        axis.title.y = ggplot2::element_text(
-          size = style_config$y_axis_title_size,
-          face = style_config$y_axis_title_face,
-          margin = style_config$y_axis_title_margin
-        )
-      )
     } else {
       # No axis titles
       p <- p + ggplot2::labs(title = plot_title, y = "", x = "")
     }
   }
+
+  # Apply style config LAST
+  p <- .apply_plot_style_config(p, style_config)
 
   return(p)
 }
@@ -2791,7 +2587,6 @@ stack_plot <- function(data, filter_var = NULL,
 
 # Trend Plot --------------------------------------------------------------
 
-
 #' @title Create Time-Series Trend Plots from GTAP Data
 #'
 #' @description
@@ -2803,8 +2598,8 @@ stack_plot <- function(data, filter_var = NULL,
 #'   If a data frame, filters `variable_col` based on matching values.
 #' @param panel_var Character. Column containing time variable for x-axis (e.g., "Year").
 #' @param group_by Character. Column for grouping lines (e.g., "REG" or "Country").
-#' @param split_by Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
-#' NULL creates a single aggregated plot, appropriate for macro-level analysis.
+#' @param split_by Character or vector. Column name(s) for data splitting (e.g., "COMM").
+#'   Set to NULL for no splitting, suitable for macro-level analysis.
 #' @param variable_col Character. Column containing variable identifiers (default: "Variable").
 #' @param unit_col Character. Column containing unit information (default: "Unit").
 #' @param desc_col Character. Column containing variable descriptions (default: "Description").
@@ -2822,40 +2617,49 @@ stack_plot <- function(data, filter_var = NULL,
 #' @param point_size Numeric. Size of point markers (default: 3).
 #' @param add_smooth Logical. If TRUE, adds smoothed trend lines (default: FALSE).
 #' @param smooth_method Character. Method for smoothing ("loess", "lm", etc.) (default: "loess").
+#' @param vertical_lines Named list. Specifications for vertical reference lines, each containing:
+#'   - position: Numeric. X-axis position for the vertical line
+#'   - color: Character. Color of the line
+#'   - linetype: Character. Line type (e.g., "dashed", "solid")
+#'   - size: Numeric. Line thickness
+#'   - text: Character. Optional label for the line
+#'   - text_size: Numeric. Size of the text label
+#'   - text_angle: Numeric. Angle of the text label (default: 90)
+#'   - text_color: Character. Color of the text label (defaults to line color)
+#'   - x_offset: Numeric. Horizontal offset for the text label
+#'   - y_offset: Numeric. Vertical position for the text label
+#' @param add_average_line Logical. If TRUE, adds a line showing average values (default: FALSE).
+#' @param avg_line_color Character. Color for the average line (default: "red").
+#' @param avg_line_size Numeric. Thickness for the average line (default: 1).
+#' @param avg_line_type Character. Line type for the average line (default: "dashed").
+#' @param avg_line_label Character. Label for the average line (default: "Average").
 #'
 #' @return A list of ggplot2 objects (invisibly) containing the generated plots.
 #'
-#' @author Pattawee Puangchit
-#' @seealso \code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
 #' @export
 #'
 #' @examples
 #' \donttest{
-#' # Basic trend plot
+#' # Basic trend plot with vertical reference lines
 #' trend_plot(
 #'   data = time_series_data,
 #'   panel_var = "Year",
 #'   group_by = "Region",
-#'   output_path = "/path/to/output"
-#' )
-#'
-#' # Advanced configuration
-#' trend_plot(
-#'   data = time_series_data,
-#'   panel_var = "Year",
-#'   group_by = "Country",
-#'   split_by = "Variable",
-#'   line_size = 1.2,
-#'   add_points = TRUE,
-#'   add_smooth = TRUE,
-#'   smooth_method = "lm",
-#'   var_name_by_description = TRUE,
-#'   plot_style_config = list(
-#'     color_tone = "economic",
-#'     show_legend = TRUE,
-#'     legend_position = "bottom",
-#'     show_zero_line = TRUE
-#'   )
+#'   vertical_lines = list(
+#'     recession = list(
+#'       position = 2008,
+#'       color = "red",
+#'       linetype = "dashed",
+#'       text = "2008 Recession",
+#'       text_angle = 90
+#'     ),
+#'     policy_change = list(
+#'       position = 2015,
+#'       color = "blue",
+#'       text = "Policy Change"
+#'     )
+#'   ),
+#'   add_average_line = TRUE
 #' )
 #' }
 trend_plot <- function(data, filter_var = NULL,
@@ -2878,33 +2682,25 @@ trend_plot <- function(data, filter_var = NULL,
                        add_points = TRUE,
                        point_size = 3,
                        add_smooth = FALSE,
-                       smooth_method = "loess") {
+                       smooth_method = "loess",
+                       vertical_lines = NULL,
+                       add_average_line = FALSE,
+                       avg_line_color = "red",
+                       avg_line_size = 1,
+                       avg_line_type = "dashed",
+                       avg_line_label = "Average") {
 
-  # Validate the column parameters
-  .validate_column_params(data, list(
-    panel_var = panel_var,
-    group_by = group_by,
-    split_by = split_by,
-    variable_col = variable_col,
-    unit_col = unit_col,
-    desc_col = desc_col
-  ))
-
-  # PREPARE DATA SOURCE
+  .validate_column_params(data, list(panel_var = panel_var, group_by = group_by, split_by = split_by,
+                                     variable_col = variable_col, unit_col = unit_col, desc_col = desc_col))
   data <- .prepare_data_source(data, panel_var, variable_col = variable_col)
-
-  # CHECK FOR UNIT COLUMN
   unit_check_result <- .check_unit_column(data, unit_col)
   data <- unit_check_result$data
   unit_col <- unit_check_result$unit_col
-
-  # PROCESS SPLIT_BY PARAMETER
   split_by_result <- .process_split_by(data, split_by)
   data <- split_by_result$data
   is_macro_mode <- split_by_result$is_macro_mode
   split_by <- split_by_result$split_by
 
-  # FILTER DATA BY FILTER_VAR IF PROVIDED
   if (!is.null(filter_var)) {
     if (is.data.frame(filter_var) && variable_col %in% names(filter_var)) {
       data <- data[data[[variable_col]] %in% filter_var[[variable_col]], ]
@@ -2918,50 +2714,38 @@ trend_plot <- function(data, filter_var = NULL,
     }
   }
 
-  # FORMAT VARIABLE NAMES
   if (variable_col %in% names(data) && desc_col %in% names(data)) {
-    data <- .format_variable_names(
-      data,
-      variable_col = variable_col,
-      desc_col = desc_col,
-      var_name_by_description = var_name_by_description,
-      add_var_info = add_var_info
-    )
+    data <- .format_variable_names(data, variable_col = variable_col, desc_col = desc_col,
+                                   var_name_by_description = var_name_by_description, add_var_info = add_var_info)
   }
 
-  # Calculate panel layout (not used for trend plots, but keeping for compatibility)
   panel_layout <- list(rows = 1, cols = 1)
-
-  # Check if custom dimensions are provided
-  dimensions <- if (!is.null(export_config) &&
-                    !is.null(export_config$width) &&
-                    !is.null(export_config$height)) {
-    list(
-      width = export_config$width,
-      height = export_config$height
-    )
+  dimensions <- if (!is.null(export_config) && !is.null(export_config$width) && !is.null(export_config$height)) {
+    list(width = export_config$width, height = export_config$height)
   } else {
     .calculate_plot_dimensions(data, panel_layout)
   }
 
-  # Prepare style configuration
+  # Add line_width parameter to style config if provided
   base_style_config <- list(
     panel_rows = panel_layout$rows,
     panel_cols = panel_layout$cols,
     all_font_size = if(!is.null(plot_style_config) && !is.null(plot_style_config$all_font_size))
-      plot_style_config$all_font_size else 1
+      plot_style_config$all_font_size else 1,
+    line_width = if(!is.null(plot_style_config) && !is.null(plot_style_config$line_width))
+      plot_style_config$line_width else line_size
   )
 
-  # Merge user config if provided
   style_config <- .calculate_plot_style_config(
-    config = if (!is.null(plot_style_config))
-      modifyList(base_style_config, plot_style_config)
-    else
-      base_style_config,
+    config = if (!is.null(plot_style_config)) modifyList(base_style_config, plot_style_config) else base_style_config,
     plot_type = "default"
   )
 
-  # PROCESS BY UNIT GROUPS
+  # Override line_size if line_width is specified in style_config
+  if (!is.null(style_config$line_width)) {
+    line_size <- style_config$line_width
+  }
+
   unit_groups <- split(data, data[[unit_col]])
   plot_list <- list()
 
@@ -2974,64 +2758,45 @@ trend_plot <- function(data, filter_var = NULL,
 
         for (var_name in var_combinations) {
           var_data <- unit_data[unit_data[[variable_col]] == var_name, ]
+          title_info <- .handle_plot_title_and_export(var_name = var_name, plot_type = "trend",
+                                                      is_macro_mode = TRUE, variable_col = variable_col,
+                                                      unit_name = unit_name, style_config = style_config,
+                                                      data = var_data)
 
-          title_info <- .handle_plot_title_and_export(
-            var_name = var_name,
-            plot_type = "trend",
-            is_macro_mode = TRUE,
-            variable_col = variable_col,
-            unit_name = unit_name,
-            style_config = style_config,
-            data = var_data
-          )
-
-          p <- .create_single_trend_plot(
-            data = var_data,
-            panel_var = panel_var,
-            group_by = group_by,
-            plot_title = title_info$title,
-            unit = unit_name,
-            invert_pane = invert_pane,
-            plot_style_config = style_config,
-            line_size = line_size,
-            add_points = add_points,
-            point_size = point_size,
-            add_smooth = add_smooth,
-            smooth_method = smooth_method
-          )
+          p <- .create_single_trend_plot(data = var_data, panel_var = panel_var, group_by = group_by,
+                                         plot_title = title_info$title, unit = unit_name,
+                                         invert_pane = invert_pane, plot_style_config = style_config,
+                                         line_size = line_size, add_points = add_points,
+                                         point_size = point_size, add_smooth = add_smooth,
+                                         smooth_method = smooth_method, vertical_lines = vertical_lines,
+                                         add_average_line = add_average_line,
+                                         avg_line_color = avg_line_color,
+                                         avg_line_size = avg_line_size,
+                                         avg_line_type = avg_line_type,
+                                         avg_line_label = avg_line_label)
 
           plot_list[[title_info$export_name]] <- p
         }
       } else {
-        # Single figure for all variables
-        title_info <- .handle_plot_title_and_export(
-          var_name = "Trend Analysis",
-          plot_type = "trend",
-          is_macro_mode = TRUE,
-          unit_name = unit_name,
-          style_config = style_config,
-          data = unit_data
-        )
+        title_info <- .handle_plot_title_and_export(var_name = "Trend Analysis", plot_type = "trend",
+                                                    is_macro_mode = TRUE, unit_name = unit_name,
+                                                    style_config = style_config, data = unit_data)
 
-        p <- .create_single_trend_plot(
-          data = unit_data,
-          panel_var = panel_var,
-          group_by = group_by,
-          plot_title = title_info$title,
-          unit = unit_name,
-          invert_pane = invert_pane,
-          plot_style_config = style_config,
-          line_size = line_size,
-          add_points = add_points,
-          point_size = point_size,
-          add_smooth = add_smooth,
-          smooth_method = smooth_method
-        )
+        p <- .create_single_trend_plot(data = unit_data, panel_var = panel_var, group_by = group_by,
+                                       plot_title = title_info$title, unit = unit_name,
+                                       invert_pane = invert_pane, plot_style_config = style_config,
+                                       line_size = line_size, add_points = add_points,
+                                       point_size = point_size, add_smooth = add_smooth,
+                                       smooth_method = smooth_method, vertical_lines = vertical_lines,
+                                       add_average_line = add_average_line,
+                                       avg_line_color = avg_line_color,
+                                       avg_line_size = avg_line_size,
+                                       avg_line_type = avg_line_type,
+                                       avg_line_label = avg_line_label)
 
         plot_list[[title_info$export_name]] <- p
       }
     } else {
-      # HANDLE SPLIT_BY MODE
       if (length(split_by) > 1) {
         unit_data$split_display <- apply(unit_data[, split_by, drop = FALSE], 1, paste, collapse = "-")
         separate_values <- unique(unit_data$split_display)
@@ -3053,63 +2818,43 @@ trend_plot <- function(data, filter_var = NULL,
 
           for (var_name in var_combinations) {
             var_data <- filtered_data[filtered_data[[variable_col]] == var_name, ]
+            title_info <- .handle_plot_title_and_export(var_name = var_name, sep_value = sep_value,
+                                                        plot_type = "trend", is_macro_mode = FALSE,
+                                                        split_by = split_by, variable_col = variable_col,
+                                                        unit_name = unit_name, style_config = style_config,
+                                                        data = var_data)
 
-            title_info <- .handle_plot_title_and_export(
-              var_name = var_name,
-              sep_value = sep_value,
-              plot_type = "trend",
-              is_macro_mode = FALSE,
-              split_by = split_by,
-              variable_col = variable_col,
-              unit_name = unit_name,
-              style_config = style_config,
-              data = var_data
-            )
-
-            p <- .create_single_trend_plot(
-              data = var_data,
-              panel_var = panel_var,
-              group_by = group_by,
-              plot_title = title_info$title,
-              unit = unit_name,
-              invert_pane = invert_pane,
-              plot_style_config = style_config,
-              line_size = line_size,
-              add_points = add_points,
-              point_size = point_size,
-              add_smooth = add_smooth,
-              smooth_method = smooth_method
-            )
+            p <- .create_single_trend_plot(data = var_data, panel_var = panel_var, group_by = group_by,
+                                           plot_title = title_info$title, unit = unit_name,
+                                           invert_pane = invert_pane, plot_style_config = style_config,
+                                           line_size = line_size, add_points = add_points,
+                                           point_size = point_size, add_smooth = add_smooth,
+                                           smooth_method = smooth_method, vertical_lines = vertical_lines,
+                                           add_average_line = add_average_line,
+                                           avg_line_color = avg_line_color,
+                                           avg_line_size = avg_line_size,
+                                           avg_line_type = avg_line_type,
+                                           avg_line_label = avg_line_label)
 
             plot_list[[title_info$export_name]] <- p
           }
         } else {
-          # Group by variable for this split value
-          title_info <- .handle_plot_title_and_export(
-            sep_value = sep_value,
-            plot_type = "trend",
-            is_macro_mode = FALSE,
-            split_by = split_by,
-            variable_col = variable_col,
-            unit_name = unit_name,
-            style_config = style_config,
-            data = filtered_data
-          )
+          title_info <- .handle_plot_title_and_export(sep_value = sep_value, plot_type = "trend",
+                                                      is_macro_mode = FALSE, split_by = split_by,
+                                                      variable_col = variable_col, unit_name = unit_name,
+                                                      style_config = style_config, data = filtered_data)
 
-          p <- .create_single_trend_plot(
-            data = filtered_data,
-            panel_var = panel_var,
-            group_by = group_by,
-            plot_title = title_info$title,
-            unit = unit_name,
-            invert_pane = invert_pane,
-            plot_style_config = style_config,
-            line_size = line_size,
-            add_points = add_points,
-            point_size = point_size,
-            add_smooth = add_smooth,
-            smooth_method = smooth_method
-          )
+          p <- .create_single_trend_plot(data = filtered_data, panel_var = panel_var, group_by = group_by,
+                                         plot_title = title_info$title, unit = unit_name,
+                                         invert_pane = invert_pane, plot_style_config = style_config,
+                                         line_size = line_size, add_points = add_points,
+                                         point_size = point_size, add_smooth = add_smooth,
+                                         smooth_method = smooth_method, vertical_lines = vertical_lines,
+                                         add_average_line = add_average_line,
+                                         avg_line_color = avg_line_color,
+                                         avg_line_size = avg_line_size,
+                                         avg_line_type = avg_line_type,
+                                         avg_line_label = avg_line_label)
 
           plot_list[[title_info$export_name]] <- p
         }
@@ -3117,31 +2862,20 @@ trend_plot <- function(data, filter_var = NULL,
     }
   }
 
-  # SET DEFAULT FILE_NAME IN EXPORT_CONFIG
   if (is.null(export_config) || is.null(export_config$file_name)) {
     export_config <- .coalesce(export_config, list())
     export_config$file_name <- "trend_plots"
   }
 
-  # Add calculated dimensions to export_config
   export_config$width <- dimensions$width
   export_config$height <- dimensions$height
 
-  # EXPORT PLOTS
-  .export_plot_output(
-    plots = plot_list,
-    output_path = output_path,
-    export_picture = export_picture,
-    export_as_pdf = export_as_pdf,
-    export_config = export_config,
-    data = data,
-    panel_layout = panel_layout
-  )
+  .export_plot_output(plots = plot_list, output_path = output_path,
+                      export_picture = export_picture, export_as_pdf = export_as_pdf,
+                      export_config = export_config, data = data, panel_layout = panel_layout)
 
-  # RETURN PLOTS
   return(invisible(plot_list))
 }
-
 
 #' @title Create Single Trend Plot (Internal)
 #'
@@ -3160,6 +2894,12 @@ trend_plot <- function(data, filter_var = NULL,
 #' @param point_size Numeric. Size of point markers. Default is 3.
 #' @param add_smooth Logical. Whether to add smoothed trend lines. Default is FALSE.
 #' @param smooth_method Character. Method for smoothing. Default is "loess".
+#' @param vertical_lines Named list. Specifications for vertical reference lines.
+#' @param add_average_line Logical. Whether to add average trend line. Default is FALSE.
+#' @param avg_line_color Character. Color for average line. Default is "red".
+#' @param avg_line_size Numeric. Line thickness for average line. Default is 1.
+#' @param avg_line_type Character. Line type for average line. Default is "dashed".
+#' @param avg_line_label Character. Label for average line. Default is "Average".
 #'
 #' @return A ggplot2 object representing the trend plot.
 #'
@@ -3256,16 +2996,6 @@ trend_plot <- function(data, filter_var = NULL,
     }
 
     p <- p + do.call(ggplot2::scale_x_continuous, scale_args)
-
-    # ADD ZERO LINE IF CONFIGURED (VERTICAL LINE FOR HORIZONTAL TREND)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_vline(
-        xintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        linewidth = style_config$zero_line_size
-      )
-    }
   } else {
     # For normal orientation (x is time, y is value)
     p <- ggplot2::ggplot(data, ggplot2::aes(
@@ -3297,16 +3027,6 @@ trend_plot <- function(data, filter_var = NULL,
     }
 
     p <- p + do.call(ggplot2::scale_y_continuous, scale_args)
-
-    # ADD ZERO LINE IF CONFIGURED (HORIZONTAL LINE FOR VERTICAL TREND)
-    if (style_config$show_zero_line) {
-      p <- p + ggplot2::geom_hline(
-        yintercept = style_config$zero_line_position,
-        linetype = style_config$zero_line_type,
-        color = style_config$zero_line_color,
-        linewidth = style_config$zero_line_size
-      )
-    }
   }
 
   # APPLY COLORS IF PROVIDED
@@ -3316,9 +3036,8 @@ trend_plot <- function(data, filter_var = NULL,
 
   # APPLY THEME STYLING
   p <- p + ggplot2::theme_minimal()
-  p <- .apply_plot_style_config(p, style_config)
 
-  # Set up legend
+  # Set up legend before applying style config
   if (style_config$show_legend) {
     p <- p + ggplot2::theme(
       legend.position = style_config$legend_position,
@@ -3366,6 +3085,195 @@ trend_plot <- function(data, filter_var = NULL,
     } else {
       # No axis titles
       p <- p + ggplot2::labs(title = plot_title, y = "", x = "")
+    }
+  }
+
+  # Apply style config LAST
+  p <- .apply_plot_style_config(p, style_config)
+
+  return(p)
+}
+
+# Function to add vertical reference lines to trend plots
+#' @noRd
+.add_vertical_trend_lines <- function(p,
+                                      vertical_lines = NULL,
+                                      y_limits = NULL,
+                                      invert_pane = FALSE) {
+
+  if (is.null(vertical_lines)) {
+    return(p)
+  }
+
+  # Ensure vertical_lines is a list
+  if (!is.list(vertical_lines) || is.null(names(vertical_lines))) {
+    stop("vertical_lines must be a named list of parameters")
+  }
+
+  required_fields <- c("position", "color")
+
+  for (line_name in names(vertical_lines)) {
+    line_params <- vertical_lines[[line_name]]
+
+    # Check for required fields
+    missing_fields <- setdiff(required_fields, names(line_params))
+    if (length(missing_fields) > 0) {
+      warning(paste("Skipping vertical line '", line_name,
+                    "': missing required fields: ",
+                    paste(missing_fields, collapse = ", ")))
+      next
+    }
+
+    position <- line_params$position
+    color <- line_params$color
+    linetype <- line_params$linetype %||% "dashed"
+    size <- line_params$size %||% 0.5
+
+    # Add text if specified
+    if (!is.null(line_params$text)) {
+      text <- line_params$text
+      text_size <- line_params$text_size %||% 3
+      text_angle <- line_params$text_angle %||% 90
+      text_color <- line_params$text_color %||% color
+      text_vjust <- line_params$text_vjust %||% 0
+      text_hjust <- line_params$text_hjust %||% 0
+
+      # Calculate text position
+      y_offset <- if (!is.null(line_params$y_offset)) {
+        line_params$y_offset
+      } else if (!is.null(y_limits)) {
+        # Default offset as 5% of y-axis range
+        y_range <- y_limits[2] - y_limits[1]
+        y_limits[1] + y_range * 0.05
+      } else {
+        NULL
+      }
+
+      x_offset <- line_params$x_offset %||% 0.01
+
+      if (invert_pane) {
+        # For horizontal trend (vertical reference lines on y-axis)
+        p <- p + ggplot2::geom_hline(
+          yintercept = position,
+          linetype = linetype,
+          color = color,
+          size = size
+        )
+
+        if (!is.null(y_offset)) {
+          p <- p + ggplot2::annotate(
+            "text",
+            y = position + x_offset,  # Swap x and y offsets for inverted pane
+            x = y_offset,
+            label = text,
+            color = text_color,
+            size = text_size,
+            vjust = text_vjust,
+            hjust = text_hjust,
+            angle = if (text_angle == 90) 0 else text_angle
+          )
+        }
+      } else {
+        # For vertical trend (vertical reference lines on x-axis)
+        p <- p + ggplot2::geom_vline(
+          xintercept = position,
+          linetype = linetype,
+          color = color,
+          size = size
+        )
+
+        if (!is.null(y_offset)) {
+          p <- p + ggplot2::annotate(
+            "text",
+            x = position + x_offset,
+            y = y_offset,
+            label = text,
+            color = text_color,
+            size = text_size,
+            vjust = text_vjust,
+            hjust = text_hjust,
+            angle = text_angle
+          )
+        }
+      }
+    } else {
+      # Just add the line without text
+      if (invert_pane) {
+        p <- p + ggplot2::geom_hline(
+          yintercept = position,
+          linetype = linetype,
+          color = color,
+          size = size
+        )
+      } else {
+        p <- p + ggplot2::geom_vline(
+          xintercept = position,
+          linetype = linetype,
+          color = color,
+          size = size
+        )
+      }
+    }
+  }
+
+  return(p)
+}
+
+# Function to calculate and add average trend line
+#' @noRd
+.add_average_trend_line <- function(p, data, panel_var, group_by,
+                                    avg_line_color = "red",
+                                    avg_line_size = 1,
+                                    avg_line_type = "dashed",
+                                    avg_line_label = "Average",
+                                    invert_pane = FALSE) {
+  # Calculate average values per time period
+  avg_data <- stats::aggregate(Value ~ panel_var, data = data, FUN = mean)
+
+  # Add the average line based on orientation
+  if (invert_pane) {
+    p <- p + ggplot2::geom_path(
+      data = avg_data,
+      mapping = ggplot2::aes_string(y = panel_var, x = "Value"),
+      color = avg_line_color,
+      size = avg_line_size,
+      linetype = avg_line_type
+    )
+
+    # Add label if there are enough points
+    if (nrow(avg_data) > 1 && !is.null(avg_line_label)) {
+      last_point <- avg_data[nrow(avg_data), ]
+      p <- p + ggplot2::annotate(
+        "text",
+        y = last_point[[panel_var]],
+        x = last_point$Value,
+        label = avg_line_label,
+        color = avg_line_color,
+        hjust = -0.2,
+        vjust = 0.5
+      )
+    }
+  } else {
+    p <- p + ggplot2::geom_path(
+      data = avg_data,
+      mapping = ggplot2::aes_string(x = panel_var, y = "Value"),
+      color = avg_line_color,
+      size = avg_line_size,
+      linetype = avg_line_type
+    )
+
+    # Add label if there are enough points
+    if (nrow(avg_data) > 1 && !is.null(avg_line_label)) {
+      last_point <- avg_data[nrow(avg_data), ]
+      p <- p + ggplot2::annotate(
+        "text",
+        x = last_point[[panel_var]],
+        y = last_point$Value,
+        label = avg_line_label,
+        color = avg_line_color,
+        hjust = -0.2,
+        vjust = 0.5
+      )
     }
   }
 

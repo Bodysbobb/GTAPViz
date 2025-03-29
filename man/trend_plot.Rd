@@ -26,7 +26,13 @@ trend_plot(
   add_points = TRUE,
   point_size = 3,
   add_smooth = FALSE,
-  smooth_method = "loess"
+  smooth_method = "loess",
+  vertical_lines = NULL,
+  add_average_line = FALSE,
+  avg_line_color = "red",
+  avg_line_size = 1,
+  avg_line_type = "dashed",
+  avg_line_label = "Average"
 )
 }
 \arguments{
@@ -39,8 +45,8 @@ If a data frame, filters `variable_col` based on matching values.}
 
 \item{group_by}{Character. Column for grouping lines (e.g., "REG" or "Country").}
 
-\item{split_by}{Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
-NULL creates a single aggregated plot, appropriate for macro-level analysis.}
+\item{split_by}{Character or vector. Column name(s) for data splitting (e.g., "COMM").
+Set to NULL for no splitting, suitable for macro-level analysis.}
 
 \item{variable_col}{Character. Column containing variable identifiers (default: "Variable").}
 
@@ -75,6 +81,28 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.}
 \item{add_smooth}{Logical. If TRUE, adds smoothed trend lines (default: FALSE).}
 
 \item{smooth_method}{Character. Method for smoothing ("loess", "lm", etc.) (default: "loess").}
+
+\item{vertical_lines}{Named list. Specifications for vertical reference lines, each containing:
+- position: Numeric. X-axis position for the vertical line
+- color: Character. Color of the line
+- linetype: Character. Line type (e.g., "dashed", "solid")
+- size: Numeric. Line thickness
+- text: Character. Optional label for the line
+- text_size: Numeric. Size of the text label
+- text_angle: Numeric. Angle of the text label (default: 90)
+- text_color: Character. Color of the text label (defaults to line color)
+- x_offset: Numeric. Horizontal offset for the text label
+- y_offset: Numeric. Vertical position for the text label}
+
+\item{add_average_line}{Logical. If TRUE, adds a line showing average values (default: FALSE).}
+
+\item{avg_line_color}{Character. Color for the average line (default: "red").}
+
+\item{avg_line_size}{Numeric. Thickness for the average line (default: 1).}
+
+\item{avg_line_type}{Character. Line type for the average line (default: "dashed").}
+
+\item{avg_line_label}{Character. Label for the average line (default: "Average").}
 }
 \value{
 A list of ggplot2 objects (invisibly) containing the generated plots.
@@ -85,37 +113,26 @@ with flexible grouping, splitting, and styling options.
 }
 \examples{
 \donttest{
-# Basic trend plot
+# Basic trend plot with vertical reference lines
 trend_plot(
   data = time_series_data,
   panel_var = "Year",
   group_by = "Region",
-  output_path = "/path/to/output"
-)
-
-# Advanced configuration
-trend_plot(
-  data = time_series_data,
-  panel_var = "Year",
-  group_by = "Country",
-  split_by = "Variable",
-  line_size = 1.2,
-  add_points = TRUE,
-  add_smooth = TRUE,
-  smooth_method = "lm",
-  var_name_by_description = TRUE,
-  plot_style_config = list(
-    color_tone = "economic",
-    show_legend = TRUE,
-    legend_position = "bottom",
-    show_zero_line = TRUE
-  )
+  vertical_lines = list(
+    recession = list(
+      position = 2008,
+      color = "red",
+      linetype = "dashed",
+      text = "2008 Recession",
+      text_angle = 90
+    ),
+    policy_change = list(
+      position = 2015,
+      color = "blue",
+      text = "Policy Change"
+    )
+  ),
+  add_average_line = TRUE
 )
 }
-}
-\seealso{
-\code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
-}
-\author{
-Pattawee Puangchit
 }
