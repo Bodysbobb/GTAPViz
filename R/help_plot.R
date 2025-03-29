@@ -2764,9 +2764,17 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
         pdf_base_name <- "Plots"
       }
 
-      # Add number of plots to the filename
+      # Create base filename with plot type and number of plots
       pdf_file_name <- paste0(pdf_base_name, "_", n_plots)
+
+      # Find an available filename by adding suffix numbers if needed
       pdf_path <- file.path(output_path, paste0(pdf_file_name, ".pdf"))
+      suffix_counter <- 1
+
+      while (file.exists(pdf_path)) {
+        pdf_path <- file.path(output_path, paste0(pdf_file_name, "_", suffix_counter, ".pdf"))
+        suffix_counter <- suffix_counter + 1
+      }
 
       grDevices::pdf(
         file = pdf_path,
