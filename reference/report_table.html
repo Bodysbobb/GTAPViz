@@ -189,7 +189,7 @@ value in the specified column gets its own sheet. Example: <code>separate_sheet_
 <span class="r-in"><span>  experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EXP1"</span>, <span class="st">"EXP2"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  input_path <span class="op">=</span> <span class="va">input_path</span>,</span></span>
 <span class="r-in"><span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  process_sl4_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  process_sl4_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span>, <span class="st">"qo"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  process_har_vars <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  mapping_info <span class="op">=</span> <span class="st">"GTAPv7"</span>,</span></span>
 <span class="r-in"><span>  plot_data <span class="op">=</span> <span class="cn">TRUE</span></span></span>
@@ -226,7 +226,6 @@ value in the specified column gets its own sheet. Example: <code>separate_sheet_
 <span class="r-in"><span>  separate_file <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  workbook_name <span class="op">=</span> <span class="st">"Comparison Table"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in report_table(data_list = sl4.plot.data[["1D"]], pivot_col = list(Region = "Variable"),     group_by = list(Region = list("Experiment", "Region")), rename_cols = list(Experiment = "Scenario"),     total_column = FALSE, decimal = 4, subtotal_level = FALSE,     repeat_label = FALSE, include_units = TRUE, var_name_by_description = TRUE,     add_var_info = TRUE, add_group_line = FALSE, separate_sheet_by = "Unit",     export_table = FALSE, output_path = tempdir(), separate_file = FALSE,     workbook_name = "Comparison Table"):</span> data_list must be a list.</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
