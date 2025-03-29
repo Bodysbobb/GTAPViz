@@ -52,7 +52,7 @@
 #'   experiment = c("EXP1", "EXP2"),
 #'   input_path = input_path,
 #'   subtotal_level = FALSE,
-#'   process_sl4_vars = c("qgdp", "EV"),
+#'   process_sl4_vars = c("qgdp", "EV", "qo"),
 #'   process_har_vars = FALSE,
 #'   mapping_info = "GTAPv7",
 #'   plot_data = TRUE
