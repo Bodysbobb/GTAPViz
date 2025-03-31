@@ -957,7 +957,7 @@ detail_plot <- function(data, filter_var = NULL,
 
               title_info <- .handle_plot_title_and_export(
                 var_name = var_name,
-                sep_value = if(identical(split_by, variable_col)) NULL else sep_value,
+                sep_value = sep_value,
                 x_value = panel_val,
                 plot_type = "detail",
                 is_macro_mode = is_macro_mode,

@@ -1597,7 +1597,12 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
     )
   } else {
     plot_title <- if (!is.null(sep_value) && !is.null(var_name)) {
-      paste0(sep_value, " - ", var_name)
+      # Check if sep_value and var_name are identical to avoid duplication
+      if (identical(as.character(sep_value), as.character(var_name))) {
+        var_name  # Use just one value to avoid duplication
+      } else {
+        paste0(sep_value, " - ", var_name)
+      }
     } else if (!is.null(sep_value)) {
       sep_value
     } else if (!is.null(var_name)) {
