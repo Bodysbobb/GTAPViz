@@ -2175,33 +2175,6 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       sequential = c("#FFE4B5", "#FFD700", "#FFA500", "#FF8C00", "#D2691E", "#A0522D", "#8B0000"),
       diverging = c("#8B0000", "#D2691E", "#FFA07A", "#FFFFFF", "#87CEFA", "#4682B4", "#00008B")
     ),
-
-    # Add monochromatic palettes
-    blue_mono = list(
-      qualitative = c("#0D47A1", "#1565C0", "#1976D2", "#1E88E5", "#2196F3", "#42A5F5", "#64B5F6", "#90CAF9"),
-      sequential = c("#E3F2FD", "#BBDEFB", "#90CAF9", "#64B5F6", "#42A5F5", "#2196F3", "#1E88E5", "#1976D2", "#1565C0", "#0D47A1"),
-      diverging = c("#0D47A1", "#1565C0", "#1976D2", "#1E88E5", "#2196F3", "#42A5F5", "#64B5F6", "#90CAF9", "#BBDEFB")
-    ),
-    green_mono = list(
-      qualitative = c("#1B5E20", "#2E7D32", "#388E3C", "#43A047", "#4CAF50", "#66BB6A", "#81C784", "#A5D6A7"),
-      sequential = c("#E8F5E9", "#C8E6C9", "#A5D6A7", "#81C784", "#66BB6A", "#4CAF50", "#43A047", "#388E3C", "#2E7D32", "#1B5E20"),
-      diverging = c("#1B5E20", "#2E7D32", "#388E3C", "#43A047", "#4CAF50", "#66BB6A", "#81C784", "#A5D6A7", "#C8E6C9")
-    ),
-    red_mono = list(
-      qualitative = c("#B71C1C", "#C62828", "#D32F2F", "#E53935", "#F44336", "#EF5350", "#E57373", "#EF9A9A"),
-      sequential = c("#FFEBEE", "#FFCDD2", "#EF9A9A", "#E57373", "#EF5350", "#F44336", "#E53935", "#D32F2F", "#C62828", "#B71C1C"),
-      diverging = c("#B71C1C", "#C62828", "#D32F2F", "#E53935", "#F44336", "#EF5350", "#E57373", "#EF9A9A", "#FFCDD2")
-    ),
-    grey_mono = list(
-      qualitative = c("#212121", "#424242", "#616161", "#757575", "#9E9E9E", "#BDBDBD", "#E0E0E0", "#EEEEEE"),
-      sequential = c("#FAFAFA", "#F5F5F5", "#EEEEEE", "#E0E0E0", "#BDBDBD", "#9E9E9E", "#757575", "#616161", "#424242", "#212121"),
-      diverging = c("#212121", "#424242", "#616161", "#757575", "#9E9E9E", "#BDBDBD", "#E0E0E0", "#EEEEEE", "#F5F5F5")
-    ),
-    black_mono = list(
-      qualitative = rep(c("#000000"), n_colors),
-      sequential = c(rep(c("#000000"), n_colors)),
-      diverging = c(rep(c("#000000"), n_colors))
-    )
   )
 
   # Check if color_tone is a recognized theme
@@ -2219,35 +2192,38 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   }
 
   # For mono-color themes that aren't predefined
-  if (!is.null(color_tone) && grepl("_mono$", tolower(color_tone))) {
-    # Extract the base color before "_mono"
-    base_color <- gsub("_mono$", "", tolower(color_tone))
+  if (grepl("_mono$", color_tone)) {
+    # Extract base color name (remove _mono suffix)
+    base_color <- sub("_mono$", "", color_tone)
 
-    # Try to interpret as a standard color name
-    tryCatch({
-      # Create a mono palette from the base color
-      base_col <- grDevices::col2rgb(base_color)
-      if (!is.null(base_col)) {
-        # Create a range of lightness values
-        darken_factor <- if (palette_type == "diverging") {
-          seq(0.4, 1.3, length.out = n_colors)
-        } else {
-          seq(0.5, 1.5, length.out = n_colors)
-        }
+    # Get the representative color
+    color_hex <- NULL
 
-        colors <- sapply(darken_factor, function(factor) {
-          r <- min(255, max(0, base_col[1,1] * factor))
-          g <- min(255, max(0, base_col[2,1] * factor))
-          b <- min(255, max(0, base_col[3,1] * factor))
-          grDevices::rgb(r, g, b, maxColorValue = 255)
-        })
+    # If base_color is a named color like "blue", "red", etc.
+    if (base_color %in% colors()) {
+      color_hex <- base_color
+    }
+    # If base_color is a hex code
+    else if (grepl("^#[0-9A-Fa-f]{6}$", base_color)) {
+      color_hex <- base_color
+    }
+    # If base_color is one of our predefined palettes, use its first color
+    else if (base_color %in% names(color_palette)) {
+      color_hex <- color_palette[[base_color]]$qualitative[1]
+    }
+    # Default fallback
+    else {
+      color_hex <- "#000000"  # Default to black if color not recognized
+    }
 
-        return(colors)
-      }
-    }, error = function(e) {
-      # If color name can't be interpreted, return NULL
-      return(NULL)
-    })
+    # Create monochrome palette with the single color
+    mono_palette <- list(
+      qualitative = rep(color_hex, n_colors),
+      sequential = rep(color_hex, n_colors),
+      diverging = rep(color_hex, n_colors)
+    )
+
+    return(mono_palette)
   }
 
   # NEW: Try to interpret any standard R color
