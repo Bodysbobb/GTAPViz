@@ -152,6 +152,7 @@ comparison_plot <- function(data, filter_var = NULL,
 
   # Ensure panel_var column maintains original order for facets
   if (panel_var %in% names(data)) {
+    panel_levels <- unique(data[[panel_var]])
     data[[panel_var]] <- factor(data[[panel_var]], levels = panel_levels)
   }
 
@@ -819,6 +820,7 @@ detail_plot <- function(data, filter_var = NULL,
 
   # Ensure panel_var column maintains original order for facets
   if (panel_var %in% names(data)) {
+    panel_levels <- unique(data[[panel_var]])
     data[[panel_var]] <- factor(data[[panel_var]], levels = panel_levels)
   }
 
@@ -1589,6 +1591,7 @@ stack_plot <- function(data, filter_var = NULL,
 
   # Ensure panel_var column maintains original order for facets
   if (panel_var %in% names(data)) {
+    panel_levels <- unique(data[[panel_var]])
     data[[panel_var]] <- factor(data[[panel_var]], levels = panel_levels)
   }
 

@@ -2179,7 +2179,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
       qualitative = c("#FF4500", "#D2691E", "#8B4513", "#A0522D", "#CD853F", "#F4A460", "#FFD700"),
       sequential = c("#FFE4B5", "#FFD700", "#FFA500", "#FF8C00", "#D2691E", "#A0522D", "#8B0000"),
       diverging = c("#8B0000", "#D2691E", "#FFA07A", "#FFFFFF", "#87CEFA", "#4682B4", "#00008B")
-    ),
+    )
   )
 
   # Check if color_tone is a recognized theme

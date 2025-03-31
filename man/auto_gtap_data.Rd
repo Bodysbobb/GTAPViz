@@ -83,7 +83,8 @@ auto_gtap_data(
 
 \item{macro_output_name}{Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".}
 
-\item{add_scenario_ranking}{Logical. If TRUE, adds a numeric ranking column to all data frames. Default is FALSE.}
+\item{add_scenario_ranking}{Logical or character. If TRUE, adds a numeric ranking column to all data frames.
+If "merged", adds ranking column and prefixes experiment names with rank in parentheses. Default is FALSE.}
 
 \item{rank_column}{Character. Name of the column to add with scenario ranking information. Default is "ScenarioRank".}
 }

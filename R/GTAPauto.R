@@ -193,7 +193,8 @@ gtap_macros_data <- function(select_var = NULL,
 #' @param sl4_output_name Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".
 #' @param har_output_name Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".
 #' @param macro_output_name Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".
-#' @param add_scenario_ranking Logical. If TRUE, adds a numeric ranking column to all data frames. Default is FALSE.
+#' @param add_scenario_ranking Logical or character. If TRUE, adds a numeric ranking column to all data frames.
+#' If "merged", adds ranking column and prefixes experiment names with rank in parentheses. Default is FALSE.
 #' @param rank_column Character. Name of the column to add with scenario ranking information. Default is "ScenarioRank".
 #'
 #' @return
@@ -336,15 +337,14 @@ auto_gtap_data <- function(experiment,
     }
 
     # Add scenario ranking if requested
-    if (add_scenario_ranking) {
+    if (isTRUE(add_scenario_ranking) ||
+        (is.character(add_scenario_ranking) && tolower(add_scenario_ranking) == "merged")) {
       merged_display <- FALSE
       if (is.character(add_scenario_ranking) && tolower(add_scenario_ranking) == "merged") {
         merged_display <- TRUE
       }
-
       data <- .add_scenario_rank(data, experiment, rank_column, merged_display = merged_display)
     }
-
     if (length(data) == 1 && is.list(data) && !is.data.frame(data)) {
       data <- data[[1]]
     }
@@ -589,7 +589,7 @@ auto_gtap_data <- function(experiment,
       process_log$qxs <- "QXS Bilateral Data processed successfully"
       bilateral_data <- transform_data(bilateral_data, sl4_mapping_info)
       if (plot_data && !is.null("bilateral_data")) {
-        assign(sl4_output_name, bilateral_data, envir = parent.frame())
+        assign("bilateral_data", list(qxs = bilateral_data), envir = parent.frame())
       }
       all_data$bilateral_data <- bilateral_data
 
