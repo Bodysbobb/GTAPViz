@@ -337,7 +337,12 @@ auto_gtap_data <- function(experiment,
 
     # Add scenario ranking if requested
     if (add_scenario_ranking) {
-      data <- .add_scenario_rank(data, experiment, rank_column)
+      merged_display <- FALSE
+      if (is.character(add_scenario_ranking) && tolower(add_scenario_ranking) == "merged") {
+        merged_display <- TRUE
+      }
+
+      data <- .add_scenario_rank(data, experiment, rank_column, merged_display = merged_display)
     }
 
     if (length(data) == 1 && is.list(data) && !is.data.frame(data)) {
@@ -507,7 +512,11 @@ auto_gtap_data <- function(experiment,
 
       # Add scenario ranking if requested
       if (add_scenario_ranking) {
-        GTAPMacros_final <- .add_scenario_rank(GTAPMacros_final, experiment, rank_column)
+        merged_display <- FALSE
+        if (is.character(add_scenario_ranking) && tolower(add_scenario_ranking) == "merged") {
+          merged_display <- TRUE
+        }
+        GTAPMacros_final <- .add_scenario_rank(GTAPMacros_final, experiment, rank_column, merged_display = merged_display)
       }
 
       rename_GTAP_bilateral(GTAPMacros_final)
@@ -580,7 +589,7 @@ auto_gtap_data <- function(experiment,
       process_log$qxs <- "QXS Bilateral Data processed successfully"
       bilateral_data <- transform_data(bilateral_data, sl4_mapping_info)
       if (plot_data && !is.null("bilateral_data")) {
-        assign("bilateral_data", bilateral_data, envir = parent.frame())
+        assign(sl4_output_name, bilateral_data, envir = parent.frame())
       }
       all_data$bilateral_data <- bilateral_data
 
@@ -588,7 +597,6 @@ auto_gtap_data <- function(experiment,
       export_processed_data(bilateral_data, "BilateralTrade", output_path)
     }
   }
-
 
   # Process HAR Data------------------------------------------------------------
   if (process_har && length(valid_har_cases) > 0) {

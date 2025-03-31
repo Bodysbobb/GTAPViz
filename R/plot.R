@@ -150,6 +150,11 @@ comparison_plot <- function(data, filter_var = NULL,
     )
   }
 
+  # Ensure panel_var column maintains original order for facets
+  if (panel_var %in% names(data)) {
+    data[[panel_var]] <- factor(data[[panel_var]], levels = panel_levels)
+  }
+
   # Calculate panel layout before style configuration
   panel_layout <- .calculate_panel_layout(data,
                                           panel_rows = if(!is.null(plot_style_config)) plot_style_config$panel_rows else NULL,
@@ -810,6 +815,11 @@ detail_plot <- function(data, filter_var = NULL,
       var_name_by_description = var_name_by_description,
       add_var_info = add_var_info
     )
+  }
+
+  # Ensure panel_var column maintains original order for facets
+  if (panel_var %in% names(data)) {
+    data[[panel_var]] <- factor(data[[panel_var]], levels = panel_levels)
   }
 
   # Calculate panel layout
@@ -1575,6 +1585,11 @@ stack_plot <- function(data, filter_var = NULL,
       var_name_by_description = var_name_by_description,
       add_var_info = add_var_info
     )
+  }
+
+  # Ensure panel_var column maintains original order for facets
+  if (panel_var %in% names(data)) {
+    data[[panel_var]] <- factor(data[[panel_var]], levels = panel_levels)
   }
 
   # Calculate panel layout

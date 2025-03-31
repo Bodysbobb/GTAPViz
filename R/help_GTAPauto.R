@@ -674,11 +674,12 @@
 #'
 .add_scenario_rank <- function(data_list, experiment,
                                rank_column = "ScenarioRank",
-                               experiment_column = "Experiment") {
+                               experiment_column = "Experiment",
+                               merged_display = FALSE) {
 
   experiment_ranks <- setNames(seq_along(experiment), experiment)
 
-  add_rank_to_df <- function(df, experiment_ranks, rank_column, experiment_column) {
+  add_rank_to_df <- function(df, experiment_ranks, rank_column, experiment_column, merged_display) {
     if (!is.data.frame(df) || nrow(df) == 0 ||
         !experiment_column %in% names(df)) {
       return(df)
@@ -694,6 +695,11 @@
 
     temp_df <- df
     temp_df[[experiment_column]] <- NULL
+
+    # If merged display, modify experiment values to include rank
+    if (merged_display) {
+      df[[experiment_column]] <- paste0("(", rank_values, ") ", df[[experiment_column]])
+    }
 
     result_df <- data.frame(
       rank_values,
@@ -712,10 +718,10 @@
   }
 
   if (is.data.frame(data_list)) {
-    return(add_rank_to_df(data_list, experiment_ranks, rank_column, experiment_column))
+    return(add_rank_to_df(data_list, experiment_ranks, rank_column, experiment_column, merged_display))
   } else if (is.list(data_list)) {
     return(.apply_to_dataframes(data_list, add_rank_to_df,
-                                experiment_ranks, rank_column, experiment_column))
+                                experiment_ranks, rank_column, experiment_column, merged_display))
   }
 
   return(data_list)
