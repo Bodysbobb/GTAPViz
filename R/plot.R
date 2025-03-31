@@ -1345,6 +1345,25 @@ detail_plot <- function(data, filter_var = NULL,
     }
   }
 
+  # ADD ZERO LINE IF CONFIGURED
+  if (style_config$show_zero_line) {
+    if (invert_pane) {
+      p <- p + ggplot2::geom_vline(
+        xintercept = style_config$zero_line_position,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        linewidth = style_config$zero_line_size
+      )
+    } else {
+      p <- p + ggplot2::geom_hline(
+        yintercept =style_config$zero_line_position0,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        linewidth = style_config$zero_line_size
+      )
+    }
+  }
+
   # Apply style config LAST
   p <- .apply_plot_style_config(p, style_config)
 
@@ -2025,20 +2044,21 @@ stack_plot <- function(data, filter_var = NULL,
     if (show_total) {
       decimal_places <- style_config$value_label_decimal_places
       value_size <- style_config$value_label_size
+      value_label_face <- style_config$value_label_face
 
       p <- p + ggplot2::geom_text(
         data = total_data,
         ggplot2::aes(
           y = .data[[x_axis_from]],
           x = ifelse(Total >= 0,
-                     PositiveTotal + abs(Total) * 0.15,
-                     NegativeTotal - abs(Total) * 0.15),
+                     PositiveTotal + pmax(abs(Total) * 0.25, 0.05),
+                     NegativeTotal - pmax(abs(Total) * 0.25, 0.05)),
           label = sprintf(paste0("Total\n%.", decimal_places, "f"), Total)
         ),
         hjust = ifelse(total_data$Total >= 0, 0, 1),
         vjust = 0.5,
         size = value_size,
-        fontface = "bold"
+        fontface = value_label_face
       )
     }
 
@@ -2074,6 +2094,7 @@ stack_plot <- function(data, filter_var = NULL,
     if (show_total) {
       decimal_places <- style_config$value_label_decimal_places
       value_size <- style_config$value_label_size
+      value_label_face <- style_config$value_label_face
 
       p <- p + ggplot2::geom_text(
         data = total_data,
@@ -2086,7 +2107,7 @@ stack_plot <- function(data, filter_var = NULL,
         ),
         vjust = ifelse(total_data$Total >= 0, 0, 1.5),
         size = value_size,
-        fontface = "bold"
+        fontface = value_label_face
       )
     }
 
@@ -2103,6 +2124,25 @@ stack_plot <- function(data, filter_var = NULL,
     }
 
     p <- p + do.call(ggplot2::scale_y_continuous, scale_args)
+  }
+
+  # ADD ZERO LINE IF CONFIGURED
+  if (style_config$show_zero_line) {
+    if (invert_pane) {
+      p <- p + ggplot2::geom_vline(
+        xintercept = style_config$zero_line_position,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        linewidth = style_config$zero_line_size
+      )
+    } else {
+      p <- p + ggplot2::geom_hline(
+        yintercept = style_config$zero_line_position,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        linewidth = style_config$zero_line_size
+      )
+    }
   }
 
   # ADD FACETS IF NEEDED
@@ -2381,7 +2421,25 @@ stack_plot <- function(data, filter_var = NULL,
     p <- p + do.call(ggplot2::scale_y_continuous, scale_args)
   }
 
-  # ADD FACETS IF NEEDED
+  # ADD ZERO LINE IF CONFIGURED
+  if (style_config$show_zero_line) {
+    if (invert_pane) {
+      p <- p + ggplot2::geom_vline(
+        xintercept = style_config$zero_line_position,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        linewidth = style_config$zero_line_size
+      )
+    } else {
+      p <- p + ggplot2::geom_hline(
+        yintercept = style_config$zero_line_position,
+        linetype = style_config$zero_line_type,
+        color = style_config$zero_line_color,
+        linewidth = style_config$zero_line_size
+      )
+    }
+  }
+
   # ADD FACETS IF NEEDED
   if (n_panels > 1) {
     facet_args <- list(
@@ -2604,7 +2662,3 @@ stack_plot <- function(data, filter_var = NULL,
 
   return(filtered_data)
 }
-
-
-
-
