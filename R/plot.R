@@ -1992,22 +1992,61 @@ stack_plot <- function(data, filter_var = NULL,
   if (!is.null(style_config$scale_limit) && length(style_config$scale_limit) == 2) {
     y_limit <- style_config$scale_limit
   } else {
-    # Calculate more generous limits for stacked plot
-    max_total <- max(abs(total_data$Total), na.rm = TRUE)
+    # Check if total_data exists and has the Total column
+    if (is.data.frame(total_data) && nrow(total_data) > 0 && "Total" %in% names(total_data)) {
+      # Calculate appropriate limits based on actual values
+      max_abs_total <- max(abs(total_data$Total), na.rm = TRUE)
 
-    # Determine if we have all positive, all negative, or mixed values
-    if (all(total_data$Total >= 0, na.rm = TRUE)) {
-      # All positive
-      y_limit <- c(0, max_total * 1.4)
-    } else if (all(total_data$Total <= 0, na.rm = TRUE)) {
-      # All negative
-      y_limit <- c(-max_total * 1.4, 0)
+      if (is.finite(max_abs_total) && max_abs_total > 0) {
+        if (all(total_data$Total >= 0, na.rm = TRUE)) {
+          # All positive values
+          y_limit <- c(0, max(total_data$Total, na.rm = TRUE) * 1.4)
+        } else if (all(total_data$Total <= 0, na.rm = TRUE)) {
+          # All negative values
+          y_limit <- c(min(total_data$Total, na.rm = TRUE) * 1.4, 0)
+        } else {
+          # Mixed values
+          y_limit <- c(min(total_data$Total, na.rm = TRUE) * 1.4,
+                       max(total_data$Total, na.rm = TRUE) * 1.4)
+        }
+      } else {
+        # Handle invalid data within total_data
+        max_abs_value <- max(abs(data$Value), na.rm = TRUE)
+        if (is.finite(max_abs_value) && max_abs_value > 0) {
+          y_limit <- c(-max_abs_value * 1.4, max_abs_value * 1.4)
+        } else {
+          y_limit <- c(-10, 10)  # Last resort fallback
+        }
+      }
     } else {
-      # Mixed values - symmetrical with extra padding
-      y_limit <- c(-max_total * 1.4, max_total * 1.4)
+      # If total_data is invalid, calculate directly from data
+      # Group by x-axis and panel to calculate stacked totals manually
+      totals <- tapply(data$Value, list(data[[x_axis_from]], data[[panel_var]]), sum, na.rm = TRUE)
+
+      if (!is.null(totals) && length(totals) > 0) {
+        max_total <- max(abs(totals), na.rm = TRUE)
+        if (is.finite(max_total) && max_total > 0) {
+          min_val <- min(totals, na.rm = TRUE)
+          max_val <- max(totals, na.rm = TRUE)
+
+          if (min_val >= 0) {
+            # All positive
+            y_limit <- c(0, max_val * 1.4)
+          } else if (max_val <= 0) {
+            # All negative
+            y_limit <- c(min_val * 1.4, 0)
+          } else {
+            # Mixed
+            y_limit <- c(min_val * 1.4, max_val * 1.4)
+          }
+        } else {
+          y_limit <- c(-10, 10)  # Fallback
+        }
+      } else {
+        y_limit <- c(-10, 10)  # Fallback if tapply fails
+      }
     }
   }
-
   # FORMAT AXIS LABELS
   # y-axis label shows the unit
   y_axis_label <- if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
@@ -2051,8 +2090,8 @@ stack_plot <- function(data, filter_var = NULL,
         ggplot2::aes(
           y = .data[[x_axis_from]],
           x = ifelse(Total >= 0,
-                     PositiveTotal + pmax(abs(Total) * 0.25, 0.05),
-                     NegativeTotal - pmax(abs(Total) * 0.25, 0.05)),
+                     PositiveTotal + pmax(abs(Total) * 0.1, 0.1),
+                     NegativeTotal - pmax(abs(Total) * 0.1, 0.1)),
           label = sprintf(paste0("Total\n%.", decimal_places, "f"), Total)
         ),
         hjust = ifelse(total_data$Total >= 0, 0, 1),
