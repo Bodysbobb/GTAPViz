@@ -387,7 +387,6 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @noRd
 #' @seealso \code{\link{comparison_plot}}
 #'
-
 .create_single_comparison_plot <- function(data, x_axis_from, plot_title, unit,
                                            panel_rows, panel_cols,
                                            panel_var = "Experiment",
