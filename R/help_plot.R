@@ -1110,7 +1110,7 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
   available_palettes <- c(
     "academic", "purdue", "colorblind", "economic", "trade", "gtap", "gtap2",
     "earth", "vibrant", "bright", "minimal", "energetic", "pastel", "spring",
-    "summer", "winter", "fall", "blue_mono", "green_mono", "red_mono", "grey_mono"
+    "summer", "winter", "fall"
   )
   # If color_tone is "all", return a list of functions (lazy evaluation)
   if (!is.null(color_tone) && color_tone == "all") {
