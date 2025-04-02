@@ -78,5 +78,7 @@ all_palettes$winter()   # View the winter palette
 all_palettes$fall()     # View the fall palette
 all_palettes$gtap()     # View the GTAP palette
 }
-
+}
+\author{
+Pattawee Puangchit
 }

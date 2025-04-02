@@ -25,23 +25,23 @@
 #'
 #' @examples
 #' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
 #'                                 package = "GTAPViz"))
-#'                                 
+#'
 #' # Get Data by Variable Name
 #' sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"), sl4_data1)
-#' 
+#'
 #' # Add mapping using GTAPv7 defaults
 #' gtap_data <- add_mapping_info(sl4_data1, mapping = "GTAPv7")
 #'
 #' # Use an external mapping file
-#' my_mapping <- data.frame(Variable = c("qgdp", "EV"), 
+#' my_mapping <- data.frame(Variable = c("qgdp", "EV"),
 #'                          Description = c("Real GDP", "Welfare"),
 #'                          Unit = c("percent", "millionUSD"))  # <- Fixed closing quote
-#'                          
-#' gtap_data <- add_mapping_info(sl4_data1, external_map = my_mapping, 
+#'
+#' gtap_data <- add_mapping_info(sl4_data1, external_map = my_mapping,
 #'                               mapping = "Mix")
-#' 
+#'
 add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
                              description_info = TRUE, unit_info = TRUE) {
   if (!is.null(mapping)) {
@@ -174,12 +174,12 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 #'
 #' @examples
 #' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
 #'                                 package = "GTAPViz"))
-#'                                 
+#'
 #' # Get Data by Variable Name
 #' sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
-#' 
+#'
 #' # Convert million USD to billion USD
 #' gtap_data <- convert_units(sl4_data1,
 #'   change_unit_from = "million USD",
@@ -392,15 +392,15 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
 #'
 #' @examples
 #' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
 #'                                 package = "GTAPViz"))
 #' # Get Data by Variable Name
 #' sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
-#' 
+#'
 #' # Rename variables in a dataset
-#' rename_map <- data.frame(OldName = c("qgdp", "EV"), 
+#' rename_map <- data.frame(OldName = c("qgdp", "EV"),
 #'                         NewName = c("Real GDP", "Welfare"))
-#' gtap_data <- rename_value(sl4_data1, column_name = "Variable", 
+#' gtap_data <- rename_value(sl4_data1, column_name = "Variable",
 #'                           mapping.file = rename_map)
 #'
 rename_value <- function(data, column_name = NULL, mapping.file) {
@@ -461,11 +461,11 @@ rename_value <- function(data, column_name = NULL, mapping.file) {
 #'
 #' @examples
 #' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
 #'                                 package = "GTAPViz"))
 #' # Get Data by Variable Name
 #' sl4_data1 <- HARplus::get_data_by_var("qxs",sl4_data1)
-#' 
+#'
 #' # Rename bilateral trade columns in a GTAP dataset
 #' gtap_data <- rename_GTAP_bilateral(sl4_data1)
 #'
@@ -495,14 +495,23 @@ rename_GTAP_bilateral <- function(data) {
       new_names[new_names == second_col] <- "Destination"
 
       names(df) <- new_names
+    } else {
+      reg_dupes <- which(toupper(names(df)) == "REG")
+      if (length(reg_dupes) >= 2) {
+        names(df)[reg_dupes[1]] <- "Source"
+        names(df)[reg_dupes[2]] <- "Destination"
+      }
     }
 
     return(df)
   }
 
+  if (is.data.frame(data)) {
+    return(rename_bilateral_cols(data))
+  }
+
   return(.apply_to_dataframes(data, rename_bilateral_cols))
 }
-
 
 #' @title Sort GTAP Plot Data
 #'
@@ -528,22 +537,22 @@ rename_GTAP_bilateral <- function(data) {
 #' @export
 #'
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_GTAP_bilateral}}
-#' 
+#'
 #' @examples
-#' 
+#'
 #' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
 #'                                 package = "GTAPViz"))
 #' # Get Data by Variable Name
 #' sl4_data1 <- HARplus::get_data_by_var(c("qgdp","EV"),sl4_data1)
-#' 
+#'
 #' # Creating Sorting Rule
 #' sorting_specs <- data.frame(REG = c("EastAsia", "SEAsia", "Oceania"))
-#' 
+#'
 #' # Sorting
-#' sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs, 
+#' sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs,
 #'                             sort_by_value_desc = FALSE)
-#' 
+#'
 sort_plot_data <- function(data, sort_columns = NULL, sort_by_value_desc = NULL, convert_to_factor = TRUE) {
   # If no sorting parameters provided, return the data as is
   if (is.null(sort_columns) && is.null(sort_by_value_desc)) {

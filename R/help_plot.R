@@ -1102,7 +1102,7 @@ get_export_config <- function(as_dataframe = TRUE, printing = FALSE) {
 #' all_palettes$fall()     # View the fall palette
 #' all_palettes$gtap()     # View the GTAP palette
 #' }
-#'
+#' @author Pattawee Puangchit
 #' @export
 #'
 get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
@@ -1145,6 +1145,341 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
 }
 
 # PLOT STYLE CONFIG HELPERS -----------------------------------------
+
+#' Create a Plot Style Configuration
+#'
+#' @description
+#' Creates a configuration list for plot styling that can be used with GTAPViz plotting functions.
+#' This function provides auto-completion for style options while maintaining compatibility
+#' with direct list specification.
+#'
+#' @param show_title Logical. Show or hide the plot title. Default: TRUE
+#' @param title_face Character. Font face ("bold", "plain", "italic"). Default: "bold"
+#' @param title_size Numeric. Font size of title. Default: 20
+#' @param title_hjust Numeric. Horizontal alignment (0 = left, 1 = right). Default: 0.5
+#' @param add_unit_to_title Logical. Append unit to title if applicable. Default: TRUE
+#' @param title_margin Numeric vector c(top, right, bottom, left). Default: c(10, 0, 10, 0)
+#' @param title_format List or function output. Title formatting options. Can be created with
+#'        \code{create_title_format()}. Default: list(type = "standard", text = "", sep = "")
+#'
+#' @param show_x_axis_title Logical. Show or hide x-axis title. Default: TRUE
+#' @param x_axis_title_face Character. Font face for x-axis title. Default: "bold"
+#' @param x_axis_title_size Numeric. Font size of x-axis title. Default: 16
+#' @param x_axis_title_margin Numeric vector c(top, right, bottom, left). Default: c(25, 25, 0, 0)
+#' @param show_x_axis_labels Logical. Show or hide x-axis labels. Default: TRUE
+#' @param x_axis_text_face Character. Font face for x-axis labels. Default: "plain"
+#' @param x_axis_text_size Numeric. Font size of x-axis labels. Default: 14
+#' @param x_axis_text_angle Numeric. Angle of x-axis labels. Default: 0
+#' @param x_axis_text_hjust Numeric. Horizontal justification of x-axis labels. Default: 0
+#' @param x_axis_description Character. Optional description for the x-axis. Default: ""
+#'
+#' @param show_y_axis_title Logical. Show or hide y-axis title. Default: TRUE
+#' @param y_axis_title_face Character. Font face for y-axis title. Default: "bold"
+#' @param y_axis_title_size Numeric. Font size of y-axis title. Default: 16
+#' @param y_axis_title_margin Numeric vector c(top, right, bottom, left). Default: c(25, 25, 0, 0)
+#' @param show_y_axis_labels Logical. Show or hide y-axis labels. Default: TRUE
+#' @param y_axis_text_face Character. Font face for y-axis labels. Default: "plain"
+#' @param y_axis_text_size Numeric. Font size of y-axis labels. Default: 14
+#' @param y_axis_text_angle Numeric. Angle of y-axis labels. Default: 0
+#' @param y_axis_text_hjust Numeric. Horizontal justification of y-axis labels. Default: 0
+#' @param y_axis_description Character. Optional description for the y-axis. Default: ""
+#' @param show_axis_titles_on_all_facets Logical. Show axis titles on all facets. Default: TRUE
+#'
+#' @param show_value_labels Logical. Show or hide value labels. Default: TRUE
+#' @param value_label_face Character. Font face for value labels. Default: "plain"
+#' @param value_label_size Numeric. Font size of value labels. Default: 5
+#' @param value_label_position Character. Position of value labels ("above", "outside", "top"). Default: "above"
+#' @param value_label_decimal_places Numeric. Number of decimal places in value labels. Default: 2
+#'
+#' @param show_legend Logical. Show or hide legend. Default: FALSE
+#' @param show_legend_title Logical. Show or hide legend title. Default: FALSE
+#' @param legend_position Character. Legend position ("none", "bottom", "right"). Default: "bottom"
+#' @param legend_title_face Character. Font face for legend title. Default: "bold"
+#' @param legend_text_face Character. Font face for legend text. Default: "plain"
+#' @param legend_text_size Numeric. Font size of legend text. Default: 14
+#'
+#' @param strip_face Character. Font face for panel strip. Default: "bold"
+#' @param strip_text_size Numeric. Font size for panel strip. Default: 16
+#' @param strip_background Character. Background color of strip. Default: "lightgrey"
+#' @param strip_text_margin Numeric vector c(top, right, bottom, left). Default: c(10, 0, 10, 0)
+#'
+#' @param panel_spacing Numeric. Spacing between panels. Default: 2
+#' @param panel_rows Numeric or NULL. Number of rows in panel layout. Default: NULL
+#' @param panel_cols Numeric or NULL. Number of columns in panel layout. Default: NULL
+#' @param theme ggplot2 theme or NULL. Custom ggplot theme. Default: NULL
+#'
+#' @param color_tone Character or NULL. Base color theme. Default: NULL
+#' @param color_palette_type Character. Type of color palette ('qualitative', 'sequential', 'diverging'). Default: "qualitative"
+#' @param positive_color Character. Color for positive values. Default: "#2E8B57"
+#' @param negative_color Character. Color for negative values. Default: "#CD5C5C"
+#' @param background_color Character. Background color of plot. Default: "white"
+#' @param grid_color Character. Color of grid lines. Default: "grey90"
+#' @param show_grid_major_x Logical. Show major grid lines on x-axis. Default: FALSE
+#' @param show_grid_major_y Logical. Show major grid lines on y-axis. Default: FALSE
+#' @param show_grid_minor_x Logical. Show minor grid lines on x-axis. Default: FALSE
+#' @param show_grid_minor_y Logical. Show minor grid lines on y-axis. Default: FALSE
+#'
+#' @param show_zero_line Logical. Show or hide zero line. Default: TRUE
+#' @param zero_line_type Character. Line type ("solid", "dashed", "dotted"). Default: "dashed"
+#' @param zero_line_color Character. Color of zero line. Default: "black"
+#' @param zero_line_size Numeric. Line thickness of zero line. Default: 0.5
+#' @param zero_line_position Numeric. Position of the zero line. Default: 0
+#'
+#' @param bar_width Numeric. Width of bars. Default: 0.9
+#' @param bar_spacing Numeric. Spacing between groups of bars. Default: 0.9
+#'
+#' @param scale_limit Numeric vector of length 2 or NULL. Manual limits for value axis. Default: NULL
+#' @param scale_increment Numeric or NULL. Step size for axis tick marks. Default: NULL
+#'
+#' @param expansion_y_mult Numeric vector. Y-axis expansion. Default: c(0.05, 0.1)
+#' @param expansion_x_mult Numeric vector. X-axis expansion. Default: c(0.05, 0.05)
+#'
+#' @param all_font_size Numeric. Master control for all font sizes. Default: 1
+#'
+#' @param sort_data_by_value Logical. Whether to sort data by value. Default: FALSE
+#'
+#' @param plot.margin Numeric vector c(top, right, bottom, left). Margins around the entire plot. Default: c(10, 25, 10, 10)
+#'
+#' @return A list containing all style configuration parameters
+#'
+#' @examples
+#' # Create default style
+#' default_style <- create_plot_style()
+#'
+#' # Create customized style with title formatting
+#' custom_style <- create_plot_style(
+#'   color_tone = "gtap",
+#'   title_size = 24,
+#'   title_format = create_title_format(
+#'     type = "prefix",
+#'     text = "Impact on",
+#'     sep = " "
+#'   ),
+#'   bar_width = 0.5,
+#'   x_axis_text_angle = 45
+#' )
+#' @author Pattawee Puangchit
+#' @export
+create_plot_style <- function(
+    # Title settings
+  show_title = TRUE,
+  title_face = "bold",
+  title_size = 20,
+  title_hjust = 0.5,
+  add_unit_to_title = TRUE,
+  title_margin = c(10, 0, 10, 0),
+  title_format = list(type = "standard", text = "", sep = ""),
+
+  # X-Axis settings
+  show_x_axis_title = TRUE,
+  x_axis_title_face = "bold",
+  x_axis_title_size = 16,
+  x_axis_title_margin = c(25, 25, 0, 0),
+  show_x_axis_labels = TRUE,
+  x_axis_text_face = "plain",
+  x_axis_text_size = 14,
+  x_axis_text_angle = 0,
+  x_axis_text_hjust = 0,
+  x_axis_description = "",
+
+  # Y-Axis settings
+  show_y_axis_title = TRUE,
+  y_axis_title_face = "bold",
+  y_axis_title_size = 16,
+  y_axis_title_margin = c(25, 25, 0, 0),
+  show_y_axis_labels = TRUE,
+  y_axis_text_face = "plain",
+  y_axis_text_size = 14,
+  y_axis_text_angle = 0,
+  y_axis_text_hjust = 0,
+  y_axis_description = "",
+  show_axis_titles_on_all_facets = TRUE,
+
+  # Value label settings
+  show_value_labels = TRUE,
+  value_label_face = "plain",
+  value_label_size = 5,
+  value_label_position = "above",
+  value_label_decimal_places = 2,
+
+  # Legend settings
+  show_legend = FALSE,
+  show_legend_title = FALSE,
+  legend_position = "bottom",
+  legend_title_face = "bold",
+  legend_text_face = "plain",
+  legend_text_size = 14,
+
+  # Panel strip settings
+  strip_face = "bold",
+  strip_text_size = 16,
+  strip_background = "lightgrey",
+  strip_text_margin = c(10, 0, 10, 0),
+
+  # Panel layout
+  panel_spacing = 2,
+  panel_rows = NULL,
+  panel_cols = NULL,
+  theme = NULL,
+
+  # Color settings
+  color_tone = NULL,
+  color_palette_type = "qualitative",
+  positive_color = "#2E8B57",
+  negative_color = "#CD5C5C",
+  background_color = "white",
+  grid_color = "grey90",
+  show_grid_major_x = FALSE,
+  show_grid_major_y = FALSE,
+  show_grid_minor_x = FALSE,
+  show_grid_minor_y = FALSE,
+
+  # Zero line settings
+  show_zero_line = TRUE,
+  zero_line_type = "dashed",
+  zero_line_color = "black",
+  zero_line_size = 0.5,
+  zero_line_position = 0,
+
+  # Bar chart settings
+  bar_width = 0.9,
+  bar_spacing = 0.9,
+
+  # Scale settings
+  scale_limit = NULL,
+  scale_increment = NULL,
+
+  # Scale expansion settings
+  expansion_y_mult = c(0.05, 0.1),
+  expansion_x_mult = c(0.05, 0.05),
+
+  # Font size settings
+  all_font_size = 1,
+
+  # Data sorting
+  sort_data_by_value = FALSE,
+
+  # Plot margin
+  plot.margin = c(10, 25, 10, 10)
+) {
+  # Process title_format if it was created using create_title_format()
+  if (is.function(title_format)) {
+    title_format <- title_format()
+  }
+
+  # Collect all arguments into a list
+  style_config <- as.list(environment())
+
+  # Return the style configuration list
+  return(style_config)
+}
+
+#' Create an Export Configuration
+#'
+#' @description
+#' Creates a configuration list for controlling plot export settings.
+#' This function provides auto-completion for export options.
+#'
+#' @param file_name Character. Base name for exported files. Default: "gtap_plots".
+#' @param width Numeric. Width of output in inches. Default: NULL (auto-calculated).
+#' @param height Numeric. Height of output in inches. Default: NULL (auto-calculated).
+#' @param dpi Numeric. Resolution for PNG export. Default: 300.
+#' @param bg Character. Background color. Default: "white".
+#' @param limitsize Logical. Whether to limit size. Default: FALSE.
+#'
+#' @return A list with export configuration parameters.
+#'
+#' @examples
+#' # Default export configuration
+#' default_export <- create_export_config()
+#'
+#' # Custom export configuration
+#' custom_export <- create_export_config(
+#'   file_name = "regional_impacts",
+#'   width = 12,
+#'   height = 8,
+#'   dpi = 600
+#' )
+#' @author Pattawee Puangchit
+#' @export
+create_export_config <- function(
+    file_name = "gtap_plots",
+    width = NULL,
+    height = NULL,
+    dpi = 300,
+    bg = "white",
+    limitsize = FALSE
+) {
+  # Return the export configuration
+  list(
+    file_name = file_name,
+    width = width,
+    height = height,
+    dpi = dpi,
+    bg = bg,
+    limitsize = limitsize
+  )
+}
+
+#' Create a Title Format Configuration
+#'
+#' @description
+#' Creates a configuration list for controlling plot title formatting. This function
+#' provides auto-completion for title format options.
+#'
+#' @param type Character. The type of title format. Options:
+#'   \itemize{
+#'     \item \code{"standard"} - Default automatic title based on variable, description, and unit.
+#'     \item \code{"prefix"} - Adds text before the automatic title.
+#'     \item \code{"suffix"} - Adds text after the automatic title.
+#'     \item \code{"full"} - Uses only the specified text as the title.
+#'     \item \code{"dynamic"} - Creates a custom title using column values.
+#'   }
+#' @param text Character. The text to add as prefix, suffix, full title, or column template for dynamic titles.
+#' @param sep Character. Separator between prefix/suffix and main title. Default: "".
+#'
+#' @return A list with title format configuration parameters.
+#'
+#' @examples
+#' # Standard auto-generated title
+#' standard_title <- create_title_format()
+#'
+#' # Prefix title
+#' prefix_title <- create_title_format(
+#'   type = "prefix",
+#'   text = "Impact on",
+#'   sep = " "
+#' )
+#'
+#' # Dynamic title using column values
+#' dynamic_title <- create_title_format(
+#'   type = "dynamic",
+#'   text = "Impact on {Variable} in {Region}"
+#' )
+#' @author Pattawee Puangchit
+#' @export
+create_title_format <- function(
+    type = "standard",
+    text = "",
+    sep = ""
+) {
+  # Validate type parameter
+  valid_types <- c("standard", "prefix", "suffix", "full", "dynamic")
+  if (!type %in% valid_types) {
+    warning(sprintf(
+      "Invalid title format type '%s'. Valid options are: '%s'. Using 'standard' instead.",
+      type, paste(valid_types, collapse = "', '")
+    ))
+    type <- "standard"
+  }
+
+  # Return the title format configuration
+  list(
+    type = type,
+    text = text,
+    sep = sep
+  )
+}
 
 #' @title Calculate Plot Style Configuration
 #'
@@ -2663,10 +2998,6 @@ get_color_palette <- function(color_tone = NULL, palette_type = "qualitative") {
                                 export_config = NULL,
                                 data = NULL,
                                 panel_layout = NULL) {
-
-  if (!export_picture) {
-    return(invisible(plots))
-  }
 
   # Prepare export configuration
   if (is.null(export_config)) {

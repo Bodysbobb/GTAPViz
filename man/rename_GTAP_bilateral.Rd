@@ -18,7 +18,7 @@ ensuring consistency in regional trade flows.
 }
 \examples{
 # Load Sample Data:
-sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
                                 package = "GTAPViz"))
 # Get Data by Variable Name
 sl4_data1 <- HARplus::get_data_by_var("qxs",sl4_data1)

@@ -37,7 +37,7 @@ Works with data frames, lists of data frames, or nested data structures.
 \examples{
 
 # Load Sample Data:
-sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
                                 package = "GTAPViz"))
 # Get Data by Variable Name
 sl4_data1 <- HARplus::get_data_by_var(c("qgdp","EV"),sl4_data1)
@@ -46,7 +46,7 @@ sl4_data1 <- HARplus::get_data_by_var(c("qgdp","EV"),sl4_data1)
 sorting_specs <- data.frame(REG = c("EastAsia", "SEAsia", "Oceania"))
 
 # Sorting
-sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs, 
+sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs,
                             sort_by_value_desc = FALSE)
 
 }

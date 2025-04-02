@@ -324,7 +324,7 @@ auto_gtap_data <- function(experiment,
   transform_data <- function(data, external_map, apply_filters = TRUE) {
     if (is.null(data)) return(NULL)
 
-    data <- rename_GTAP_bilateral(data)
+    data <- .apply_to_dataframes(data, rename_GTAP_bilateral)
     data <- add_mapping_info(data, mapping = mapping_info, external_map = external_map)
 
     if (apply_filters && (!is.null(region_select) || !is.null(sector_select))) {
@@ -561,6 +561,17 @@ auto_gtap_data <- function(experiment,
       if (!is.null(grouped_sl4)) {
         process_log$sl4 <- "SL4 Data processed successfully"
         grouped_sl4 <- transform_data(grouped_sl4, sl4_mapping_info)
+
+        if (is.data.frame(grouped_sl4)) {
+          name <- switch(
+            sl4_extract_method,
+            "get_data_by_var" = if ("Variable" %in% names(grouped_sl4)) as.character(grouped_sl4$Variable[1]) else "data",
+            "get_data_by_dims" = if ("Dimension" %in% names(grouped_sl4)) as.character(grouped_sl4$Dimension[1]) else "data",
+            "group_data_by_dims" = "data"
+          )
+          grouped_sl4 <- setNames(list(grouped_sl4), name)
+        }
+
         if (plot_data && !is.null(sl4_output_name)) {
           assign(sl4_output_name, grouped_sl4, envir = parent.frame())
         }
@@ -571,7 +582,6 @@ auto_gtap_data <- function(experiment,
       }
     }
   }
-
 
   # Process Bilateral Trade -------------------------------------------------
   if (process_qxs && length(valid_sl4_cases) > 0) {
@@ -588,6 +598,16 @@ auto_gtap_data <- function(experiment,
     if (!is.null(bilateral_data)) {
       process_log$qxs <- "QXS Bilateral Data processed successfully"
       bilateral_data <- transform_data(bilateral_data, sl4_mapping_info)
+
+      if (is.data.frame(bilateral_data)) {
+        name <- switch(
+          "get_data_by_var",
+          "get_data_by_var" = if ("Variable" %in% names(bilateral_data)) as.character(bilateral_data$Variable[1]) else "qxs",
+          "qxs"
+        )
+        bilateral_data <- setNames(list(bilateral_data), name)
+      }
+
       if (plot_data && !is.null("bilateral_data")) {
         assign("bilateral_data", list(qxs = bilateral_data), envir = parent.frame())
       }
@@ -612,6 +632,17 @@ auto_gtap_data <- function(experiment,
     if (!is.null(har_data)) {
       process_log$har <- "HAR Data processed successfully"
       har_data <- transform_data(har_data, har_mapping_info)
+
+      if (is.data.frame(har_data)) {
+        name <- switch(
+          har_extract_method,
+          "get_data_by_var" = if ("Variable" %in% names(har_data)) as.character(har_data$Variable[1]) else "data",
+          "get_data_by_dims" = if ("Dimension" %in% names(har_data)) as.character(har_data$Dimension[1]) else "data",
+          "group_data_by_dims" = "data"
+        )
+        har_data <- setNames(list(har_data), name)
+      }
+
       if (plot_data && !is.null(har_output_name)) {
         assign(har_output_name, har_data, envir = parent.frame())
       }

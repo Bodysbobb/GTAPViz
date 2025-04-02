@@ -22,15 +22,15 @@ Supports renaming across nested data structures and preserves factor levels.
 }
 \examples{
 # Load Sample Data:
-sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4", 
+sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
                                 package = "GTAPViz"))
 # Get Data by Variable Name
 sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
 
 # Rename variables in a dataset
-rename_map <- data.frame(OldName = c("qgdp", "EV"), 
+rename_map <- data.frame(OldName = c("qgdp", "EV"),
                         NewName = c("Real GDP", "Welfare"))
-gtap_data <- rename_value(sl4_data1, column_name = "Variable", 
+gtap_data <- rename_value(sl4_data1, column_name = "Variable",
                           mapping.file = rename_map)
 
 }
