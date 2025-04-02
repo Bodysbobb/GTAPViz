@@ -2429,6 +2429,28 @@ create_title_format <- function(
 .create_color_palette <- function(color_tone = NULL, n_colors = 5,
                                   palette_type = "qualitative") {
 
+  # Special case for "mono" palette type - return exact same color for all items
+  if (!is.null(palette_type) && tolower(palette_type) == "mono") {
+    if (!is.null(color_tone)) {
+      # Try to validate if it's a valid R color
+      tryCatch({
+        # Confirm it's a valid color
+        base_col <- grDevices::col2rgb(color_tone)
+        # Convert to hex for consistency
+        hex_color <- grDevices::rgb(base_col[1,1], base_col[2,1], base_col[3,1], maxColorValue = 255)
+        # Return the exact same color n_colors times
+        return(rep(hex_color, n_colors))
+      }, error = function(e) {
+        warning(paste("Invalid color:", color_tone, "- using black instead"))
+        return(rep("#000000", n_colors))
+      })
+    } else {
+      # If no color_tone provided with mono, default to black
+      return(rep("#000000", n_colors))
+    }
+  }
+
+  # Rest of the original function for themed palettes
   themed_palettes <- list(
     academic = list(
       qualitative = c("#4477AA", "#66CCEE", "#228833", "#CCBB44", "#EE6677", "#AA3377", "#BBBBBB"),
@@ -2548,35 +2570,29 @@ create_title_format <- function(
       color_hex <- base_color
     }
     # If base_color is one of our predefined palettes, use its first color
-    else if (base_color %in% names(color_palette)) {
-      color_hex <- color_palette[[base_color]]$qualitative[1]
+    else if (base_color %in% names(themed_palettes)) {
+      color_hex <- themed_palettes[[base_color]]$qualitative[1]
     }
     # Default fallback
     else {
       color_hex <- "#000000"  # Default to black if color not recognized
     }
 
-    # Create monochrome palette with the single color
-    mono_palette <- list(
-      qualitative = rep(color_hex, n_colors),
-      sequential = rep(color_hex, n_colors),
-      diverging = rep(color_hex, n_colors)
-    )
-
-    return(mono_palette)
+    # For _mono suffix, return the exact same color for all items
+    return(rep(color_hex, n_colors))
   }
 
-  # NEW: Try to interpret any standard R color
+  # Try to interpret any standard R color
   if (!is.null(color_tone)) {
     tryCatch({
       # Try to validate if it's a valid R color
       base_col <- grDevices::col2rgb(color_tone)
 
       # If we get here, it's a valid color - create a palette of shades
-      darken_factor <- if (palette_type == "diverging") {
-        seq(0.4, 1.3, length.out = n_colors)
+      if (palette_type == "diverging") {
+        darken_factor <- seq(0.4, 1.3, length.out = n_colors)
       } else {
-        seq(0.5, 1.5, length.out = n_colors)
+        darken_factor <- seq(0.5, 1.5, length.out = n_colors)
       }
 
       # Create different shades based on the base color
@@ -2596,7 +2612,6 @@ create_title_format <- function(
 
   return(NULL)
 }
-
 
 #' @title Generate Comparison Colors for Bar Charts
 #'

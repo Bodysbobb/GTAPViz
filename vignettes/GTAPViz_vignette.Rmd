@@ -689,17 +689,17 @@ comparison_plot(data = reg_data,
                 output_path = output.folder,
                 
                 # See ?export_config
-                export_config = list(
+                export_config = create_export_config(
                   width = 20,
                   height = 12
                   ),
                 
                 # See ?plot_style_config
-                plot_style_config = list(
+                plot_style_config = create_plot_style(
                   color_tone = "purdue",
                   color_palette_type = "qualitative",
                   add_unit_to_title = TRUE,
-                  title_format = list(
+                  title_format = create_title_format(
                     type = "prefix",  
                     text = "Impact on"
                   ),
@@ -719,9 +719,9 @@ comparison_plot(reg_data,
                 export_picture = TRUE,
                 output_path = output.folder,
                 
-                plot_style_config = list(
+                plot_style_config = create_plot_style(
                   color_tone = "purdue",
-                  title_format = list(
+                  title_format = create_title_format(
                     type = "prefix",  
                     text = "Impact on"
                   ),
@@ -767,15 +767,15 @@ comparison_plot(GTAPMacro,
                 
                 export_picture = TRUE,
                 export_as_pdf = "merged",
-                export_config = list(
+                export_config = create_export_config(
                   width = 20,
                   height = 15
                   ),
                 output_path = output.folder,
                 
-                plot_style_config = list(
+                plot_style_config = create_plot_style(
                   color_tone = "blue",
-                  title_format = list(
+                  title_format = create_title_format(
                     type = "full",  
                     text = "Global Economic Impacts"
                   )
@@ -820,7 +820,7 @@ detail_plot(sl4.plot.data[["2D"]][["Sector"]],
             invert_pane = TRUE,
             separate_figure = FALSE,
             
-            export_config = list(
+            export_config = create_export_config(
               width = 45,
               height = 20
             ),
@@ -829,7 +829,7 @@ detail_plot(sl4.plot.data[["2D"]][["Sector"]],
             export_as_pdf = FALSE,   
             output_path = output.folder,
             
-            plot_style_config = list(
+            plot_style_config = create_plot_style(
               positive_color = "#2E8B57", 
               negative_color = "#CD5C5C",
               panel_rows = 1,
@@ -927,13 +927,13 @@ stack_plot(data = har.plot.data[["A"]],
 
            export_picture = TRUE,
            export_as_pdf = "merged",
-           export_config = list(
+           export_config = create_export_config(
              width = 28,
              height = 15
            ),
            output_path = output.folder,
            
-           plot_style_config = list(
+           plot_style_config = create_plot_style(
              color_tone = "gtap",
              panel_rows = 2,
              panel_cols = NULL,
@@ -974,14 +974,14 @@ stack_plot(data = har.plot.data[["E1"]],
 
            export_picture = TRUE,
            export_as_pdf = FALSE,
-           export_config = list(
+           export_config = create_export_config(
              width = 50,
              height = 30
            ),
            output_path = output.folder,
            
-           plot_style_config = list(
-             title_format = list(
+           plot_style_config = create_plot_style(
+             title_format = create_title_format(
                type = "prefix",
                text = "Terms of Trade Decomposition",
                sep = ": "
