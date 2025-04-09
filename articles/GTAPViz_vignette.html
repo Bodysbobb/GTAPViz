@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@
                         <h4 data-toc-skip class="author">Pattawee
 Puangchit</h4>
             
-            <h4 data-toc-skip class="date">2025-04-02</h4>
+            <h4 data-toc-skip class="date">2025-04-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bodysbobb/GTAPViz/blob/main/vignettes/GTAPViz_vignette.Rmd" class="external-link"><code>vignettes/GTAPViz_vignette.Rmd</code></a></small>
       <div class="d-none name"><code>GTAPViz_vignette.Rmd</code></div>
@@ -316,8 +316,8 @@ variables—non-GTAPv7 variables</strong>.</p>
 <p>You can import your external mapping file into R using the following
 method:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sl4map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="va">map.folder</span>, sheet <span class="op">=</span> <span class="st">"SL4File"</span><span class="op">)</span></span>
-<span><span class="va">harmap</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="va">map.folder</span>, sheet <span class="op">=</span> <span class="st">"HARFile"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sl4map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu">read_xlsx</span><span class="op">(</span><span class="va">map.folder</span>, sheet <span class="op">=</span> <span class="st">"SL4File"</span><span class="op">)</span></span>
+<span><span class="va">harmap</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu">read_xlsx</span><span class="op">(</span><span class="va">map.folder</span>, sheet <span class="op">=</span> <span class="st">"HARFile"</span><span class="op">)</span></span></code></pre></div>
 <p>Or manually create it in the R environment using the following
 code:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -385,7 +385,7 @@ redefine the order for sorting the output format.
 </figure><p>You can import your external mapping file into R using the following
 method:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">filter.map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="va">map.folder</span>, sheet <span class="op">=</span> <span class="st">"FilterData"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">filter.map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu">read_xlsx</span><span class="op">(</span><span class="va">map.folder</span>, sheet <span class="op">=</span> <span class="st">"FilterData"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
 <span><span class="va">selected_sector</span>  <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Sector</span> <span class="kw">else</span> <span class="cn">NULL</span></span></code></pre></div>
@@ -493,7 +493,23 @@ plotting:</p>
 <span><span class="va">r.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span></span>
 <span><span class="va">txt.output</span> <span class="op">&lt;-</span> <span class="st">"YES"</span>   </span>
 <span></span>
-<span><span class="va">plot_data</span> <span class="op">=</span> <span class="cn">TRUE</span></span></code></pre></div>
+<span><span class="va">plot_data</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span></span>
+<span><span class="co"># Convert units (optional)</span></span>
+<span><span class="co"># Options: "mil2bil", "bil2mil", "pct2frac", "frac2pct" — see details in `?convert_units`</span></span>
+<span><span class="va">sl4_convert_unit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mil2bil"</span><span class="op">)</span></span>
+<span><span class="va">har_convert_unit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mil2bil"</span><span class="op">)</span></span></code></pre></div>
+<div class="tip-box">
+<p>💡 <strong>Tip:</strong> You can convert result units for ‘sl4’ and
+‘har’ independently by using the following automatic options:</p>
+<ul>
+<li>“mil2bil”: converts million USD to billion USD.</li>
+<li>“bil2mil”: converts billion USD to million USD.</li>
+<li>“pct2frac”: converts percentages to fractions.</li>
+<li>“frac2pct”: converts fractions to percentages.</li>
+<li>NULL: No conversion</li>
+</ul>
+</div>
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;">
 
 </div>
@@ -536,9 +552,9 @@ modification if you followed all the previous instructions:</p>
 <span><span class="va">output.folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">project.folder</span>, <span class="st">"/out"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Default Mapping File:</span></span>
-<span><span class="va">sl4map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"SL4File"</span><span class="op">)</span></span>
-<span><span class="va">harmap</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"HARFile"</span><span class="op">)</span></span>
-<span><span class="va">filter.map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"FilterData"</span><span class="op">)</span></span>
+<span><span class="va">sl4map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu">read_xlsx</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"SL4File"</span><span class="op">)</span></span>
+<span><span class="va">harmap</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu">read_xlsx</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"HARFile"</span><span class="op">)</span></span>
+<span><span class="va">filter.map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu">read_xlsx</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"FilterData"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Filtering Data:</span></span>
 <span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
@@ -595,6 +611,8 @@ automated data extraction method using the following command:</p>
 <span>  mapping_info <span class="op">=</span> <span class="va">info.mode</span>,</span>
 <span>  sl4_mapping_info <span class="op">=</span> <span class="va">sl4map</span>,</span>
 <span>  har_mapping_info <span class="op">=</span> <span class="va">harmap</span>,</span>
+<span>  sl4_convert_unit <span class="op">=</span><span class="st">"mil2bil"</span>,</span>
+<span>  har_convert_unit <span class="op">=</span> <span class="st">"mil2bil"</span>,</span>
 <span>  region_select <span class="op">=</span> <span class="va">selected_regions</span>,</span>
 <span>  sector_select <span class="op">=</span> <span class="va">selected_sector</span>,</span>
 <span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -607,7 +625,7 @@ automated data extraction method using the following command:</p>
 <span>    <span class="st">"txt"</span> <span class="op">=</span> <span class="va">txt.output</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The default process for extracting data in automation uses
 <code><a href="https://bodysbobb.github.io/HARplus/reference/group_data_by_dims.html" class="external-link">HARplus::group_data_by_dims</a></code> for <code>.sl4</code> and
-<code>get_data_by_var</code> for <code>.har</code>.</p>
+<code><a href="https://bodysbobb.github.io/HARplus/reference/get_data_by_var.html" class="external-link">HARplus::get_data_by_var</a></code> for <code>.har</code>.</p>
 <div class="tip-box">
 <p>💡 <strong>Tip:</strong> The process in <code><a href="../reference/auto_gtap_data.html">?auto_gtap_data</a></code>
 can be modified for both <code>.sl4</code> and <code>.har</code> files,
@@ -1548,6 +1566,10 @@ creation, consider the following approach:</p>
 <span>  sl4_mapping_info <span class="op">=</span> <span class="va">sl4map</span>,</span>
 <span>  har_mapping_info <span class="op">=</span> <span class="va">harmap</span>,</span>
 <span>  mapping_info <span class="op">=</span> <span class="va">info.mode</span>,</span>
+<span>  </span>
+<span>  <span class="co"># Convert units (see `?convert_units`)</span></span>
+<span>  sl4_convert_unit <span class="op">=</span><span class="st">"mil2bil"</span>,</span>
+<span>  har_convert_unit <span class="op">=</span> <span class="st">"mil2bil"</span>,</span>
 <span>  </span>
 <span>  <span class="co"># Region and Sector Filtering</span></span>
 <span>  region_select <span class="op">=</span> <span class="va">selected_regions</span>,</span>

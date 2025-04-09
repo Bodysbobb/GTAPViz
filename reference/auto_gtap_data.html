@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,6 +62,8 @@
 <span>  har_extract_method <span class="op">=</span> <span class="st">"get_data_by_var"</span>,</span>
 <span>  sl4_priority <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  har_priority <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sl4_convert_unit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  har_convert_unit <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  region_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sector_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -84,19 +86,19 @@
 
 
 <dt id="arg-project-path">project_path<a class="anchor" aria-label="anchor" href="#arg-project-path"></a></dt>
-<dd><p>Character. Path to the project folder with "in" and "out" subfolders.</p></dd>
+<dd><p>Character. Path to project folder with "in" and "out" subfolders.</p></dd>
 
 
 <dt id="arg-input-path">input_path<a class="anchor" aria-label="anchor" href="#arg-input-path"></a></dt>
-<dd><p>Character. Path to the input folder. Overrides `project_path/in` if specified.</p></dd>
+<dd><p>Character. Input folder path. Overrides `project_path/in` if specified.</p></dd>
 
 
 <dt id="arg-output-path">output_path<a class="anchor" aria-label="anchor" href="#arg-output-path"></a></dt>
-<dd><p>Character. Path to the output folder. Overrides `project_path/out` if specified.</p></dd>
+<dd><p>Character. Output folder path. Overrides `project_path/out` if specified.</p></dd>
 
 
 <dt id="arg-sl-suffix">sl4_suffix<a class="anchor" aria-label="anchor" href="#arg-sl-suffix"></a></dt>
-<dd><p>Character. Custom suffix for SL4 files (e.g., "" or "-custom").</p></dd>
+<dd><p>Character. Custom suffix for SL4 files (e.g., "", "-custom").</p></dd>
 
 
 <dt id="arg-har-suffix">har_suffix<a class="anchor" aria-label="anchor" href="#arg-har-suffix"></a></dt>
@@ -104,35 +106,33 @@
 
 
 <dt id="arg-mapping-info">mapping_info<a class="anchor" aria-label="anchor" href="#arg-mapping-info"></a></dt>
-<dd><p>Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".</p></dd>
+<dd><p>Character. Metadata mode: "GTAPv7" (default), "Yes", "No", or "Mix".</p></dd>
 
 
 <dt id="arg-process-sl-vars">process_sl4_vars<a class="anchor" aria-label="anchor" href="#arg-process-sl-vars"></a></dt>
-<dd><p>Data frame, NULL, or FALSE. Variables to extract from SL4 files.
-- Set to NULL to extract all variables.
-- Set to FALSE to skip SL4 processing.</p></dd>
+<dd><p>Data frame, NULL, or FALSE. Variables to extract from SL4:
+NULL = extract all; FALSE = skip SL4 processing.</p></dd>
 
 
 <dt id="arg-process-har-vars">process_har_vars<a class="anchor" aria-label="anchor" href="#arg-process-har-vars"></a></dt>
-<dd><p>Data frame, NULL, or FALSE. Variables to extract from HAR files.
-- Set to NULL to extract all variables.
-- Set to FALSE to skip HAR processing.</p></dd>
+<dd><p>Data frame, NULL, or FALSE. Variables to extract from HAR:
+NULL = extract all; FALSE = skip HAR processing.</p></dd>
 
 
 <dt id="arg-sl-mapping-info">sl4_mapping_info<a class="anchor" aria-label="anchor" href="#arg-sl-mapping-info"></a></dt>
-<dd><p>Data frame or NULL. Mapping information for SL4 variables (with "Variable", "Description", and "Unit" columns).</p></dd>
+<dd><p>Data frame or NULL. Mapping info for SL4 (must include "Variable", "Description", and "Unit").</p></dd>
 
 
 <dt id="arg-har-mapping-info">har_mapping_info<a class="anchor" aria-label="anchor" href="#arg-har-mapping-info"></a></dt>
-<dd><p>Data frame or NULL. Mapping information for HAR variables (with "Variable", "Description", and "Unit" columns).</p></dd>
+<dd><p>Data frame or NULL. Mapping info for HAR (same structure as SL4).</p></dd>
 
 
 <dt id="arg-sl-extract-method">sl4_extract_method<a class="anchor" aria-label="anchor" href="#arg-sl-extract-method"></a></dt>
-<dd><p>Character. SL4 extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".</p></dd>
+<dd><p>Character. Method for SL4 extraction: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".</p></dd>
 
 
 <dt id="arg-har-extract-method">har_extract_method<a class="anchor" aria-label="anchor" href="#arg-har-extract-method"></a></dt>
-<dd><p>Character. HAR extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".</p></dd>
+<dd><p>Character. Method for HAR extraction: same options as above.</p></dd>
 
 
 <dt id="arg-sl-priority">sl4_priority<a class="anchor" aria-label="anchor" href="#arg-sl-priority"></a></dt>
@@ -143,45 +143,52 @@
 <dd><p>Optional list. Priority rules for HAR data grouping.</p></dd>
 
 
+<dt id="arg-sl-convert-unit">sl4_convert_unit<a class="anchor" aria-label="anchor" href="#arg-sl-convert-unit"></a></dt>
+<dd><p>Character. Optional SL4 unit conversion: "mil2bil", "bil2mil", "pct2frac", or "frac2pct". Default is NULL.</p></dd>
+
+
+<dt id="arg-har-convert-unit">har_convert_unit<a class="anchor" aria-label="anchor" href="#arg-har-convert-unit"></a></dt>
+<dd><p>Character. Optional HAR unit conversion: same options as above. Default is NULL.</p></dd>
+
+
 <dt id="arg-region-select">region_select<a class="anchor" aria-label="anchor" href="#arg-region-select"></a></dt>
-<dd><p>Optional character vector. Specifies regions to filter the data.</p></dd>
+<dd><p>Optional character vector. Regions to include.</p></dd>
 
 
 <dt id="arg-sector-select">sector_select<a class="anchor" aria-label="anchor" href="#arg-sector-select"></a></dt>
-<dd><p>Optional character vector. Specifies sectors to filter the data.</p></dd>
+<dd><p>Optional character vector. Sectors to include.</p></dd>
 
 
 <dt id="arg-subtotal-level">subtotal_level<a class="anchor" aria-label="anchor" href="#arg-subtotal-level"></a></dt>
-<dd><p>Logical. If TRUE, includes subtotal data. Default is FALSE.</p></dd>
+<dd><p>Logical. Whether to include subtotal rows. Default is FALSE.</p></dd>
 
 
 <dt id="arg-plot-data">plot_data<a class="anchor" aria-label="anchor" href="#arg-plot-data"></a></dt>
-<dd><p>Logical. If TRUE, prepares data for plotting and assigns to variables.</p></dd>
+<dd><p>Logical. If TRUE, prepares and assigns plot-ready data.</p></dd>
 
 
 <dt id="arg-output-formats">output_formats<a class="anchor" aria-label="anchor" href="#arg-output-formats"></a></dt>
-<dd><p>Character vector or list. Exports data in these formats (valid: "csv", "stata", "rds", "txt").</p></dd>
+<dd><p>Character vector or list. Output formats to export (valid: "csv", "stata", "rds", "txt").</p></dd>
 
 
 <dt id="arg-sl-output-name">sl4_output_name<a class="anchor" aria-label="anchor" href="#arg-sl-output-name"></a></dt>
-<dd><p>Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".</p></dd>
+<dd><p>Character. Output variable name for SL4 results. Default is "sl4.plot.data".</p></dd>
 
 
 <dt id="arg-har-output-name">har_output_name<a class="anchor" aria-label="anchor" href="#arg-har-output-name"></a></dt>
-<dd><p>Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".</p></dd>
+<dd><p>Character. Output variable name for HAR results. Default is "har.plot.data".</p></dd>
 
 
 <dt id="arg-macro-output-name">macro_output_name<a class="anchor" aria-label="anchor" href="#arg-macro-output-name"></a></dt>
-<dd><p>Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".</p></dd>
+<dd><p>Character. Output variable name for macro results. Default is "GTAPMacro".</p></dd>
 
 
 <dt id="arg-add-scenario-ranking">add_scenario_ranking<a class="anchor" aria-label="anchor" href="#arg-add-scenario-ranking"></a></dt>
-<dd><p>Logical or character. If TRUE, adds a numeric ranking column to all data frames.
-If "merged", adds ranking column and prefixes experiment names with rank in parentheses. Default is FALSE.</p></dd>
+<dd><p>Logical or "merged". If TRUE, adds ranking column; if "merged", also prefixes experiment names. Default is FALSE.</p></dd>
 
 
 <dt id="arg-rank-column">rank_column<a class="anchor" aria-label="anchor" href="#arg-rank-column"></a></dt>
-<dd><p>Character. Name of the column to add with scenario ranking information. Default is "ScenarioRank".</p></dd>
+<dd><p>Character. Name of the ranking column to add. Default is "ScenarioRank".</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -236,8 +243,8 @@ with flexible output options and optional filtering for region- and sector-speci
 <span class="r-msg co"><span class="r-pr">#&gt;</span> SL4 Data processed successfully</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> HAR Data processed successfully</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> QXS Bilateral Data processed successfully</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP data processing completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
