@@ -63,7 +63,7 @@ txt.output <- "no"
 # 5. For Plotting: (TRUE/FALSE)
 plot_data = TRUE
 
-setwd <- "D:/GitHub/GTAPViz/R"
+setwd("D:/GitHub/GTAPViz/R")
 devtools::load_all()
 
 # Extracting Data
@@ -74,6 +74,8 @@ auto_gtap_data(
   har_mapping_info = harmap,
   region_select = selected_regions,
   sector_select = selected_sector,
+  sl4_convert_unit ="mil2bil",
+  har_convert_unit = "mil2bil",
   subtotal_level = FALSE,
   experiment = experiment, 
   mapping_info = info.mode,
@@ -85,12 +87,6 @@ auto_gtap_data(
     "stata" = stata.output,
     "rds" = r.output,
     "txt" = txt.output))
-
-sl4.plot.data <- convert_units(sl4.plot.data, 
-                               scale_auto = "mil2bil")
-
-har.plot.data <- convert_units(har.plot.data, 
-                               scale_auto = "mil2bil")
 
 ```
 
@@ -447,8 +443,23 @@ r.output <- "YES"
 txt.output <- "YES"   
 
 plot_data = TRUE
+
+# Convert units (optional)
+# Options: "mil2bil", "bil2mil", "pct2frac", "frac2pct" — see details in `?convert_units`
+sl4_convert_unit <- c("mil2bil")
+har_convert_unit <- c("mil2bil")
 ```
 
+<div class="tip-box">
+💡 <strong>Tip:</strong> You can convert result units for 'sl4' and 'har' independently by using the following automatic options:
+
+- "mil2bil": converts million USD to billion USD.
+- "bil2mil": converts billion USD to million USD.
+- "pct2frac": converts percentages to fractions.
+- "frac2pct": converts fractions to percentages.
+- NULL: No conversion
+
+</div>
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
 
@@ -547,6 +558,8 @@ auto_gtap_data(
   mapping_info = info.mode,
   sl4_mapping_info = sl4map,
   har_mapping_info = harmap,
+  sl4_convert_unit ="mil2bil",
+  har_convert_unit = "mil2bil",
   region_select = selected_regions,
   sector_select = selected_sector,
   subtotal_level = FALSE,
@@ -559,7 +572,7 @@ auto_gtap_data(
     "txt" = txt.output))
 ```
 
-The default process for extracting data in automation uses `HARplus::group_data_by_dims` for `.sl4` and `get_data_by_var` for `.har`.
+The default process for extracting data in automation uses `HARplus::group_data_by_dims` for `.sl4` and `HARplus::get_data_by_var` for `.har`.
 
 <div class="tip-box">
 💡 <strong>Tip:</strong> The process in <code>?auto_gtap_data</code> can be modified for both `.sl4` and `.har` files, making it more suitable for certain datasets, including non-GTAP variables.
@@ -1405,6 +1418,10 @@ auto_gtap_data(
   sl4_mapping_info = sl4map,
   har_mapping_info = harmap,
   mapping_info = info.mode,
+  
+  # Convert units (see `?convert_units`)
+  sl4_convert_unit ="mil2bil",
+  har_convert_unit = "mil2bil",
   
   # Region and Sector Filtering
   region_select = selected_regions,

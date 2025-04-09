@@ -20,6 +20,8 @@ auto_gtap_data(
   har_extract_method = "get_data_by_var",
   sl4_priority = NULL,
   har_priority = NULL,
+  sl4_convert_unit = NULL,
+  har_convert_unit = NULL,
   region_select = NULL,
   sector_select = NULL,
   subtotal_level = FALSE,
@@ -35,58 +37,59 @@ auto_gtap_data(
 \arguments{
 \item{experiment}{Character vector. Case names to process.}
 
-\item{project_path}{Character. Path to the project folder with "in" and "out" subfolders.}
+\item{project_path}{Character. Path to project folder with "in" and "out" subfolders.}
 
-\item{input_path}{Character. Path to the input folder. Overrides `project_path/in` if specified.}
+\item{input_path}{Character. Input folder path. Overrides `project_path/in` if specified.}
 
-\item{output_path}{Character. Path to the output folder. Overrides `project_path/out` if specified.}
+\item{output_path}{Character. Output folder path. Overrides `project_path/out` if specified.}
 
-\item{sl4_suffix}{Character. Custom suffix for SL4 files (e.g., "" or "-custom").}
+\item{sl4_suffix}{Character. Custom suffix for SL4 files (e.g., "", "-custom").}
 
 \item{har_suffix}{Character. Custom suffix for HAR files (e.g., "-WEL").}
 
-\item{mapping_info}{Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".}
+\item{mapping_info}{Character. Metadata mode: "GTAPv7" (default), "Yes", "No", or "Mix".}
 
-\item{process_sl4_vars}{Data frame, NULL, or FALSE. Variables to extract from SL4 files.
-- Set to NULL to extract all variables.
-- Set to FALSE to skip SL4 processing.}
+\item{process_sl4_vars}{Data frame, NULL, or FALSE. Variables to extract from SL4:
+NULL = extract all; FALSE = skip SL4 processing.}
 
-\item{process_har_vars}{Data frame, NULL, or FALSE. Variables to extract from HAR files.
-- Set to NULL to extract all variables.
-- Set to FALSE to skip HAR processing.}
+\item{process_har_vars}{Data frame, NULL, or FALSE. Variables to extract from HAR:
+NULL = extract all; FALSE = skip HAR processing.}
 
-\item{sl4_mapping_info}{Data frame or NULL. Mapping information for SL4 variables (with "Variable", "Description", and "Unit" columns).}
+\item{sl4_mapping_info}{Data frame or NULL. Mapping info for SL4 (must include "Variable", "Description", and "Unit").}
 
-\item{har_mapping_info}{Data frame or NULL. Mapping information for HAR variables (with "Variable", "Description", and "Unit" columns).}
+\item{har_mapping_info}{Data frame or NULL. Mapping info for HAR (same structure as SL4).}
 
-\item{sl4_extract_method}{Character. SL4 extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".}
+\item{sl4_extract_method}{Character. Method for SL4 extraction: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".}
 
-\item{har_extract_method}{Character. HAR extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".}
+\item{har_extract_method}{Character. Method for HAR extraction: same options as above.}
 
 \item{sl4_priority}{Optional list. Priority rules for SL4 data grouping.}
 
 \item{har_priority}{Optional list. Priority rules for HAR data grouping.}
 
-\item{region_select}{Optional character vector. Specifies regions to filter the data.}
+\item{sl4_convert_unit}{Character. Optional SL4 unit conversion: "mil2bil", "bil2mil", "pct2frac", or "frac2pct". Default is NULL.}
 
-\item{sector_select}{Optional character vector. Specifies sectors to filter the data.}
+\item{har_convert_unit}{Character. Optional HAR unit conversion: same options as above. Default is NULL.}
 
-\item{subtotal_level}{Logical. If TRUE, includes subtotal data. Default is FALSE.}
+\item{region_select}{Optional character vector. Regions to include.}
 
-\item{plot_data}{Logical. If TRUE, prepares data for plotting and assigns to variables.}
+\item{sector_select}{Optional character vector. Sectors to include.}
 
-\item{output_formats}{Character vector or list. Exports data in these formats (valid: "csv", "stata", "rds", "txt").}
+\item{subtotal_level}{Logical. Whether to include subtotal rows. Default is FALSE.}
 
-\item{sl4_output_name}{Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".}
+\item{plot_data}{Logical. If TRUE, prepares and assigns plot-ready data.}
 
-\item{har_output_name}{Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".}
+\item{output_formats}{Character vector or list. Output formats to export (valid: "csv", "stata", "rds", "txt").}
 
-\item{macro_output_name}{Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".}
+\item{sl4_output_name}{Character. Output variable name for SL4 results. Default is "sl4.plot.data".}
 
-\item{add_scenario_ranking}{Logical or character. If TRUE, adds a numeric ranking column to all data frames.
-If "merged", adds ranking column and prefixes experiment names with rank in parentheses. Default is FALSE.}
+\item{har_output_name}{Character. Output variable name for HAR results. Default is "har.plot.data".}
 
-\item{rank_column}{Character. Name of the column to add with scenario ranking information. Default is "ScenarioRank".}
+\item{macro_output_name}{Character. Output variable name for macro results. Default is "GTAPMacro".}
+
+\item{add_scenario_ranking}{Logical or "merged". If TRUE, adds ranking column; if "merged", also prefixes experiment names. Default is FALSE.}
+
+\item{rank_column}{Character. Name of the ranking column to add. Default is "ScenarioRank".}
 }
 \value{
 A processed dataset, with options for exporting and visualization.

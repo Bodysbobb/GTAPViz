@@ -65,6 +65,8 @@
 #' @param plot_data Logical. Whether to generate plots without exporting data.
 #' @param sl4_file_suffix Character. Suffix for SL4 files (e.g., "" or "-custom").
 #' @param har_file_suffix Character. Suffix for HAR files (e.g., "-WEL").
+#' @param sl4_convert_unit Character. Optional unit conversion for SL4 data: "mil2bil", "bil2mil", "pct2frac", or "frac2pct". Default is NULL (no conversion).
+#' @param har_convert_unit Character. Optional unit conversion for HAR data: "mil2bil", "bil2mil", "pct2frac", or "frac2pct". Default is NULL.
 #'
 #' @return A list with three elements:
 #' \item{status}{Character indicating validation status ("ok", "error", or "warning").}
@@ -79,7 +81,8 @@
 .validate_gtap_files <- function(input_dir, output_dir,
                                  experiment, mapping_info, sl4var, harvar,
                                  sl4map, harmap, output_formats, plot_data,
-                                 sl4_file_suffix = ".sl4", har_file_suffix = "-WEL.har") {
+                                 sl4_file_suffix = ".sl4", har_file_suffix = "-WEL.har",
+                                 sl4_convert_unit = NULL, har_convert_unit = NULL) {
 
   validation_results <- list(
     status = "ok",
@@ -201,6 +204,27 @@
                                         paste(missing_cols, collapse = ", ")))
         }
       }
+    }
+
+    # Validate unit conversion parameters
+    valid_convert_units <- c("mil2bil", "bil2mil", "pct2frac", "frac2pct")
+
+    if (!is.null(sl4_convert_unit) && !sl4_convert_unit %in% valid_convert_units) {
+      validation_results$status <- "warning"
+      validation_results$messages <- c(validation_results$messages,
+                                       sprintf("Invalid sl4_convert_unit: '%s'. Valid options are: %s.",
+                                               sl4_convert_unit, paste(valid_convert_units, collapse = ", ")))
+      cat("Invalid sl4_convert_unit parameter. Will use default (no conversion).\n")
+      sl4_convert_unit <- NULL
+    }
+
+    if (!is.null(har_convert_unit) && !har_convert_unit %in% valid_convert_units) {
+      validation_results$status <- "warning"
+      validation_results$messages <- c(validation_results$messages,
+                                       sprintf("Invalid har_convert_unit: '%s'. Valid options are: %s.",
+                                               har_convert_unit, paste(valid_convert_units, collapse = ", ")))
+      cat("Invalid har_convert_unit parameter. Will use default (no conversion).\n")
+      har_convert_unit <- NULL
     }
 
     # Check HAR mapping only if harvar is TRUE

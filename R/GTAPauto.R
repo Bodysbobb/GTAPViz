@@ -167,35 +167,43 @@ gtap_macros_data <- function(select_var = NULL,
 #' }
 #'
 #' @param experiment Character vector. Case names to process.
-#' @param project_path Character. Path to the project folder with "in" and "out" subfolders.
-#' @param input_path Character. Path to the input folder. Overrides `project_path/in` if specified.
-#' @param output_path Character. Path to the output folder. Overrides `project_path/out` if specified.
-#' @param sl4_suffix Character. Custom suffix for SL4 files (e.g., "" or "-custom").
+#' @param project_path Character. Path to project folder with "in" and "out" subfolders.
+#' @param input_path Character. Input folder path. Overrides `project_path/in` if specified.
+#' @param output_path Character. Output folder path. Overrides `project_path/out` if specified.
+#' @param sl4_suffix Character. Custom suffix for SL4 files (e.g., "", "-custom").
 #' @param har_suffix Character. Custom suffix for HAR files (e.g., "-WEL").
-#' @param mapping_info Character. Mapping mode: "GTAPv7" (default), "Yes", "No", or "Mix".
-#' @param process_sl4_vars Data frame, NULL, or FALSE. Variables to extract from SL4 files.
-#'   - Set to NULL to extract all variables.
-#'   - Set to FALSE to skip SL4 processing.
-#' @param process_har_vars Data frame, NULL, or FALSE. Variables to extract from HAR files.
-#'   - Set to NULL to extract all variables.
-#'   - Set to FALSE to skip HAR processing.
-#' @param sl4_mapping_info Data frame or NULL. Mapping information for SL4 variables (with "Variable", "Description", and "Unit" columns).
-#' @param har_mapping_info Data frame or NULL. Mapping information for HAR variables (with "Variable", "Description", and "Unit" columns).
-#' @param sl4_extract_method Character. SL4 extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".
-#' @param har_extract_method Character. HAR extraction method. Options: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".
+#' @param mapping_info Character. Metadata mode: "GTAPv7" (default), "Yes", "No", or "Mix".
+#'
+#' @param process_sl4_vars Data frame, NULL, or FALSE. Variables to extract from SL4:
+#'   NULL = extract all; FALSE = skip SL4 processing.
+#' @param process_har_vars Data frame, NULL, or FALSE. Variables to extract from HAR:
+#'   NULL = extract all; FALSE = skip HAR processing.
+#'
+#' @param sl4_mapping_info Data frame or NULL. Mapping info for SL4 (must include "Variable", "Description", and "Unit").
+#' @param har_mapping_info Data frame or NULL. Mapping info for HAR (same structure as SL4).
+#'
+#' @param sl4_extract_method Character. Method for SL4 extraction: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".
+#' @param har_extract_method Character. Method for HAR extraction: same options as above.
+#'
 #' @param sl4_priority Optional list. Priority rules for SL4 data grouping.
 #' @param har_priority Optional list. Priority rules for HAR data grouping.
-#' @param region_select Optional character vector. Specifies regions to filter the data.
-#' @param sector_select Optional character vector. Specifies sectors to filter the data.
-#' @param subtotal_level Logical. If TRUE, includes subtotal data. Default is FALSE.
-#' @param plot_data Logical. If TRUE, prepares data for plotting and assigns to variables.
-#' @param output_formats Character vector or list. Exports data in these formats (valid: "csv", "stata", "rds", "txt").
-#' @param sl4_output_name Character. Variable name for SL4 plotting data if generating plot data. Default is "sl4.plot.data".
-#' @param har_output_name Character. Variable name for HAR plotting data if generating plot data. Default is "har.plot.data".
-#' @param macro_output_name Character. Variable name for GTAP macro data if generating plot data. Default is "GTAPMacro".
-#' @param add_scenario_ranking Logical or character. If TRUE, adds a numeric ranking column to all data frames.
-#' If "merged", adds ranking column and prefixes experiment names with rank in parentheses. Default is FALSE.
-#' @param rank_column Character. Name of the column to add with scenario ranking information. Default is "ScenarioRank".
+#'
+#' @param sl4_convert_unit Character. Optional SL4 unit conversion: "mil2bil", "bil2mil", "pct2frac", or "frac2pct". Default is NULL.
+#' @param har_convert_unit Character. Optional HAR unit conversion: same options as above. Default is NULL.
+#'
+#' @param region_select Optional character vector. Regions to include.
+#' @param sector_select Optional character vector. Sectors to include.
+#' @param subtotal_level Logical. Whether to include subtotal rows. Default is FALSE.
+#'
+#' @param plot_data Logical. If TRUE, prepares and assigns plot-ready data.
+#' @param output_formats Character vector or list. Output formats to export (valid: "csv", "stata", "rds", "txt").
+#'
+#' @param sl4_output_name Character. Output variable name for SL4 results. Default is "sl4.plot.data".
+#' @param har_output_name Character. Output variable name for HAR results. Default is "har.plot.data".
+#' @param macro_output_name Character. Output variable name for macro results. Default is "GTAPMacro".
+#'
+#' @param add_scenario_ranking Logical or "merged". If TRUE, adds ranking column; if "merged", also prefixes experiment names. Default is FALSE.
+#' @param rank_column Character. Name of the ranking column to add. Default is "ScenarioRank".
 #'
 #' @return
 #' A processed dataset, with options for exporting and visualization.
@@ -224,6 +232,7 @@ auto_gtap_data <- function(experiment,
                            sl4_mapping_info = NULL, har_mapping_info = NULL,
                            sl4_extract_method = "group_data_by_dims", har_extract_method = "get_data_by_var",
                            sl4_priority = NULL, har_priority = NULL,
+                           sl4_convert_unit = NULL, har_convert_unit = NULL,
                            region_select = NULL, sector_select = NULL, subtotal_level = FALSE,
                            plot_data = FALSE, output_formats = NULL,
                            sl4_output_name = "sl4.plot.data",
@@ -290,7 +299,9 @@ auto_gtap_data <- function(experiment,
     output_formats = if(export_data) output_formats else NULL,
     plot_data = plot_data,
     sl4_file_suffix = sl4_file_suffix,
-    har_file_suffix = har_file_suffix
+    har_file_suffix = har_file_suffix,
+    sl4_convert_unit = sl4_convert_unit,
+    har_convert_unit = har_convert_unit
   )
 
   cat(paste(validation_result$messages, collapse = "\n"), "\n")
@@ -529,6 +540,17 @@ auto_gtap_data <- function(experiment,
       process_log$macro <- "GTAP Macro Data processed successfully"
       all_data$GTAPMacros <- macro_data
 
+      # Apply unit conversion to macro data if specified
+      if (!is.null(sl4_convert_unit) && !is.null(macro_data)) {
+        message("Applying unit conversion to macro data: ", sl4_convert_unit)
+        all_data$GTAPMacros <- convert_units(macro_data, scale_auto = sl4_convert_unit)
+
+        # Update the plot data variable if it's being generated
+        if (plot_data) {
+          assign(macro_output_name, all_data$GTAPMacros, envir = parent.frame())
+        }
+      }
+
       # Fixed issue: Assign to parent environment if plot_data is TRUE
       if (plot_data) {
         assign(macro_output_name, macro_data, envir = parent.frame())
@@ -577,6 +599,17 @@ auto_gtap_data <- function(experiment,
         }
         all_data$sl4_data <- grouped_sl4
 
+        # Apply unit conversion to SL4 data if specified
+        if (!is.null(sl4_convert_unit) && !is.null(grouped_sl4)) {
+          message("Applying unit conversion to SL4 data: ", sl4_convert_unit)
+          all_data$sl4_data <- convert_units(grouped_sl4, scale_auto = sl4_convert_unit)
+
+          # Update the plot data variable if it's being generated
+          if (plot_data && !is.null(sl4_output_name)) {
+            assign(sl4_output_name, all_data$sl4_data, envir = parent.frame())
+          }
+        }
+
         # Export processed SL4 data
         export_processed_data(grouped_sl4, "SL4", output_path)
       }
@@ -613,6 +646,17 @@ auto_gtap_data <- function(experiment,
       }
       all_data$bilateral_data <- bilateral_data
 
+      # Apply unit conversion to bilateral data if specified
+      if (!is.null(sl4_convert_unit) && !is.null(bilateral_data)) {
+        message("Applying unit conversion to bilateral data: ", sl4_convert_unit)
+        all_data$bilateral_data <- convert_units(bilateral_data, scale_auto = sl4_convert_unit)
+
+        # Update the plot data variable if it's being generated
+        if (plot_data && !is.null("bilateral_data")) {
+          assign("bilateral_data", list(qxs = all_data$bilateral_data), envir = parent.frame())
+        }
+      }
+
       # Export using the same export_processed_data helper as SL4
       export_processed_data(bilateral_data, "BilateralTrade", output_path)
     }
@@ -648,6 +692,17 @@ auto_gtap_data <- function(experiment,
       }
       all_data$decomposition_data <- har_data
 
+      # Apply unit conversion to HAR data if specified
+      if (!is.null(har_convert_unit) && !is.null(har_data)) {
+        message("Applying unit conversion to HAR data: ", har_convert_unit)
+        all_data$decomposition_data <- convert_units(har_data, scale_auto = har_convert_unit)
+
+        # Update the plot data variable if it's being generated
+        if (plot_data && !is.null(har_output_name)) {
+          assign(har_output_name, all_data$decomposition_data, envir = parent.frame())
+        }
+      }
+
       # Export processed HAR data
       export_processed_data(har_data, "Decomposition", output_path)
     }
@@ -667,11 +722,17 @@ auto_gtap_data <- function(experiment,
   if (!is.null(process_log$qxs)) message(process_log$qxs)
 
   if (all(vapply(process_log, function(x) grepl("successfully", x), logical(1)))) {
-    message("\nGTAP data processing completed successfully!")
+    message("GTAP data processing completed successfully!")
   } else {
     failed_processes <- names(process_log)[!vapply(process_log, function(x) grepl("successfully", x), logical(1))]
-    message(sprintf("\nGTAP data processing completed with errors in: %s", paste(failed_processes, collapse = ", ")))
+    message(sprintf("GTAP data processing completed with errors in: %s", paste(failed_processes, collapse = ", ")))
   }
+
+  # Reset console output
+  on.exit({
+    cat("\r")  # Carriage return without newline
+    flush.console()
+  }, add = TRUE)
 
   return(invisible(all_data))
 }

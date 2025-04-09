@@ -7,13 +7,21 @@
 #'
 #' @param data_list A data structure containing GTAP variables.
 #' @param external_map Optional data frame with mapping information (must include "Variable", "Description", and "Unit" columns).
-#' @param mapping Character. Mapping mode:
-#'   - `"GTAPv7"` (default): Uses standard GTAPv7 definitions.
-#'   - `"Yes"`: Uses only the supplied descriptions and units from `external_map`.
-#'   - `"No"`: Does not add any descriptions or units.
-#'   - `"Mix"`: Prioritizes `external_map`, but falls back to GTAPv7 for missing values.
+#' @param mapping Character. Controls how descriptions and units are added:
+#'   `"GTAPv7"` (default) uses standard GTAPv7 definitions;
+#'   `"Yes"` uses only the supplied `external_map`;
+#'   `"No"` skips mapping;
+#'   `"Mix"` prioritizes `external_map`, falling back to GTAPv7 if needed.
 #' @param description_info Logical. If `TRUE`, adds description information to the data.
 #' @param unit_info Logical. If `TRUE`, adds unit information to the data.
+#'
+#' @details
+#' The `mapping` argument controls how description and unit information are added to the dataset:
+#'
+#' - `"GTAPv7"` (default): Applies standardized GTAPv7 metadata for variable descriptions and units.
+#' - `"Yes"`: Uses only the descriptions and units from the `external_map` provided by the user. No fallback to GTAPv7.
+#' - `"No"`: Skips mapping entirely. No descriptions or units are added.
+#' - `"Mix"`: Prioritizes entries in `external_map`, but fills in any missing values using GTAPv7 metadata where available.
 #'
 #' @return
 #' A data structure with added mapping information, preserving the original structure.

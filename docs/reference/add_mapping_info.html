@@ -74,11 +74,11 @@ standardized metadata.</p>
 
 
 <dt id="arg-mapping">mapping<a class="anchor" aria-label="anchor" href="#arg-mapping"></a></dt>
-<dd><p>Character. Mapping mode:
-- `"GTAPv7"` (default): Uses standard GTAPv7 definitions.
-- `"Yes"`: Uses only the supplied descriptions and units from `external_map`.
-- `"No"`: Does not add any descriptions or units.
-- `"Mix"`: Prioritizes `external_map`, but falls back to GTAPv7 for missing values.</p></dd>
+<dd><p>Character. Controls how descriptions and units are added:
+`"GTAPv7"` (default) uses standard GTAPv7 definitions;
+`"Yes"` uses only the supplied `external_map`;
+`"No"` skips mapping;
+`"Mix"` prioritizes `external_map`, falling back to GTAPv7 if needed.</p></dd>
 
 
 <dt id="arg-description-info">description_info<a class="anchor" aria-label="anchor" href="#arg-description-info"></a></dt>
@@ -92,6 +92,14 @@ standardized metadata.</p>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A data structure with added mapping information, preserving the original structure.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The `mapping` argument controls how description and unit information are added to the dataset:</p>
+<p>- `"GTAPv7"` (default): Applies standardized GTAPv7 metadata for variable descriptions and units.
+- `"Yes"`: Uses only the descriptions and units from the `external_map` provided by the user. No fallback to GTAPv7.
+- `"No"`: Skips mapping entirely. No descriptions or units are added.
+- `"Mix"`: Prioritizes entries in `external_map`, but fills in any missing values using GTAPv7 metadata where available.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
