@@ -77,6 +77,7 @@ auto_gtap_data(
   sl4_convert_unit ="mil2bil",
   har_convert_unit = "mil2bil",
   subtotal_level = FALSE,
+  rename_columns = TRUE,
   experiment = experiment, 
   mapping_info = info.mode,
   project_path = project.folder,
@@ -1418,6 +1419,9 @@ auto_gtap_data(
   sl4_mapping_info = sl4map,
   har_mapping_info = harmap,
   mapping_info = info.mode,
+  
+  # Renames GTAP column identifiers to more readable format (REG → Region, COMM → Commodity, ACTS → Activity) for all data extraction methods.
+  rename_columns = FALSE,
   
   # Convert units (see `?convert_units`)
   sl4_convert_unit ="mil2bil",

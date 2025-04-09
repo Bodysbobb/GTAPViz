@@ -64,6 +64,7 @@
 <span>  har_priority <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sl4_convert_unit <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  har_convert_unit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rename_columns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  region_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sector_select <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -149,6 +150,10 @@ NULL = extract all; FALSE = skip HAR processing.</p></dd>
 
 <dt id="arg-har-convert-unit">har_convert_unit<a class="anchor" aria-label="anchor" href="#arg-har-convert-unit"></a></dt>
 <dd><p>Character. Optional HAR unit conversion: same options as above. Default is NULL.</p></dd>
+
+
+<dt id="arg-rename-columns">rename_columns<a class="anchor" aria-label="anchor" href="#arg-rename-columns"></a></dt>
+<dd><p>Logical. If TRUE (default), renames GTAP column identifiers to more readable format</p></dd>
 
 
 <dt id="arg-region-select">region_select<a class="anchor" aria-label="anchor" href="#arg-region-select"></a></dt>
@@ -243,8 +248,8 @@ with flexible output options and optional filtering for region- and sector-speci
 <span class="r-msg co"><span class="r-pr">#&gt;</span> SL4 Data processed successfully</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> HAR Data processed successfully</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> QXS Bilateral Data processed successfully</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP data processing completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -22,6 +22,7 @@ auto_gtap_data(
   har_priority = NULL,
   sl4_convert_unit = NULL,
   har_convert_unit = NULL,
+  rename_columns = FALSE,
   region_select = NULL,
   sector_select = NULL,
   subtotal_level = FALSE,
@@ -70,6 +71,8 @@ NULL = extract all; FALSE = skip HAR processing.}
 \item{sl4_convert_unit}{Character. Optional SL4 unit conversion: "mil2bil", "bil2mil", "pct2frac", or "frac2pct". Default is NULL.}
 
 \item{har_convert_unit}{Character. Optional HAR unit conversion: same options as above. Default is NULL.}
+
+\item{rename_columns}{Logical. If TRUE (default), renames GTAP column identifiers to more readable format}
 
 \item{region_select}{Optional character vector. Regions to include.}
 

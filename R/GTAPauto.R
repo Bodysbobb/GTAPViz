@@ -173,6 +173,7 @@ gtap_macros_data <- function(select_var = NULL,
 #' @param sl4_suffix Character. Custom suffix for SL4 files (e.g., "", "-custom").
 #' @param har_suffix Character. Custom suffix for HAR files (e.g., "-WEL").
 #' @param mapping_info Character. Metadata mode: "GTAPv7" (default), "Yes", "No", or "Mix".
+#' @param rename_columns Logical. If TRUE (default), renames GTAP column identifiers to more readable format
 #'
 #' @param process_sl4_vars Data frame, NULL, or FALSE. Variables to extract from SL4:
 #'   NULL = extract all; FALSE = skip SL4 processing.
@@ -233,6 +234,7 @@ auto_gtap_data <- function(experiment,
                            sl4_extract_method = "group_data_by_dims", har_extract_method = "get_data_by_var",
                            sl4_priority = NULL, har_priority = NULL,
                            sl4_convert_unit = NULL, har_convert_unit = NULL,
+                           rename_columns = FALSE,
                            region_select = NULL, sector_select = NULL, subtotal_level = FALSE,
                            plot_data = FALSE, output_formats = NULL,
                            sl4_output_name = "sl4.plot.data",
@@ -408,12 +410,22 @@ auto_gtap_data <- function(experiment,
         priority = priority_list %||% list("Sector" = c("COMM", "ACTS"), "Region" = c("REG")),
         subtotal_level = subtotal_level
       )
+
+      # Add standard column renaming if requested
+      if (rename_columns) {
+        params$rename_cols = c(REG = "Region", COMM = "Commodity", ACTS = "Activity")
+      }
     } else {
       params <- list(
         experiment_names = names(data_raw),
         subtotal_level = subtotal_level,
         merge_data = keep_unique_flag
       )
+
+      # Add standard column renaming if requested
+      if (rename_columns) {
+        params$rename_cols = c(REG = "Region", COMM = "Commodity", ACTS = "Activity")
+      }
     }
 
     grouped_data <- tryCatch({
