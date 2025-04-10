@@ -61,7 +61,7 @@ The function supports top impact filtering, color coding, and flexible visualiza
 <span>  var_name_by_description <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  add_var_info <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  top_impact <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  invert_pane <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  invert_panel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  export_picture <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -121,7 +121,7 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <dd><p>Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.</p></dd>
 
 
-<dt id="arg-invert-pane">invert_pane<a class="anchor" aria-label="anchor" href="#arg-invert-pane"></a></dt>
+<dt id="arg-invert-panel">invert_panel<a class="anchor" aria-label="anchor" href="#arg-invert-panel"></a></dt>
 <dd><p>Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).</p></dd>
 
 
@@ -201,7 +201,7 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <span class="r-in"><span>            top_impact <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>            var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>            invert_pane <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>            invert_panel <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>            separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>            export_config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
@@ -223,10 +223,7 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <span class="r-in"><span>              bar_width <span class="op">=</span> <span class="fl">0.6</span>,</span></span>
 <span class="r-in"><span>              all_font_size <span class="op">=</span> <span class="fl">1.1</span></span></span>
 <span class="r-in"><span>            <span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; Starting plot export process: 10 plot(s) with dimensions (widthxheight): 45.0 x 20.0 inches</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; DPI: 300</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; Completed plot export: 10 plot(s) exported with dimensions (widthxheight): 45.0 x 20.0 inches</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; DPI: 300</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in detail_plot(sl4.plot.data[["2D"]], x_axis_from = "Sector", split_by = "Region",     filter_var = "qo", top_impact = NULL, var_name_by_description = TRUE,     invert_panel = TRUE, separate_figure = FALSE, export_config = list(width = 45,         height = 20), export_picture = FALSE, export_as_pdf = FALSE,     output_path = tempdir(), plot_style_config = list(positive_color = "#2E8B57",         negative_color = "#CD5C5C", panel_rows = 1, panel_cols = NULL,         show_axis_titles_on_all_facets = FALSE, y_axis_text_size = 25,         bar_width = 0.6, all_font_size = 1.1)):</span> unused argument (invert_panel = TRUE)</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

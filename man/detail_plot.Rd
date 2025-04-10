@@ -16,7 +16,7 @@ detail_plot(
   var_name_by_description = FALSE,
   add_var_info = FALSE,
   top_impact = NULL,
-  invert_pane = FALSE,
+  invert_panel = FALSE,
   separate_figure = FALSE,
   output_path = NULL,
   export_picture = TRUE,
@@ -50,7 +50,7 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.}
 
 \item{top_impact}{Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.}
 
-\item{invert_pane}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
+\item{invert_panel}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
 
 \item{separate_figure}{Logical. If TRUE, generates separate figures per panel value (default: FALSE).}
 
@@ -97,7 +97,7 @@ detail_plot(sl4.plot.data[["2D"]],
             top_impact = NULL,
             var_name_by_description = TRUE,
 
-            invert_pane = TRUE,
+            invert_panel = TRUE,
             separate_figure = FALSE,
 
             export_config = list(

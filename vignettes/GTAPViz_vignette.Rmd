@@ -698,7 +698,7 @@ comparison_plot(data = reg_data,
                 var_name_by_description = TRUE,
                 add_var_info = TRUE,
                 
-                invert_pane = FALSE,                
+                invert_panel = FALSE,                
                 separate_figure = FALSE,
                 
                 export_picture = TRUE,
@@ -834,7 +834,7 @@ detail_plot(sl4.plot.data[["2D"]][["Sector"]],
             top_impact = NULL,
             var_name_by_description = TRUE,
             
-            invert_pane = TRUE,
+            invert_panel = TRUE,
             separate_figure = FALSE,
             
             export_config = create_export_config(
@@ -877,7 +877,7 @@ detail_plot(sl4.plot.data[["2D"]][["Sector"]],
 ```{r, echo=FALSE, fig.align="center", out.width="100%"}
   knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot.png")
 ```
-</div> <figcaption class="package-fig"> Detail Plot Visualization <br> <span class="package-fig-note">(top_impact = NULL, invert_pane = TRUE, panel_rows = 1)</span> </figcaption> </figure>
+</div> <figcaption class="package-fig"> Detail Plot Visualization <br> <span class="package-fig-note">(top_impact = NULL, invert_panel = TRUE, panel_rows = 1)</span> </figcaption> </figure>
   
   
 <figure class="package-figure">
@@ -885,7 +885,7 @@ detail_plot(sl4.plot.data[["2D"]][["Sector"]],
 ```{r detail plot top impact, echo=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot_top10.png")
 ```
-</div> <figcaption class="package-fig"> Detail Plot Visualization (filtered) <br> <span class="package-fig-note">(top_impact = 10, invert_pane = TRUE)</span> </figcaption> </figure>
+</div> <figcaption class="package-fig"> Detail Plot Visualization (filtered) <br> <span class="package-fig-note">(top_impact = 10, invert_panel = TRUE)</span> </figcaption> </figure>
 
 
 <div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
@@ -939,7 +939,7 @@ stack_plot(data = har.plot.data[["A"]],
            
            var_name_by_description = TRUE,       
            
-           invert_pane = FALSE,           
+           invert_panel = FALSE,           
            separate_figure = FALSE,
 
            export_picture = TRUE,
@@ -986,7 +986,7 @@ stack_plot(data = har.plot.data[["E1"]],
            
            var_name_by_description = TRUE,       
            
-           invert_pane = TRUE,           
+           invert_panel = TRUE,           
            separate_figure = FALSE,
 
            export_picture = TRUE,

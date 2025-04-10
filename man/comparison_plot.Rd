@@ -13,7 +13,7 @@ comparison_plot(
   variable_col = "Variable",
   unit_col = "Unit",
   desc_col = "Description",
-  invert_pane = FALSE,
+  invert_panel = FALSE,
   separate_figure = FALSE,
   var_name_by_description = FALSE,
   add_var_info = FALSE,
@@ -43,7 +43,7 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.}
 
 \item{desc_col}{Character. Column containing variable descriptions (default: "Description").}
 
-\item{invert_pane}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
+\item{invert_panel}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
 
 \item{separate_figure}{Logical. If TRUE, generates separate figures per panel value (default: FALSE).}
 

@@ -64,7 +64,7 @@ The function supports stacked and unstacked presentations for decomposition anal
 <span>  show_total <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  unstack_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  top_impact <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  invert_pane <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  invert_panel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  export_picture <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -136,7 +136,7 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <dd><p>Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.</p></dd>
 
 
-<dt id="arg-invert-pane">invert_pane<a class="anchor" aria-label="anchor" href="#arg-invert-pane"></a></dt>
+<dt id="arg-invert-panel">invert_panel<a class="anchor" aria-label="anchor" href="#arg-invert-panel"></a></dt>
 <dd><p>Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).</p></dd>
 
 
@@ -217,7 +217,7 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>           var_name_by_description <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>           invert_pane <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>           invert_panel <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>           separate_figure <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>           export_picture <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
@@ -235,8 +235,7 @@ NULL creates a single aggregated plot, appropriate for macro-level analysis.</p>
 <span class="r-in"><span>             show_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>             show_axis_titles_on_all_facets <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span>           <span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Parameter 'x_axis_from' value 'REG' does not match any column in the data.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .prepare_data_source(data, x_axis_from, stack_value_from, variable_col):</span> Required column REG not found in the data frame.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stack_plot(data = har.plot.data[["A"]], x_axis_from = "REG",     stack_value_from = "COLUMN", split_by = FALSE, show_total = TRUE,     unstack_plot = FALSE, var_name_by_description = TRUE, invert_panel = FALSE,     separate_figure = FALSE, export_picture = FALSE, export_as_pdf = FALSE,     export_config = list(width = 28, height = 15), output_path = tempdir(),     plot_style_config = list(color_tone = "gtap", panel_rows = 2,         panel_cols = NULL, show_legend = TRUE, show_axis_titles_on_all_facets = FALSE)):</span> unused argument (invert_panel = FALSE)</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
