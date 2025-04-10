@@ -564,6 +564,8 @@ auto_gtap_data(
   region_select = selected_regions,
   sector_select = selected_sector,
   subtotal_level = FALSE,
+  rename_columns = TRUE,
+  decimals = 4,
   project_path = project.folder,
   plot_data = plot_data,
   output_formats = list(
@@ -1420,12 +1422,10 @@ auto_gtap_data(
   har_mapping_info = harmap,
   mapping_info = info.mode,
   
-  # Renames GTAP column identifiers to more readable format (REG → Region, COMM → Commodity, ACTS → Activity) for all data extraction methods.
-  rename_columns = FALSE,
-  
   # Convert units (see `?convert_units`)
   sl4_convert_unit ="mil2bil",
   har_convert_unit = "mil2bil",
+  decimals = 4,
   
   # Region and Sector Filtering
   region_select = selected_regions,
@@ -1435,7 +1435,10 @@ auto_gtap_data(
   sl4_extract_method = "get_data_by_dims",
   har_extract_method = "get_data_by_var",
   subtotal_level = FALSE,
-  
+
+  # Renames GTAP column identifiers to more readable format (REG → Region, COMM → Commodity, ACTS → Activity) for all data extraction methods.
+  rename_columns = FALSE,
+    
   # If using `"group_data_by_dims"`, a `priority_list` is required. See `?HARplus::group_data_by_dims`.
   sl4_priority = NULL,
   har_priority = NULL,

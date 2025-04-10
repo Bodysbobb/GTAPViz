@@ -173,7 +173,6 @@ gtap_macros_data <- function(select_var = NULL,
 #' @param sl4_suffix Character. Custom suffix for SL4 files (e.g., "", "-custom").
 #' @param har_suffix Character. Custom suffix for HAR files (e.g., "-WEL").
 #' @param mapping_info Character. Metadata mode: "GTAPv7" (default), "Yes", "No", or "Mix".
-#' @param rename_columns Logical. If TRUE (default), renames GTAP column identifiers to more readable format
 #'
 #' @param process_sl4_vars Data frame, NULL, or FALSE. Variables to extract from SL4:
 #'   NULL = extract all; FALSE = skip SL4 processing.
@@ -191,10 +190,12 @@ gtap_macros_data <- function(select_var = NULL,
 #'
 #' @param sl4_convert_unit Character. Optional SL4 unit conversion: "mil2bil", "bil2mil", "pct2frac", or "frac2pct". Default is NULL.
 #' @param har_convert_unit Character. Optional HAR unit conversion: same options as above. Default is NULL.
+#' @param decimals Integer. Number of decimal places to round numeric values to. Default is 2. Set to NULL to disable rounding.
 #'
 #' @param region_select Optional character vector. Regions to include.
 #' @param sector_select Optional character vector. Sectors to include.
 #' @param subtotal_level Logical. Whether to include subtotal rows. Default is FALSE.
+#' @param rename_columns Logical. If TRUE (default), renames GTAP column identifiers to more readable format
 #'
 #' @param plot_data Logical. If TRUE, prepares and assigns plot-ready data.
 #' @param output_formats Character vector or list. Output formats to export (valid: "csv", "stata", "rds", "txt").
@@ -234,7 +235,7 @@ auto_gtap_data <- function(experiment,
                            sl4_extract_method = "group_data_by_dims", har_extract_method = "get_data_by_var",
                            sl4_priority = NULL, har_priority = NULL,
                            sl4_convert_unit = NULL, har_convert_unit = NULL,
-                           rename_columns = FALSE,
+                           decimals = 4, rename_columns = TRUE,
                            region_select = NULL, sector_select = NULL, subtotal_level = FALSE,
                            plot_data = FALSE, output_formats = NULL,
                            sl4_output_name = "sl4.plot.data",
@@ -339,6 +340,20 @@ auto_gtap_data <- function(experiment,
 
     data <- .apply_to_dataframes(data, rename_GTAP_bilateral)
     data <- add_mapping_info(data, mapping = mapping_info, external_map = external_map)
+
+    if (apply_filters && (!is.null(region_select) || !is.null(sector_select))) {
+      data <- .apply_filters(
+        data,
+        region_select = region_select,
+        experiment_select = experiment,
+        sector_select = sector_select
+      )
+    }
+
+    # Apply decimal formatting to numeric columns
+    if (!is.null(decimals)) {
+      data <- .format_decimal_places(data, decimals)
+    }
 
     if (apply_filters && (!is.null(region_select) || !is.null(sector_select))) {
       data <- .apply_filters(

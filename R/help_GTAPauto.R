@@ -750,3 +750,30 @@
 
   return(data_list)
 }
+
+#' @title Format Decimal Places in Numeric Columns
+#' @description Internal function to round all numeric columns in a data structure to a specified number of decimal places.
+#' @param data A data frame, list of data frames, or nested data structure to process.
+#' @param decimals Integer. Number of decimal places to round numeric values to.
+#' @return Data with the same structure, but with numeric columns rounded to specified decimal places.
+#' @keywords internal
+#' @noRd
+.format_decimal_places <- function(data, decimals = 2) {
+  # For a single data frame
+  if (is.data.frame(data)) {
+    # Process only numeric columns
+    numeric_cols <- sapply(data, is.numeric)
+    if (any(numeric_cols)) {
+      data[numeric_cols] <- lapply(data[numeric_cols], function(x) round(x, decimals))
+    }
+    return(data)
+  }
+
+  # For a list or nested data structure, apply recursively
+  if (is.list(data)) {
+    return(.apply_to_dataframes(data, .format_decimal_places, decimals))
+  }
+
+  # Return unchanged for other data types
+  return(data)
+}
