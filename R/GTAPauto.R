@@ -571,9 +571,11 @@ auto_gtap_data <- function(experiment,
       if (!is.null(sl4_convert_unit) && !is.null(macro_data)) {
         message("Applying unit conversion to macro data: ", sl4_convert_unit)
         all_data$GTAPMacros <- convert_units(macro_data, scale_auto = sl4_convert_unit)
+        all_data$GTAPMacros <- .format_decimal_places(all_data$GTAPMacros, decimals)
 
         # Update the plot data variable if it's being generated
         if (plot_data) {
+          assign(macro_output_name, all_data$GTAPMacros, envir = parent.frame())
           assign(macro_output_name, all_data$GTAPMacros, envir = parent.frame())
         }
       }
@@ -630,9 +632,11 @@ auto_gtap_data <- function(experiment,
         if (!is.null(sl4_convert_unit) && !is.null(grouped_sl4)) {
           message("Applying unit conversion to SL4 data: ", sl4_convert_unit)
           all_data$sl4_data <- convert_units(grouped_sl4, scale_auto = sl4_convert_unit)
+          all_data$sl4_data <- .format_decimal_places(all_data$sl4_data, decimals)
 
           # Update the plot data variable if it's being generated
           if (plot_data && !is.null(sl4_output_name)) {
+            assign(sl4_output_name, all_data$sl4_data, envir = parent.frame())
             assign(sl4_output_name, all_data$sl4_data, envir = parent.frame())
           }
         }
@@ -677,9 +681,11 @@ auto_gtap_data <- function(experiment,
       if (!is.null(sl4_convert_unit) && !is.null(bilateral_data)) {
         message("Applying unit conversion to bilateral data: ", sl4_convert_unit)
         all_data$bilateral_data <- convert_units(bilateral_data, scale_auto = sl4_convert_unit)
+        all_data$bilateral_data <- .format_decimal_places(all_data$bilateral_data, decimals)
 
         # Update the plot data variable if it's being generated
         if (plot_data && !is.null("bilateral_data")) {
+          assign("bilateral_data", list(qxs = all_data$bilateral_data), envir = parent.frame())
           assign("bilateral_data", list(qxs = all_data$bilateral_data), envir = parent.frame())
         }
       }
@@ -723,9 +729,11 @@ auto_gtap_data <- function(experiment,
       if (!is.null(har_convert_unit) && !is.null(har_data)) {
         message("Applying unit conversion to HAR data: ", har_convert_unit)
         all_data$decomposition_data <- convert_units(har_data, scale_auto = har_convert_unit)
+        all_data$decomposition_data <- .format_decimal_places(all_data$decomposition_data, decimals)
 
         # Update the plot data variable if it's being generated
         if (plot_data && !is.null(har_output_name)) {
+          assign(har_output_name, all_data$decomposition_data, envir = parent.frame())
           assign(har_output_name, all_data$decomposition_data, envir = parent.frame())
         }
       }

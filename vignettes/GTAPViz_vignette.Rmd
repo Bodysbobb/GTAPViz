@@ -76,6 +76,7 @@ auto_gtap_data(
   sector_select = selected_sector,
   sl4_convert_unit ="mil2bil",
   har_convert_unit = "mil2bil",
+  decimals = 2,
   subtotal_level = FALSE,
   rename_columns = TRUE,
   experiment = experiment, 
@@ -1425,7 +1426,7 @@ auto_gtap_data(
   # Convert units (see `?convert_units`)
   sl4_convert_unit ="mil2bil",
   har_convert_unit = "mil2bil",
-  decimals = 4,
+  decimals = 2,
   
   # Region and Sector Filtering
   region_select = selected_regions,
