@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="GTAPViz - Visualizing GTAP Results from HAR and SL4 Files">
-<meta name="description" content="An R package designed to streamline the processing and visualization of GTAP model results. While primarily built for GTAP simulations, it also supports other .har and .sl4 datasets. As an extension of HARplus, GTAPViz simplifies GTAP data extraction and visualization, reducing manual effort and enhancing efficiency. With intuitive commands and automated adjustments, users can create, customize, and export high-quality visualizations for economic analysis and research reporting with minimal coding.">
-<meta property="og:description" content="An R package designed to streamline the processing and visualization of GTAP model results. While primarily built for GTAP simulations, it also supports other .har and .sl4 datasets. As an extension of HARplus, GTAPViz simplifies GTAP data extraction and visualization, reducing manual effort and enhancing efficiency. With intuitive commands and automated adjustments, users can create, customize, and export high-quality visualizations for economic analysis and research reporting with minimal coding.">
+<meta name="description" content="Tools to streamline the extraction, processing, and visualization of Computable General Equilibrium (CGE) results from GTAP models. Designed for compatibility with both .har and .sl4 files, the package enables users to automate data preparation, apply mapping metadata, and generate high-quality plots and summary tables with minimal coding. GTAPViz supports flexible export options (e.g., Text, CSV, Stata, or Excel formats). This facilitates efficient post-simulation analysis for economic research and policy reporting. Includes helper functions to filter, format, and customize outputs with reproducible styling.">
+<meta property="og:description" content="Tools to streamline the extraction, processing, and visualization of Computable General Equilibrium (CGE) results from GTAP models. Designed for compatibility with both .har and .sl4 files, the package enables users to automate data preparation, apply mapping metadata, and generate high-quality plots and summary tables with minimal coding. GTAPViz supports flexible export options (e.g., Text, CSV, Stata, or Excel formats). This facilitates efficient post-simulation analysis for economic research and policy reporting. Includes helper functions to filter, format, and customize outputs with reproducible styling.">
 <link rel="stylesheet" href="mystyle.css">
 <meta name="google-site-verification" content="8QKloLN9mSrDsTaZuR4KAEAmti-k3mYCBZpMVgq2RO8">
 </head>
@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="index.html">GTAPViz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,17 +37,15 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
-<li><a class="dropdown-item" href="articles/GTAPViz_vignette.html">Comprehensive Manuscript</a></li>
-    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/">Advanced Plot Configurations and Outputs</a></li>
-    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/">Advanced Table Configurations and Outputs</a></li>
+<li><a class="dropdown-item" href="articles/GTAPViz_Data.html">Data Processing</a></li>
+    <li><a class="dropdown-item" href="articles/GTAPViz_Plot.html">Plotting</a></li>
+    <li><a class="dropdown-item" href="articles/GTAPViz_Table.html">Table Generation</a></li>
+    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/">Advanced Plot Catalogs</a></li>
+    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/">Advanced Table Catalogs</a></li>
+    <li><a class="dropdown-item" href="articles/GTAPViz_Utilities.html">Utilities</a></li>
   </ul>
 </li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-references" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">References</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-references">
-<li><a class="dropdown-item" href="reference/index.html">Function Reference</a></li>
-  </ul>
-</li>
+<li class="nav-item"><a class="nav-link" href="reference/index.html">References</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/Bodysbobb/GTAPViz" aria-label="GitHub Repository"><span class="fa fab fa-github"></span></a></li>
@@ -65,32 +63,22 @@
 <h2 id="overview">
 <strong>Overview</strong><a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><strong>GTAPViz</strong> is an R package designed to streamline the processing and visualization of GTAP model results. While primarily built for <strong>GTAP simulations, it also supports other <code>.HAR</code> and <code>.SL4</code> datasets</strong>.</p>
-<p>As an extension of HARplus GTAPViz simplifies <strong>GTAP data extraction and visualization</strong>, reducing manual effort and enhancing efficiency.</p>
+<p><strong>GTAPViz</strong> is an R package designed to streamline the processing and visualization of GTAP-CGE results. While primarily built for <strong>GTAP simulations, it also supports other <code>.har</code> and <code>.sl4</code> datasets</strong>.</p>
 <p>With intuitive commands and automated adjustments, users can create, customize, and export high-quality visualizations for journal publications, economic analysis, and research reports—all with minimal coding.</p>
 </div>
 <div class="section level2">
 <h2 id="key-features">
 <strong>Key Features</strong><a class="anchor" aria-label="anchor" href="#key-features"></a>
 </h2>
+<p>This package streamlines the creation of figures and tables from <code>.har</code> and <code>.sl4</code> results, making academic presentations effortless. Some key features are:</p>
 <ul>
-<li>
-<strong>Automated Plot Adjustments</strong> – Optimizes plot dimensions, facet settings, and layout dynamically with minimal user input.<br>
-</li>
-<li>
-<strong>Academic-Style Pivot Table</strong> – Automatically generates tables alongside figures, making it easy to include both in academic papers.<br>
-</li>
-<li>
-<strong>Intuitive Customization</strong> – Modify colors, fonts, legend positions, and other styling elements using simple, adaptable commands.<br>
-</li>
-<li>
-<strong>Full Customization Without Complexity</strong> – Built on <code>ggplot2</code>, this package simplifies adjustments into intuitive commands like <code>TRUE/FALSE</code>, eliminating the need for deep coding.<br>
-</li>
-<li>
-<strong>Multiple Export Formats</strong> – Save high-resolution figures in <strong>PNG and PDF</strong> formats simultaneously for presentations, publications, and LaTeX reports.<br>
-</li>
-<li>
-<strong>Comprehensive Documentation</strong> – Includes a vignette and built-in help functions covering all customization options—no need to search online.</li>
+<li><p><strong>Effortless Multi-Plot Generation</strong> – Automatically adjusts dimensions, facets, and layout with minimal input.</p></li>
+<li><p><strong>Smart Plot Adjustments</strong> – Fine-tune visuals easily without manual sizing or layout tweaks.</p></li>
+<li><p><strong>Dual Export Plot Formats</strong> – Instantly save high-resolution PNG and PDF outputs for slides, papers, and LaTeX.</p></li>
+<li><p><strong>Publication-Ready Pivot Tables</strong> – Generate clean tables alongside figures—ideal for academic papers.</p></li>
+<li><p><strong>Streamlined Styling</strong> – Customize colors, fonts, and legends through simple, flexible options.</p></li>
+<li><p><strong>Powerful Yet Simple</strong> – Built on <code>ggplot2</code>, with intuitive <code>TRUE/FALSE</code> switches—no advanced coding needed.</p></li>
+<li><p><strong>Self-Contained Help</strong> – Includes a detailed vignette and internal help—no need to search online.</p></li>
 </ul>
 </div>
 <div class="section level2">
@@ -108,8 +96,24 @@
 <h2 id="comprehensive-documentation">
 <strong>Comprehensive Documentation</strong><a class="anchor" aria-label="anchor" href="#comprehensive-documentation"></a>
 </h2>
-<p>For full details on how to use this package and explore practical examples, see the <a href="https://rpubs.com/Bodysbob/1289755" class="external-link">GTAPViz Vignette</a> or <a href="https://bodysbobb.github.io/GTAPViz/">GitHub GTAPViz</a>.</p>
-<p>For the R reference manual, see the <a href="https://github.com/Bodysbobb/GTAPViz/blob/main/inst/GTAPViz_1.1.0.pdf/" class="external-link">GTAPViz Reference Manual</a>.</p>
+<p>For complete instructions on using this package and exploring practical examples:</p>
+<ul>
+<li>
+<a href="https://bodysbobb.github.io/GTAPViz/">GTAPViz Step-by-Step Guide</a><br>
+</li>
+<li>
+<a href="https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/" class="external-link">GTAPViz: Plot Catalogs</a><br>
+</li>
+<li><a href="https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/" class="external-link">GTAPViz: Table Catalogs</a></li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="useful-packages-for-cge-fellows">
+<strong>Useful Packages for CGE Fellows</strong><a class="anchor" aria-label="anchor" href="#useful-packages-for-cge-fellows"></a>
+</h2>
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/HARplus/index.html" class="external-link">HARplus</a></li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="license--author">
@@ -126,7 +130,7 @@ Research Assistant at GTAP</p>
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/bodysbobb/GTAPViz/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/bodysbobb/GTAPViz/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/bodysbobb/GTAPViz/issues/" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
