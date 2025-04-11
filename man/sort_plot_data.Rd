@@ -16,8 +16,8 @@ sort_plot_data(
 
 \item{sort_columns}{Named list. Specifies columns to sort by and their ordering.
 Each element should be a character vector of values in desired order.
-For example, `list(Region = c("USA", "EU", "CHN")`,
-                  `Experiment = c("Base", "Shock1", "Shock2"))`.}
+For example, \verb{list(Region = c("USA", "EU", "CHN")},
+\verb{Experiment = c("Base", "Shock1", "Shock2"))}.}
 
 \item{sort_by_value_desc}{Logical or NULL. Controls sorting by the "Value" column:
 - NULL (default): Don't sort by value, only use column-based sorting.
@@ -35,7 +35,6 @@ Sorts data for plotting using flexible options for column ordering and value-bas
 Works with data frames, lists of data frames, or nested data structures.
 }
 \examples{
-
 # Load Sample Data:
 sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
                                 package = "GTAPViz"))
@@ -51,7 +50,7 @@ sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs,
 
 }
 \seealso{
-\code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_GTAP_bilateral}}
+\code{\link{add_mapping_info}}, \code{\link{convert_units}}
 }
 \author{
 Pattawee Puangchit

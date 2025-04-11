@@ -21,23 +21,25 @@ convert_units(
 
 \item{change_unit_from}{Character vector. Units to be converted (case-insensitive).}
 
-\item{change_unit_to}{Character vector. Target units corresponding to `change_unit_from`.}
+\item{change_unit_to}{Character vector. Target units corresponding to \code{change_unit_from}.}
 
-\item{adjustment}{Character or numeric vector. Specifies conversion operations (e.g., `"/1000"` to convert million to billion).}
+\item{adjustment}{Character or numeric vector. Specifies conversion operations (e.g., \code{"/1000"} to convert million to billion).}
 
-\item{value_col}{Character. Column name containing values to adjust (default: `"Value"`).}
+\item{value_col}{Character. Column name containing values to adjust (default: \code{"Value"}).}
 
-\item{unit_col}{Character. Column name containing unit information (default: `"Unit"`).}
+\item{unit_col}{Character. Column name containing unit information (default: \code{"Unit"}).}
 
 \item{variable_select}{Optional character vector. If provided, only these variables are converted.}
 
-\item{variable_col}{Character. Column name containing variable identifiers (default: `"Variable"`).}
+\item{variable_col}{Character. Column name containing variable identifiers (default: \code{"Variable"}).}
 
 \item{scale_auto}{Optional character vector of predefined conversion rules:
-- `"mil2bil"`: Converts million USD to billion USD (divides by 1000).
-- `"bil2mil"`: Converts billion USD to million USD (multiplies by 1000).
-- `"pct2frac"`: Converts percent to fraction (divides by 100).
-- `"frac2pct"`: Converts fraction to percent (multiplies by 100).}
+\itemize{
+\item \code{"mil2bil"}: Converts million USD to billion USD (divides by 1000).
+\item \code{"bil2mil"}: Converts billion USD to million USD (multiplies by 1000).
+\item \code{"pct2frac"}: Converts percent to fraction (divides by 100).
+\item \code{"frac2pct"}: Converts fraction to percent (multiplies by 100).
+}}
 }
 \value{
 A data structure with values converted to the specified units.
@@ -47,7 +49,7 @@ Converts values in a dataset to different units based on predefined transformati
 Supports manual and automatic conversions for economic and trade-related metrics.
 }
 \details{
-If both `change_unit_from` and `scale_auto` are provided, the function prompts the user
+If both \code{change_unit_from} and \code{scale_auto} are provided, the function prompts the user
 to choose between manual and automatic conversion.
 }
 \examples{

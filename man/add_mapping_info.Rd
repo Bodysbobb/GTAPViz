@@ -18,14 +18,16 @@ add_mapping_info(
 \item{external_map}{Optional data frame with mapping information (must include "Variable", "Description", and "Unit" columns).}
 
 \item{mapping}{Character. Controls how descriptions and units are added:
-`"GTAPv7"` (default) uses standard GTAPv7 definitions;
-`"Yes"` uses only the supplied `external_map`;
-`"No"` skips mapping;
-`"Mix"` prioritizes `external_map`, falling back to GTAPv7 if needed.}
+\itemize{
+\item \code{"GTAPv7"} (default): Uses standard GTAPv7 definitions.
+\item \code{"Yes"}: Uses only the information provided in \code{external_map}.
+\item \code{"No"}: Skips adding mapping information.
+\item \code{"Mix"}: Prioritizes values from \code{external_map}, but fills in missing entries using GTAPv7 definitions.
+}}
 
-\item{description_info}{Logical. If `TRUE`, adds description information to the data.}
+\item{description_info}{Logical. If \code{TRUE}, adds description information to the data.}
 
-\item{unit_info}{Logical. If `TRUE`, adds unit information to the data.}
+\item{unit_info}{Logical. If \code{TRUE}, adds unit information to the data.}
 }
 \value{
 A data structure with added mapping information, preserving the original structure.
@@ -36,12 +38,7 @@ Supports external mappings or default GTAPv7 mappings, allowing users to enrich 
 standardized metadata.
 }
 \details{
-The `mapping` argument controls how description and unit information are added to the dataset:
-
-- `"GTAPv7"` (default): Applies standardized GTAPv7 metadata for variable descriptions and units.
-- `"Yes"`: Uses only the descriptions and units from the `external_map` provided by the user. No fallback to GTAPv7.
-- `"No"`: Skips mapping entirely. No descriptions or units are added.
-- `"Mix"`: Prioritizes entries in `external_map`, but fills in any missing values using GTAPv7 metadata where available.
+The \code{mapping} argument supports:
 }
 \examples{
 # Load Sample Data:
