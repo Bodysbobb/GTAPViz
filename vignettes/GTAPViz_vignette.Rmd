@@ -36,6 +36,7 @@ rm(list=ls())
 setwd("D:/GitHub/GTAPViz/R")
 devtools::load_all()
 
+input_path <- system.file("extdata/in", package = "GTAPViz")
 sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 har.plot.data <- readRDS(file.path(input_path, "har.plot.data.rds"))
 macro.data    <- readRDS(file.path(input_path, "macro.data.rds"))

@@ -1,0 +1,403 @@
+---
+title: "Plot: A Step-by-Step Guide"
+author: "Pattawee Puangchit"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    css: mystyle.css
+    number_sections: true
+    code_folding: show
+    self_contained: true
+vignette: >
+  %\VignetteIndexEntry{Plot: A Step-by-Step Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE, eval = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  eval = requireNamespace("GTAPViz", quietly = TRUE)
+)
+
+```
+
+
+```{r Dev Period, include = FALSE, eval = FALSE}
+rm(list=ls())
+#------------------Dev Period######################################
+setwd("D:/GitHub/GTAPViz/R")
+devtools::load_all()
+
+input_path <- system.file("extdata/in", package = "GTAPViz")
+sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
+har.plot.data <- readRDS(file.path(input_path, "har.plot.data.rds"))
+macro.data    <- readRDS(file.path(input_path, "macro.data.rds"))
+
+output.folder <- "D:/One Drive/OneDrive - purdue.edu/GTAPViz Data/out"
+```
+
+# Introduction {#sec:introduction}
+
+This vignette aims to illustrate plot configurations and outputs
+
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
+
+# Comparison Plot {#sec:comparisonplot}
+
+This figure compares one or multiple variables across all experiments for selected observations from a chosen dimension (e.g., region, sector).  
+
+<strong style="font-size: 1.17em;">Key Features</strong>
+
+- Designed for comparing selected variables across experiments.  
+
+- Displays all selected variables in one plot, making it ideal for a few observations; too many can make it dense and unclear.  
+
+For example, plotting `qgdp`, `ppriv`, `EV`, `tot`, and `u` generates six separate figures using the following command:  
+
+```{r Comparison Plot, eval = FALSE}
+reg_data = sl4.plot.data[["REG"]]
+
+comparison_plot(data = reg_data,
+                x_axis_from = "Region",
+                split_by = "Variable",
+                panel_var = "Experiment", 
+                variable_col = "Variable",
+                filter_var = NULL,
+                unit_col = "Unit",
+                desc_col = "Description",
+                
+                var_name_by_description = FALSE,
+                add_var_info = FALSE,
+                
+                invert_axis = FALSE,                
+                separate_figure = FALSE,
+                
+                export_picture = TRUE,
+                export_as_pdf = "merged",
+                output_path = output.folder,
+                
+                # See ?export_config
+                export_config = create_export_config(
+                  width = 20,
+                  height = 12
+                  ),
+                
+                # See ?plot_style_config
+                plot_style_config = create_plot_style(
+                  color_tone = "purdue",
+                  add_unit_to_title = TRUE,
+                  title_format = create_title_format(
+                    type = "prefix",  
+                    text = "Impact on"
+                  ),
+                  panel_rows = 2,
+                  plot.margin = ggplot2::margin(10, 25, 10, 10)
+                ))
+```
+
+By default, you might not need to define as much, as the previous sample code assumes that you follow all the previous instructions. You may use the following command to get the exact same output:  
+
+```{r Comparison Plot - Short Version, eval = FALSE}
+comparison_plot(reg_data,
+                x_axis_from = "Region",
+                split_by = "Variable",
+                var_name_by_description = TRUE,
+                
+                export_picture = FALSE,
+                output_path = NULL,
+                
+                plot_style_config = create_plot_style(
+                  color_tone = "purdue",
+                  title_format = create_title_format(
+                    type = "prefix",  
+                    text = "Impact on"
+                  ),
+                  panel_rows = 2
+                ))
+```
+
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/cpsplot.png")
+```
+</div> <figcaption class="package-fig"> Comparison Plot Visualization <br> </figcaption>
+<span class="package-fig-note">(splt_by = FALSE, panel_rows = 2, panel_cols = NULL i.e., default)</span> </figcaption> </figure>
+
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
+
+
+## GTAP Macro Variable Plot {#sec:macroplot}
+
+This figure displays aggregated values across all experiments, typically for global economic impacts. It is designed for GTAP Macro variables extracted from the *"Macros"* header in `<.sl4>` files.  
+
+<strong style="font-size: 1.17em;">Key Features</strong>
+
+- Compares macroeconomic indicators across experiments.  
+
+- Works with aggregated data, making it ideal for global-scale analysis.  
+
+- Primarily used for GTAP Macro variables but can be applied to other aggregated datasets.  
+
+To plot this figure—the only difference from previous figures is changing `split_by = FALSE`—you can use the following command:
+
+```{r GTAP Macro Plot, eval = FALSE}
+comparison_plot(GTAPMacro,
+                x_axis_from = "Variable",
+                split_by = FALSE,
+                filter_var = c("pgdpwld", "qgdpwld", "vgdpwld"),
+                
+                export_picture = FALSE,
+                export_as_pdf = NULL,
+                export_config = create_export_config(
+                  width = 20,
+                  height = 15
+                  ),
+                output_path = output.folder,
+                
+                plot_style_config = create_plot_style(
+                  color_tone = "blue",
+                  title_format = create_title_format(
+                    type = "full",  
+                    text = "Global Economic Impacts"
+                  )
+                ))
+```
+
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/GTAPMacros.png")
+```
+</div> <figcaption class="package-fig"> GTAP Macro Plot Visualization <br> <span class="package-fig-note">(splt_by = FALSE, panel_rows and panel_cols = NULL i.e., default)</span> </figcaption> </figure>
+
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
+
+# Detail Plot {#sec:detailplot}
+
+
+This figure visualizes large-scale data, displaying all sectors (*COMM*, *ACTS*) or all regions (*REG*) within each experiment.  
+
+<strong style="font-size: 1.17em;">Key Features</strong>
+
+- Supports visualization across two selected dimensions.  
+
+- Suitable for datasets too large for *comparison_plot*.  
+
+- Automatically detects and aligns variables with different dimension names.  
+
+- Filters data by selecting the most affected variables using **top_impact**.  
+
+
+For example, the following command plots all variables with sectors on the x-axis for each region:  
+
+```{r Detail Plot, eval = FALSE}
+sector_data <- sl4.plot.data[["COMM*REG"]]
+
+detail_plot(sector_data,
+            x_axis_from = "Commodity",
+            split_by = "Region",
+
+            top_impact = NULL,
+            var_name_by_description = TRUE,
+            
+            invert_axis = TRUE,
+            separate_figure = FALSE,
+            
+            export_config = create_export_config(
+              width = 45,
+              height = 20
+            ),
+            
+            export_picture = FALSE,
+            export_as_pdf = FALSE,   
+            output_path = NULL,
+            
+            plot_style_config = create_plot_style(
+              positive_color = "#2E8B57", 
+              negative_color = "#CD5C5C",
+              panel_rows = 1,
+              panel_cols = NULL,
+              show_axis_titles_on_all_facets = FALSE,
+              y_axis_text_size = 25,
+              bar_width = 0.6,
+              all_font_size = 1.1
+            ))
+```
+
+<div class="tip-box">
+💡 **Tip:** You may notice the following adjustments:
+- `positive_color` and `negative_color`: Define colors for positive and negative values, automatically distinguishing impacts by shade.
+
+- `show_axis_titles_on_all_facets`: Suppresses repeated labels across facets.
+
+- `y_axis_text_size`: Increases y-axis label size to 25 from the default setting.
+
+- `bar_width`: Decreases bar width for better visualization of large datasets.
+
+- `all_font_size`: Increases all font sizes to 1.3 from the default setting.
+</div>
+
+
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r, echo=FALSE, fig.align="center", out.width="100%"}
+  knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot.png")
+```
+</div> <figcaption class="package-fig"> Detail Plot Visualization <br> <span class="package-fig-note">(top_impact = NULL, invert_axis = TRUE, panel_rows = 1)</span> </figcaption> </figure>
+  
+  
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r detail plot top impact, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/detail_plot_top10.png")
+```
+</div> <figcaption class="package-fig"> Detail Plot Visualization (filtered) <br> <span class="package-fig-note">(top_impact = 10, invert_axis = TRUE)</span> </figcaption> </figure>
+
+
+<div style="border-top: 1px solid #003366; margin-top: 15px; margin-bottom: 15px;"></div>
+
+# Stack Plot {#sec:stackplot}
+
+This plot visualizes decomposition results, showing how different components contribute to a total value, making it particularly suitable for decomposition analysis.  
+
+<strong style="font-size: 1.17em;">Key Features</strong>
+
+- Displays the contribution of components to a total value.  
+
+- Allows further decomposition by unstacking components instead of using a stacked bar.  
+
+- Suitable for welfare decomposition, trade decomposition, and other GTAP structural breakdowns.  
+
+<div class="tip-box">
+💡 <strong>Tip:</strong> Since decomposition data often contains multiple components, <strong>renaming and restructuring</strong> may be necessary before plotting. You can try the following code:
+</div>
+
+```{r Rename Decomposition File, eval = FALSE}
+# Rename Value if needed
+wefare.decomp.rename <- data.frame(
+  ColumnName = "COLUMN",
+  OldName = c("alloc_A1", "ENDWB1", "tech_C1", "pop_D1", "pref_G1", "tot_E1", "IS_F1"),
+  NewName = c("Alloc Eff.", "Endwb", "Tech Chg.", "Pop", "Perf", "ToT", "I-S"),
+  stringsAsFactors = FALSE
+)
+
+har.plot.data <- rename_value(har.plot.data, mapping.file = wefare.decomp.rename)
+
+# Rename Column
+rename_col <- data.frame(
+  old = c("REG", "COMM", "ACTS"),
+  new = c("Region", "Commodity", "Activity")
+  )
+
+har.plot.data <- HARplus::rename_dims(har.plot.data, rename_col)
+```
+
+Then, you can use the following command to plot the decomposition figure:
+
+```{r Decomposition Plot, eval = FALSE}
+stack_plot(data = har.plot.data[["A"]],
+           x_axis_from = "Region",
+           stack_value_from = "COLUMN",
+           split_by = FALSE,
+           
+           show_total = TRUE,
+           unstack_plot = FALSE,
+           
+           var_name_by_description = TRUE,       
+           
+           invert_axis = FALSE,           
+           separate_figure = FALSE,
+
+           export_picture = TRUE,
+           export_as_pdf = "merged",
+           export_config = create_export_config(
+             width = 28,
+             height = 15
+           ),
+           output_path = output.folder,
+           
+           plot_style_config = create_plot_style(
+             color_tone = "gtap",
+             panel_rows = 2,
+             panel_cols = NULL,
+             show_legend = TRUE,
+             show_axis_titles_on_all_facets = FALSE
+           ))
+```
+
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r stack plot, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/stack_plot.png")
+```
+</div> <figcaption class="package-fig"> Stack Plot Visualization (stack) <br> <span class="package-fig-note">(split_by = FALSE, show_total = TRUE, unstack_plot = TRUE)</span> </figcaption> </figure>
+
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r unstack plot, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/unstack_plot.png")
+```
+</div> <figcaption class="package-fig"> Stack Plot Visualization (unstacked) <br> <span class="package-fig-note">(split_by = FALSE, show_total = TRUE, unstack_plot = FALSE)</span> </figcaption> </figure>
+
+Another practical example is plotting the decomposition of terms of trade (header E1), which is also a good example of multi-dimensional plotting. You may try the following command:
+
+```{r Terms of Trade Decomposition, eval = FALSE}
+stack_plot(data = har.plot.data[["E1"]],
+           x_axis_from = "Commodity",
+           stack_value_from = "PRICES",
+           split_by = "Region",
+           
+           show_total = TRUE,
+           unstack_plot = FALSE,
+           
+           var_name_by_description = TRUE,       
+           
+           invert_axis = TRUE,           
+           separate_figure = FALSE,
+
+           export_picture = TRUE,
+           export_as_pdf = FALSE,
+           export_config = create_export_config(
+             width = 50,
+             height = 30
+           ),
+           output_path = output.folder,
+           
+           plot_style_config = create_plot_style(
+             title_format = create_title_format(
+               type = "prefix",
+               text = "Terms of Trade Decomposition",
+               sep = ": "
+             ),
+             color_tone = "blue", 
+             panel_rows = 1,
+             show_axis_titles_on_all_facets = FALSE,
+             bar_width = 0.5,
+             bar_spacing = 0,
+             title_size = 48,
+             x_axis_title_size = 32,
+             y_axis_title_size = 32,
+             x_axis_text_size = 20,
+             y_axis_text_size = 20,
+             show_legend = TRUE
+           ))
+
+```
+
+<figure class="package-figure">
+  <div class="package-figure-box">
+```{r stack multi plot, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://raw.githubusercontent.com/Bodysbobb/GTAPViz/main/vignettes/images/stack_multi_plot.png")
+```
+</div> <figcaption class="package-fig"> Stack Plot Visualization (Multi-Dimension) <br> <span class="package-fig-note">(split_by = "Region", plot_style_config -> adjustments)</span> </figcaption> </figure>
+
+<div style="border-top: 1.5px solid #D62728; margin-top: 15px; margin-bottom: 15px;"></div>
