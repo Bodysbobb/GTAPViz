@@ -1,0 +1,271 @@
+---
+title: "GTAPViz: Utilities"
+author: "Pattawee Puangchit"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    css: mystyle.css
+    number_sections: true
+    code_folding: show
+    self_contained: true
+vignette: >
+  %\VignetteIndexEntry{GTAPViz: Utilities}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE, eval = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  eval = requireNamespace("GTAPViz", quietly = TRUE)
+)
+```
+
+
+```{r Dev Period, include = FALSE, eval = TRUE}
+rm(list=ls())
+
+try(devtools::load_all(".."), silent = TRUE)  # go up one level from /vignettes/
+
+input_path <- system.file("extdata/in", package = "GTAPViz")
+sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
+har.plot.data <- readRDS(file.path(input_path, "har.plot.data.rds"))
+macro.data    <- readRDS(file.path(input_path, "macro.data.rds"))
+```
+
+This vignette provides other useful functions in the `GTAPViz` package.   
+
+
+# Adding Unit and Description Columns {#sec:add-info}
+
+If you manually import data or need to adjust the `"Description"` and `"Unit"` columns, you can use the following command:
+
+```{r Add Info, eval = FALSE}
+# Create mapping file
+mapping_df <- data.frame(
+  Variable = c("qgdp", "EV", "ppriv"),
+  Description = c("Real GDP Index", "Welfare Equivalents", "Consumer Price Index"),
+  Unit = c("Percent", "million USD", "percent"),
+  stringsAsFactors = FALSE
+)
+
+datasets <- add_mapping_info(mapping_df, 
+                             external_map = mapping_df, 
+                             mapping = "Yes")
+```
+
+
+# Convert Different Units
+
+You can convert all units across all data frames within the data list by using the following code:
+
+```{r Converting Unit, eval = FALSE}
+your_data <- sl4.plot.data   # Change this to your data list name
+
+your_data <- convert_units(change_unit_from = c("BAHT", "million USD"),
+                           change_unit_to = c("USD", "billion USD"),
+                           adjustment = c("*34.5", "/1000"))
+```
+
+<details>
+  <summary class="toggle-summary">Explanation</summary>
+  
+  <div class="tip-box">
+
+**What does this code do?**
+
+- Converts `BAHT` to `USD` by multiplying the values by 34.5.  
+
+- Converts `million USD` to `billion USD` by dividing the values by 1,000.  
+
+**Parameters:**
+
+- `change_unit_from`: The original unit name to be changed in the `"Unit"` column.  
+  If your dataset does not yet include a `"Unit"` column, please refer to [adding unit and description columns](#sec:add-info).
+
+- `change_unit_to`: The new unit name to be recorded in the `"Unit"` column.  
+
+- `adjustment`: The mathematical operation used to transform the values.  
+  Accepts operators such as `/`, `*`, `+`, or `-`.
+
+  </div>
+</details>
+
+# Renaming Columns and Data List Names {#sec:rename-column}
+
+To modify column names across all datasets and/or rename data list names automatically—such as changing `REG` to `Region` or `COMM` to `Commodity`—use the following command:  
+
+```{r Rename Column, eval = FALSE}
+# Creating Mapping File
+rename_col <- data.frame(
+  old = c("REG", "COMM", "ACTS"),
+  new = c("Region", "Commodity", "Activity")
+  )
+
+har.plot.data <- HARplus::rename_dims(har.plot.data, 
+                                      mapping_df = rename_col,
+                                      rename_list_names = FALSE)
+```
+
+<details>
+  <summary class="toggle-summary">💡 Tip</summary>
+  
+<div class="tip-box">
+You can create this mapping dataframe in Excel and import it into R. The column names must be **"old"** and **"new"**.  
+</div>
+
+</details>
+
+
+# Sorting Output {#sec:sorting-output}
+
+This function allows you to sort data before generating plots or tables.  
+For example, you can display `EXP2` before `EXP1`, or `SEAsia` before `Oceania`.
+
+It supports:
+
+- Sorting by multiple columns simultaneously for precise output control 
+
+- Applying consistent sorting across all data frames within a data list
+
+See `?sort_plot_data` for full details.
+
+Key arguments:  
+
+- `cols` specifies the column(s) to sort based on a predefined order (e.g., in `sl4.plot.data`, `Experiment` and `Region` will follow the defined order).  
+
+- `sort_by_value_desc` controls whether sorting is in descending order (`TRUE/FALSE/NULL`).   
+
+To apply sorting, use the following command:  
+
+```{r Sorting Data Function, eval = FALSE}
+# Using the function
+sort_sl4_plot <- sort_plot_data(
+  sl4.plot.data,
+  sort_columns = list(
+    Experiment = c("EXP2", "EXP1"), # Column Name = Sorting Order
+    Region = c("SEAsia", "Oceania")
+    ),
+  sort_by_value_desc = NULL
+)
+```
+
+
+# Renaming Values {#sec:rename-value}
+
+To automatically modify values in any column before plotting—such as renaming country names in the `REG` column (e.g., changing `"USA"` to `"United States"` or `"CHN"` to `"China"`)—use the following command:  
+
+```{r Rename Value, eval = FALSE}
+# Creating Mapping File
+rename.region <- data.frame(
+  ColumnName = "REG",
+  OldName = c("USA", "CHN"),
+  NewName = c("United States", "China"),
+  stringsAsFactors = FALSE
+)
+
+sl4.plot.data_rename <- rename_value(sl4.plot.data, mapping.file = rename.region)
+```
+
+<br>
+Another useful example is renaming the components of welfare decomposition before plotting.
+
+```{r, eval = FALSE}
+# Rename Value if needed
+wefare.decomp.rename <- data.frame(
+  ColumnName = "COLUMN",
+  OldName = c("alloc_A1", "ENDWB1", "tech_C1", "pop_D1", "pref_G1", "tot_E1", "IS_F1"),
+  NewName = c("Alloc Eff.", "Endwb", "Tech Chg.", "Pop", "Perf", "ToT", "I-S"),
+  stringsAsFactors = FALSE
+)
+
+welfare_decomp <- rename_value(har.plot.data, mapping.file = wefare.decomp.rename)
+```
+
+
+# (HARplus) Manual Data Processing {#sec:manualdata}
+
+This section is for non-GTAP models or manual data extraction for plotting. Follow these steps:
+
+1. Use `"HARplus::load_sl4x"` or `"HARplus::load_harx"`, then `"HARplus::group_data_by_dims"` to structure the data in the required format.  
+
+2. Filter each dataframe using standard R `data.frame` operations.  
+
+3. Add the "Unit" and "Description" columns using `"add_mapping_info"` (the *"Unit"* column is required for plotting).  
+
+```{r Manual Data Filtering, eval = FALSE}
+# Step 1: Filtering Data using Dataframe and lapply
+manual.data <- lapply(sl4data, function(x) {
+  if (is.data.frame(x)) {
+    x[x$REG %in% selected_regions & x$COMM %in% selected_sector & x$ACTS %in% selected_sector
+      & x$Experiment %in% selected_exp , ]
+  } else {
+    x  
+  }
+})
+
+# Step 2: Adding Unit and Description Column
+manual.data <- add_mapping_info(manual.data, external_map = "/your/mapping.xlsx",
+                                description_info = TRUE,
+                                unit_info = TRUE)
+```
+
+
+# Sample Data
+
+Sample data used in this vignette is obtained from the GTAPv7 model
+and utilizes data from the GTAP 11 database. For
+more details, refer to the [GTAP Database Archive](https://www.gtap.agecon.purdue.edu/databases/archives.asp).
+
+```{=html}
+<script>
+window.addEventListener("load", function () {
+  document.querySelectorAll("pre code").forEach(function (codeBlock) {
+    const button = document.createElement("button");
+    button.className = "copy-code-button";
+    button.type = "button";
+    button.innerText = "Copy";
+    button.style.position = "absolute";
+    button.style.top = "4px";
+    button.style.right = "4px";
+
+    button.addEventListener("click", () => {
+      navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+        button.innerText = "Copied!";
+        setTimeout(() => (button.innerText = "Copy"), 1500);
+      });
+    });
+
+    const pre = codeBlock.parentNode;
+    pre.style.position = "relative";
+    pre.insertBefore(button, codeBlock);
+  });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  let prevScrollPos = window.pageYOffset;
+  const navbar = document.querySelector(".navbar");
+
+  window.addEventListener("scroll", function () {
+    const currentScrollPos = window.pageYOffset;
+    if (prevScrollPos > currentScrollPos) {
+      // Scrolling up
+      navbar.style.top = "0";
+    } else {
+      // Scrolling down
+      navbar.style.top = "-70px";
+    }
+    prevScrollPos = currentScrollPos;
+  });
+});
+</script>
+```

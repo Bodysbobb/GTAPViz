@@ -2,20 +2,27 @@
 
 ## **Overview** 
 
-**GTAPViz** is an R package designed to streamline the processing and visualization of GTAP model results. While primarily built for **GTAP simulations, it also supports other `.HAR` and `.SL4` datasets**.  
-
-As an extension of HARplus GTAPViz simplifies **GTAP data extraction and visualization**, reducing manual effort and enhancing efficiency.  
+**GTAPViz** is an R package designed to streamline the processing and visualization of GTAP-CGE results. While primarily built for **GTAP simulations, it also supports other `.har` and `.sl4` datasets**. 
 
 With intuitive commands and automated adjustments, users can create, customize, and export high-quality visualizations for journal publications, economic analysis, and research reports—all with minimal coding. 
 
 ## **Key Features**  
 
-- **Automated Plot Adjustments** – Optimizes plot dimensions, facet settings, and layout dynamically with minimal user input.  
-- **Academic-Style Pivot Table** – Automatically generates tables alongside figures, making it easy to include both in academic papers.  
-- **Intuitive Customization** – Modify colors, fonts, legend positions, and other styling elements using simple, adaptable commands.  
-- **Full Customization Without Complexity** – Built on `ggplot2`, this package simplifies adjustments into intuitive commands like `TRUE/FALSE`, eliminating the need for deep coding.  
-- **Multiple Export Formats** – Save high-resolution figures in **PNG and PDF** formats simultaneously for presentations, publications, and LaTeX reports.  
-- **Comprehensive Documentation** – Includes a vignette and built-in help functions covering all customization options—no need to search online.  
+This package streamlines the creation of figures and tables from `.har` and `.sl4` results, making academic presentations effortless. Some key features are:
+
+- **Effortless Multi-Plot Generation** – Automatically adjusts dimensions, facets, and layout with minimal input.  
+
+- **Smart Plot Adjustments** – Fine-tune visuals easily without manual sizing or layout tweaks.  
+
+- **Dual Export Plot Formats** – Instantly save high-resolution PNG and PDF outputs for slides, papers, and LaTeX. 
+
+- **Publication-Ready Pivot Tables** – Generate clean tables alongside figures—ideal for academic papers.  
+
+- **Streamlined Styling** – Customize colors, fonts, and legends through simple, flexible options.  
+
+- **Powerful Yet Simple** – Built on `ggplot2`, with intuitive `TRUE/FALSE` switches—no advanced coding needed.  
+
+- **Self-Contained Help** – Includes a detailed vignette and internal help—no need to search online.
 
 
 ## **Installation**
@@ -31,11 +38,17 @@ Then, you can access the package manual using:
 help(package = "GTAPViz")
 ```
 
-## **Comprehensive Documentation** 
+## **Comprehensive Documentation**
 
-For full details on how to use this package and explore practical examples, see the [GTAPViz Vignette](https://rpubs.com/Bodysbob/1289755) or [GitHub GTAPViz](https://bodysbobb.github.io/GTAPViz/).
+For complete instructions on using this package and exploring practical examples:
 
-For the R reference manual, see the [GTAPViz Reference Manual](https://github.com/Bodysbobb/GTAPViz/blob/main/inst/GTAPViz_1.1.0.pdf/).
+- [GTAPViz Step-by-Step Guide](https://bodysbobb.github.io/GTAPViz/)  
+- [GTAPViz: Plot Catalogs](https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/)  
+- [GTAPViz: Table Catalogs](https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/)
+
+## **Useful Packages for CGE Fellows**
+
+- [HARplus](https://cran.r-project.org/web/packages/HARplus/index.html)
 
 ## **License & Author** 
 

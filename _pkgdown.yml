@@ -10,6 +10,7 @@ template:
 
 home:
   title: GTAPViz - Visualizing GTAP Results from HAR and SL4 Files
+  strip_header: false
 
 navbar:
   structure:
@@ -22,17 +23,21 @@ navbar:
     articles:
       text: "Vignettes"
       menu:
-        - text: "Comprehensive Manuscript"
-          href: articles/GTAPViz_vignette.html
-        - text: "Advanced Plot Configurations and Outputs"
+        - text: "Data Processing"
+          href: articles/GTAPViz_Data.html
+        - text: "Plotting"
+          href: articles/GTAPViz_Plot.html
+        - text: "Table Generation"
+          href: articles/GTAPViz_Table.html
+        - text: "Advanced Plot Catalogs"
           href: https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/
-        - text: "Advanced Table Configurations and Outputs"
+        - text: "Advanced Table Catalogs"
           href: https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/
+        - text: "Utilities"
+          href: articles/GTAPViz_Utilities.html  
     reference:
       text: "References"
-      menu:
-        - text: "Function Reference"
-          href: reference/index.html
+      href: reference/index.html
     github:
       icon: fab fa-github
       href: https://github.com/Bodysbobb/GTAPViz
@@ -47,4 +52,7 @@ toc:
 articles:
   - title: "GTAPViz Vignettes"
     contents:
-      - GTAPViz_vignette
+      - GTAPViz_Data
+      - GTAPViz_Plot
+      - GTAPViz_Table
+      - GTAPViz_Utilities

@@ -41,22 +41,19 @@ standardized metadata.
 The \code{mapping} argument supports:
 }
 \examples{
-# Load Sample Data:
-sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
-                                package = "GTAPViz"))
-
-# Get Data by Variable Name
-sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"), sl4_data1)
+# Load Data:
+input_path <- system.file("extdata/in", package = "GTAPViz")
+sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 
 # Add mapping using GTAPv7 defaults
-gtap_data <- add_mapping_info(sl4_data1, mapping = "GTAPv7")
+gtap_data <- add_mapping_info(sl4.plot.data, mapping = "GTAPv7")
 
 # Use an external mapping file
 my_mapping <- data.frame(Variable = c("qgdp", "EV"),
                          Description = c("Real GDP", "Welfare"),
-                         Unit = c("percent", "millionUSD"))  # <- Fixed closing quote
+                         Unit = c("percent", "millionUSD"))
 
-gtap_data <- add_mapping_info(sl4_data1, external_map = my_mapping,
+gtap_data <- add_mapping_info(sl4.plot.data, external_map = my_mapping,
                               mapping = "Mix")
 
 }

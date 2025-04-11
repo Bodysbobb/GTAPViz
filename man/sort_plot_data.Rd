@@ -31,26 +31,27 @@ Default is TRUE, which preserves ordering in GTAP plotting functions.}
 A data structure with the same form as the input, with all contained data frames sorted.
 }
 \description{
-Sorts data for plotting using flexible options for column ordering and value-based sorting.
+Sorts data frames in a GTAP plot list structure based on specified column orders.
 Works with data frames, lists of data frames, or nested data structures.
 }
 \examples{
-# Load Sample Data:
-sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
-                                package = "GTAPViz"))
-# Get Data by Variable Name
-sl4_data1 <- HARplus::get_data_by_var(c("qgdp","EV"),sl4_data1)
+# Load Data:
+input_path <- system.file("extdata/in", package = "GTAPViz")
+sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 
 # Creating Sorting Rule
-sorting_specs <- data.frame(REG = c("EastAsia", "SEAsia", "Oceania"))
+sorting_specs <- list(
+  Experiment = c("EXP2", "EXP1"),     # Show EXP2 first, then EXP1
+  Region = c("EastAsia", "SEAsia", "Oceania")  # Custom region order
+)
 
 # Sorting
-sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs,
+sort_data <- sort_plot_data(sl4.plot.data, sort_columns = sorting_specs,
                             sort_by_value_desc = FALSE)
 
 }
 \seealso{
-\code{\link{add_mapping_info}}, \code{\link{convert_units}}
+\code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_value}}
 }
 \author{
 Pattawee Puangchit

@@ -34,17 +34,17 @@ report_table(
 Each dataset can have only one pivot column. Example:
 \code{pivot_col = list(A = "COLUMN", E1 = "PRICES")}}
 
-\item{total_column}{Logical. If `TRUE`, adds a "Total" column summing numeric values.}
+\item{total_column}{Logical. If \code{TRUE}, adds a "Total" column summing numeric values.}
 
-\item{export_table}{Logical. If `TRUE`, saves the output as an Excel file.}
+\item{export_table}{Logical. If \code{TRUE}, saves the output as an Excel file.}
 
-\item{separate_file}{Logical. If `TRUE`, saves each dataset as a separate Excel file.}
+\item{separate_file}{Logical. If \code{TRUE}, saves each dataset as a separate Excel file.}
 
-\item{output_path}{Character. Directory for saving Excel files when `export_table = TRUE`.}
+\item{output_path}{Character. Directory for saving Excel files when \code{export_table = TRUE}.}
 
 \item{sheet_names}{Optional named list for custom sheet names.}
 
-\item{include_units}{Logical. If `TRUE`, includes "Unit" as a grouping column if applicable.}
+\item{include_units}{Logical. If \code{TRUE}, includes "Unit" as a grouping column if applicable.}
 
 \item{component_exclude}{Optional character vector specifying pivoted values to exclude.}
 
@@ -52,12 +52,12 @@ Each dataset can have only one pivot column. Example:
 in each list determines the priority. Example:
 \code{group_by = list(A = list("Experiment", "REG"), E1 = list("Experiment", "REG", "COMM"))}}
 
-\item{rename_cols}{A named list for renaming columns across **all** datasets. Example:
+\item{rename_cols}{A named list for renaming columns across \strong{all} datasets. Example:
 \code{rename_cols = list("REG" = "Region", "COMM" = "Commodities", "Experiment" = "Scenario")}}
 
-\item{var_name_by_description}{Logical. If `TRUE`, replaces variable codes with descriptions when available.}
+\item{var_name_by_description}{Logical. If \code{TRUE}, replaces variable codes with descriptions when available.}
 
-\item{add_var_info}{Logical. If `TRUE`, appends variable codes in parentheses after descriptions.}
+\item{add_var_info}{Logical. If \code{TRUE}, appends variable codes in parentheses after descriptions.}
 
 \item{decimal}{Numeric. Number of decimal places for rounding values.}
 
@@ -66,65 +66,31 @@ in each list determines the priority. Example:
 \item{separate_sheet_by}{Optional column name to split sheets in Excel. If defined, each unique
 value in the specified column gets its own sheet. Example: \code{separate_sheet_by = "Scenario"}.}
 
-\item{subtotal_level}{Logical. If `TRUE`, includes all subtotal values; otherwise, keeps only `TOTAL` rows.}
+\item{subtotal_level}{Logical. If \code{TRUE}, includes all subtotal values; otherwise, keeps only \code{TOTAL} rows.}
 
-\item{repeat_label}{Logical. If `TRUE`, repeats the first group column in exports for clarity.}
+\item{repeat_label}{Logical. If \code{TRUE}, repeats the first group column in exports for clarity.}
 
 \item{workbook_name}{Character. Name of the Excel workbook (without extension).}
 
-\item{add_group_line}{Logical. If `TRUE`, adds a thin line after each group in the exported table.}
+\item{add_group_line}{Logical. If \code{TRUE}, adds a thin line after each group in the exported table.}
 }
 \value{
-A named list of transformed data frames. If `export_table = TRUE`, tables are saved as Excel files.
+If \code{export_table = TRUE}, tables are saved as Excel files.
 }
 \description{
 Transforms multiple datasets into wide-format tables based on defined pivot columns,
 hierarchical grouping, and renaming rules. Supports optional subtotal filtering
 and exporting to Excel.
 }
-\examples{
-\donttest{
-# Input Path
-input_path <- system.file("extdata/in", package = "GTAPViz")
-
-# Prepares data from SL4 files for EXP1 and EXP2
-auto_gtap_data(
-  experiment = c("EXP1", "EXP2"),
-  input_path = input_path,
-  subtotal_level = FALSE,
-  process_sl4_vars = c("qgdp", "EV", "qo"),
-  process_har_vars = FALSE,
-  mapping_info = "GTAPv7",
-  plot_data = TRUE
-)
-
-# Generate comparison table
-report_table(
-  data_list = sl4.plot.data[["1D"]],
-  pivot_col = list(Region = "Variable"),
-  group_by = list(Region = list("Experiment", "Region")),
-  rename_cols = list("Experiment" = "Scenario"),
-
-  total_column = FALSE,
-  decimal = 4,
-  subtotal_level = FALSE,
-  repeat_label = FALSE,
-  include_units = TRUE,
-
-  var_name_by_description = TRUE,
-  add_var_info = TRUE,
-  add_group_line = FALSE,
-
-  separate_sheet_by = "Unit",
-  export_table = FALSE,
-  output_path = tempdir(),
-  separate_file = FALSE,
-  workbook_name = "Comparison Table"
-)
-}
+\details{
+This function requires a data list and can generate multiple output tables in a single setup.
+That is, all data frames within the list can be processed simultaneously.
+See the example for how to generate two data frames at once from the data list \code{sl4.plot.data},
+which is obtained via \code{auto_gtap_ddta(plot_data = TRUE)}.
 }
 \seealso{
-\code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_value}}
+\code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_value}},
+\code{\link{pivot_table_with_filter}}
 }
 \author{
 Pattawee Puangchit

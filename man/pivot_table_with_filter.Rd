@@ -12,9 +12,9 @@ pivot_table_with_filter(
   data_fields = "Value",
   raw_sheet_name = "RawData",
   pivot_sheet_name = "PivotTable",
-  dims = "A5",
-  export = TRUE,
-  output_path = getwd(),
+  dims = "A4",
+  export_table = FALSE,
+  output_path = NULL,
   workbook_name = "GTAP_PivotTable.xlsx"
 )
 }
@@ -27,19 +27,19 @@ pivot_table_with_filter(
 
 \item{cols}{Character vector (optional). Columns to be used as column fields in the pivot table.}
 
-\item{data_fields}{Character. The data field(s) to be summarized in the pivot table (default: `"Value"`).}
+\item{data_fields}{Character. The data field(s) to be summarized in the pivot table (default: \code{"Value"}).}
 
-\item{raw_sheet_name}{Character. Name of the sheet containing raw data (default: `"RawData"`).}
+\item{raw_sheet_name}{Character. Name of the sheet containing raw data (default: \code{"RawData"}).}
 
-\item{pivot_sheet_name}{Character. Name of the sheet containing the pivot table (default: `"PivotTable"`).}
+\item{pivot_sheet_name}{Character. Name of the sheet containing the pivot table (default: \code{"PivotTable"}).}
 
-\item{dims}{Character. Cell reference where the pivot table starts (default: `"A3"`).}
+\item{dims}{Character. Cell reference where the pivot table starts (default: \code{"A3"}).}
 
-\item{export}{Logical. Whether to save the Excel file (default: `TRUE`).}
+\item{export_table}{Logical. Whether to save the Excel file (default: \code{TRUE}).}
 
 \item{output_path}{Character. Directory where the file should be saved (default: current working directory).}
 
-\item{workbook_name}{Character. Name of the output Excel file (default: `"GTAP_PivotTable.xlsx"`).}
+\item{workbook_name}{Character. Name of the output Excel file (default: \code{"GTAP_PivotTable.xlsx"}).}
 }
 \value{
 An excel workbook object containing both raw data and the pivot table.
@@ -49,42 +49,45 @@ Exports a dataset to an Excel file with both raw data and a generated pivot tabl
 }
 \details{
 This function creates an Excel workbook with:
-- A raw data sheet (`raw_sheet_name`) containing the provided dataset.
-- A pivot table sheet (`pivot_sheet_name`) generated based on specified row, column, and data fields.
+\itemize{
+\item A raw data sheet (\code{raw_sheet_name}) containing the provided dataset.
+\item A pivot table sheet (\code{pivot_sheet_name}) generated based on specified row, column, and data fields.
+}
 
-If `export = TRUE`, the function saves the workbook to the specified `output_path`.
+If \code{export = TRUE}, the function saves the workbook to the specified \code{output_path}.
 }
 \examples{
 \donttest{
-# Input Path
+# Load Data:
 input_path <- system.file("extdata/in", package = "GTAPViz")
+sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 
-# Prepares data from SL4 files for EXP1 and EXP2
-auto_gtap_data(
-  experiment = c("EXP1", "EXP2"),
-  input_path = input_path,
-  subtotal_level = FALSE,
-  process_sl4_vars = c("qo", "qgdp"),
-  process_har_vars = FALSE,
-  mapping_info = "GTAPv7",
-  plot_data = TRUE
-)
+data_pivot_table <- sl4.plot.data[["REG"]]
 
-# Generate comparison table
+# Generate Pivot Table with Filter
+# Only use columns that exist in the data
 pivot_table_with_filter(
-  data = sl4.plot.data[["2D"]][["Sector"]],
-  filter = c("Variable", "Unit"),
-  rows = c("Region", "Sector"),
-  cols = c("Experiment"),
-  data_fields = "Value",
-  raw_sheet_name = "Raw_Data",
-  pivot_sheet_name = "Sector_Pivot",
-  export = TRUE,
-  output_path = tempdir(),
+
+  # === Input & Filter Settings ===
+  data = data_pivot_table,
+  filter = c("Variable", "Unit"),  # Allow filtering by variable type and unit
+
+  # === Pivot Structure ===
+  rows = c("Region"),             # Rows: Regions (removed "Sector" which doesn't exist)
+  cols = c("Experiment"),         # Columns: Experiments
+  data_fields = "Value",          # Values to be aggregated
+
+  # === Sheet & Layout ===
+  raw_sheet_name = "Raw_Data",         # Sheet name for raw data
+  pivot_sheet_name = "Sector_Pivot",   # Sheet name for pivot table
+  dims = "A3",                         # Starting cell for pivot table
+
+  # === Export Options ===
+  export_table = FALSE,
+  output_path = NULL,
   workbook_name = "Sectoral_Impact_Analysis.xlsx"
 )
 }
-
 }
 \author{
 Pattawee Puangchit

@@ -4,6 +4,8 @@
 #' @importFrom dplyr where
 #' @importFrom utils globalVariables capture.output str tail
 #' @importFrom stringdist stringdist
+#' @importFrom grDevices col2rgb rgb
+#' @importFrom utils flush.console modifyList
 # Declare global variables to avoid R CMD check notes
 utils::globalVariables(c(
   ".data", "Experiment", "Group", "Label", "NegativeTotal",

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,14 +18,14 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/GTAPViz_vignette.html">Comprehensive Manuscript</a></li>
-    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/">Advanced Plot Configurations and Outputs</a></li>
-    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/">Advanced Table Configurations and Outputs</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/GTAPViz_Data.html">Data Processing</a></li>
+    <li><a class="dropdown-item" href="../articles/GTAPViz_Plot.html">Plotting</a></li>
+    <li><a class="dropdown-item" href="../articles/GTAPViz_Table.html">Table Generation</a></li>
+    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/">Advanced Plot Catalogs</a></li>
+    <li><a class="external-link dropdown-item" href="https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/">Advanced Table Catalogs</a></li>
+    <li><a class="dropdown-item" href="../articles/GTAPViz_Utilities.html">Utilities</a></li>
   </ul></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-references" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">References</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-references"><li><a class="dropdown-item" href="../reference/index.html">Function Reference</a></li>
-  </ul></li>
+<li class="active nav-item"><a class="nav-link" href="../reference/index.html">References</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/Bodysbobb/GTAPViz" aria-label="GitHub Repository"><span class="fa fab fa-github"></span></a></li>
       </ul></div>
 
@@ -54,9 +54,9 @@
 <span>  data_fields <span class="op">=</span> <span class="st">"Value"</span>,</span>
 <span>  raw_sheet_name <span class="op">=</span> <span class="st">"RawData"</span>,</span>
 <span>  pivot_sheet_name <span class="op">=</span> <span class="st">"PivotTable"</span>,</span>
-<span>  dims <span class="op">=</span> <span class="st">"A5"</span>,</span>
-<span>  export <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  output_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  dims <span class="op">=</span> <span class="st">"A4"</span>,</span>
+<span>  export_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  workbook_name <span class="op">=</span> <span class="st">"GTAP_PivotTable.xlsx"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -82,23 +82,23 @@
 
 
 <dt id="arg-data-fields">data_fields<a class="anchor" aria-label="anchor" href="#arg-data-fields"></a></dt>
-<dd><p>Character. The data field(s) to be summarized in the pivot table (default: `"Value"`).</p></dd>
+<dd><p>Character. The data field(s) to be summarized in the pivot table (default: <code>"Value"</code>).</p></dd>
 
 
 <dt id="arg-raw-sheet-name">raw_sheet_name<a class="anchor" aria-label="anchor" href="#arg-raw-sheet-name"></a></dt>
-<dd><p>Character. Name of the sheet containing raw data (default: `"RawData"`).</p></dd>
+<dd><p>Character. Name of the sheet containing raw data (default: <code>"RawData"</code>).</p></dd>
 
 
 <dt id="arg-pivot-sheet-name">pivot_sheet_name<a class="anchor" aria-label="anchor" href="#arg-pivot-sheet-name"></a></dt>
-<dd><p>Character. Name of the sheet containing the pivot table (default: `"PivotTable"`).</p></dd>
+<dd><p>Character. Name of the sheet containing the pivot table (default: <code>"PivotTable"</code>).</p></dd>
 
 
 <dt id="arg-dims">dims<a class="anchor" aria-label="anchor" href="#arg-dims"></a></dt>
-<dd><p>Character. Cell reference where the pivot table starts (default: `"A3"`).</p></dd>
+<dd><p>Character. Cell reference where the pivot table starts (default: <code>"A3"</code>).</p></dd>
 
 
-<dt id="arg-export">export<a class="anchor" aria-label="anchor" href="#arg-export"></a></dt>
-<dd><p>Logical. Whether to save the Excel file (default: `TRUE`).</p></dd>
+<dt id="arg-export-table">export_table<a class="anchor" aria-label="anchor" href="#arg-export-table"></a></dt>
+<dd><p>Logical. Whether to save the Excel file (default: <code>TRUE</code>).</p></dd>
 
 
 <dt id="arg-output-path">output_path<a class="anchor" aria-label="anchor" href="#arg-output-path"></a></dt>
@@ -106,7 +106,7 @@
 
 
 <dt id="arg-workbook-name">workbook_name<a class="anchor" aria-label="anchor" href="#arg-workbook-name"></a></dt>
-<dd><p>Character. Name of the output Excel file (default: `"GTAP_PivotTable.xlsx"`).</p></dd>
+<dd><p>Character. Name of the output Excel file (default: <code>"GTAP_PivotTable.xlsx"</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -115,10 +115,9 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function creates an Excel workbook with:
-- A raw data sheet (`raw_sheet_name`) containing the provided dataset.
-- A pivot table sheet (`pivot_sheet_name`) generated based on specified row, column, and data fields.</p>
-<p>If `export = TRUE`, the function saves the workbook to the specified `output_path`.</p>
+    <p>This function creates an Excel workbook with:</p><ul><li><p>A raw data sheet (<code>raw_sheet_name</code>) containing the provided dataset.</p></li>
+<li><p>A pivot table sheet (<code>pivot_sheet_name</code>) generated based on specified row, column, and data fields.</p></li>
+</ul><p>If <code>export = TRUE</code>, the function saves the workbook to the specified <code>output_path</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -128,49 +127,40 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># Input Path</span></span></span>
+<span class="r-in"><span><span class="co"># Load Data:</span></span></span>
 <span class="r-in"><span><span class="va">input_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/in"</span>, package <span class="op">=</span> <span class="st">"GTAPViz"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sl4.plot.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">input_path</span>, <span class="st">"sl4.plot.data.rds"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open compressed file 'C:/Users/b_pat/AppData/Local/R/win-library/4.4/GTAPViz/extdata/in/sl4.plot.data.rds', probable reason 'No such file or directory'</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gzfile(file, "rb"):</span> cannot open the connection</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Prepares data from SL4 files for EXP1 and EXP2</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="auto_gtap_data.html">auto_gtap_data</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EXP1"</span>, <span class="st">"EXP2"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  input_path <span class="op">=</span> <span class="va">input_path</span>,</span></span>
-<span class="r-in"><span>  subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  process_sl4_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qo"</span>, <span class="st">"qgdp"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  process_har_vars <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  mapping_info <span class="op">=</span> <span class="st">"GTAPv7"</span>,</span></span>
-<span class="r-in"><span>  plot_data <span class="op">=</span> <span class="cn">TRUE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> All 2 requested experiment SL4 files are found.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Mapping method used: GTAPv7 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing SL4 Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Summary of Processing:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> SL4 Data processed successfully</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP data processing completed successfully!</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">data_pivot_table</span> <span class="op">&lt;-</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"REG"</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'sl4.plot.data' not found</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Generate comparison table</span></span></span>
+<span class="r-in"><span><span class="co"># Generate Pivot Table with Filter</span></span></span>
+<span class="r-in"><span><span class="co"># Only use columns that exist in the data</span></span></span>
 <span class="r-in"><span><span class="fu">pivot_table_with_filter</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"2D"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Sector"</span><span class="op">]</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Variable"</span>, <span class="st">"Unit"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Region"</span>, <span class="st">"Sector"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Experiment"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  data_fields <span class="op">=</span> <span class="st">"Value"</span>,</span></span>
-<span class="r-in"><span>  raw_sheet_name <span class="op">=</span> <span class="st">"Raw_Data"</span>,</span></span>
-<span class="r-in"><span>  pivot_sheet_name <span class="op">=</span> <span class="st">"Sector_Pivot"</span>,</span></span>
-<span class="r-in"><span>  export <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  output_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># === Input &amp; Filter Settings ===</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">data_pivot_table</span>,</span></span>
+<span class="r-in"><span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Variable"</span>, <span class="st">"Unit"</span><span class="op">)</span>,  <span class="co"># Allow filtering by variable type and unit</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># === Pivot Structure ===</span></span></span>
+<span class="r-in"><span>  rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Region"</span><span class="op">)</span>,             <span class="co"># Rows: Regions (removed "Sector" which doesn't exist)</span></span></span>
+<span class="r-in"><span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Experiment"</span><span class="op">)</span>,         <span class="co"># Columns: Experiments</span></span></span>
+<span class="r-in"><span>  data_fields <span class="op">=</span> <span class="st">"Value"</span>,          <span class="co"># Values to be aggregated</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># === Sheet &amp; Layout ===</span></span></span>
+<span class="r-in"><span>  raw_sheet_name <span class="op">=</span> <span class="st">"Raw_Data"</span>,         <span class="co"># Sheet name for raw data</span></span></span>
+<span class="r-in"><span>  pivot_sheet_name <span class="op">=</span> <span class="st">"Sector_Pivot"</span>,   <span class="co"># Sheet name for pivot table</span></span></span>
+<span class="r-in"><span>  dims <span class="op">=</span> <span class="st">"A3"</span>,                         <span class="co"># Starting cell for pivot table</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># === Export Options ===</span></span></span>
+<span class="r-in"><span>  export_table <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>  workbook_name <span class="op">=</span> <span class="st">"Sectoral_Impact_Analysis.xlsx"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Excel file with pivot table exported to: C:\temp\RtmpuqxS2Z/Sectoral_Impact_Analysis.xlsx</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A Workbook object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Worksheets:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Sheets: Raw_Data, Sector_Pivot </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Write order: 1, 2</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in pivot_table_with_filter(data = data_pivot_table, filter = c("Variable",     "Unit"), rows = c("Region"), cols = c("Experiment"), data_fields = "Value",     raw_sheet_name = "Raw_Data", pivot_sheet_name = "Sector_Pivot",     dims = "A3", export_table = FALSE, output_path = NULL, workbook_name = "Sectoral_Impact_Analysis.xlsx"):</span> unused argument (export_table = FALSE)</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

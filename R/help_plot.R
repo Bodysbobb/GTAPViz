@@ -23,7 +23,7 @@
 .preprocess_data <- function(data, x_axis_from, split_by, panel_var, variable_col,
                              unit_col, desc_col, filter_var, var_name_by_description,
                              add_var_info, stack_value_from = NULL) {
-  # Validate columns
+  # Validate columns with better error handling
   if (!is.null(stack_value_from)) {
     data <- .prepare_data_source(data, x_axis_from, stack_value_from, variable_col)
   } else {
@@ -39,41 +39,54 @@
   is_macro_mode <- is.null(split_by) || (is.logical(split_by) && !split_by)
 
   if (!is_macro_mode) {
-    # Create a split_display for multiple columns
+    # Validate split_by columns
     if (length(split_by) > 1) {
+      # Check if all split_by columns exist
+      missing_cols <- setdiff(split_by, names(data))
+      if (length(missing_cols) > 0) {
+        stop(paste0("Split-by column(s) not found in data: ", paste(missing_cols, collapse=", "),
+                    ". Available columns are: ", paste(names(data), collapse=", ")))
+      }
+
+      # Create a split_display for multiple columns
       data$split_display <- apply(data[, split_by, drop = FALSE], 1, paste, collapse = "-")
+    } else {
+      # Check if split_by column exists
+      if (!split_by %in% names(data)) {
+        stop(paste0("Split-by column '", split_by, "' not found in data. ",
+                    "Available columns are: ", paste(names(data), collapse=", ")))
+      }
     }
   }
 
-  # Filter data
-  if (!is.null(filter_var)) {
-    if (is.data.frame(filter_var) && variable_col %in% names(filter_var)) {
-      data <- data[data[[variable_col]] %in% filter_var[[variable_col]], ]
-    } else {
-      data <- data[data[[variable_col]] %in% filter_var, ]
-    }
+  # Filter data using enhanced filter function
+  filtered_data <- .process_filter_var(data, filter_var, variable_col)
 
-    if (nrow(data) == 0) {
-      warning("No matching data found for the specified filter_var values.")
-      return(NULL)
-    }
+  # Early return if filtering resulted in empty data
+  if (nrow(filtered_data) == 0) {
+    warning("No data remains after filtering. Please check your filter criteria.")
+    return(NULL)
   }
 
   # Format variable names
-  if (variable_col %in% names(data) && desc_col %in% names(data)) {
-    data <- .format_variable_names(
-      data, variable_col, desc_col, var_name_by_description, add_var_info
+  if (variable_col %in% names(filtered_data) && desc_col %in% names(filtered_data)) {
+    filtered_data <- .format_variable_names(
+      filtered_data, variable_col, desc_col, var_name_by_description, add_var_info
     )
   }
 
   # Ensure panel_var is a factor with original order
-  if (panel_var %in% names(data)) {
-    panel_levels <- unique(data[[panel_var]])
-    data[[panel_var]] <- factor(data[[panel_var]], levels = panel_levels)
+  if (panel_var %in% names(filtered_data)) {
+    panel_levels <- unique(filtered_data[[panel_var]])
+    filtered_data[[panel_var]] <- factor(filtered_data[[panel_var]], levels = panel_levels)
+  } else {
+    warning(paste0("Panel variable '", panel_var, "' not found in data. ",
+                   "This might affect facet layouts. Available columns are: ",
+                   paste(names(filtered_data), collapse=", ")))
   }
 
   return(list(
-    data = data,
+    data = filtered_data,
     is_macro_mode = is_macro_mode
   ))
 }
@@ -114,89 +127,635 @@
     unit_data <- unit_groups[[unit_name]]
 
     # Apply top impact filtering if needed
+    # Apply top impact filtering if needed
     if (!is.null(top_impact)) {
       if (plot_type == "detail") {
-        unit_data <- .filter_for_top_impact(unit_data, top_impact, is_macro_mode, split_by,
-                                            x_axis_from, panel_var, variable_col, unit_col)
+        # Determine the proper group column
+        if (!is_macro_mode && length(split_by) > 1) {
+          unit_data$._split_group_ <- apply(unit_data[, split_by, drop = FALSE], 1, paste, collapse = "-")
+          top_impact_filter_col <- "._split_group_"
+        } else if (!is_macro_mode) {
+          top_impact_filter_col <- split_by
+        } else {
+          top_impact_filter_col <- x_axis_from
+        }
+
+        unit_data <- .filter_top_impact_values_detail(
+          data = unit_data,
+          top_impact = top_impact,
+          group_col = top_impact_filter_col,
+          panel_var = panel_var,
+          x_axis_from = x_axis_from,
+          variable_col = variable_col,
+          unit_col = unit_col
+        )
+
+        # Clean up temporary column if it exists
+        if ("._split_group_" %in% names(unit_data)) {
+          unit_data$._split_group_ <- NULL
+        }
       } else if (plot_type == "stack") {
         total_data <- .calculate_stack_totals(unit_data, x_axis_from, panel_var)
-        unit_data <- .filter_for_top_impact_stack(unit_data, total_data, top_impact, is_macro_mode,
-                                                  split_by, x_axis_from, panel_var, variable_col,
-                                                  unit_col, stack_value_from)
+        unit_data <- .filter_top_impact_values_stack(unit_data, total_data, top_impact, is_macro_mode,
+                                                     split_by, x_axis_from, panel_var, variable_col,
+                                                     unit_col)
       }
     }
 
-    # Process separate values based on macro mode
+    # FIX: Handle macro mode properly (split_by = NULL)
     if (is_macro_mode) {
-      separate_values <- list(name = "All Data", data = unit_data)
-    } else {
-      # Get split column
-      split_col <- if (length(split_by) > 1) "split_display" else split_by
-      separate_values_names <- unique(unit_data[[split_col]])
-
-      # Create list of data frames for each separate value
-      separate_values <- lapply(separate_values_names, function(val) {
-        list(
-          name = val,
-          data = unit_data[unit_data[[split_col]] == val, ]
-        )
-      })
-      names(separate_values) <- separate_values_names
-    }
-
-    # Process each separate value
-    for (i in seq_along(separate_values)) {
-      sep_value <- if (is_macro_mode) NULL else names(separate_values)[i]
-      filtered_data <- separate_values[[i]]$data
-
-      # For stack plots, calculate totals
-      if (plot_type == "stack") {
-        total_data <- .calculate_stack_totals(filtered_data, x_axis_from, panel_var)
-      }
-
-      # Handle variable combinations for detail plots
+      # In macro mode, we process a single dataset with all data
       if (plot_type == "detail") {
-        var_combinations <- unique(filtered_data[[variable_col]])
+        # For detail plots, we need to process by variable
+        var_combinations <- unique(unit_data[[variable_col]])
 
         for (var_name in var_combinations) {
-          var_data <- filtered_data[filtered_data[[variable_col]] == var_name, ]
-          plots <- .create_plots_with_panels(var_data, NULL, unit_name, x_axis_from, stack_value_from,
-                                             panel_var, separate_figure, style_config, plot_type,
-                                             is_macro_mode, invert_axis, var_name, sep_value, split_by,
-                                             variable_col, top_impact, show_total)
-          plot_list <- c(plot_list, plots)
-        }
-      }
-      # Handle x-axis values for unstack plots
-      else if (plot_type == "stack" && unstack_plot) {
-        x_axis_values <- unique(filtered_data[[x_axis_from]])
+          var_data <- unit_data[unit_data[[variable_col]] == var_name, ]
 
-        for (x_val in x_axis_values) {
-          x_data <- filtered_data[filtered_data[[x_axis_from]] == x_val, ]
-          x_totals <- total_data[total_data[[x_axis_from]] == x_val, ]
+          if (separate_figure) {
+            panel_values <- unique(var_data[[panel_var]])
 
-          plots <- .create_plots_with_panels(x_data, x_totals, unit_name, x_axis_from, stack_value_from,
-                                             panel_var, separate_figure, style_config, "unstack",
-                                             is_macro_mode, invert_axis, NULL, sep_value, split_by,
-                                             variable_col, top_impact, show_total, x_val)
-          plot_list <- c(plot_list, plots)
+            for (panel_val in panel_values) {
+              panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
+
+              title_info <- .handle_plot_title_and_export(
+                var_name = var_name,
+                sep_value = NULL,
+                plot_type = "detail",
+                is_macro_mode = TRUE,
+                variable_col = variable_col,
+                unit_name = unit_name,
+                style_config = style_config,
+                data = panel_data,
+                separate_figure = TRUE,
+                panel_val = panel_val
+              )
+
+              p <- .create_single_detail_plot(
+                data = panel_data,
+                x_axis_from = x_axis_from,
+                plot_title = title_info$title,
+                unit = unit_name,
+                panel_rows = style_config$panel_rows,
+                panel_cols = style_config$panel_cols,
+                panel_var = panel_var,
+                invert_axis = invert_axis,
+                top_impact = top_impact,
+                plot_style_config = style_config
+              )
+
+              plot_list[[title_info$export_name]] <- p
+            }
+          } else {
+            title_info <- .handle_plot_title_and_export(
+              var_name = var_name,
+              plot_type = "detail",
+              is_macro_mode = TRUE,
+              variable_col = variable_col,
+              unit_name = unit_name,
+              style_config = style_config,
+              data = var_data
+            )
+
+            p <- .create_single_detail_plot(
+              data = var_data,
+              x_axis_from = x_axis_from,
+              plot_title = title_info$title,
+              unit = unit_name,
+              panel_rows = style_config$panel_rows,
+              panel_cols = style_config$panel_cols,
+              panel_var = panel_var,
+              invert_axis = invert_axis,
+              top_impact = top_impact,
+              plot_style_config = style_config
+            )
+
+            plot_list[[title_info$export_name]] <- p
+          }
         }
-      }
-      # Handle regular stack plots and comparison plots
-      else {
-        # For stack plots, pass total_data
-        if (plot_type == "stack") {
-          plots <- .create_plots_with_panels(filtered_data, total_data, unit_name, x_axis_from,
-                                             stack_value_from, panel_var, separate_figure, style_config,
-                                             plot_type, is_macro_mode, invert_axis, NULL, sep_value,
-                                             split_by, variable_col, top_impact, show_total)
+      } else if (plot_type == "stack") {
+        # For stack plots in macro mode
+        total_data <- .calculate_stack_totals(unit_data, x_axis_from, panel_var)
+
+        if (unstack_plot) {
+          # Handle unstacked plots in macro mode
+          x_axis_values <- unique(unit_data[[x_axis_from]])
+
+          for (x_val in x_axis_values) {
+            x_data <- unit_data[unit_data[[x_axis_from]] == x_val, ]
+            x_totals <- total_data[total_data[[x_axis_from]] == x_val, ]
+
+            if (separate_figure) {
+              panel_values <- unique(x_data[[panel_var]])
+
+              for (panel_val in panel_values) {
+                panel_x_data <- x_data[x_data[[panel_var]] == panel_val, ]
+                panel_x_totals <- x_totals[x_totals[[panel_var]] == panel_val, ]
+
+                title_info <- .handle_plot_title_and_export(
+                  var_name = NULL,
+                  sep_value = NULL,
+                  x_value = x_val,
+                  plot_type = "unstack",
+                  is_macro_mode = TRUE,
+                  variable_col = variable_col,
+                  unit_name = unit_name,
+                  style_config = style_config,
+                  data = panel_x_data,
+                  separate_figure = TRUE,
+                  panel_val = panel_val
+                )
+
+                p <- .create_single_unstacked_plot(
+                  data = panel_x_data,
+                  total_data = panel_x_totals,
+                  x_axis_from = x_axis_from,
+                  stack_value_from = stack_value_from,
+                  plot_title = title_info$title,
+                  unit = unit_name,
+                  panel_rows = style_config$panel_rows,
+                  panel_cols = style_config$panel_cols,
+                  panel_var = panel_var,
+                  invert_axis = invert_axis,
+                  top_impact = top_impact,
+                  plot_style_config = style_config
+                )
+
+                plot_list[[title_info$export_name]] <- p
+              }
+            } else {
+              title_info <- .handle_plot_title_and_export(
+                var_name = NULL,
+                sep_value = NULL,
+                x_value = x_val,
+                plot_type = "unstack",
+                is_macro_mode = TRUE,
+                variable_col = variable_col,
+                unit_name = unit_name,
+                style_config = style_config,
+                data = x_data
+              )
+
+              p <- .create_single_unstacked_plot(
+                data = x_data,
+                total_data = x_totals,
+                x_axis_from = x_axis_from,
+                stack_value_from = stack_value_from,
+                plot_title = title_info$title,
+                unit = unit_name,
+                panel_rows = style_config$panel_rows,
+                panel_cols = style_config$panel_cols,
+                panel_var = panel_var,
+                invert_axis = invert_axis,
+                top_impact = top_impact,
+                plot_style_config = style_config
+              )
+
+              plot_list[[title_info$export_name]] <- p
+            }
+          }
         } else {
-          plots <- .create_plots_with_panels(filtered_data, NULL, unit_name, x_axis_from, NULL,
-                                             panel_var, separate_figure, style_config, plot_type,
-                                             is_macro_mode, invert_axis, NULL, sep_value, split_by,
-                                             variable_col, top_impact, FALSE)
+          # Regular stacked plots in macro mode
+          if (separate_figure) {
+            panel_values <- unique(unit_data[[panel_var]])
+
+            for (panel_val in panel_values) {
+              panel_data <- unit_data[unit_data[[panel_var]] == panel_val, ]
+              panel_totals <- total_data[total_data[[panel_var]] == panel_val, ]
+
+              title_info <- .handle_plot_title_and_export(
+                var_name = NULL,
+                sep_value = NULL,
+                plot_type = "stack",
+                is_macro_mode = TRUE,
+                variable_col = variable_col,
+                unit_name = unit_name,
+                style_config = style_config,
+                data = panel_data,
+                separate_figure = TRUE,
+                panel_val = panel_val
+              )
+
+              p <- .create_single_stacked_plot(
+                data = panel_data,
+                total_data = panel_totals,
+                x_axis_from = x_axis_from,
+                stack_value_from = stack_value_from,
+                plot_title = title_info$title,
+                unit = unit_name,
+                panel_rows = style_config$panel_rows,
+                panel_cols = style_config$panel_cols,
+                panel_var = panel_var,
+                show_total = show_total,
+                invert_axis = invert_axis,
+                top_impact = top_impact,
+                plot_style_config = style_config
+              )
+
+              plot_list[[title_info$export_name]] <- p
+            }
+          } else {
+            title_info <- .handle_plot_title_and_export(
+              var_name = NULL,
+              sep_value = NULL,
+              plot_type = "stack",
+              is_macro_mode = TRUE,
+              variable_col = variable_col,
+              unit_name = unit_name,
+              style_config = style_config,
+              data = unit_data
+            )
+
+            p <- .create_single_stacked_plot(
+              data = unit_data,
+              total_data = total_data,
+              x_axis_from = x_axis_from,
+              stack_value_from = stack_value_from,
+              plot_title = title_info$title,
+              unit = unit_name,
+              panel_rows = style_config$panel_rows,
+              panel_cols = style_config$panel_cols,
+              panel_var = panel_var,
+              show_total = show_total,
+              invert_axis = invert_axis,
+              top_impact = top_impact,
+              plot_style_config = style_config
+            )
+
+            plot_list[[title_info$export_name]] <- p
+          }
         }
-        plot_list <- c(plot_list, plots)
+      } else {
+        # For comparison plots in macro mode
+        if (separate_figure) {
+          panel_values <- unique(unit_data[[panel_var]])
+
+          for (panel_val in panel_values) {
+            panel_data <- unit_data[unit_data[[panel_var]] == panel_val, ]
+
+            title_info <- .handle_plot_title_and_export(
+              var_name = "Global Economic Impacts",
+              sep_value = panel_val,
+              plot_type = "comparison",
+              is_macro_mode = TRUE,
+              variable_col = variable_col,
+              unit_name = unit_name,
+              style_config = style_config,
+              data = panel_data,
+              separate_figure = TRUE,
+              panel_val = panel_val
+            )
+
+            p <- .create_single_comparison_plot(
+              data = panel_data,
+              x_axis_from = x_axis_from,
+              plot_title = title_info$title,
+              unit = unit_name,
+              panel_rows = style_config$panel_rows,
+              panel_cols = style_config$panel_cols,
+              panel_var = panel_var,
+              invert_axis = invert_axis,
+              plot_style_config = style_config
+            )
+
+            plot_list[[title_info$export_name]] <- p
+          }
+        } else {
+          title_info <- .handle_plot_title_and_export(
+            var_name = "Global Economic Impacts",
+            plot_type = "comparison",
+            is_macro_mode = TRUE,
+            unit_name = unit_name,
+            style_config = style_config,
+            data = unit_data
+          )
+
+          p <- .create_single_comparison_plot(
+            data = unit_data,
+            x_axis_from = x_axis_from,
+            plot_title = title_info$title,
+            unit = unit_name,
+            panel_rows = style_config$panel_rows,
+            panel_cols = style_config$panel_cols,
+            panel_var = panel_var,
+            invert_axis = invert_axis,
+            plot_style_config = style_config
+          )
+
+          plot_list[[title_info$export_name]] <- p
+        }
+      }
+    } else {
+      # Not in macro mode - process data by split values
+      # Get split column name
+      split_col <- if (length(split_by) > 1) "split_display" else split_by
+
+      # Get unique values for splitting
+      separate_values_names <- unique(unit_data[[split_col]])
+
+      # Process each separate value
+      for (sep_value in separate_values_names) {
+        filtered_data <- unit_data[unit_data[[split_col]] == sep_value, ]
+
+        # For stack plots, calculate totals
+        if (plot_type == "stack") {
+          total_data <- .calculate_stack_totals(filtered_data, x_axis_from, panel_var)
+
+          if (unstack_plot) {
+            # Handle unstacked plots
+            x_axis_values <- unique(filtered_data[[x_axis_from]])
+
+            for (x_val in x_axis_values) {
+              x_data <- filtered_data[filtered_data[[x_axis_from]] == x_val, ]
+              x_totals <- total_data[total_data[[x_axis_from]] == x_val, ]
+
+              if (separate_figure) {
+                panel_values <- unique(x_data[[panel_var]])
+
+                for (panel_val in panel_values) {
+                  panel_x_data <- x_data[x_data[[panel_var]] == panel_val, ]
+                  panel_x_totals <- x_totals[x_totals[[panel_var]] == panel_val, ]
+
+                  title_info <- .handle_plot_title_and_export(
+                    var_name = NULL,
+                    sep_value = sep_value,
+                    x_value = x_val,
+                    plot_type = "unstack",
+                    is_macro_mode = FALSE,
+                    split_by = split_by,
+                    x_axis_from = x_axis_from,
+                    variable_col = variable_col,
+                    unit_name = unit_name,
+                    style_config = style_config,
+                    data = panel_x_data,
+                    separate_figure = TRUE,
+                    panel_val = panel_val
+                  )
+
+                  p <- .create_single_unstacked_plot(
+                    data = panel_x_data,
+                    total_data = panel_x_totals,
+                    x_axis_from = x_axis_from,
+                    stack_value_from = stack_value_from,
+                    plot_title = title_info$title,
+                    unit = unit_name,
+                    panel_rows = style_config$panel_rows,
+                    panel_cols = style_config$panel_cols,
+                    panel_var = panel_var,
+                    invert_axis = invert_axis,
+                    top_impact = top_impact,
+                    plot_style_config = style_config
+                  )
+
+                  plot_list[[title_info$export_name]] <- p
+                }
+              } else {
+                title_info <- .handle_plot_title_and_export(
+                  var_name = NULL,
+                  sep_value = sep_value,
+                  x_value = x_val,
+                  plot_type = "unstack",
+                  is_macro_mode = FALSE,
+                  split_by = split_by,
+                  x_axis_from = x_axis_from,
+                  variable_col = variable_col,
+                  unit_name = unit_name,
+                  style_config = style_config,
+                  data = x_data
+                )
+
+                p <- .create_single_unstacked_plot(
+                  data = x_data,
+                  total_data = x_totals,
+                  x_axis_from = x_axis_from,
+                  stack_value_from = stack_value_from,
+                  plot_title = title_info$title,
+                  unit = unit_name,
+                  panel_rows = style_config$panel_rows,
+                  panel_cols = style_config$panel_cols,
+                  panel_var = panel_var,
+                  invert_axis = invert_axis,
+                  top_impact = top_impact,
+                  plot_style_config = style_config
+                )
+
+                plot_list[[title_info$export_name]] <- p
+              }
+            }
+          } else {
+            # Regular stacked plots
+            if (separate_figure) {
+              panel_values <- unique(filtered_data[[panel_var]])
+
+              for (panel_val in panel_values) {
+                panel_data <- filtered_data[filtered_data[[panel_var]] == panel_val, ]
+                panel_totals <- total_data[total_data[[panel_var]] == panel_val, ]
+
+                title_info <- .handle_plot_title_and_export(
+                  var_name = NULL,
+                  sep_value = sep_value,
+                  plot_type = "stack",
+                  is_macro_mode = FALSE,
+                  split_by = split_by,
+                  x_axis_from = x_axis_from,
+                  variable_col = variable_col,
+                  unit_name = unit_name,
+                  style_config = style_config,
+                  data = panel_data,
+                  separate_figure = TRUE,
+                  panel_val = panel_val
+                )
+
+                p <- .create_single_stacked_plot(
+                  data = panel_data,
+                  total_data = panel_totals,
+                  x_axis_from = x_axis_from,
+                  stack_value_from = stack_value_from,
+                  plot_title = title_info$title,
+                  unit = unit_name,
+                  panel_rows = style_config$panel_rows,
+                  panel_cols = style_config$panel_cols,
+                  panel_var = panel_var,
+                  show_total = show_total,
+                  invert_axis = invert_axis,
+                  top_impact = top_impact,
+                  plot_style_config = style_config
+                )
+
+                plot_list[[title_info$export_name]] <- p
+              }
+            } else {
+              title_info <- .handle_plot_title_and_export(
+                var_name = NULL,
+                sep_value = sep_value,
+                plot_type = "stack",
+                is_macro_mode = FALSE,
+                split_by = split_by,
+                x_axis_from = x_axis_from,
+                variable_col = variable_col,
+                unit_name = unit_name,
+                style_config = style_config,
+                data = filtered_data
+              )
+
+              p <- .create_single_stacked_plot(
+                data = filtered_data,
+                total_data = total_data,
+                x_axis_from = x_axis_from,
+                stack_value_from = stack_value_from,
+                plot_title = title_info$title,
+                unit = unit_name,
+                panel_rows = style_config$panel_rows,
+                panel_cols = style_config$panel_cols,
+                panel_var = panel_var,
+                show_total = show_total,
+                invert_axis = invert_axis,
+                top_impact = top_impact,
+                plot_style_config = style_config
+              )
+
+              plot_list[[title_info$export_name]] <- p
+            }
+          }
+        } else if (plot_type == "detail") {
+          # Handle detail plots
+          var_combinations <- unique(filtered_data[[variable_col]])
+
+          for (var_name in var_combinations) {
+            var_data <- filtered_data[filtered_data[[variable_col]] == var_name, ]
+
+            if (separate_figure) {
+              panel_values <- unique(var_data[[panel_var]])
+
+              for (panel_val in panel_values) {
+                panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
+
+                title_info <- .handle_plot_title_and_export(
+                  var_name = var_name,
+                  sep_value = sep_value,
+                  plot_type = "detail",
+                  is_macro_mode = FALSE,
+                  split_by = split_by,
+                  x_axis_from = x_axis_from,
+                  variable_col = variable_col,
+                  unit_name = unit_name,
+                  style_config = style_config,
+                  data = panel_data,
+                  separate_figure = TRUE,
+                  panel_val = panel_val
+                )
+
+                p <- .create_single_detail_plot(
+                  data = panel_data,
+                  x_axis_from = x_axis_from,
+                  plot_title = title_info$title,
+                  unit = unit_name,
+                  panel_rows = style_config$panel_rows,
+                  panel_cols = style_config$panel_cols,
+                  panel_var = panel_var,
+                  invert_axis = invert_axis,
+                  top_impact = top_impact,
+                  plot_style_config = style_config
+                )
+
+                plot_list[[title_info$export_name]] <- p
+              }
+            } else {
+              title_info <- .handle_plot_title_and_export(
+                var_name = var_name,
+                sep_value = sep_value,
+                plot_type = "detail",
+                is_macro_mode = FALSE,
+                split_by = split_by,
+                x_axis_from = x_axis_from,
+                variable_col = variable_col,
+                unit_name = unit_name,
+                style_config = style_config,
+                data = var_data
+              )
+
+              p <- .create_single_detail_plot(
+                data = var_data,
+                x_axis_from = x_axis_from,
+                plot_title = title_info$title,
+                unit = unit_name,
+                panel_rows = style_config$panel_rows,
+                panel_cols = style_config$panel_cols,
+                panel_var = panel_var,
+                invert_axis = invert_axis,
+                top_impact = top_impact,
+                plot_style_config = style_config
+              )
+
+              plot_list[[title_info$export_name]] <- p
+            }
+          }
+        } else {
+          # Comparison plots
+          if (separate_figure) {
+            panel_values <- unique(filtered_data[[panel_var]])
+
+            for (panel_val in panel_values) {
+              panel_data <- filtered_data[filtered_data[[panel_var]] == panel_val, ]
+
+              title_info <- .handle_plot_title_and_export(
+                var_name = NULL,
+                sep_value = sep_value,
+                plot_type = "comparison",
+                is_macro_mode = FALSE,
+                split_by = split_by,
+                x_axis_from = x_axis_from,
+                variable_col = variable_col,
+                unit_name = unit_name,
+                style_config = style_config,
+                data = panel_data,
+                separate_figure = TRUE,
+                panel_val = panel_val
+              )
+
+              p <- .create_single_comparison_plot(
+                data = panel_data,
+                x_axis_from = x_axis_from,
+                plot_title = title_info$title,
+                unit = unit_name,
+                panel_rows = style_config$panel_rows,
+                panel_cols = style_config$panel_cols,
+                panel_var = panel_var,
+                invert_axis = invert_axis,
+                plot_style_config = style_config
+              )
+
+              plot_list[[title_info$export_name]] <- p
+            }
+          } else {
+            title_info <- .handle_plot_title_and_export(
+              var_name = NULL,
+              sep_value = sep_value,
+              plot_type = "comparison",
+              is_macro_mode = FALSE,
+              split_by = split_by,
+              x_axis_from = x_axis_from,
+              variable_col = variable_col,
+              unit_name = unit_name,
+              style_config = style_config,
+              data = filtered_data
+            )
+
+            p <- .create_single_comparison_plot(
+              data = filtered_data,
+              x_axis_from = x_axis_from,
+              plot_title = title_info$title,
+              unit = unit_name,
+              panel_rows = style_config$panel_rows,
+              panel_cols = style_config$panel_cols,
+              panel_var = panel_var,
+              invert_axis = invert_axis,
+              plot_style_config = style_config
+            )
+
+            plot_list[[title_info$export_name]] <- p
+          }
+        }
       }
     }
   }
@@ -408,11 +967,27 @@
 .finalize_plot_export <- function(plot_list, data, panel_layout, output_path, export_picture,
                                   export_as_pdf, export_config, default_filename) {
 
-  # Set default file_name in export_config
-  if (is.null(export_config) || is.null(export_config$file_name)) {
-    export_config <- if (is.null(export_config)) list() else export_config
+  # Only create export_config if it's NULL
+  if (is.null(export_config)) {
+    export_config <- list()
+  }
+
+  # Only set file_name if it's NULL AND export_as_pdf is "merged"
+  if (is.null(export_config$file_name) && is.character(export_as_pdf) &&
+      tolower(export_as_pdf) == "merged") {
     export_config$file_name <- default_filename
   }
+
+  # Calculate dimensions if not already specified
+  dimensions <- if (!is.null(export_config$width) && !is.null(export_config$height)) {
+    list(width = export_config$width, height = export_config$height)
+  } else {
+    .calculate_plot_dimensions(data, panel_layout)
+  }
+
+  # Add calculated dimensions to export_config
+  export_config$width <- dimensions$width
+  export_config$height <- dimensions$height
 
   # Export plots
   .export_plot_output(
@@ -699,6 +1274,106 @@
   return(default_name)  # Return default or NULL
 }
 
+#' @title Process Filter Variable for GTAPViz Data
+#'
+#' @description
+#' Applies filtering to a GTAP-compatible data frame based on a specified `filter_var`.
+#' This function supports filtering using a vector, list of column-value pairs, or
+#' a data frame of filter values matched by `variable_col`.
+#' @md
+#' @param data A data frame containing GTAP result variables.
+#' @param filter_var A filter object that can be:
+#'   - A vector of values to filter in the column specified by `variable_col`.
+#'   - A list of column-value pairs for multi-column filtering.
+#'   - A data frame with a `variable_col` column to match values in `data`.
+#' @param variable_col Character. Column name to match values when `filter_var` is a vector or data frame.
+#'
+#' @return A filtered data frame with rows matching the specified criteria.
+#' If no matches are found, a warning is issued and an empty data frame is returned.
+#'
+#' @details
+#' This function is called internally during data preprocessing for GTAPViz plots.
+#' If `filter_var` is NULL, the original `data` is returned unmodified.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @noRd
+.process_filter_var <- function(data, filter_var, variable_col) {
+  # If filter_var is NULL, return data as is
+  if (is.null(filter_var)) {
+    return(data)
+  }
+
+  # Check if data is a data frame
+  if (!is.data.frame(data)) {
+    stop("Input data must be a data frame. Current data structure is ", class(data)[1], ".")
+  }
+
+  # Case 1: filter_var is a list of column/value pairs
+  if (is.list(filter_var) && !is.data.frame(filter_var)) {
+    filtered_data <- data
+
+    for (col_name in names(filter_var)) {
+      filter_values <- filter_var[[col_name]]
+
+      # Check if column exists in data
+      if (!col_name %in% names(filtered_data)) {
+        warning(paste0("Filter column '", col_name, "' not found in data. Skipping this filter."))
+        next
+      }
+
+      # Apply filter for this column
+      filtered_data <- filtered_data[filtered_data[[col_name]] %in% filter_values, ]
+
+      # Stop if no data left after filtering
+      if (nrow(filtered_data) == 0) {
+        warning(paste0("No data remains after filtering by column '", col_name,
+                       "' with values: ", paste(filter_values, collapse=", "), "."))
+        return(filtered_data)
+      }
+    }
+
+    return(filtered_data)
+  }
+
+  # Case 2: filter_var is a data frame
+  if (is.data.frame(filter_var)) {
+    if (!variable_col %in% names(filter_var)) {
+      stop("Variable column '", variable_col, "' not found in filter_var data frame.")
+    }
+
+    if (!variable_col %in% names(data)) {
+      stop("Variable column '", variable_col, "' not found in input data.")
+    }
+
+    filtered_data <- data[data[[variable_col]] %in% filter_var[[variable_col]], ]
+
+    if (nrow(filtered_data) == 0) {
+      warning("No matching data found for the specified filter_var values.")
+    }
+
+    return(filtered_data)
+  }
+
+  # Case 3: filter_var is a vector (original behavior)
+  if (is.vector(filter_var) && !is.list(filter_var)) {
+    if (!variable_col %in% names(data)) {
+      stop("Variable column '", variable_col, "' not found in input data.")
+    }
+
+    filtered_data <- data[data[[variable_col]] %in% filter_var, ]
+
+    if (nrow(filtered_data) == 0) {
+      warning(paste0("No matching data found for filter values: ", paste(filter_var, collapse=", ")))
+    }
+
+    return(filtered_data)
+  }
+
+  # If filter_var is of an unexpected type
+  stop("filter_var must be a vector, list, or data frame. Current type is ", class(filter_var)[1], ".")
+}
+
 #' @title Prepare Data Source for Plotting
 #' @description
 #' Validates and retrieves a data frame containing required columns from either a data frame or list of frames.
@@ -712,21 +1387,35 @@
 #' @keywords internal
 #' @noRd
 .prepare_data_source <- function(data, x_axis_from, stack_value_from = NULL, variable_col = NULL) {
+  # Check if data is completely missing
+  if (is.null(data)) {
+    stop("Input data is NULL. Please provide a valid data frame or list of data frames.")
+  }
+
+  # Check data type and provide helpful message
+  if (!is.data.frame(data) && !is.list(data)) {
+    stop(paste0("Invalid data format. Expected a data frame or list of data frames, but got: ",
+                class(data)[1], ". Please check your input data."))
+  }
+
   # If already a data frame, validate columns
   if (is.data.frame(data)) {
     # Check x_axis_from column
     if (!(x_axis_from %in% names(data))) {
-      stop(paste("Required column", x_axis_from, "not found in the data frame."))
+      stop(paste0("Required column '", x_axis_from, "' not found in the data frame. ",
+                  "Available columns are: ", paste(names(data), collapse=", ")))
     }
 
     # Check stack_value_from if provided (for stack_plot)
     if (!is.null(stack_value_from) && !(stack_value_from %in% names(data))) {
-      stop(paste("Required column", stack_value_from, "not found in the data frame."))
+      stop(paste0("Required column '", stack_value_from, "' not found in the data frame. ",
+                  "Available columns are: ", paste(names(data), collapse=", ")))
     }
 
     # Check variable_col if provided
     if (!is.null(variable_col) && !(variable_col %in% names(data))) {
-      stop(paste("Required column", variable_col, "not found in the data frame."))
+      stop(paste0("Required column '", variable_col, "' not found in the data frame. ",
+                  "Available columns are: ", paste(names(data), collapse=", ")))
     }
 
     return(data)
@@ -734,9 +1423,15 @@
 
   # If a list of data frames, find first matching data frame
   if (is.list(data)) {
+    if (length(data) == 0) {
+      stop("Empty list provided. The list must contain at least one data frame.")
+    }
+
+    valid_dfs <- 0
     for (df_name in names(data)) {
       df <- data[[df_name]]
       if (is.data.frame(df)) {
+        valid_dfs <- valid_dfs + 1
         # Check x_axis_from column
         if (x_axis_from %in% names(df)) {
           # Check stack_value_from if provided
@@ -754,10 +1449,16 @@
       }
     }
 
-    # If no suitable data frame found
-    stop(paste("No suitable data frame found with required column:", x_axis_from))
+    # Helpful error messages based on what was found
+    if (valid_dfs == 0) {
+      stop("No valid data frames found in the input list. Please check your data structure.")
+    } else {
+      stop(paste0("No suitable data frame found with required column '", x_axis_from, "'. ",
+                  "Checked ", valid_dfs, " data frames but none contained all required columns."))
+    }
   }
 
+  # This should never be reached due to the initial type check, but including for completeness
   stop("Input must be a data frame or a list of data frames.")
 }
 
@@ -1108,11 +1809,11 @@
 #' @return Filtered data frame.
 #' @keywords internal
 #' @noRd
-.filter_top_impact_values_stack <- function(data, total_data, top_impact, group_col, panel_var,
-                                            x_axis_from, variable_col, unit_col, stack_value_from) {
+.filter_top_impact_values_stack <- function(data, total_data, top_impact, is_macro_mode, split_by,
+                                            x_axis_from, panel_var, variable_col, unit_col) {
   if (inherits(data, "list") && !is.data.frame(data)) {
     return(.apply_to_dataframes(data, .filter_top_impact_values_stack, total_data, top_impact,
-                                group_col, panel_var, x_axis_from, variable_col, unit_col, stack_value_from))
+                                is_macro_mode, split_by, x_axis_from, panel_var, variable_col, unit_col))
   }
 
   # INPUT VALIDATION
@@ -1121,7 +1822,7 @@
   if (is.null(top_impact) || nrow(total_data) <= top_impact) return(data)
 
   # GET GROUP COLUMNS
-  group_cols <- c(variable_col, unit_col, panel_var, group_col)
+  group_cols <- c(variable_col, unit_col, panel_var, split_by)
   group_cols <- group_cols[group_cols %in% names(total_data)]
 
   # CREATE GROUP IDENTIFIER
@@ -1217,22 +1918,50 @@
     dimensions <- .calculate_plot_dimensions(data, panel_layout)
     export_config$width <- dimensions$width
     export_config$height <- dimensions$height
+  } else {
+    dimensions <- list(width = export_config$width, height = export_config$height)
   }
 
   # Display dimensions at the start of export process
-  .display_export_dimensions(list(width = export_config$width, height = export_config$height), plots, "start", export_config$dpi)
+  .display_export_dimensions(dimensions, plots, "start", export_config$dpi)
 
-  # Create output directory if needed
+  # Process output_path
   if (is.null(output_path)) {
     output_path <- getwd()
   }
 
+  # Normalize the path to handle spaces and special characters
+  output_path <- normalizePath(output_path, mustWork = FALSE)
+
+  # Create output directory first, before any file operations
   if (!dir.exists(output_path)) {
-    dir.create(output_path, recursive = TRUE)
+    tryCatch({
+      dir.create(output_path, recursive = TRUE)
+      if (!dir.exists(output_path)) {
+        warning(paste0("Failed to create output directory: ", output_path,
+                       ". Using current working directory instead."))
+        output_path <- getwd()
+      }
+    }, error = function(e) {
+      warning(paste0("Error creating output directory: ", conditionMessage(e),
+                     ". Using current working directory instead."))
+      output_path <- getwd()
+    })
   }
 
-  is_single_plot <- inherits(plots, "gg")
+  # Check if directory is writable
+  if (file.access(output_path, 2) != 0) {
+    warning(paste0("Output directory is not writable: ", output_path,
+                   ". Using temporary directory instead."))
+    output_path <- tempdir()
+    # Ensure this directory exists
+    if (!dir.exists(output_path)) {
+      dir.create(output_path, recursive = TRUE)
+    }
+  }
 
+  # Normalize plot names to be valid filenames
+  is_single_plot <- inherits(plots, "gg")
   if (is_single_plot) {
     plots <- list(plot = plots)
   }
@@ -1245,10 +1974,19 @@
     stop("All elements in plots must be ggplot objects")
   }
 
-  n_plots <- length(plots)
+  # Make sure all plot names are valid filenames
+  plots_with_clean_names <- list()
+  for (i in seq_along(plots)) {
+    original_name <- names(plots)[i]
+    # Make a filename-safe version of the plot name
+    clean_name <- gsub("[^a-zA-Z0-9_\\-\\. ]", "_", original_name)
+    clean_name <- gsub("\\s+", " ", clean_name)
+    clean_name <- trimws(clean_name)
 
-  # For individual plots, use the export_config file name
-  base_file_name <- export_config$file_name
+    plots_with_clean_names[[clean_name]] <- plots[[i]]
+  }
+  plots <- plots_with_clean_names
+  n_plots <- length(plots)
 
   is_merge_pdf <- FALSE
   if (is.character(export_as_pdf)) {
@@ -1260,79 +1998,88 @@
 
   if (export_as_pdf) {
     if (is_merge_pdf && n_plots >= 1) {
-      # Determine the plot type based on the calling function
-      calling_func <- sys.call(-1)[[1]]
-      if (is.name(calling_func)) {
-        calling_func <- as.character(calling_func)
+      # For merged PDFs, use the file_name from export_config, or create a default
+      if (is.null(export_config$file_name)) {
+        # Determine plot type based on the calling function for default name
+        calling_func <- sys.call(-1)[[1]]
+        if (is.name(calling_func)) {
+          calling_func <- as.character(calling_func)
 
-        if (grepl("comparison_plot", calling_func)) {
-          pdf_base_name <- "Comparison_plot"
-        } else if (grepl("detail_plot", calling_func)) {
-          pdf_base_name <- "Detail_plot"
-        } else if (grepl("stack_plot", calling_func)) {
-          pdf_base_name <- "Stack_plot"
+          if (grepl("comparison_plot", calling_func)) {
+            pdf_base_name <- "Comparison_plot"
+          } else if (grepl("detail_plot", calling_func)) {
+            pdf_base_name <- "Detail_plot"
+          } else if (grepl("stack_plot", calling_func)) {
+            pdf_base_name <- "Stack_plot"
+          } else {
+            pdf_base_name <- "Plots"
+          }
         } else {
           pdf_base_name <- "Plots"
         }
+
+        # Create base filename with plot type and number of plots
+        pdf_file_name <- paste0(pdf_base_name, "_", n_plots)
       } else {
-        pdf_base_name <- "Plots"
+        # Use the configured file_name for merged PDFs
+        pdf_file_name <- export_config$file_name
       }
 
-      # Create base filename with plot type and number of plots
-      pdf_file_name <- paste0(pdf_base_name, "_", n_plots)
+      # Make sure the filename is safe
+      pdf_file_name <- gsub("[^a-zA-Z0-9_\\-\\. ]", "_", pdf_file_name)
+      pdf_file_name <- gsub("\\s+", " ", pdf_file_name)
+      pdf_file_name <- trimws(pdf_file_name)
+
+      # Create the full path
+      pdf_path <- file.path(output_path, paste0(pdf_file_name, ".pdf"))
 
       # Find an available filename by adding suffix numbers if needed
-      pdf_path <- file.path(output_path, paste0(pdf_file_name, ".pdf"))
       suffix_counter <- 1
-
       while (file.exists(pdf_path)) {
         pdf_path <- file.path(output_path, paste0(pdf_file_name, "_", suffix_counter, ".pdf"))
         suffix_counter <- suffix_counter + 1
       }
 
-      grDevices::pdf(
-        file = pdf_path,
-        width = export_config$width,
-        height = export_config$height,
-        useDingbats = FALSE,
-        title = pdf_file_name
-      )
-
-      on.exit(grDevices::dev.off())
-
-      for (i in seq_along(plots)) {
-        print(plots[[i]])
-      }
-
-      message("Combined PDF exported to: ", pdf_path)
-    } else {
-      # Individual PDF export
-      if (n_plots == 1) {
-        p <- plots[[1]]
-        plot_name <- names(plots)[[1]]
-        # Use the plot name directly - preserve spaces
-        pdf_path <- file.path(output_path, paste0(plot_name, ".pdf"))
-
-        ggplot2::ggsave(
-          filename = pdf_path,
-          plot = p,
-          device = "pdf",
+      # Use tryCatch to handle PDF creation errors
+      tryCatch({
+        grDevices::pdf(
+          file = pdf_path,
           width = export_config$width,
           height = export_config$height,
-          dpi = export_config$dpi,
-          bg = export_config$bg,
-          limitsize = export_config$limitsize
+          useDingbats = FALSE,
+          title = pdf_file_name
         )
 
-        message("PDF figure exported to: ", pdf_path)
-      } else {
-        # Multiple plots: use individual plot names
         for (i in seq_along(plots)) {
-          p <- plots[[i]]
-          plot_name <- names(plots)[[i]]
-          # Use the plot name directly - preserve spaces
-          pdf_path <- file.path(output_path, paste0(plot_name, ".pdf"))
+          print(plots[[i]])
+        }
 
+        # Always make sure to close the device
+        grDevices::dev.off()
+
+        if (file.exists(pdf_path)) {
+          message("Combined PDF exported to: ", pdf_path)
+        } else {
+          warning("PDF creation failed. The output file was not created.")
+        }
+      }, error = function(e) {
+        # Make sure to close any open devices on error
+        if (grDevices::dev.cur() > 1) {
+          try(grDevices::dev.off(), silent = TRUE)
+        }
+        warning(paste0("Error exporting merged PDF: ", conditionMessage(e)))
+      })
+    } else {
+      # Individual PDF export - use the cleaned plot names
+      for (i in seq_along(plots)) {
+        p <- plots[[i]]
+        plot_name <- names(plots)[[i]]
+
+        # Create the full path
+        pdf_path <- file.path(output_path, paste0(plot_name, ".pdf"))
+
+        # Use tryCatch to handle ggsave errors
+        tryCatch({
           ggplot2::ggsave(
             filename = pdf_path,
             plot = p,
@@ -1344,40 +2091,29 @@
             limitsize = export_config$limitsize
           )
 
-          message("PDF figure exported to: ", pdf_path)
-        }
+          if (file.exists(pdf_path)) {
+            message("PDF figure exported to: ", pdf_path)
+          } else {
+            warning("PDF creation failed for plot name: ", plot_name)
+          }
+        }, error = function(e) {
+          warning(paste0("Error exporting PDF for plot '", plot_name, "': ", conditionMessage(e)))
+        })
       }
     }
   }
 
   if (export_picture) {
-    # If there's only one plot, use the base filename without numbering
-    if (n_plots == 1) {
-      p <- plots[[1]]
-      plot_name <- names(plots)[[1]]
-      # Use the plot name directly - preserve spaces
+    # PNG export - use the cleaned plot names
+    for (i in seq_along(plots)) {
+      p <- plots[[i]]
+      plot_name <- names(plots)[[i]]
+
+      # Create the full path
       png_path <- file.path(output_path, paste0(plot_name, ".png"))
 
-      ggplot2::ggsave(
-        filename = png_path,
-        plot = p,
-        device = "png",
-        width = export_config$width,
-        height = export_config$height,
-        dpi = export_config$dpi,
-        bg = export_config$bg,
-        limitsize = export_config$limitsize
-      )
-
-      message("PNG figure exported to: ", png_path)
-    } else {
-      # Multiple plots: use individual plot names
-      for (i in seq_along(plots)) {
-        p <- plots[[i]]
-        plot_name <- names(plots)[[i]]
-        # Use the plot name directly - preserve spaces
-        png_path <- file.path(output_path, paste0(plot_name, ".png"))
-
+      # Use tryCatch to handle ggsave errors
+      tryCatch({
         ggplot2::ggsave(
           filename = png_path,
           plot = p,
@@ -1389,15 +2125,23 @@
           limitsize = export_config$limitsize
         )
 
-        message("PNG figure exported to: ", png_path)
-      }
+        if (file.exists(png_path)) {
+          message("PNG figure exported to: ", png_path)
+        } else {
+          warning("PNG creation failed for plot name: ", plot_name)
+        }
+      }, error = function(e) {
+        warning(paste0("Error exporting PNG for plot '", plot_name, "': ", conditionMessage(e)))
+      })
     }
   }
+
+  # Display dimensions at the end of export process
+  .display_export_dimensions(dimensions, plots, "end", export_config$dpi)
 
   # Always return NULL invisibly to suppress output
   return(invisible(NULL))
 }
-
 
 # COMPARISON PLOT SPECIFIC FUNCTIONS --------------------------------------
 
@@ -3024,9 +3768,9 @@
     }
   }
 
+  # Apply title format transformations from style config
   dynamic_title_has_unit <- FALSE
-
-  if (!is.null(style_config$title_format)) {
+  if (!is.null(style_config) && !is.null(style_config$title_format)) {
     title_format <- style_config$title_format
 
     if (title_format$type == "dynamic") {
@@ -3041,14 +3785,11 @@
 
           if (length(referenced_cols) > 0 && length(referenced_cols[[1]]) > 0) {
             referenced_cols <- gsub("\\{|\\}", "", referenced_cols[[1]])
-
-            # Check if "Unit" is included in the dynamic template
             if (any(referenced_cols %in% c("Unit", "unit", "UNIT"))) {
               dynamic_title_has_unit <- TRUE
             }
 
             missing_cols <- setdiff(referenced_cols, names(data))
-
             if (length(missing_cols) > 0) {
               warning(paste("Columns referenced in dynamic title template but not found in data:",
                             paste(missing_cols, collapse=", ")))
@@ -3075,7 +3816,10 @@
   }
 
   # Add unit to title if appropriate
-  if ((title_format$type != "dynamic" || (title_format$type == "dynamic" && !dynamic_title_has_unit)) &&
+  if (!is.null(style_config) &&
+      (!is.null(style_config$title_format) &&
+       (style_config$title_format$type != "dynamic" ||
+        (style_config$title_format$type == "dynamic" && !dynamic_title_has_unit))) &&
       style_config$add_unit_to_title && !is.null(unit_name)) {
     if (tolower(unit_name) == "percent") {
       plot_title <- paste0(plot_title, " (%)")
@@ -3092,43 +3836,15 @@
     plot_title <- paste0(base_title, " - ", panel_val)
   }
 
-  # Create initial export name from base title (without panel value)
-  export_name <- base_title
+  # Create a file-safe export name
+  # 1. Keep only alphanumeric, spaces, dots, underscores, hyphens, and parentheses
+  export_name <- gsub("[^a-zA-Z0-9_\\-\\. ()]", "_", plot_title)
 
-  # Process parentheses in export name
-  parentheses_content <- list()
-  parentheses_pattern <- "\\(([^()]*)\\)"
-  matches <- gregexpr(parentheses_pattern, export_name)
-  match_list <- regmatches(export_name, matches)
-
-  if (length(match_list) > 0 && length(match_list[[1]]) > 0) {
-    for (i in seq_along(match_list[[1]])) {
-      placeholder <- paste0("__PLACEHOLDER_", i, "__")
-      parentheses_content[[placeholder]] <- match_list[[1]][i]
-      export_name <- sub(match_list[[1]][i], placeholder, export_name, fixed = TRUE)
-    }
-  }
-
-  # Clean export name
-  export_name <- gsub("[^a-zA-Z0-9\\s_]", " ", export_name)
-
-  # Restore parentheses
-  for (placeholder in names(parentheses_content)) {
-    export_name <- sub(placeholder, parentheses_content[[placeholder]], export_name, fixed = TRUE)
-  }
-
+  # 2. Replace multiple spaces with a single space
   export_name <- gsub("\\s+", " ", export_name)
+
+  # 3. Trim any leading/trailing whitespace
   export_name <- trimws(export_name)
-
-  # Add panel value as parenthetical suffix
-  if (separate_figure && !is.null(panel_val)) {
-    clean_panel_val <- gsub("[^a-zA-Z0-9\\s]", " ", panel_val)
-    clean_panel_val <- gsub("\\s+", " ", clean_panel_val)
-    clean_panel_val <- trimws(clean_panel_val)
-
-    # Add panel value in parentheses to export name
-    export_name <- paste0(export_name, " (", clean_panel_val, ")")
-  }
 
   # Add plot type suffix if needed
   if (!is.null(plot_type)) {
@@ -3139,9 +3855,230 @@
     }
   }
 
+  # Make sure the name isn't too long for a filename
+  if (nchar(export_name) > 200) {
+    export_name <- paste0(substr(export_name, 1, 197), "...")
+  }
+
   return(list(
     title = plot_title,
     export_name = export_name
   ))
+}
+
+
+# Ge Plot Styles Help -----------------------------------------------------
+#' @title Get Export Configuration Options
+#'
+#' @description
+#' Returns documentation and default values for export configuration options used in plotting functions.
+#'
+#' @keywords internal
+#' @noRd
+#'
+.get_export_config <- function() {
+  # Export config parameters with default values
+  export_config_params <- list(
+    file_name = "gtap_plots",
+    width = NULL,
+    height = NULL,
+    dpi = 300,
+    bg = "white",
+    limitsize = FALSE
+  )
+
+  cat("my_export_config <- list(\n")
+
+  # Print file_name
+  cat("  file_name = \"", export_config_params$file_name, "\",\n", sep="")
+
+  # Print width
+  cat("  width = ", if(is.null(export_config_params$width)) "NULL" else export_config_params$width, ",\n", sep="")
+
+  # Print height
+  cat("  height = ", if(is.null(export_config_params$height)) "NULL" else export_config_params$height, ",\n", sep="")
+
+  # Print dpi
+  cat("  dpi = ", export_config_params$dpi, ",\n", sep="")
+
+  # Print bg
+  cat("  bg = \"", export_config_params$bg, "\",\n", sep="")
+
+  # Print limitsize (last item, no comma)
+  cat("  limitsize = ", ifelse(export_config_params$limitsize, "TRUE", "FALSE"), "\n", sep="")
+
+  cat(")\n\n")
+  cat("# Example usage:\n")
+  cat("# comparison_plot(data, x_axis_from = \"REG\", export_config = my_export_config)\n")
+
+  return(invisible(export_config_params))
+}
+
+#' @title Get Plot Style Configuration
+#'
+#' @description
+#' Returns configuration settings for plot styles, with options to view as a structured dataframe
+#' or to look up specific parameters. Also provides parameter validation for custom configurations.
+#'
+#' @param plot_type Character. Type of plot: "default" (default).
+#' @param validate_custom List or NULL. Custom configuration settings to validate.
+#'
+#' @keywords internal
+#' @noRd
+.get_plot_style_config <- function(plot_type = "default",
+                                   validate_custom = NULL) {
+  config <- .calculate_plot_style_config(NULL, plot_type)
+
+  cat("my_style_config <- list(\n")
+
+  # Title settings
+  cat("\n  # Title settings\n")
+  cat("  show_title = ", ifelse(config$show_title, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  title_face = \"", config$title_face, "\",\n", sep="")
+  cat("  title_size = ", config$title_size, ",\n", sep="")
+  cat("  title_hjust = ", config$title_hjust, ",\n", sep="")
+  cat("  add_unit_to_title = ", ifelse(config$add_unit_to_title, "TRUE", "FALSE"), ",\n", sep="")
+
+  # Format margin objects as simple vectors with description
+  margin_values <- as.numeric(config$title_margin)
+  cat("  title_margin = c(", margin_values[1], ", ", margin_values[2],
+      ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
+
+  # Format title_format as a properly structured list
+  tf <- config$title_format
+  cat("  title_format = create_title_format(\n")
+  cat("    type = \"", .coalesce(tf$type, "standard"), "\", #option: prefix, suffix, full, dynamic\n", sep="")
+  cat("    text = \"", .coalesce(tf$text, ""), "\",\n", sep="")
+  cat("    sep = \"", .coalesce(tf$sep, ""), "\"\n", sep="")
+  cat("  ),\n")
+
+  # X-Axis settings
+  cat("\n  # X-Axis settings\n")
+  cat("  show_x_axis_title = ", ifelse(config$show_x_axis_title, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  x_axis_title_face = \"", config$x_axis_title_face, "\",\n", sep="")
+  cat("  x_axis_title_size = ", config$x_axis_title_size, ",\n", sep="")
+
+  margin_values <- as.numeric(config$x_axis_title_margin)
+  cat("  x_axis_title_margin = c(", margin_values[1], ", ", margin_values[2],
+      ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
+
+  cat("  show_x_axis_labels = ", ifelse(config$show_x_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  x_axis_text_face = \"", config$x_axis_text_face, "\",\n", sep="")
+  cat("  x_axis_text_size = ", config$x_axis_text_size, ",\n", sep="")
+  cat("  x_axis_text_angle = ", config$x_axis_text_angle, ",\n", sep="")
+  cat("  x_axis_text_hjust = ", config$x_axis_text_hjust, ",\n", sep="")
+  cat("  x_axis_description = \"", config$x_axis_description, "\",\n", sep="")
+
+  # Y-Axis settings
+  cat("\n  # Y-Axis settings\n")
+  cat("  show_y_axis_title = ", ifelse(config$show_y_axis_title, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  y_axis_title_face = \"", config$y_axis_title_face, "\",\n", sep="")
+  cat("  y_axis_title_size = ", config$y_axis_title_size, ",\n", sep="")
+
+  margin_values <- as.numeric(config$y_axis_title_margin)
+  cat("  y_axis_title_margin = c(", margin_values[1], ", ", margin_values[2],
+      ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
+
+  cat("  show_y_axis_labels = ", ifelse(config$show_y_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  y_axis_text_face = \"", config$y_axis_text_face, "\",\n", sep="")
+  cat("  y_axis_text_size = ", config$y_axis_text_size, ",\n", sep="")
+  cat("  y_axis_text_angle = ", config$y_axis_text_angle, ",\n", sep="")
+  cat("  y_axis_text_hjust = ", config$y_axis_text_hjust, ",\n", sep="")
+  cat("  y_axis_description = \"", config$y_axis_description, "\",\n", sep="")
+  cat("  show_axis_titles_on_all_facets = ", ifelse(config$show_axis_titles_on_all_facets, "TRUE", "FALSE"), ",\n", sep="")
+
+  # Value Labels
+  cat("\n  # Value Labels\n")
+  cat("  show_value_labels = ", ifelse(config$show_value_labels, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  value_label_face = \"", config$value_label_face, "\",\n", sep="")
+  cat("  value_label_size = ", config$value_label_size, ",\n", sep="")
+  cat("  value_label_position = \"", config$value_label_position, "\",\n", sep="")
+  cat("  value_label_decimal_places = ", config$value_label_decimal_places, ",\n", sep="")
+
+  # Legend
+  cat("\n  # Legend\n")
+  cat("  show_legend = ", ifelse(config$show_legend, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  show_legend_title = ", ifelse(config$show_legend_title, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  legend_position = \"", config$legend_position, "\",\n", sep="")
+  cat("  legend_title_face = \"", config$legend_title_face, "\",\n", sep="")
+  cat("  legend_text_face = \"", config$legend_text_face, "\",\n", sep="")
+  cat("  legend_text_size = ", config$legend_text_size, ",\n", sep="")
+
+  # Panel Strip
+  cat("\n  # Panel Strip\n")
+  cat("  strip_face = \"", config$strip_face, "\",\n", sep="")
+  cat("  strip_text_size = ", config$strip_text_size, ",\n", sep="")
+  cat("  strip_background = \"", config$strip_background, "\",\n", sep="")
+
+  margin_values <- as.numeric(config$strip_text_margin)
+  cat("  strip_text_margin = c(", margin_values[1], ", ", margin_values[2],
+      ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
+
+  # Panel Layout
+  cat("\n  # Panel Layout\n")
+  cat("  panel_spacing = ", config$panel_spacing, ",\n", sep="")
+  cat("  panel_rows = ", if(is.null(config$panel_rows)) "NULL" else config$panel_rows, ",\n", sep="")
+  cat("  panel_cols = ", if(is.null(config$panel_cols)) "NULL" else config$panel_cols, ",\n", sep="")
+  cat("  theme = ", if(is.null(config$theme)) "NULL" else "custom_theme", ",\n", sep="")
+
+  # Color
+  cat("\n  # Colors and Grid \n")
+  cat("  color_tone = ", if(is.null(config$color_tone)) "NULL" else paste0("\"", config$color_tone, "\""), ",\n", sep="")
+  cat("  color_palette_type = \"", config$color_palette_type, "\", #option: qualitative, sequential, diverging\n", sep="")
+  cat("  positive_color = \"", config$positive_color, "\",\n", sep="")
+  cat("  negative_color = \"", config$negative_color, "\",\n", sep="")
+  cat("  background_color = \"", config$background_color, "\",\n", sep="")
+  cat("  grid_color = \"", config$grid_color, "\",\n", sep="")
+  cat("  show_grid_major_x = ", ifelse(config$show_grid_major_x, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  show_grid_major_y = ", ifelse(config$show_grid_major_y, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  show_grid_minor_x = ", ifelse(config$show_grid_minor_x, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  show_grid_minor_y = ", ifelse(config$show_grid_minor_y, "TRUE", "FALSE"), ",\n", sep="")
+
+  # Zero Line
+  cat("\n  # Zero Line\n")
+  cat("  show_zero_line = ", ifelse(config$show_zero_line, "TRUE", "FALSE"), ",\n", sep="")
+  cat("  zero_line_type = \"", config$zero_line_type, "\",\n", sep="")
+  cat("  zero_line_color = \"", config$zero_line_color, "\",\n", sep="")
+  cat("  zero_line_size = ", config$zero_line_size, ",\n", sep="")
+  cat("  zero_line_position = ", config$zero_line_position, ",\n", sep="")
+
+  # Bar Chart
+  cat("\n  # Bar Chart\n")
+  cat("  bar_width = ", config$bar_width, ",\n", sep="")
+  cat("  bar_spacing = ", config$bar_spacing, ",\n", sep="")
+
+  # Scale Settings
+  cat("\n  # Scale Settings\n")
+  if (is.null(config$scale_limit)) {
+    cat("  scale_limit = NULL,\n", sep="")
+  } else {
+    cat("  scale_limit = c(", paste(config$scale_limit, collapse=", "), "),\n", sep="")
+  }
+  cat("  scale_increment = ", if(is.null(config$scale_increment)) "NULL" else config$scale_increment, ",\n", sep="")
+
+  # Scale Expansion
+  cat("\n  # Scale Expansion\n")
+  cat("  expansion_y_mult = c(", paste(config$expansion_y_mult, collapse=", "), "),\n", sep="")
+  cat("  expansion_x_mult = c(", paste(config$expansion_x_mult, collapse=", "), "),\n", sep="")
+
+  # Font Size Control
+  cat("\n  # Font Size Control\n")
+  cat("  all_font_size = ", config$all_font_size, ",\n", sep="")
+
+  # Data Sorting
+  cat("\n  # Data Sorting\n")
+  cat("  sort_data_by_value = ", ifelse(config$sort_data_by_value, "TRUE", "FALSE"), ",\n", sep="")
+
+  # Plot Margin Settings
+  cat("\n  # Plot Margin\n")
+  margin_values <- as.numeric(config$plot.margin)
+  cat("  plot.margin = c(", margin_values[1], ", ", margin_values[2],
+      ", ", margin_values[3], ", ", margin_values[4], ") #c(top, right, bottom, left)\n", sep="")
+
+  cat(")\n\n")
+  cat("# Example usage:\n")
+  cat("# comparison_plot(data, x_axis_from = \"REG\", plot_style_config = my_style_config)\n")
+
+  return(invisible(config))
 }
 

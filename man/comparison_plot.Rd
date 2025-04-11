@@ -8,12 +8,12 @@ comparison_plot(
   data,
   filter_var = NULL,
   x_axis_from,
-  split_by = NULL,
+  split_by = "Variable",
   panel_var = "Experiment",
   variable_col = "Variable",
   unit_col = "Unit",
   desc_col = "Description",
-  invert_panel = FALSE,
+  invert_axis = FALSE,
   separate_figure = FALSE,
   var_name_by_description = FALSE,
   add_var_info = FALSE,
@@ -25,103 +25,115 @@ comparison_plot(
 )
 }
 \arguments{
-\item{data}{A data frame or a list of data frames containing GTAP results.}
+\item{data}{A data frame or list of data frames containing GTAP results.}
 
-\item{filter_var}{Vector or data frame. If a vector, filters the values in `x_axis_from`.
-If a data frame, filters `value_col` based on matching `variable_col` values.}
+\item{filter_var}{NULL, a vector, a data frame, or a named list specifying filtering conditions.
+For example: \code{list(Variable = c("EV", "qgdp"), REG = c("USA", "THA"))}.}
 
-\item{x_axis_from}{Character. Column name for x-axis categories (e.g., "REG", "Sector").}
+\item{x_axis_from}{Character. Column name used for the x-axis.}
 
-\item{split_by}{Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
-NULL creates a single aggregated plot, appropriate for macro-level analysis.}
-
-\item{panel_var}{Character. Column for panel facets (default: "Experiment").}
-
-\item{variable_col}{Character. Column containing variable identifiers (default: "Variable").}
-
-\item{unit_col}{Character. Column containing unit information (default: "Unit").}
-
-\item{desc_col}{Character. Column containing variable descriptions (default: "Description").}
-
-\item{invert_panel}{Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).}
-
-\item{separate_figure}{Logical. If TRUE, generates separate figures per panel value (default: FALSE).}
-
-\item{var_name_by_description}{Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).}
-
-\item{add_var_info}{Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).}
-
-\item{output_path}{Character. Directory path for saving output files. If NULL, plots are only returned in R.}
-
-\item{export_picture}{Logical. If TRUE, exports plots as image files (default: TRUE).}
-
-\item{export_as_pdf}{Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).}
-
-\item{export_config}{List. Export settings, including:
+\item{split_by}{Character or vector.
 \itemize{
-  \item `width`: Output file width (in inches).
-  \item `height`: Output file height (in inches).
-  \item Additional settings—see `?get_export_config`.
+\item Column(s) used to split plots by (e.g., \code{"REG"} or \code{c("COMM", "REG")}).
+\item If \code{NULL}, a single aggregated plot is generated.
 }}
 
-\item{plot_style_config}{List. Custom plot styles—see `?get_plot_style_config`.}
+\item{panel_var}{Character. Column for panel facets. Default is \code{"Experiment"}.}
+
+\item{variable_col}{Character. Column name for variable codes. Default is \code{"Variable"}.}
+
+\item{unit_col}{Character. Column name for units. Default is \code{"Unit"}.}
+
+\item{desc_col}{Character. Column name for variable descriptions. Default is \code{"Description"}.
+
+\strong{Plot Behavior}}
+
+\item{invert_axis}{Logical. If \code{TRUE}, flips the plot orientation (horizontal bars). Default is \code{FALSE}.}
+
+\item{separate_figure}{Logical. If \code{TRUE}, generates a separate plot for each value in \code{panel_var}. Default is \code{FALSE}.
+
+\strong{Variable Display}}
+
+\item{var_name_by_description}{Logical. If \code{TRUE}, uses descriptions instead of variable codes in titles. Default is \code{FALSE}.}
+
+\item{add_var_info}{Logical. If \code{TRUE}, appends variable codes in parentheses after the description. Default is \code{FALSE}.
+
+\strong{Export Settings}}
+
+\item{output_path}{Character. Directory to save plots. If \code{NULL}, plots are returned but not saved.}
+
+\item{export_picture}{Logical. If \code{TRUE}, exports plots as PNG images. Default is \code{TRUE}.}
+
+\item{export_as_pdf}{Logical or \code{"merged"}.
+\itemize{
+\item \code{FALSE} (default): disables PDF export.
+\item \code{TRUE}: exports each plot as a separate PDF file.
+\item \code{"merged"}: combines all plots into a single PDF file.
+}}
+
+\item{export_config}{List. Export options including dimensions, DPI, and background.
+See \code{\link{create_export_config}} or \code{\link{get_all_config}}.
+
+\strong{Styling}}
+
+\item{plot_style_config}{List. Custom plot appearance settings.
+See \code{\link{create_plot_style}} or \code{\link{get_all_config}}.}
 }
 \value{
-A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
+A ggplot object or a named list of ggplot objects depending on the \code{separate_figure} setting.
+If \code{export_picture} or \code{export_as_pdf} is enabled, the plots are also saved to \code{output_path}.
 }
 \description{
-Generates comparative bar charts using GTAP data, allowing multiple visualization options
-such as panel facets, split grouping, and customizable styles.
+Generates comparative bar charts using GTAP data.
+Supports panel facets, split-by grouping, and fully customizable styling and export options.
+
+\strong{Input Data}
+}
+\details{
+Please refer to the full plot
 }
 \examples{
-\donttest{
-# Input Path:
+# Load data
 input_path <- system.file("extdata/in", package = "GTAPViz")
+sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
+reg_data <- sl4.plot.data[["REG"]]
 
-# GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
-# Note: No need to add .sl4 to the experiment name
-gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
-                            input_path = input_path, subtotal_level = FALSE,
-                            process_sl4_vars = NULL, process_har_vars = NULL,
-                            mapping_info = "GTAPv7", plot_data = TRUE)
+# Generate plot
+plotA <- comparison_plot(
+  data         = reg_data,
+  filter_var   = list(Region = "Oceania", Variable = "qgdp"),
+  x_axis_from  = "Region",
+  split_by     = "Variable",
+  panel_var    = "Experiment",
+  variable_col = "Variable",
+  unit_col     = "Unit",
+  desc_col     = "Description",
 
-# Basic usage with data frame
-p1 <- comparison_plot(
-  data = sl4.plot.data[["1D"]][["Region"]],
-  x_axis_from = "Region",
-  panel_var = "Experiment",
-  filter_var = c("qgdp", "EV"),
-  output_path = tempdir(),
+  invert_axis     = FALSE,
+  separate_figure = FALSE,
+
+  var_name_by_description = FALSE,
+  add_var_info            = FALSE,
+
+  output_path    = NULL,
   export_picture = FALSE,
-  export_as_pdf = FALSE,
-)
+  export_as_pdf  = FALSE,
+  export_config  = create_export_config(width = 20, height = 12),
 
-# Split by commodity with custom styling and export options
-p2 <- comparison_plot(
-  data = sl4.plot.data[["1D"]][["Region"]],
-  x_axis_from = "Region",
-  split_by = "Variable",
-  panel_var = "Experiment",
-  filter_var = c("qgdp", "EV"),
-  var_name_by_description = TRUE,
-  output_path = tempdir(),
-  export_picture = FALSE,
-  export_as_pdf = FALSE,
-  export_config = list(
-    file_name = "commodity_impacts",
-    width = 12,
-    height = 8
-  ),
-  plot_style_config = list(
-    color_tone = "economic",
-    title_size = 16,
-    show_grid_major_y = TRUE
+  plot_style_config = create_plot_style(
+    color_tone        = "purdue",
+    add_unit_to_title = TRUE,
+    title_format = create_title_format(
+      type = "prefix",
+      text = "Impact on"
+    ),
+    panel_rows = 2
   )
 )
 }
-}
 \seealso{
-\code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+\code{\link{get_all_config}}, \code{\link{detail_plot}}, \code{\link{stack_plot}},
+\code{\link{create_title_format}}
 }
 \author{
 Pattawee Puangchit

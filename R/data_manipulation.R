@@ -29,22 +29,19 @@
 #' @seealso \code{\link{convert_units}}, \code{\link{rename_value}}
 #'
 #' @examples
-#' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
-#'                                 package = "GTAPViz"))
-#'
-#' # Get Data by Variable Name
-#' sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"), sl4_data1)
+#' # Load Data:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#' sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 #'
 #' # Add mapping using GTAPv7 defaults
-#' gtap_data <- add_mapping_info(sl4_data1, mapping = "GTAPv7")
+#' gtap_data <- add_mapping_info(sl4.plot.data, mapping = "GTAPv7")
 #'
 #' # Use an external mapping file
 #' my_mapping <- data.frame(Variable = c("qgdp", "EV"),
 #'                          Description = c("Real GDP", "Welfare"),
-#'                          Unit = c("percent", "millionUSD"))  # <- Fixed closing quote
+#'                          Unit = c("percent", "millionUSD"))
 #'
-#' gtap_data <- add_mapping_info(sl4_data1, external_map = my_mapping,
+#' gtap_data <- add_mapping_info(sl4.plot.data, external_map = my_mapping,
 #'                               mapping = "Mix")
 #'
 add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
@@ -177,23 +174,21 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 #'
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{rename_value}}, \code{\link{sort_plot_data}}
 #'
+
 #' @examples
-#' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
-#'                                 package = "GTAPViz"))
-#'
-#' # Get Data by Variable Name
-#' sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
+#' # Load Data:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#' sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 #'
 #' # Convert million USD to billion USD
-#' gtap_data <- convert_units(sl4_data1,
+#' gtap_data <- convert_units(sl4.plot.data,
 #'   change_unit_from = "million USD",
 #'   change_unit_to = "billion USD",
 #'   adjustment = "/1000"
 #' )
 #'
 #' # Automatic conversion from percent to fraction
-#' gtap_data <- convert_units(sl4_data1, scale_auto = "pct2frac")
+#' gtap_data <- convert_units(sl4.plot.data, scale_auto = "pct2frac")
 #'
 convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
                           adjustment = NULL, value_col = "Value", unit_col = "Unit",
@@ -396,17 +391,19 @@ convert_units <- function(data, change_unit_from = NULL, change_unit_to = NULL,
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}
 #'
 #' @examples
-#' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
-#'                                 package = "GTAPViz"))
-#' # Get Data by Variable Name
-#' sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
+#' # Load Data:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#' har.plot.data <- readRDS(file.path(input_path, "har.plot.data.rds"))
 #'
 #' # Rename variables in a dataset
-#' rename_map <- data.frame(OldName = c("qgdp", "EV"),
-#'                         NewName = c("Real GDP", "Welfare"))
-#' gtap_data <- rename_value(sl4_data1, column_name = "Variable",
-#'                           mapping.file = rename_map)
+#' mapping_welfare <- data.frame(
+#'   ColumnName = "COLUMN",
+#'   OldName = c("alloc_A1", "ENDWB1", "tech_C1", "pop_D1", "pref_G1", "tot_E1", "IS_F1"),
+#'   NewName = c("Alloc Eff.", "Endwb", "Tech Chg.", "Pop", "Perf", "ToT", "I-S"),
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' har.plot.data <- rename_value(har.plot.data, mapping.file = mapping_welfare)
 #'
 rename_value <- function(data, column_name = NULL, mapping.file) {
   if (!all(c("OldName", "NewName") %in% names(mapping.file))) {
@@ -449,11 +446,12 @@ rename_value <- function(data, column_name = NULL, mapping.file) {
 }
 
 #' @title Sort GTAP Plot Data
+#' @md
 #'
 #' @description
-#' Sorts data for plotting using flexible options for column ordering and value-based sorting.
+#' Sorts data frames in a GTAP plot list structure based on specified column orders.
 #' Works with data frames, lists of data frames, or nested data structures.
-#' @md
+#'
 #' @param data A data frame or list structure containing data to be sorted.
 #' @param sort_columns Named list. Specifies columns to sort by and their ordering.
 #'        Each element should be a character vector of values in desired order.
@@ -471,20 +469,21 @@ rename_value <- function(data, column_name = NULL, mapping.file) {
 #' @author Pattawee Puangchit
 #' @export
 #'
-#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_value}}
 #'
 #' @examples
-#' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
-#'                                 package = "GTAPViz"))
-#' # Get Data by Variable Name
-#' sl4_data1 <- HARplus::get_data_by_var(c("qgdp","EV"),sl4_data1)
+#' # Load Data:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#' sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 #'
 #' # Creating Sorting Rule
-#' sorting_specs <- data.frame(REG = c("EastAsia", "SEAsia", "Oceania"))
+#' sorting_specs <- list(
+#'   Experiment = c("EXP2", "EXP1"),     # Show EXP2 first, then EXP1
+#'   Region = c("EastAsia", "SEAsia", "Oceania")  # Custom region order
+#' )
 #'
 #' # Sorting
-#' sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs,
+#' sort_data <- sort_plot_data(sl4.plot.data, sort_columns = sorting_specs,
 #'                             sort_by_value_desc = FALSE)
 #'
 sort_plot_data <- function(data, sort_columns = NULL,
@@ -503,7 +502,7 @@ sort_plot_data <- function(data, sort_columns = NULL,
     # Create copies to work with
     original_df <- df
     working_df <- df
-    sort_columns <- c()
+    sort_col_names <- c()
 
     # Keep track of column order info for factor conversion
     col_order_maps <- list()
@@ -534,7 +533,7 @@ sort_plot_data <- function(data, sort_columns = NULL,
           # Create sorting column
           temp_col_name <- paste0("._sort_", col_name)
           working_df[[temp_col_name]] <- match(df[[col_name]], ordered_values)
-          sort_columns <- c(sort_columns, temp_col_name)
+          sort_col_names <- c(sort_col_names, temp_col_name)
         } else if (isTRUE(col_values)) {
           # Sort alphabetically
           ordered_values <- sort(unique(df[[col_name]]))
@@ -542,7 +541,7 @@ sort_plot_data <- function(data, sort_columns = NULL,
 
           temp_col_name <- paste0("._sort_", col_name)
           working_df[[temp_col_name]] <- match(df[[col_name]], ordered_values)
-          sort_columns <- c(sort_columns, temp_col_name)
+          sort_col_names <- c(sort_col_names, temp_col_name)
         }
       }
     }
@@ -554,16 +553,16 @@ sort_plot_data <- function(data, sort_columns = NULL,
       } else {
         working_df$._sort_Value <- as.numeric(df$Value)   # Ascending
       }
-      sort_columns <- c(sort_columns, "._sort_Value")
+      sort_col_names <- c(sort_col_names, "._sort_Value")
     }
 
     # If no sorting columns created, return original
-    if (length(sort_columns) == 0) {
+    if (length(sort_col_names) == 0) {
       return(original_df)
     }
 
     # Sort the dataframe using all sorting columns
-    sort_order <- do.call(order, working_df[sort_columns])
+    sort_order <- do.call(order, working_df[sort_col_names])
     sorted_df <- df[sort_order, ]
 
     # Convert to factors with explicit ordering if requested

@@ -1,88 +1,98 @@
 # SIMPLIFIED MAIN PLOT FUNCTIONS ------------------------------------------
 
 #' @title Create Comparative Bar Charts from HAR and SL4 Data
-#'
+#' @md
 #' @description
 #' Generates comparative bar charts using GTAP data.
 #' Supports panel facets, split-by grouping, and fully customizable styling and export options.
 #'
-#' @md
-#'
+#' **Input Data**
 #' @param data A data frame or list of data frames containing GTAP results.
-#' @param filter_var Character vector or data frame.
-#' If a vector, filters values in `x_axis_from`.
-#' If a data frame, filters `value_col` based on matching `variable_col` values.
-#' @param x_axis_from Character. Column name used for the x-axis (e.g., `"REG"`, `"Sector"`).
-#' @param split_by Character or vector. Column(s) used to split plots by group (e.g., `"COMM"`, `"REG"`).
-#' If `NULL`, a single aggregated plot is produced.
+#' @param filter_var NULL, a vector, a data frame, or a named list specifying filtering conditions.
+#' For example: \code{list(Variable = c("EV", "qgdp"), REG = c("USA", "THA"))}.
+#' @param x_axis_from Character. Column name used for the x-axis.
+#' @param split_by Character or vector.
+#' - Column(s) used to split plots by (e.g., `"REG"` or `c("COMM", "REG")`).
+#' - If `NULL`, a single aggregated plot is generated.
 #' @param panel_var Character. Column for panel facets. Default is `"Experiment"`.
 #' @param variable_col Character. Column name for variable codes. Default is `"Variable"`.
 #' @param unit_col Character. Column name for units. Default is `"Unit"`.
 #' @param desc_col Character. Column name for variable descriptions. Default is `"Description"`.
-#' @param invert_axis Logical. If `TRUE`, flips panel layout to horizontal (default: `FALSE`).
-#' @param separate_figure Logical. If `TRUE`, generates a separate figure for each panel value (default: `FALSE`).
-#' @param var_name_by_description Logical. If `TRUE`, uses descriptions instead of variable codes in titles (default: `FALSE`).
-#' @param add_var_info Logical. If `TRUE`, appends variable codes in parentheses after the description (default: `FALSE`).
-#' @param output_path Character. Path to output folder for saving plots. If `NULL`, plots are returned only in R.
-#' @param export_picture Logical. If `TRUE`, exports plots as images (default: `TRUE`).
-#' @param export_as_pdf Logical or `"merged"`.
-#' If `TRUE`, saves separate PDFs. If `"merged"`, combines all into a single PDF. If `FALSE`, disables PDF export (default: `FALSE`).
-#' @param export_config List. Export settings.
-#' See \code{\link{create_export_config}} or \code{\link{get_export_config}}.
-#' @param plot_style_config List. Plot styling settings.
-#' See \code{\link{create_plot_style_config}} or \code{\link{get_plot_style_config}}.
 #'
-#' @return A single ggplot2 object or a named list of ggplot2 objects, depending on the configuration.
+#' **Plot Behavior**
+#' @param invert_axis Logical. If `TRUE`, flips the plot orientation (horizontal bars). Default is `FALSE`.
+#' @param separate_figure Logical. If `TRUE`, generates a separate plot for each value in `panel_var`. Default is `FALSE`.
+#'
+#' **Variable Display**
+#' @param var_name_by_description Logical. If `TRUE`, uses descriptions instead of variable codes in titles. Default is `FALSE`.
+#' @param add_var_info Logical. If `TRUE`, appends variable codes in parentheses after the description. Default is `FALSE`.
+#'
+#' **Export Settings**
+#' @param output_path Character. Directory to save plots. If `NULL`, plots are returned but not saved.
+#' @param export_picture Logical. If `TRUE`, exports plots as PNG images. Default is `TRUE`.
+#' @param export_as_pdf Logical or `"merged"`.
+#' - `FALSE` (default): disables PDF export.
+#' - `TRUE`: exports each plot as a separate PDF file.
+#' - `"merged"`: combines all plots into a single PDF file.
+#' @param export_config List. Export options including dimensions, DPI, and background.
+#' See \code{\link{create_export_config}} or \code{\link{get_all_config}}.
+#'
+#' **Styling**
+#' @param plot_style_config List. Custom plot appearance settings.
+#' See \code{\link{create_plot_style}} or \code{\link{get_all_config}}.
+#'
+#' @return A ggplot object or a named list of ggplot objects depending on the `separate_figure` setting.
+#' If `export_picture` or `export_as_pdf` is enabled, the plots are also saved to `output_path`.
 #'
 #' @author Pattawee Puangchit
 #' @seealso \code{\link{get_all_config}}, \code{\link{detail_plot}}, \code{\link{stack_plot}},
 #' \code{\link{create_title_format}}
+#'
+#' @details Please refer to the full plot
 #' @export
 #'
 #' @examples
-#' \donttest{
-#' # Load Data:
+#' # Load data
 #' input_path <- system.file("extdata/in", package = "GTAPViz")
 #' sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
+#' reg_data <- sl4.plot.data[["REG"]]
 #'
-#' # Basic usage with data frame
-#' p1 <- comparison_plot(
-#'   data = sl4.plot.data[["REG"]],
-#'   x_axis_from = "Region",
-#'   panel_var = "Experiment",
-#'   filter_var = c("qgdp", "EV"),
-#'   output_path = NULL,
-#'   export_picture = FALSE,
-#'   export_as_pdf = FALSE,
-#' )
+#' # Generate plot
+#' plotA <- comparison_plot(
+#'   data         = reg_data,
+#'   filter_var   = list(Region = "Oceania", Variable = "qgdp"),
+#'   x_axis_from  = "Region",
+#'   split_by     = "Variable",
+#'   panel_var    = "Experiment",
+#'   variable_col = "Variable",
+#'   unit_col     = "Unit",
+#'   desc_col     = "Description",
 #'
-#' # Split by commodity with custom styling and export options
-#' p2 <- comparison_plot(
-#'   data = sl4.plot.data[["REG"]],
-#'   x_axis_from = "Region",
-#'   split_by = "Variable",
-#'   panel_var = "Experiment",
-#'   filter_var = c("qgdp", "EV"),
-#'   var_name_by_description = TRUE,
-#'   output_path = NULL,
+#'   invert_axis     = FALSE,
+#'   separate_figure = FALSE,
+#'
+#'   var_name_by_description = FALSE,
+#'   add_var_info            = FALSE,
+#'
+#'   output_path    = NULL,
 #'   export_picture = FALSE,
-#'   export_as_pdf = FALSE,
-#'   export_config = list(
-#'     width = 12,
-#'     height = 8
-#'   ),
-#'   plot_style_config = list(
-#'     color_tone = "gtap",
+#'   export_as_pdf  = FALSE,
+#'   export_config  = create_export_config(width = 20, height = 12),
+#'
+#'   plot_style_config = create_plot_style(
+#'     color_tone        = "purdue",
+#'     add_unit_to_title = TRUE,
 #'     title_format = create_title_format(
-#'     type = "prefix",
-#'     text = "Impact on",
-#'     sep = "")
+#'       type = "prefix",
+#'       text = "Impact on"
+#'     ),
+#'     panel_rows = 2
 #'   )
 #' )
-#' }
-comparison_plot <- function(data, filter_var = NULL,
+comparison_plot <- function(data,
+                            filter_var = NULL,
                             x_axis_from,
-                            split_by = NULL,
+                            split_by = "Variable",
                             panel_var = "Experiment",
                             variable_col = "Variable",
                             unit_col = "Unit",
@@ -169,95 +179,114 @@ comparison_plot <- function(data, filter_var = NULL,
 }
 
 #' @title Create Comprehensive Bar Charts from HAR and SL4 Data
-#'
+#' @md
 #' @description
 #' Generates detailed bar charts to visualize the distribution of impacts across multiple dimensions.
-#' The function supports top impact filtering, color coding, and flexible visualization settings.
+#' Supports top impact filtering, color coding, and fully customizable styling and export options.
 #'
-#' @param data A data frame or a list of data frames containing GTAP results.
-#' @param filter_var Vector or data frame. If a vector, filters the values in `x_axis_from`.
-#' If a data frame, filters `value_col` based on matching `variable_col` values.
-#' @param x_axis_from Character. Column name for x-axis categories (e.g., "REG", "Sector").
-#' @param split_by Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
-#' NULL creates a single aggregated plot, appropriate for macro-level analysis.
-#' @param panel_var Character. Column for panel facets (default: "Experiment").
-#' @param variable_col Character. Column containing variable identifiers (default: "Variable").
-#' @param unit_col Character. Column containing unit information (default: "Unit").
-#' @param desc_col Character. Column containing variable descriptions (default: "Description").
-#' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
-#' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
-#' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.
-#' @param invert_axis Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
-#' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
-#' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
-#' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
-#' @param export_as_pdf Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).
-#' @param export_config List. Export settings, including:
-#' \itemize{
-#'   \item `width`: Output file width (in inches).
-#'   \item `height`: Output file height (in inches).
-#'   \item Additional settings—see `?get_export_config`.
-#' }
-#' @param plot_style_config List. Custom plot styles—see `?get_plot_style_config`.
+#' **Input Data**
+#' @param data A data frame or list of data frames containing GTAP results.
+#' @param filter_var NULL, a vector, a data frame, or a named list specifying filtering conditions.
+#' For example: \code{list(Variable = c("EV", "qgdp"), REG = c("USA", "THA"))}.
+#' @param x_axis_from Character. Column name used for the x-axis.
+#' @param split_by Character or vector.
+#' - Column(s) used to split plots by (e.g., `"REG"` or `c("COMM", "REG")`).
+#' - If `NULL`, a single aggregated plot is generated.
+#' @param panel_var Character. Column for panel facets. Default is `"Experiment"`.
+#' @param variable_col Character. Column name for variable codes. Default is `"Variable"`.
+#' @param unit_col Character. Column name for units. Default is `"Unit"`.
+#' @param desc_col Character. Column name for variable descriptions. Default is `"Description"`.
 #'
-#' @return A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
+#' **Plot Behavior**
+#' @param invert_axis Logical. If `TRUE`, flips the plot orientation (horizontal bars). Default is `FALSE`.
+#' @param separate_figure Logical. If `TRUE`, generates a separate plot for each value in `panel_var`. Default is `FALSE`.
+#' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; `NULL` shows all.
+#'
+#' **Variable Display**
+#' @param var_name_by_description Logical. If `TRUE`, uses descriptions instead of variable codes in titles. Default is `FALSE`.
+#' @param add_var_info Logical. If `TRUE`, appends variable codes in parentheses after the description. Default is `FALSE`.
+#'
+#' **Export Settings**
+#' @param output_path Character. Directory to save plots. If `NULL`, plots are returned but not saved.
+#' @param export_picture Logical. If `TRUE`, exports plots as PNG images. Default is `TRUE`.
+#' @param export_as_pdf Logical or `"merged"`.
+#' - `FALSE` (default): disables PDF export.
+#' - `TRUE`: exports each plot as a separate PDF file.
+#' - `"merged"`: combines all plots into a single PDF file.
+#' @param export_config List. Export options including dimensions, DPI, and background.
+#' See \code{\link{create_export_config}} or \code{\link{get_all_config}}.
+#'
+#' **Styling**
+#' @param plot_style_config List. Custom plot appearance settings.
+#' See \code{\link{create_plot_style}} or \code{\link{get_all_config}}.
+#'
+#' @return A ggplot object or a named list of ggplot objects depending on the `separate_figure` setting.
+#' If `export_picture` or `export_as_pdf` is enabled, the plots are also saved to `output_path`.
 #'
 #' @author Pattawee Puangchit
-#' @seealso \code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{stack_plot}}
+#' @seealso \code{\link{comparison_plot}}, \code{\link{stack_plot}}
 #' @export
 #'
 #' @examples
-#'
-#' \donttest{
 #' # Load Data:
 #' input_path <- system.file("extdata/in", package = "GTAPViz")
 #' sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 #'
-#' # Basic usage with data frame
-#' plotA <- detail_plot(sl4.plot.data[["2D"]],
-#'             x_axis_from = "Sector",
-#'             split_by = "Region",
-#'             filter_var = "qo",
+#' # Prepare Dataframe
+#' sector_data <- sl4.plot.data[["COMM*REG"]]
 #'
-#'             top_impact = NULL,
-#'             var_name_by_description = TRUE,
+#' # Plot
+#' plotB <- detail_plot(
+#'   # === Input Data ===
+#'   data        = sector_data,
+#'   filter_var  = list(Region = "Oceania"),
+#'   x_axis_from = "Commodity",
+#'   split_by    = "Region",
+#'   panel_var   = "Experiment",
+#'   variable_col = "Variable",
+#'   unit_col     = "Unit",
+#'   desc_col     = "Description",
 #'
-#'             invert_axis = TRUE,
-#'             separate_figure = FALSE,
+#'   # === Plot Behavior ===
+#'   invert_axis      = TRUE,
+#'   separate_figure  = FALSE,
+#'   top_impact       = NULL,
 #'
-#'             export_config = list(
-#'               width = 45,
-#'               height = 20
-#'             ),
+#'   # === Variable Display ===
+#'   var_name_by_description = TRUE,
+#'   add_var_info            = FALSE,
 #'
-#'             export_picture = FALSE,
-#'             export_as_pdf = FALSE,
-#'             output_path = NULL,
+#'   # === Export Settings ===
+#'   output_path     = NULL,
+#'   export_picture  = FALSE,
+#'   export_as_pdf   = FALSE,
+#'   export_config   = create_export_config(width = 45, height = 20),
 #'
-#'             plot_style_config = list(
-#'               positive_color = "#2E8B57",
-#'               negative_color = "#CD5C5C",
-#'               panel_rows = 1,
-#'               panel_cols = NULL,
-#'               show_axis_titles_on_all_facets = FALSE,
-#'               y_axis_text_size = 25,
-#'               bar_width = 0.6,
-#'               all_font_size = 1.1
-#'             ))
-#' }
-#'
-detail_plot <- function(data, filter_var = NULL,
+#'   # === Styling ===
+#'   plot_style_config = create_plot_style(
+#'     positive_color = "#2E8B57",
+#'     negative_color = "#CD5C5C",
+#'     panel_rows = 1,
+#'     panel_cols = NULL,
+#'     show_axis_titles_on_all_facets = FALSE,
+#'     y_axis_text_size = 25,
+#'     bar_width = 0.6,
+#'     all_font_size = 1.1
+#'   )
+#' )
+detail_plot <- function(data,
+                        filter_var = NULL,
                         x_axis_from,
-                        split_by = NULL,
+                        split_by = "Variable",
                         panel_var = "Experiment",
                         variable_col = "Variable",
                         unit_col = "Unit",
                         desc_col = "Description",
+                        invert_axis = TRUE,
+                        separate_figure = FALSE,
+                        top_impact = NULL,
                         var_name_by_description = FALSE,
                         add_var_info = FALSE,
-                        top_impact = NULL,
-                        invert_axis = FALSE,
-                        separate_figure = FALSE,
                         output_path = NULL,
                         export_picture = TRUE,
                         export_as_pdf = FALSE,
@@ -345,79 +374,107 @@ detail_plot <- function(data, filter_var = NULL,
 
 #' @title Create Stacked Bar Charts for Decomposition Analysis
 #'
+#' @md
 #' @description
 #' Generates stacked bar charts to visualize value compositions across multiple dimensions.
-#' The function supports stacked and unstacked presentations for decomposition analysis.
+#' Supports both stacked and unstacked layouts for decomposition analysis, with full control over grouping,
+#' faceting, top-impact filtering, and export styling.
 #'
-#' @param data A data frame or a list of data frames containing GTAP results.
-#' @param filter_var Vector or data frame. If a vector, filters the values in `x_axis_from`.
-#' If a data frame, filters `value_col` based on matching `variable_col` values.
-#' @param x_axis_from Character. Column name for x-axis categories (e.g., "REG", "Sector").
-#' @param stack_value_from Character. Column containing stack component categories (e.g., "COMM" for commodities).
-#' @param split_by Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
-#' NULL creates a single aggregated plot, appropriate for macro-level analysis.
-#' @param panel_var Character. Column for panel facets (default: "Experiment").
-#' @param variable_col Character. Column containing variable identifiers (default: "Variable").
-#' @param unit_col Character. Column containing unit information (default: "Unit").
-#' @param desc_col Character. Column containing variable descriptions (default: "Description").
-#' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
-#' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
-#' @param show_total Logical. If TRUE, displays total values above stacked bars (default: TRUE).
-#' @param unstack_plot Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).
-#' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.
-#' @param invert_axis Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
-#' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
-#' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
-#' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
-#' @param export_as_pdf Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).
-#' @param export_config List. Export settings, including:
-#' \itemize{
-#'   \item `width`: Output file width (in inches).
-#'   \item `height`: Output file height (in inches).
-#'   \item Additional settings—see `?get_export_config`.
-#' }
-#' @param plot_style_config List. Custom plot styles—see `?get_plot_style_config`.
+#' **Input Data**
+#' @param data A data frame or list of data frames containing GTAP results.
+#' @param filter_var NULL, a vector, a data frame, or a named list specifying filtering conditions.
+#' For example: \code{list(Variable = c("EV", "qgdp"), REG = c("USA", "THA"))}.
+#' @param x_axis_from Character. Column name used for the x-axis.
+#' @param stack_value_from Character. Column containing stack component categories (e.g., `"COMM"` for commodities).
+#' @param split_by Character or vector.
+#' - Column(s) used to split plots by (e.g., `"REG"` or `c("COMM", "REG")`).
+#' - If `NULL`, a single aggregated plot is generated.
+#' @param panel_var Character. Column for panel facets. Default is `"Experiment"`.
+#' @param variable_col Character. Column name for variable codes. Default is `"Variable"`.
+#' @param unit_col Character. Column name for units. Default is `"Unit"`.
+#' @param desc_col Character. Column name for variable descriptions. Default is `"Description"`.
 #'
-#' @return A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
+#' **Plot Behavior**
+#' @param invert_axis Logical. If `TRUE`, flips the plot orientation (horizontal bars). Default is `FALSE`.
+#' @param separate_figure Logical. If `TRUE`, generates a separate plot for each value in `panel_var`. Default is `FALSE`.
+#' @param show_total Logical. If `TRUE`, displays total values above stacked bars. Default is `TRUE`.
+#' @param unstack_plot Logical. If `TRUE`, creates separate bar plots for each `x_axis_from` value instead of stacking. Default is `FALSE`.
+#' @param top_impact Numeric or `NULL`. If specified, shows only the top N impactful values; `NULL` shows all.
+#'
+#' **Variable Display**
+#' @param var_name_by_description Logical. If `TRUE`, uses descriptions instead of variable codes in titles. Default is `FALSE`.
+#' @param add_var_info Logical. If `TRUE`, appends variable codes in parentheses after the description. Default is `FALSE`.
+#'
+#' **Export Settings**
+#' @param output_path Character. Directory to save plots. If `NULL`, plots are returned but not saved.
+#' @param export_picture Logical. If `TRUE`, exports plots as PNG images. Default is `TRUE`.
+#' @param export_as_pdf Logical or `"merged"`.
+#' - `FALSE` (default): disables PDF export.
+#' - `TRUE`: exports each plot as a separate PDF file.
+#' - `"merged"`: combines all plots into a single PDF file.
+#' @param export_config List. Export options including dimensions, DPI, and background.
+#' See \code{\link{create_export_config}} or \code{\link{get_all_config}}.
+#'
+#' **Styling**
+#' @param plot_style_config List. Custom plot appearance settings.
+#' See \code{\link{create_plot_style}} or \code{\link{get_all_config}}.
+#'
+#' @return A ggplot object or a named list of ggplot objects depending on the `separate_figure` setting.
+#' If `export_picture` or `export_as_pdf` is enabled, the plots are also saved to `output_path`.
 #'
 #' @author Pattawee Puangchit
-#' @seealso \code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{detail_plot}}
+#' @seealso \code{\link{comparison_plot}}, \code{\link{detail_plot}}
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' # Load Data:
 #' input_path <- system.file("extdata/in", package = "GTAPViz")
 #' har.plot.data <- readRDS(file.path(input_path, "har.plot.data.rds"))
 #'
-#' plotC <- stack_plot(data = har.plot.data[["A"]],
-#'            x_axis_from = "Region",
-#'            stack_value_from = "COLUMN",
-#'            split_by = FALSE,
+#' # Prepare Dataframe
+#' welfare.decomp <- har.plot.data[["A"]]
 #'
-#'            show_total = TRUE,
-#'            unstack_plot = FALSE,
+#' # Plot
+#' plotC <- stack_plot(
+#'   # === Input Data ===
+#'   data              = welfare.decomp,
+#'   filter_var        = list(Region = "Oceania"),
+#'   x_axis_from       = "Region",
+#'   stack_value_from  = "COLUMN",
+#'   split_by          = FALSE,
+#'   panel_var         = "Experiment",
+#'   variable_col      = "Variable",
+#'   unit_col          = "Unit",
+#'   desc_col          = "Description",
 #'
-#'            var_name_by_description = TRUE,
+#'   # === Plot Behavior ===
+#'   invert_axis     = FALSE,
+#'   separate_figure = FALSE,
+#'   show_total      = TRUE,
+#'   unstack_plot    = FALSE,
+#'   top_impact      = NULL,
 #'
-#'            invert_axis = FALSE,
-#'            separate_figure = FALSE,
+#'   # === Variable Display ===
+#'   var_name_by_description = TRUE,
+#'   add_var_info            = FALSE,
 #'
-#'            export_picture = FALSE,
-#'            export_as_pdf = FALSE,
-#'            export_config = list(
-#'              width = 28,
-#'              height = 15
-#'            ),
-#'            output_path = NULL,
+#'   # === Export Settings ===
+#'   output_path     = NULL,
+#'   export_picture  = FALSE,
+#'   export_as_pdf   = FALSE,
+#'   export_config   = create_export_config(width = 28, height = 15),
 #'
-#'            plot_style_config = list(
-#'              color_tone = "gtap",
-#'              panel_rows = 2,
-#'              show_legend = TRUE,
-#'            ))
-#' }
-stack_plot <- function(data, filter_var = NULL,
+#'   # === Styling ===
+#'   plot_style_config = create_plot_style(
+#'     color_tone                   = "gtap",
+#'     panel_rows                   = 2,
+#'     panel_cols                   = NULL,
+#'     show_legend                  = TRUE,
+#'     show_axis_titles_on_all_facets = FALSE
+#'   )
+#' )
+stack_plot <- function(data,
+                       filter_var = NULL,
                        x_axis_from,
                        stack_value_from,
                        split_by = NULL,
@@ -425,13 +482,13 @@ stack_plot <- function(data, filter_var = NULL,
                        variable_col = "Variable",
                        unit_col = "Unit",
                        desc_col = "Description",
-                       var_name_by_description = FALSE,
-                       add_var_info = FALSE,
+                       invert_axis = FALSE,
+                       separate_figure = FALSE,
                        show_total = TRUE,
                        unstack_plot = FALSE,
                        top_impact = NULL,
-                       invert_axis = FALSE,
-                       separate_figure = FALSE,
+                       var_name_by_description = FALSE,
+                       add_var_info = FALSE,
                        output_path = NULL,
                        export_picture = TRUE,
                        export_as_pdf = FALSE,
@@ -547,27 +604,12 @@ stack_plot <- function(data, filter_var = NULL,
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' # Input Path:
 #' input_path <- system.file("extdata/in", package = "GTAPViz")
 #' sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 #'
 #' # Retrive configurations
 #' get_all_config()
-#'
-#' # Basic usage with data frame
-#' p1 <- comparison_plot(
-#'   data = sl4.plot.data[["REG"]],
-#'   x_axis_from = "Region",
-#'   panel_var = "Experiment",
-#'   filter_var = c("qgdp", "EV"),
-#'   output_path = NULL,
-#'   export_picture = FALSE,
-#'   export_as_pdf = FALSE,
-#'   export_config = my_export_config,
-#'   plot_style_config = my_style_config
-#' )
-#'}
 #'
 get_all_config <- function(plot_style = "default", plot_config = TRUE,
                            export_config = TRUE) {
@@ -579,7 +621,7 @@ get_all_config <- function(plot_style = "default", plot_config = TRUE,
 
   if (isTRUE(plot_config)) {
     # Print the plot style configuration
-    .get_plot_style_config(plot_type = plot_style, validate_custom = config)
+    .get_plot_style_config(plot_type = plot_style)
 
     # Add some separation between the two sections
     cat("\n\n")
@@ -788,7 +830,7 @@ get_color_palette <- function(color_tone = NULL,
 #'   title_format = create_title_format(
 #'     type = "prefix",
 #'     text = "Impact on",
-#'     sep = " "
+#'     sep = "-"
 #'   ),
 #'   bar_width = 0.5,
 #'   x_axis_text_angle = 45
@@ -969,6 +1011,7 @@ create_export_config <- function(
 #' - `"dynamic"`: Builds a title using column values
 #'
 #' @param text Character. Text content used for `prefix`, `suffix`, `full`, or a template for `dynamic`.
+#' @param sep Character. The separator between components (only used in `"prefix"` or `"suffix"` mode). Default is `": "`.
 #'
 #' @return A list with title format configuration parameters.
 #' @author Pattawee Puangchit
@@ -994,7 +1037,7 @@ create_export_config <- function(
 create_title_format <- function(
     type = "standard",
     text = "",
-    sep = ""
+    sep = NULL
 ) {
   # Validate type parameter
   valid_types <- c("standard", "prefix", "suffix", "full", "dynamic")

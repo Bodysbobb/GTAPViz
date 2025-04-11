@@ -21,17 +21,19 @@ Replaces specific values in a column based on a provided mapping file.
 Supports renaming across nested data structures and preserves factor levels.
 }
 \examples{
-# Load Sample Data:
-sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
-                                package = "GTAPViz"))
-# Get Data by Variable Name
-sl4_data1 <- HARplus::get_data_by_var(c("qgdp", "EV"),sl4_data1)
+# Load Data:
+input_path <- system.file("extdata/in", package = "GTAPViz")
+har.plot.data <- readRDS(file.path(input_path, "har.plot.data.rds"))
 
 # Rename variables in a dataset
-rename_map <- data.frame(OldName = c("qgdp", "EV"),
-                        NewName = c("Real GDP", "Welfare"))
-gtap_data <- rename_value(sl4_data1, column_name = "Variable",
-                          mapping.file = rename_map)
+mapping_welfare <- data.frame(
+  ColumnName = "COLUMN",
+  OldName = c("alloc_A1", "ENDWB1", "tech_C1", "pop_D1", "pref_G1", "tot_E1", "IS_F1"),
+  NewName = c("Alloc Eff.", "Endwb", "Tech Chg.", "Pop", "Perf", "ToT", "I-S"),
+  stringsAsFactors = FALSE
+)
+
+har.plot.data <- rename_value(har.plot.data, mapping.file = mapping_welfare)
 
 }
 \seealso{

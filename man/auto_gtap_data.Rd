@@ -126,13 +126,13 @@ See \code{\link[HARplus]{group_data_by_dims}} for more details.
 }
 }
 \examples{
-
 # Input Path:
 input_path <- system.file("extdata/in", package = "GTAPViz")
 
 # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
 # Note: No need to add .sl4 to the experiment name
 gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
+                            har_suffix = "-WEL",
                             input_path = input_path, subtotal_level = FALSE,
                             process_sl4_vars = NULL, process_har_vars = NULL,
                             mapping_info = "GTAPv7", plot_data = TRUE)
