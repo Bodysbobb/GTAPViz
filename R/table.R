@@ -40,7 +40,7 @@
 #' This function requires a data list and can generate multiple output tables in a single setup.
 #' That is, all data frames within the list can be processed simultaneously.
 #' See the example for how to generate two data frames at once from the data list `sl4.plot.data`,
-#' which is obtained via `auto_gtap_ddta(plot_data = TRUE)`.
+#' which is obtained via `auto_gtap_data(plot_data = TRUE)`.
 #'
 #' @return If `export_table = TRUE`, tables are saved as Excel files.
 #'
@@ -49,12 +49,6 @@
 #'
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_value}},
 #' \code{\link{pivot_table_with_filter}}
-#'
-#' @examples
-#' \donttest{
-#' # Load Data:
-#' input_path <- system.file("extdata/in", package = "GTAPViz")
-#' sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 #'
 #' @examples
 #' \donttest{
@@ -92,8 +86,7 @@
 #'   output_path = NULL,
 #'   separate_file = FALSE,
 #'   workbook_name = "Comparison Table Default"
-#' )
-#' }
+#'   )
 #' }
 report_table <- function(data_list,
                          pivot_col,
@@ -261,23 +254,33 @@ report_table <- function(data_list,
     ssc<-separate_sheet_by
 
     if (!is.null(ssc) && ssc %in% names(df)) {
-      uv<-unique(df[[ssc]])
-      partres<-list()
+      # Get unique values and filter out NA values
+      uv <- unique(df[[ssc]])
+      uv <- uv[!is.na(uv)]  # Remove NA values
+
+      partres <- list()
       for (xx in uv) {
-        subdf<-df[df[[ssc]]==xx, ]
-        newdf<- .process_detail_data(
-          subdf,piv,gc,rename_mapping,
-          total_column, decimal
-        )
-        partres[[paste(hd,xx,sep="_")]]<-newdf
+        subdf <- df[df[[ssc]]==xx, ]
+        # Only process if there are valid rows in the subset
+        if (nrow(subdf) > 0) {
+          newdf <- .process_detail_data(
+            subdf, piv, gc, rename_mapping,
+            total_column, decimal
+          )
+          # Only add to results if we got valid results
+          if (!is.null(newdf) && nrow(newdf) > 0) {
+            partres[[paste(hd, xx, sep="_")]] <- newdf
+          }
+        }
       }
-      out_list<-c(out_list, partres)
+
+      out_list <- c(out_list, partres)
     } else {
-      newdf<- .process_detail_data(
-        df,piv,gc,rename_mapping,
+      newdf <- .process_detail_data(
+        df, piv, gc, rename_mapping,
         total_column, decimal
       )
-      out_list[[hd]]<-newdf
+      out_list[[hd]] <- newdf
     }
   }
 

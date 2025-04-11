@@ -111,12 +111,9 @@ standardized metadata.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load Data:</span></span></span>
 <span class="r-in"><span><span class="va">input_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/in"</span>, package <span class="op">=</span> <span class="st">"GTAPViz"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sl4.plot.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">input_path</span>, <span class="st">"sl4.plot.data.rds"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open compressed file 'C:/Users/b_pat/AppData/Local/R/win-library/4.4/GTAPViz/extdata/in/sl4.plot.data.rds', probable reason 'No such file or directory'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gzfile(file, "rb"):</span> cannot open the connection</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add mapping using GTAPv7 defaults</span></span></span>
 <span class="r-in"><span><span class="va">gtap_data</span> <span class="op">&lt;-</span> <span class="fu">add_mapping_info</span><span class="op">(</span><span class="va">sl4.plot.data</span>, mapping <span class="op">=</span> <span class="st">"GTAPv7"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'sl4.plot.data' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use an external mapping file</span></span></span>
 <span class="r-in"><span><span class="va">my_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qgdp"</span>, <span class="st">"EV"</span><span class="op">)</span>,</span></span>
@@ -125,7 +122,6 @@ standardized metadata.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">gtap_data</span> <span class="op">&lt;-</span> <span class="fu">add_mapping_info</span><span class="op">(</span><span class="va">sl4.plot.data</span>, external_map <span class="op">=</span> <span class="va">my_mapping</span>,</span></span>
 <span class="r-in"><span>                              mapping <span class="op">=</span> <span class="st">"Mix"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'sl4.plot.data' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

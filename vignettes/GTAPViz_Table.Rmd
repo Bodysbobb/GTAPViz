@@ -78,8 +78,8 @@ report_table(
   add_group_line = FALSE,
   
   separate_sheet_by = "Unit",
-  export_table = TRUE,
-  output_path = output.folder,
+  export_table = FALSE,
+  output_path = NULL,
   separate_file = FALSE,
   workbook_name = "Comparison Table"
 )
@@ -104,12 +104,10 @@ report_table(
   pivot_col = list(A = "COLUMN", 
                    E1 = "PRICES"),
   group_by = list(
-    A = list("Experiment", "REG"), 
-    E1 = list("Experiment", "REG", "COMM")
+    A = list("Experiment", "Region"), 
+    E1 = list("Experiment", "Commodity", "PRICES")
   ),
-  rename_cols = list("REG" = "Region", 
-                     "COMM" = "Commodities",
-                     "Experiment" = "Scenario"),
+  rename_cols = list("Experiment" = "Scenario"),
   
   total_column = TRUE,
   decimal = 6,
@@ -121,9 +119,9 @@ report_table(
   add_var_info = FALSE,
   add_group_line = FALSE,
 
-  separate_sheet_by = "REG",
-  export_table = TRUE,
-  output_path = output.folder,
+  separate_sheet_by = "Region",
+  export_table = FALSE,
+  output_path = NULL,
   separate_file = FALSE,
   workbook_name = "Decomposition Table"
 )
@@ -155,8 +153,8 @@ pivot_table_with_filter(
   data_fields = "Value",             # Values to be aggregated
   raw_sheet_name = "Raw_Data",       # Sheet name for raw data
   pivot_sheet_name = "Sector_Pivot", # Sheet name for pivot table
-  export = TRUE,
-  output_path = output.folder,
+  export_table = FALSE,
+  output_path = NULL,
   workbook_name = "Sectoral_Impact_Analysis.xlsx"
 )
 ```

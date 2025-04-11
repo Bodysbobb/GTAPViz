@@ -199,12 +199,9 @@ If <code>export_picture</code> or <code>export_as_pdf</code> is enabled, the plo
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load Data:</span></span></span>
 <span class="r-in"><span><span class="va">input_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/in"</span>, package <span class="op">=</span> <span class="st">"GTAPViz"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">har.plot.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">input_path</span>, <span class="st">"har.plot.data.rds"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open compressed file 'C:/Users/b_pat/AppData/Local/R/win-library/4.4/GTAPViz/extdata/in/har.plot.data.rds', probable reason 'No such file or directory'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gzfile(file, "rb"):</span> cannot open the connection</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Prepare Dataframe</span></span></span>
 <span class="r-in"><span><span class="va">welfare.decomp</span> <span class="op">&lt;-</span> <span class="va">har.plot.data</span><span class="op">[[</span><span class="st">"A"</span><span class="op">]</span><span class="op">]</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'har.plot.data' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot</span></span></span>
 <span class="r-in"><span><span class="va">plotC</span> <span class="op">&lt;-</span> <span class="fu">stack_plot</span><span class="op">(</span></span></span>
@@ -245,7 +242,10 @@ If <code>export_picture</code> or <code>export_as_pdf</code> is enabled, the plo
 <span class="r-in"><span>    show_axis_titles_on_all_facets <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stack_plot(data = welfare.decomp, filter_var = list(Region = "Oceania"),     x_axis_from = "Region", stack_value_from = "COLUMN", split_by = FALSE,     panel_var = "Experiment", variable_col = "Variable", unit_col = "Unit",     desc_col = "Description", invert_axis = FALSE, separate_figure = FALSE,     show_total = TRUE, unstack_plot = FALSE, top_impact = NULL,     var_name_by_description = TRUE, add_var_info = FALSE, output_path = NULL,     export_picture = FALSE, export_as_pdf = FALSE, export_config = create_export_config(width = 28,         height = 15), plot_style_config = create_plot_style(color_tone = "gtap",         panel_rows = 2, panel_cols = NULL, show_legend = TRUE,         show_axis_titles_on_all_facets = FALSE)):</span> unused argument (invert_axis = FALSE)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; Starting plot export process: 1 plot(s) with dimensions (widthxheight): 28.0 x 15.0 inches</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; DPI: 300</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; Completed plot export: 1 plot(s) exported with dimensions (widthxheight): 28.0 x 15.0 inches</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; DPI: 300</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

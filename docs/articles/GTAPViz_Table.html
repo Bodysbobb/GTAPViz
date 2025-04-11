@@ -115,8 +115,8 @@ within <code>sl4.plot.data</code></strong> in one code block.</p></li>
 <span>  add_group_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  </span>
 <span>  separate_sheet_by <span class="op">=</span> <span class="st">"Unit"</span>,</span>
-<span>  export_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>  export_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  separate_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  workbook_name <span class="op">=</span> <span class="st">"Comparison Table"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -141,12 +141,10 @@ below:</p>
 <span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">"COLUMN"</span>, </span>
 <span>                   E1 <span class="op">=</span> <span class="st">"PRICES"</span><span class="op">)</span>,</span>
 <span>  group_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"REG"</span><span class="op">)</span>, </span>
-<span>    E1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"REG"</span>, <span class="st">"COMM"</span><span class="op">)</span></span>
+<span>    A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Region"</span><span class="op">)</span>, </span>
+<span>    E1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Commodity"</span>, <span class="st">"PRICES"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  rename_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"REG"</span> <span class="op">=</span> <span class="st">"Region"</span>, </span>
-<span>                     <span class="st">"COMM"</span> <span class="op">=</span> <span class="st">"Commodities"</span>,</span>
-<span>                     <span class="st">"Experiment"</span> <span class="op">=</span> <span class="st">"Scenario"</span><span class="op">)</span>,</span>
+<span>  rename_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span> <span class="op">=</span> <span class="st">"Scenario"</span><span class="op">)</span>,</span>
 <span>  </span>
 <span>  total_column <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  decimal <span class="op">=</span> <span class="fl">6</span>,</span>
@@ -158,9 +156,9 @@ below:</p>
 <span>  add_var_info <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  add_group_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span></span>
-<span>  separate_sheet_by <span class="op">=</span> <span class="st">"REG"</span>,</span>
-<span>  export_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>  separate_sheet_by <span class="op">=</span> <span class="st">"Region"</span>,</span>
+<span>  export_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  separate_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  workbook_name <span class="op">=</span> <span class="st">"Decomposition Table"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -194,8 +192,8 @@ intuitive exploration and ease of use.</p></li>
 <span>  data_fields <span class="op">=</span> <span class="st">"Value"</span>,             <span class="co"># Values to be aggregated</span></span>
 <span>  raw_sheet_name <span class="op">=</span> <span class="st">"Raw_Data"</span>,       <span class="co"># Sheet name for raw data</span></span>
 <span>  pivot_sheet_name <span class="op">=</span> <span class="st">"Sector_Pivot"</span>, <span class="co"># Sheet name for pivot table</span></span>
-<span>  export <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  output_path <span class="op">=</span> <span class="va">output.folder</span>,</span>
+<span>  export_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  workbook_name <span class="op">=</span> <span class="st">"Sectoral_Impact_Analysis.xlsx"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>

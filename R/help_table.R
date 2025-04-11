@@ -35,67 +35,96 @@
 
   keep_ <- c(group_cols, wide_col, "Value")
   df <- df[, intersect(names(df), keep_), drop=FALSE]
-  df$Value<-as.numeric(df$Value)
+  df$Value <- as.numeric(df$Value)
   id_cols <- setdiff(keep_, c(wide_col,"Value"))
-  if (nrow(df)>0) {
+
+  # Skip rows where wide_col is NA
+  if (any(is.na(df[[wide_col]]))) {
+    nas <- sum(is.na(df[[wide_col]]))
+    warning(sprintf("Removed %d rows with NA in pivot column '%s'", nas, wide_col))
+    df <- df[!is.na(df[[wide_col]]), ]
+  }
+
+  # Check for duplicates in the combination of id columns and wide column
+  if (nrow(df) > 0) {
     check_ <- df[, c(id_cols, wide_col), drop=FALSE]
-    dup_ <- duplicated(check_)|duplicated(check_,fromLast=TRUE)
+    dup_ <- duplicated(check_) | duplicated(check_, fromLast=TRUE)
+
     if (any(dup_)) {
-      ex_ <- df[dup_,]
-      msg<-sprintf("Found %d duplicates in pivot_wider:\n", sum(dup_))
-      for (z in seq_len(min(3,nrow(ex_)))) {
-        line<-paste(names(ex_), ex_[z,], sep=":", collapse=",")
-        msg<-paste(msg," -",line,"\n")
-      }
-      stop(msg)
+      # Get duplicate rows to examine the specific issue
+      dup_rows <- df[dup_, ]
+      id_values <- paste(names(dup_rows), dup_rows[1,], sep=":", collapse=", ")
+
+      # Count duplicates by group
+      dup_keys <- do.call(paste, c(dup_rows[, c(id_cols, wide_col), drop=FALSE], sep="--"))
+      dup_counts <- table(dup_keys)
+      most_common <- names(sort(dup_counts, decreasing=TRUE))[1]
+
+      # Build error message with useful diagnostic information
+      err_msg <- sprintf(
+        "Found %d duplicates in pivot_wider operation.\n", sum(dup_)/2)
+
+      # Add example of a problematic row
+      err_msg <- paste0(err_msg, "Example duplicate: ", id_values, "\n")
+
+      # Add most common duplicate group
+      err_msg <- paste0(err_msg, "Most common duplicate key: ", most_common,
+                        " (appears ", dup_counts[most_common], " times)\n")
+
+      # Suggest checking the data or using an aggregation function
+      err_msg <- paste0(err_msg,
+                        "Suggestion: Check your data for unexpected duplicates in the specified columns.",
+                        " To proceed anyway, duplicate values could be aggregated (e.g., by taking the mean).")
+
+      stop(err_msg)
     }
   }
 
-  wdata<-tidyr::pivot_wider(df, id_cols=id_cols,names_from=wide_col,values_from="Value")
+  wdata <- tidyr::pivot_wider(df, id_cols=id_cols, names_from=wide_col, values_from="Value")
 
   if (total_column) {
-    idx <- which(sapply(wdata,is.numeric))
-    if (length(idx)>0) wdata$Total<-rowSums(wdata[, idx, drop=FALSE], na.rm=TRUE)
+    idx <- which(sapply(wdata, is.numeric))
+    if (length(idx) > 0) wdata$Total <- rowSums(wdata[, idx, drop=FALSE], na.rm=TRUE)
   }
 
-  if (length(rename_mapping)>0) {
+  if (length(rename_mapping) > 0) {
     for (rnm in names(rename_mapping)) {
       if (rnm %in% names(wdata)) {
-        names(wdata)[names(wdata)==rnm]<-rename_mapping[[rnm]]
+        names(wdata)[names(wdata)==rnm] <- rename_mapping[[rnm]]
       }
     }
   }
 
-  numc <- which(sapply(wdata,is.numeric))
-  if (length(numc)>0) {
-    wdata[,numc]<-lapply(wdata[,numc,drop=FALSE], function(x) round(x, decimal))
+  numc <- which(sapply(wdata, is.numeric))
+  if (length(numc) > 0) {
+    wdata[, numc] <- lapply(wdata[, numc, drop=FALSE], function(x) round(x, decimal))
   }
 
-  sc<-character(0)
-  if ("Unit"%in%names(wdata)) sc<-c(sc,"Unit")
+  sc <- character(0)
+  if ("Unit" %in% names(wdata)) sc <- c(sc, "Unit")
   for (g_ in group_cols) {
-    if (g_!="Unit") {
+    if (g_ != "Unit") {
       rename_ <- if (g_ %in% names(rename_mapping)) rename_mapping[[g_]] else g_
-      sc<-c(sc, rename_)
+      sc <- c(sc, rename_)
     }
   }
-  sc <- intersect(sc,names(wdata))
-  if (length(sc)>0) {
-    wdata <- wdata[do.call(order, lapply(sc, function(z) wdata[[z]])),]
+  sc <- intersect(sc, names(wdata))
+  if (length(sc) > 0) {
+    wdata <- wdata[do.call(order, lapply(sc, function(z) wdata[[z]])), ]
   }
 
-  final_col<-character(0)
+  final_col <- character(0)
   for (g_ in group_cols) {
     rn_ <- if (g_ %in% names(rename_mapping)) rename_mapping[[g_]] else g_
-    if (rn_ %in% names(wdata) && !(rn_ %in% final_col)) final_col<-c(final_col, rn_)
+    if (rn_ %in% names(wdata) && !(rn_ %in% final_col)) final_col <- c(final_col, rn_)
   }
-  nonnum<-setdiff(names(wdata)[!sapply(wdata,is.numeric)],final_col)
-  final_col<-c(final_col,nonnum)
-  dd_ <- names(wdata)[sapply(wdata,is.numeric)]
-  if ("Total"%in%dd_) dd_<-c(setdiff(dd_,"Total"),"Total")
-  final_col<-c(final_col, dd_)
-  if (all(final_col%in%names(wdata))) {
-    wdata<-wdata[, final_col, drop=FALSE]
+  nonnum <- setdiff(names(wdata)[!sapply(wdata, is.numeric)], final_col)
+  final_col <- c(final_col, nonnum)
+  dd_ <- names(wdata)[sapply(wdata, is.numeric)]
+  if ("Total" %in% dd_) dd_ <- c(setdiff(dd_, "Total"), "Total")
+  final_col <- c(final_col, dd_)
+  if (all(final_col %in% names(wdata))) {
+    wdata <- wdata[, final_col, drop=FALSE]
   }
   wdata
 }

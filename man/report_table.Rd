@@ -86,7 +86,46 @@ and exporting to Excel.
 This function requires a data list and can generate multiple output tables in a single setup.
 That is, all data frames within the list can be processed simultaneously.
 See the example for how to generate two data frames at once from the data list \code{sl4.plot.data},
-which is obtained via \code{auto_gtap_ddta(plot_data = TRUE)}.
+which is obtained via \code{auto_gtap_data(plot_data = TRUE)}.
+}
+\examples{
+\donttest{
+# Load Data:
+input_path <- system.file("extdata/in", package = "GTAPViz")
+sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
+
+report_table(
+  data_list = sl4.plot.data,
+
+  # === Table Structure ===
+  pivot_col = list(
+    REG = "Variable",
+    "COMM*REG" = "Commodity"
+  ),
+  group_by = list(
+    REG = list("Experiment", "Region"),
+    "COMM*REG" = list("Experiment", "Variable", "Region")
+  ),
+  rename_cols = list("Experiment" = "Scenario"),
+
+  # === Table Layout & Labels ===
+  total_column = FALSE,
+  decimal = 4,
+  subtotal_level = FALSE,
+  repeat_label = FALSE,
+  include_units = TRUE,
+  var_name_by_description = TRUE,
+  add_var_info = TRUE,
+  add_group_line = FALSE,
+
+  # === Export Options ===
+  separate_sheet_by = "Unit",
+  export_table = FALSE,
+  output_path = NULL,
+  separate_file = FALSE,
+  workbook_name = "Comparison Table Default"
+  )
+}
 }
 \seealso{
 \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_value}},

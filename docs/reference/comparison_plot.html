@@ -181,10 +181,7 @@ If <code>export_picture</code> or <code>export_as_pdf</code> is enabled, the plo
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load data</span></span></span>
 <span class="r-in"><span><span class="va">input_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/in"</span>, package <span class="op">=</span> <span class="st">"GTAPViz"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sl4.plot.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">input_path</span>, <span class="st">"sl4.plot.data.rds"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open compressed file 'C:/Users/b_pat/AppData/Local/R/win-library/4.4/GTAPViz/extdata/in/sl4.plot.data.rds', probable reason 'No such file or directory'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gzfile(file, "rb"):</span> cannot open the connection</span>
 <span class="r-in"><span><span class="va">reg_data</span> <span class="op">&lt;-</span> <span class="va">sl4.plot.data</span><span class="op">[[</span><span class="st">"REG"</span><span class="op">]</span><span class="op">]</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'sl4.plot.data' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Generate plot</span></span></span>
 <span class="r-in"><span><span class="va">plotA</span> <span class="op">&lt;-</span> <span class="fu">comparison_plot</span><span class="op">(</span></span></span>
@@ -218,7 +215,10 @@ If <code>export_picture</code> or <code>export_as_pdf</code> is enabled, the plo
 <span class="r-in"><span>    panel_rows <span class="op">=</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in comparison_plot(data = reg_data, filter_var = list(Region = "Oceania",     Variable = "qgdp"), x_axis_from = "Region", split_by = "Variable",     panel_var = "Experiment", variable_col = "Variable", unit_col = "Unit",     desc_col = "Description", invert_axis = FALSE, separate_figure = FALSE,     var_name_by_description = FALSE, add_var_info = FALSE, output_path = NULL,     export_picture = FALSE, export_as_pdf = FALSE, export_config = create_export_config(width = 20,         height = 12), plot_style_config = create_plot_style(color_tone = "purdue",         add_unit_to_title = TRUE, title_format = create_title_format(type = "prefix",             text = "Impact on"), panel_rows = 2)):</span> unused argument (invert_axis = FALSE)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; Starting plot export process: 1 plot(s) with dimensions (widthxheight): 20.0 x 12.0 inches</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; DPI: 300</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; Completed plot export: 1 plot(s) exported with dimensions (widthxheight): 20.0 x 12.0 inches</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &gt;&gt;&gt; DPI: 300</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

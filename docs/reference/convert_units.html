@@ -129,8 +129,6 @@ to choose between manual and automatic conversion.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load Data:</span></span></span>
 <span class="r-in"><span><span class="va">input_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/in"</span>, package <span class="op">=</span> <span class="st">"GTAPViz"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sl4.plot.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">input_path</span>, <span class="st">"sl4.plot.data.rds"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open compressed file 'C:/Users/b_pat/AppData/Local/R/win-library/4.4/GTAPViz/extdata/in/sl4.plot.data.rds', probable reason 'No such file or directory'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gzfile(file, "rb"):</span> cannot open the connection</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Convert million USD to billion USD</span></span></span>
 <span class="r-in"><span><span class="va">gtap_data</span> <span class="op">&lt;-</span> <span class="fu">convert_units</span><span class="op">(</span><span class="va">sl4.plot.data</span>,</span></span>
@@ -138,11 +136,12 @@ to choose between manual and automatic conversion.</p>
 <span class="r-in"><span>  change_unit_to <span class="op">=</span> <span class="st">"billion USD"</span>,</span></span>
 <span class="r-in"><span>  adjustment <span class="op">=</span> <span class="st">"/1000"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'sl4.plot.data' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Automatic conversion from percent to fraction</span></span></span>
 <span class="r-in"><span><span class="va">gtap_data</span> <span class="op">&lt;-</span> <span class="fu">convert_units</span><span class="op">(</span><span class="va">sl4.plot.data</span>, scale_auto <span class="op">=</span> <span class="st">"pct2frac"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'sl4.plot.data' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9600 observations converted to new unit</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 1780 observations converted to new unit</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 22000 observations converted to new unit</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
