@@ -3,86 +3,84 @@
 #' @title Create Comparative Bar Charts from HAR and SL4 Data
 #'
 #' @description
-#' Generates comparative bar charts using GTAP data, allowing multiple visualization options
-#' such as panel facets, split grouping, and customizable styles.
+#' Generates comparative bar charts using GTAP data.
+#' Supports panel facets, split-by grouping, and fully customizable styling and export options.
 #'
-#' @param data A data frame or a list of data frames containing GTAP results.
-#' @param filter_var Vector or data frame. If a vector, filters the values in `x_axis_from`.
+#' @md
+#'
+#' @param data A data frame or list of data frames containing GTAP results.
+#' @param filter_var Character vector or data frame.
+#' If a vector, filters values in `x_axis_from`.
 #' If a data frame, filters `value_col` based on matching `variable_col` values.
-#' @param x_axis_from Character. Column name for x-axis categories (e.g., "REG", "Sector").
-#' @param split_by Character or vector. Column name(s) to generate separate plots for each unique value (e.g., "COMM", "REG", "Variable").
-#' NULL creates a single aggregated plot, appropriate for macro-level analysis.
-#' @param panel_var Character. Column for panel facets (default: "Experiment").
-#' @param variable_col Character. Column containing variable identifiers (default: "Variable").
-#' @param unit_col Character. Column containing unit information (default: "Unit").
-#' @param desc_col Character. Column containing variable descriptions (default: "Description").
-#' @param invert_panel Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
-#' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
-#' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
-#' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
-#' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
-#' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
-#' @param export_as_pdf Logical or "merged". If TRUE, exports separate PDFs; if "merged", creates a multi-page PDF; if FALSE, skips PDF (default: FALSE).
-#' @param export_config List. Export settings, including:
-#' \itemize{
-#'   \item `width`: Output file width (in inches).
-#'   \item `height`: Output file height (in inches).
-#'   \item Additional settings—see `?get_export_config`.
-#' }
-#' @param plot_style_config List. Custom plot styles—see `?get_plot_style_config`.
+#' @param x_axis_from Character. Column name used for the x-axis (e.g., `"REG"`, `"Sector"`).
+#' @param split_by Character or vector. Column(s) used to split plots by group (e.g., `"COMM"`, `"REG"`).
+#' If `NULL`, a single aggregated plot is produced.
+#' @param panel_var Character. Column for panel facets. Default is `"Experiment"`.
+#' @param variable_col Character. Column name for variable codes. Default is `"Variable"`.
+#' @param unit_col Character. Column name for units. Default is `"Unit"`.
+#' @param desc_col Character. Column name for variable descriptions. Default is `"Description"`.
+#' @param invert_axis Logical. If `TRUE`, flips panel layout to horizontal (default: `FALSE`).
+#' @param separate_figure Logical. If `TRUE`, generates a separate figure for each panel value (default: `FALSE`).
+#' @param var_name_by_description Logical. If `TRUE`, uses descriptions instead of variable codes in titles (default: `FALSE`).
+#' @param add_var_info Logical. If `TRUE`, appends variable codes in parentheses after the description (default: `FALSE`).
+#' @param output_path Character. Path to output folder for saving plots. If `NULL`, plots are returned only in R.
+#' @param export_picture Logical. If `TRUE`, exports plots as images (default: `TRUE`).
+#' @param export_as_pdf Logical or `"merged"`.
+#' If `TRUE`, saves separate PDFs. If `"merged"`, combines all into a single PDF. If `FALSE`, disables PDF export (default: `FALSE`).
+#' @param export_config List. Export settings.
+#' See \code{\link{create_export_config}} or \code{\link{get_export_config}}.
+#' @param plot_style_config List. Plot styling settings.
+#' See \code{\link{create_plot_style_config}} or \code{\link{get_plot_style_config}}.
 #'
-#' @return A ggplot2 object for a single plot or a list of ggplot2 objects for multiple plots.
+#' @return A single ggplot2 object or a named list of ggplot2 objects, depending on the configuration.
 #'
 #' @author Pattawee Puangchit
-#' @seealso \code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+#' @seealso \code{\link{get_all_config}}, \code{\link{detail_plot}}, \code{\link{stack_plot}},
+#' \code{\link{create_title_format}}
 #' @export
 #'
 #' @examples
 #' \donttest{
-#' # Input Path:
+#' # Load Data:
 #' input_path <- system.file("extdata/in", package = "GTAPViz")
-#'
-#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
-#' # Note: No need to add .sl4 to the experiment name
-#' gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
-#'                             input_path = input_path, subtotal_level = FALSE,
-#'                             process_sl4_vars = NULL, process_har_vars = NULL,
-#'                             mapping_info = "GTAPv7", plot_data = TRUE)
+#' sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 #'
 #' # Basic usage with data frame
 #' p1 <- comparison_plot(
-#'   data = sl4.plot.data[["1D"]][["Region"]],
+#'   data = sl4.plot.data[["REG"]],
 #'   x_axis_from = "Region",
 #'   panel_var = "Experiment",
 #'   filter_var = c("qgdp", "EV"),
-#'   output_path = tempdir(),
+#'   output_path = NULL,
 #'   export_picture = FALSE,
 #'   export_as_pdf = FALSE,
 #' )
 #'
 #' # Split by commodity with custom styling and export options
 #' p2 <- comparison_plot(
-#'   data = sl4.plot.data[["1D"]][["Region"]],
+#'   data = sl4.plot.data[["REG"]],
 #'   x_axis_from = "Region",
 #'   split_by = "Variable",
 #'   panel_var = "Experiment",
 #'   filter_var = c("qgdp", "EV"),
 #'   var_name_by_description = TRUE,
-#'   output_path = tempdir(),
+#'   output_path = NULL,
 #'   export_picture = FALSE,
 #'   export_as_pdf = FALSE,
 #'   export_config = list(
-#'     file_name = "commodity_impacts",
 #'     width = 12,
 #'     height = 8
 #'   ),
 #'   plot_style_config = list(
-#'     color_tone = "economic",
-#'     title_size = 16,
-#'     show_grid_major_y = TRUE
+#'     color_tone = "gtap",
+#'     title_format = create_title_format(
+#'     type = "prefix",
+#'     text = "Impact on",
+#'     sep = "")
 #'   )
 #' )
 #' }
+#'
 comparison_plot <- function(data, filter_var = NULL,
                             x_axis_from,
                             split_by = NULL,
@@ -90,7 +88,7 @@ comparison_plot <- function(data, filter_var = NULL,
                             variable_col = "Variable",
                             unit_col = "Unit",
                             desc_col = "Description",
-                            invert_panel = FALSE,
+                            invert_axis = FALSE,
                             separate_figure = FALSE,
                             var_name_by_description = FALSE,
                             add_var_info = FALSE,
@@ -225,7 +223,7 @@ comparison_plot <- function(data, filter_var = NULL,
             panel_rows = style_config$panel_rows,
             panel_cols = style_config$panel_cols,
             panel_var = panel_var,
-            invert_panel = invert_panel,
+            invert_axis = invert_axis,
             plot_style_config = style_config
           )
 
@@ -249,7 +247,7 @@ comparison_plot <- function(data, filter_var = NULL,
           panel_rows = style_config$panel_rows,
           panel_cols = style_config$panel_cols,
           panel_var = panel_var,
-          invert_panel = invert_panel,
+          invert_axis = invert_axis,
           plot_style_config = style_config
         )
 
@@ -301,7 +299,7 @@ comparison_plot <- function(data, filter_var = NULL,
               panel_rows = style_config$panel_rows,
               panel_cols = style_config$panel_cols,
               panel_var = panel_var,
-              invert_panel = invert_panel,
+              invert_axis = invert_axis,
               plot_style_config = style_config
             )
 
@@ -328,7 +326,7 @@ comparison_plot <- function(data, filter_var = NULL,
             panel_rows = style_config$panel_rows,
             panel_cols = style_config$panel_cols,
             panel_var = panel_var,
-            invert_panel = invert_panel,
+            invert_axis = invert_axis,
             plot_style_config = style_config
           )
 
@@ -376,7 +374,7 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @param panel_rows Numeric. Number of rows in panel layout.
 #' @param panel_cols Numeric. Number of columns in panel layout.
 #' @param panel_var Character. Column for panel facets. Default is "Experiment".
-#' @param invert_panel Logical. Whether to flip plot orientation. Default is FALSE.
+#' @param invert_axis Logical. Whether to flip plot orientation. Default is FALSE.
 #' @param plot_style_config List. Custom plot styling configuration.
 #'
 #' @return A ggplot2 object representing the comparison plot.
@@ -390,7 +388,7 @@ comparison_plot <- function(data, filter_var = NULL,
 .create_single_comparison_plot <- function(data, x_axis_from, plot_title, unit,
                                            panel_rows, panel_cols,
                                            panel_var = "Experiment",
-                                           invert_panel = FALSE,
+                                           invert_axis = FALSE,
                                            plot_style_config = NULL) {
 
   # GET STYLE CONFIGURATION
@@ -453,7 +451,7 @@ comparison_plot <- function(data, filter_var = NULL,
   }
 
   # CALCULATE LABEL POSITIONS
-  if (invert_panel) {
+  if (invert_axis) {
     # For horizontal bars (coord_flip), need more space for labels
     label_position <- sapply(data$Value, function(x) {
       if (x >= 0) x + diff(y_limits) * 0.08 else x - diff(y_limits) * 0.08
@@ -476,7 +474,7 @@ comparison_plot <- function(data, filter_var = NULL,
   bar_spacing <- style_config$bar_spacing
 
   # CREATE THE BASIC PLOT
-  if (invert_panel) {
+  if (invert_axis) {
     # For horizontal bars (flipped coordinates)
     p <- ggplot2::ggplot(data, ggplot2::aes(
       y = .data[[x_var]],
@@ -596,7 +594,7 @@ comparison_plot <- function(data, filter_var = NULL,
   p <- p + ggplot2::theme_minimal()
 
   # Handle axis labels BEFORE applying style config
-  if (invert_panel) {
+  if (invert_axis) {
     # For horizontal bars, x is Value axis and y is Categories axis
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
@@ -656,7 +654,7 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @param var_name_by_description Logical. If TRUE, uses descriptions instead of variable codes in titles (default: FALSE).
 #' @param add_var_info Logical. If TRUE, adds the variable code in parentheses after the description (default: FALSE).
 #' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.
-#' @param invert_panel Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
+#' @param invert_axis Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
 #' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
 #' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
 #' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
@@ -678,17 +676,12 @@ comparison_plot <- function(data, filter_var = NULL,
 #' @examples
 #'
 #' \donttest{
-#' # Input Path:
+#' # Load Data:
 #' input_path <- system.file("extdata/in", package = "GTAPViz")
+#' sl4.plot.data <- readRDS(file.path(input_path, "sl4.plot.data.rds"))
 #'
-#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
-#' # Note: No need to add .sl4 to the experiment name
-#' gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
-#'                             input_path = input_path, subtotal_level = FALSE,
-#'                             process_sl4_vars = NULL, process_har_vars = NULL,
-#'                             mapping_info = "GTAPv7", plot_data = TRUE)
 #' # Basic usage with data frame
-#' detail_plot(sl4.plot.data[["2D"]],
+#' plotA <- detail_plot(sl4.plot.data[["2D"]],
 #'             x_axis_from = "Sector",
 #'             split_by = "Region",
 #'             filter_var = "qo",
@@ -696,7 +689,7 @@ comparison_plot <- function(data, filter_var = NULL,
 #'             top_impact = NULL,
 #'             var_name_by_description = TRUE,
 #'
-#'             invert_panel = TRUE,
+#'             invert_axis = TRUE,
 #'             separate_figure = FALSE,
 #'
 #'             export_config = list(
@@ -706,7 +699,7 @@ comparison_plot <- function(data, filter_var = NULL,
 #'
 #'             export_picture = FALSE,
 #'             export_as_pdf = FALSE,
-#'             output_path = tempdir(),
+#'             output_path = NULL,
 #'
 #'             plot_style_config = list(
 #'               positive_color = "#2E8B57",
@@ -730,7 +723,7 @@ detail_plot <- function(data, filter_var = NULL,
                         var_name_by_description = FALSE,
                         add_var_info = FALSE,
                         top_impact = NULL,
-                        invert_panel = FALSE,
+                        invert_axis = FALSE,
                         separate_figure = FALSE,
                         output_path = NULL,
                         export_picture = TRUE,
@@ -897,7 +890,7 @@ detail_plot <- function(data, filter_var = NULL,
               panel_rows = style_config$panel_rows,
               panel_cols = style_config$panel_cols,
               panel_var = panel_var,
-              invert_panel = invert_panel,
+              invert_axis = invert_axis,
               top_impact = top_impact,
               plot_style_config = style_config
             )
@@ -929,7 +922,7 @@ detail_plot <- function(data, filter_var = NULL,
             panel_rows = style_config$panel_rows,
             panel_cols = style_config$panel_cols,
             panel_var = panel_var,
-            invert_panel = invert_panel,
+            invert_axis = invert_axis,
             top_impact = top_impact,
             plot_style_config = style_config
           )
@@ -990,7 +983,7 @@ detail_plot <- function(data, filter_var = NULL,
                 panel_rows = style_config$panel_rows,
                 panel_cols = style_config$panel_cols,
                 panel_var = panel_var,
-                invert_panel = invert_panel,
+                invert_axis = invert_axis,
                 top_impact = top_impact,
                 plot_style_config = style_config
               )
@@ -1019,7 +1012,7 @@ detail_plot <- function(data, filter_var = NULL,
               panel_rows = style_config$panel_rows,
               panel_cols = style_config$panel_cols,
               panel_var = panel_var,
-              invert_panel = invert_panel,
+              invert_axis = invert_axis,
               top_impact = top_impact,
               plot_style_config = style_config
             )
@@ -1073,7 +1066,7 @@ detail_plot <- function(data, filter_var = NULL,
 #' @param panel_rows Numeric. Number of rows in panel layout.
 #' @param panel_cols Numeric. Number of columns in panel layout.
 #' @param panel_var Character. Column for panel facets. Default is "Experiment".
-#' @param invert_panel Logical. Whether to flip plot orientation. Default is FALSE.
+#' @param invert_axis Logical. Whether to flip plot orientation. Default is FALSE.
 #' @param top_impact Numeric. Number of top impacts to display. Default is NULL.
 #' @param plot_style_config List. Custom plot styling configuration.
 #'
@@ -1088,7 +1081,7 @@ detail_plot <- function(data, filter_var = NULL,
 .create_single_detail_plot <- function(data, x_axis_from, plot_title, unit,
                                        panel_rows, panel_cols,
                                        panel_var = "Experiment",
-                                       invert_panel = FALSE,
+                                       invert_axis = FALSE,
                                        top_impact = NULL,
                                        plot_style_config = NULL) {
 
@@ -1201,7 +1194,7 @@ detail_plot <- function(data, filter_var = NULL,
   }
 
   # CREATE BASE PLOT WITH APPROPRIATE ORDERING
-  if (invert_panel) {
+  if (invert_axis) {
     # For horizontal bars (flipped coordinates)
     p <- ggplot2::ggplot() +
       ggplot2::geom_hline(yintercept = 1:n_vars + 0.5, color = "gray70", linewidth = 0.4) +
@@ -1312,7 +1305,7 @@ detail_plot <- function(data, filter_var = NULL,
   }
 
   # Handle axis labels BEFORE applying style config
-  if (invert_panel) {
+  if (invert_axis) {
     # For horizontal bars, x is Value axis and y is Categories axis
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
@@ -1346,7 +1339,7 @@ detail_plot <- function(data, filter_var = NULL,
 
   # ADD ZERO LINE IF CONFIGURED
   if (style_config$show_zero_line) {
-    if (invert_panel) {
+    if (invert_axis) {
       p <- p + ggplot2::geom_vline(
         xintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
@@ -1480,7 +1473,7 @@ detail_plot <- function(data, filter_var = NULL,
 #' @param show_total Logical. If TRUE, displays total values above stacked bars (default: TRUE).
 #' @param unstack_plot Logical. If TRUE, creates separate bar plots for each `x_axis_from` value instead of stacked bars (default: FALSE).
 #' @param top_impact Numeric or NULL. If specified, shows only the top N impactful values; NULL shows all values.
-#' @param invert_panel Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
+#' @param invert_axis Logical. If TRUE, creates horizontal bars instead of vertical ones (default: FALSE).
 #' @param separate_figure Logical. If TRUE, generates separate figures per panel value (default: FALSE).
 #' @param output_path Character. Directory path for saving output files. If NULL, plots are only returned in R.
 #' @param export_picture Logical. If TRUE, exports plots as image files (default: TRUE).
@@ -1501,18 +1494,12 @@ detail_plot <- function(data, filter_var = NULL,
 #'
 #' @examples
 #' \donttest{
-#' # Input Path:
+#' # Load Data:
 #' input_path <- system.file("extdata/in", package = "GTAPViz")
+#' har.plot.data <- readRDS(file.path(input_path, "har.plot.data.rds"))
 #'
-#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
-#' # Note: No need to add .sl4 to the experiment name
-#' gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
-#'                             input_path = input_path, subtotal_level = FALSE,
-#'                             process_sl4_vars = NULL, process_har_vars = NULL,
-#'                             mapping_info = "GTAPv7", plot_data = TRUE)
-#'
-#' stack_plot(data = har.plot.data[["A"]],
-#'            x_axis_from = "REG",
+#' plotC <- stack_plot(data = har.plot.data[["A"]],
+#'            x_axis_from = "Region",
 #'            stack_value_from = "COLUMN",
 #'            split_by = FALSE,
 #'
@@ -1521,7 +1508,7 @@ detail_plot <- function(data, filter_var = NULL,
 #'
 #'            var_name_by_description = TRUE,
 #'
-#'            invert_panel = FALSE,
+#'            invert_axis = FALSE,
 #'            separate_figure = FALSE,
 #'
 #'            export_picture = FALSE,
@@ -1530,14 +1517,12 @@ detail_plot <- function(data, filter_var = NULL,
 #'              width = 28,
 #'              height = 15
 #'            ),
-#'            output_path = tempdir(),
+#'            output_path = NULL,
 #'
 #'            plot_style_config = list(
 #'              color_tone = "gtap",
 #'              panel_rows = 2,
-#'              panel_cols = NULL,
 #'              show_legend = TRUE,
-#'              show_axis_titles_on_all_facets = FALSE
 #'            ))
 #' }
 stack_plot <- function(data, filter_var = NULL,
@@ -1553,7 +1538,7 @@ stack_plot <- function(data, filter_var = NULL,
                        show_total = TRUE,
                        unstack_plot = FALSE,
                        top_impact = NULL,
-                       invert_panel = FALSE,
+                       invert_axis = FALSE,
                        separate_figure = FALSE,
                        output_path = NULL,
                        export_picture = TRUE,
@@ -1759,7 +1744,7 @@ stack_plot <- function(data, filter_var = NULL,
                 panel_rows = style_config$panel_rows,
                 panel_cols = style_config$panel_cols,
                 panel_var = panel_var,
-                invert_panel = invert_panel,
+                invert_axis = invert_axis,
                 top_impact = top_impact,
                 plot_style_config = style_config
               )
@@ -1791,7 +1776,7 @@ stack_plot <- function(data, filter_var = NULL,
               panel_rows = style_config$panel_rows,
               panel_cols = style_config$panel_cols,
               panel_var = panel_var,
-              invert_panel = invert_panel,
+              invert_axis = invert_axis,
               top_impact = top_impact,
               plot_style_config = style_config
             )
@@ -1834,7 +1819,7 @@ stack_plot <- function(data, filter_var = NULL,
               panel_cols = style_config$panel_cols,
               panel_var = panel_var,
               show_total = show_total,
-              invert_panel = invert_panel,
+              invert_axis = invert_axis,
               top_impact = top_impact,
               plot_style_config = style_config
             )
@@ -1866,7 +1851,7 @@ stack_plot <- function(data, filter_var = NULL,
             panel_cols = style_config$panel_cols,
             panel_var = panel_var,
             show_total = show_total,
-            invert_panel = invert_panel,
+            invert_axis = invert_axis,
             top_impact = top_impact,
             plot_style_config = style_config
           )
@@ -1930,7 +1915,7 @@ stack_plot <- function(data, filter_var = NULL,
 #' @param panel_cols Numeric. Number of columns in panel layout.
 #' @param panel_var Character. Column for panel facets. Default is "Experiment".
 #' @param show_total Logical. Whether to display total values. Default is TRUE.
-#' @param invert_panel Logical. Whether to flip plot orientation. Default is FALSE.
+#' @param invert_axis Logical. Whether to flip plot orientation. Default is FALSE.
 #' @param top_impact Numeric. Number of top impacts to display. Default is NULL.
 #' @param plot_style_config List. Custom plot styling configuration.
 #'
@@ -1941,13 +1926,12 @@ stack_plot <- function(data, filter_var = NULL,
 #' @keywords internal
 #' @noRd
 #' @seealso \code{\link{stack_plot}}
-#'
 .create_single_stacked_plot <- function(data, total_data, x_axis_from, stack_value_from,
                                         plot_title, unit,
                                         panel_rows, panel_cols,
                                         panel_var = "Experiment",
                                         show_total = TRUE,
-                                        invert_panel = FALSE,
+                                        invert_axis = FALSE,
                                         top_impact = NULL,
                                         plot_style_config = NULL) {
 
@@ -2064,7 +2048,7 @@ stack_plot <- function(data, filter_var = NULL,
   }
 
   # CREATE BASE PLOT BASED ON ORIENTATION
-  if (invert_panel) {
+  if (invert_axis) {
     # For horizontal bars (categories on y-axis, values on x-axis)
     p <- ggplot2::ggplot() +
       ggplot2::geom_col(
@@ -2166,7 +2150,7 @@ stack_plot <- function(data, filter_var = NULL,
 
   # ADD ZERO LINE IF CONFIGURED
   if (style_config$show_zero_line) {
-    if (invert_panel) {
+    if (invert_axis) {
       p <- p + ggplot2::geom_vline(
         xintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
@@ -2224,7 +2208,7 @@ stack_plot <- function(data, filter_var = NULL,
   }
 
   # HANDLE AXIS LABELS BASED ON ORIENTATION
-  if (invert_panel) {
+  if (invert_axis) {
     # For horizontal bars, x is Value axis and y is Categories axis
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
@@ -2278,7 +2262,7 @@ stack_plot <- function(data, filter_var = NULL,
 #' @param panel_rows Numeric. Number of rows in panel layout.
 #' @param panel_cols Numeric. Number of columns in panel layout.
 #' @param panel_var Character. Column for panel facets. Default is "Experiment".
-#' @param invert_panel Logical. Whether to flip plot orientation. Default is FALSE.
+#' @param invert_axis Logical. Whether to flip plot orientation. Default is FALSE.
 #' @param top_impact Numeric. Number of top impacts to display. Default is NULL.
 #' @param plot_style_config List. Custom plot styling configuration.
 #'
@@ -2293,7 +2277,7 @@ stack_plot <- function(data, filter_var = NULL,
                                           plot_title, unit,
                                           panel_rows, panel_cols,
                                           panel_var = "Experiment",
-                                          invert_panel = FALSE,
+                                          invert_axis = FALSE,
                                           top_impact = NULL,
                                           plot_style_config = NULL) {
 
@@ -2376,7 +2360,7 @@ stack_plot <- function(data, filter_var = NULL,
   data$Label <- sprintf(paste0("%.", decimal_places, "f"), data$Value)
 
   # CREATE BASE PLOT BASED ON ORIENTATION
-  if (invert_panel) {
+  if (invert_axis) {
     # For horizontal bars (categories on y-axis, values on x-axis)
     p <- ggplot2::ggplot() +
       ggplot2::geom_col(
@@ -2461,7 +2445,7 @@ stack_plot <- function(data, filter_var = NULL,
 
   # ADD ZERO LINE IF CONFIGURED
   if (style_config$show_zero_line) {
-    if (invert_panel) {
+    if (invert_axis) {
       p <- p + ggplot2::geom_vline(
         xintercept = style_config$zero_line_position,
         linetype = style_config$zero_line_type,
@@ -2501,7 +2485,7 @@ stack_plot <- function(data, filter_var = NULL,
     ggplot2::theme_minimal()
 
   # HANDLE AXIS LABELS BASED ON ORIENTATION
-  if (invert_panel) {
+  if (invert_axis) {
     # For horizontal bars, x is Value axis and y is Categories axis
     if (style_config$show_x_axis_title && style_config$show_y_axis_title) {
       # Both axis titles visible
@@ -2551,7 +2535,6 @@ stack_plot <- function(data, filter_var = NULL,
 #'
 #' @keywords internal
 #' @noRd
-#'
 .calculate_stack_totals <- function(data, x_axis_from, panel_var) {
   if (inherits(data, "list") && !is.data.frame(data)) {
     return(.apply_to_dataframes(data, .calculate_stack_totals, x_axis_from, panel_var))
@@ -2622,13 +2605,11 @@ stack_plot <- function(data, filter_var = NULL,
 #' @param stack_value_from Character. Column for stack components.
 #'
 #' @return A filtered data frame.
-#'
 #' @author Pattawee Puangchit
 #'
 #' @keywords internal
 #' @noRd
 #' @seealso \code{\link{stack_plot}}
-#'
 .filter_top_impact_values_stack <- function(data, total_data, top_impact, group_col, panel_var, x_axis_from, variable_col, unit_col, stack_value_from) {
   if (inherits(data, "list") && !is.data.frame(data)) {
     return(.apply_to_dataframes(data, .filter_top_impact_values_stack, total_data, top_impact, group_col, panel_var, x_axis_from, variable_col, unit_col, stack_value_from))

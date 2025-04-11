@@ -777,3 +777,213 @@
   }
   return(data)
 }
+
+#' @title Rename GTAP Bilateral Trade Columns
+#'
+#' @description
+#' Renames bilateral trade columns in GTAP data to standardized names,
+#' ensuring consistency in regional trade flows.
+#'
+#' @param data Data structure containing GTAP bilateral trade data.
+#'
+#' @return The same data structure with renamed bilateral trade columns.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @noRd
+#'
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}
+#'
+#' @examples
+#' # Load Sample Data:
+#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
+#'                                 package = "GTAPViz"))
+#' # Get Data by Variable Name
+#' sl4_data1 <- HARplus::get_data_by_var("qxs",sl4_data1)
+#'
+#' # Rename bilateral trade columns in a GTAP dataset
+#' gtap_data <- rename_GTAP_bilateral(sl4_data1)
+#'
+rename_GTAP_bilateral <- function(data) {
+  rename_bilateral_cols <- function(df) {
+    if (!is.data.frame(df)) return(df)
+
+    reg_cols <- grep("^REG", names(df), value = TRUE, ignore.case = TRUE)
+    region_cols <- grep("^REGION", names(df), value = TRUE, ignore.case = TRUE)
+
+    all_reg_cols <- c(reg_cols, region_cols)
+
+    first_col_pattern <- "^REG$|^REGION$"
+    first_col <- grep(first_col_pattern, all_reg_cols, value = TRUE, ignore.case = TRUE)
+
+    second_col_pattern <- "^REG\\.1$|^REG_1$|^REG1$|^REGION\\.1$|^REGION_1$|^REGION1$"
+    second_col <- grep(second_col_pattern, all_reg_cols, value = TRUE, ignore.case = TRUE)
+
+    if (length(first_col) >= 1 && length(second_col) >= 1) {
+      first_col <- first_col[1]
+      second_col <- second_col[1]
+
+      orig_names <- names(df)
+      new_names <- orig_names
+
+      new_names[new_names == first_col] <- "Source"
+      new_names[new_names == second_col] <- "Destination"
+
+      names(df) <- new_names
+    } else {
+      reg_dupes <- which(toupper(names(df)) == "REG")
+      if (length(reg_dupes) >= 2) {
+        names(df)[reg_dupes[1]] <- "Source"
+        names(df)[reg_dupes[2]] <- "Destination"
+      }
+    }
+
+    return(df)
+  }
+
+  if (is.data.frame(data)) {
+    return(rename_bilateral_cols(data))
+  }
+
+  return(.apply_to_dataframes(data, rename_bilateral_cols))
+}
+
+# GTAP Macro Data ---------------------------------------------------------
+
+#' @title Extract and Aggregate Scalar Macroeconomic Variables
+#'
+#' @description
+#' Extracts scalar macroeconomic variables from multiple SL4 datasets and aggregates them into a structured data frame.
+#'
+#' @param input_path Character. Path to the directory containing SL4 files.
+#' @param output_path Character (optional). Directory to save exported data.
+#' @param experiment Character vector. List of experiment names corresponding to SL4 files.
+#' @param select_var Character vector (optional). List of specific variable names to filter from the final result. If NULL, all variables are returned.
+#' @param subtotal_level Logical. Whether to include subtotal levels in the processed data.
+#' @param output_formats Character vector (optional). List of output formats (e.g., "csv", "xlsx").
+#'
+#' @return A sorted data frame containing processed GTAP macro data.
+#'
+#' @author Pattawee Puangchit
+#' @keywords internal
+#' @noRd
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{auto_gtap_data}}
+#'
+#' @examples
+#'
+#' # Input Path:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#'
+#' # GTAP Macro Variables from 2 .sl4 Files named (EXP1, EXP2)
+#' # Note: No need to add .sl4 to the experiment name
+#' gtap_macro <- gtap_macros_data(NULL, experiment = c("EXP1", "EXP2"),
+#'                                input_path = input_path, subtotal_level = FALSE)
+#'
+gtap_macros_data <- function(select_var = NULL,
+                             experiment = NULL,
+                             input_path = NULL,
+                             output_path = NULL,
+                             output_formats = NULL,
+                             subtotal_level = FALSE) {
+  # Check for required inputs
+  if (is.null(experiment) || is.null(input_path)) {
+    stop("Both experiment and input_path must be specified")
+  }
+
+  # Get macro variable list
+  macro_vars <- macro_info$Variable
+
+  # Check if we have multiple experiments
+  is_multiple_experiments <- function(experiment) {
+    length(experiment) > 1
+  }
+  keep_unique_flag <- is_multiple_experiments(experiment)
+
+  # Process the SL4 files using the approach from auto_gtap_data function
+  sl4_file_suffix <- ".sl4"
+
+  # Load SL4 files and extract data
+  macro_raw <- setNames(
+    lapply(experiment, function(scenario) {
+      sl4_path <- file.path(input_path, paste0(scenario, sl4_file_suffix))
+      if (file.exists(sl4_path)) {
+        tryCatch({
+          HARplus::load_sl4x(sl4_path, select_header = macro_vars)
+        }, error = function(e) {
+          message(sprintf("Error processing %s.sl4: %s", scenario, e$message))
+          return(NULL)
+        })
+      } else {
+        message(sprintf("Skipping %s.sl4 (file not found)", scenario))
+        return(NULL)
+      }
+    }),
+    experiment
+  )
+
+  # Remove NULL entries (failed loads)
+  macro_raw <- macro_raw[!sapply(macro_raw, is.null)]
+
+  # Process data - using approach from auto_gtap_data
+  GTAPMacros <- do.call(
+    HARplus::get_data_by_var,
+    c(
+      list(
+        experiment_names = names(macro_raw),
+        subtotal_level = subtotal_level,
+        merge_data = keep_unique_flag
+      ),
+      macro_raw
+    )
+  )
+
+  # Add mapping information
+  GTAPMacros <- add_mapping_info(GTAPMacros, mapping = "GTAPv7")
+
+  # Filter columns
+  GTAPMacros_filtered <- .apply_to_dataframes(GTAPMacros, function(df) {
+    df[, c("Variable", "Value", "Subtotal", "Experiment", "Description", "Unit"), drop = FALSE]
+  })
+
+  # Process based on number of experiments
+  if (length(experiment) > 1) {
+    GTAPMacros_final <- do.call(rbind, GTAPMacros_filtered)
+  } else {
+    GTAPMacros_final <- do.call(rbind, unlist(GTAPMacros_filtered, recursive = FALSE))
+  }
+  rownames(GTAPMacros_final) <- NULL
+
+  # Apply filtering by Variable if select_var is provided
+  if (!is.null(select_var)) {
+    GTAPMacros_final <- GTAPMacros_final[GTAPMacros_final$Variable %in% select_var, ]
+  }
+
+  # Sort the results
+  GTAPMacros_final <- GTAPMacros_final[order(GTAPMacros_final$Experiment,
+                                             GTAPMacros_final$Variable,
+                                             GTAPMacros_final$Unit), ]
+
+  # Export if needed
+  if (!is.null(output_path) && !is.null(output_formats)) {
+    export_formats <- .output_format(output_formats)
+    if (length(export_formats) > 0) {
+      if (!dir.exists(output_path)) {
+        dir.create(output_path, recursive = TRUE)
+      }
+
+      macro_list <- list(Macros = GTAPMacros_final)
+      message("Exporting macro data...")
+      HARplus::export_data(
+        data = macro_list,
+        output_path = output_path,
+        format = export_formats,
+        create_subfolder = TRUE,
+        multi_sheet_xlsx = TRUE,
+        report_output = TRUE
+      )
+      message("Macro data exported to: ", output_path)
+    }
+  }
+
+  return(GTAPMacros_final)
+}

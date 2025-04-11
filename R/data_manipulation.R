@@ -4,25 +4,22 @@
 #' Adds descriptions and unit information to GTAP data based on a specified mapping mode.
 #' Supports external mappings or default GTAPv7 mappings, allowing users to enrich datasets with
 #' standardized metadata.
-#'
+#' @md
 #' @param data_list A data structure containing GTAP variables.
 #' @param external_map Optional data frame with mapping information (must include "Variable", "Description", and "Unit" columns).
 #' @param mapping Character. Controls how descriptions and units are added:
-#'   `"GTAPv7"` (default) uses standard GTAPv7 definitions;
-#'   `"Yes"` uses only the supplied `external_map`;
-#'   `"No"` skips mapping;
-#'   `"Mix"` prioritizes `external_map`, falling back to GTAPv7 if needed.
+#' - `"GTAPv7"` (default): Uses standard GTAPv7 definitions.
+#' - `"Yes"`: Uses only the information provided in `external_map`.
+#' - `"No"`: Skips adding mapping information.
+#' - `"Mix"`: Prioritizes values from `external_map`, but fills in missing entries using GTAPv7 definitions.
 #' @param description_info Logical. If `TRUE`, adds description information to the data.
 #' @param unit_info Logical. If `TRUE`, adds unit information to the data.
 #'
+#' @md
 #' @details
-#' The `mapping` argument controls how description and unit information are added to the dataset:
+#' The `mapping` argument supports:
 #'
-#' - `"GTAPv7"` (default): Applies standardized GTAPv7 metadata for variable descriptions and units.
-#' - `"Yes"`: Uses only the descriptions and units from the `external_map` provided by the user. No fallback to GTAPv7.
-#' - `"No"`: Skips mapping entirely. No descriptions or units are added.
-#' - `"Mix"`: Prioritizes entries in `external_map`, but fills in any missing values using GTAPv7 metadata where available.
-#'
+
 #' @return
 #' A data structure with added mapping information, preserving the original structure.
 #'
@@ -154,7 +151,7 @@ add_mapping_info <- function(data_list, external_map = NULL, mapping = "GTAPv7",
 #' @description
 #' Converts values in a dataset to different units based on predefined transformations or custom scaling.
 #' Supports manual and automatic conversions for economic and trade-related metrics.
-#'
+#' @md
 #' @param data A data structure (list, data frame, or nested combination).
 #' @param change_unit_from Character vector. Units to be converted (case-insensitive).
 #' @param change_unit_to Character vector. Target units corresponding to `change_unit_from`.
@@ -451,82 +448,12 @@ rename_value <- function(data, column_name = NULL, mapping.file) {
   return(.apply_to_dataframes(data, rename_column))
 }
 
-
-#' @title Rename GTAP Bilateral Trade Columns
-#'
-#' @description
-#' Renames bilateral trade columns in GTAP data to standardized names,
-#' ensuring consistency in regional trade flows.
-#'
-#' @param data Data structure containing GTAP bilateral trade data.
-#'
-#' @return The same data structure with renamed bilateral trade columns.
-#'
-#' @author Pattawee Puangchit
-#' @export
-#'
-#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}
-#'
-#' @examples
-#' # Load Sample Data:
-#' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
-#'                                 package = "GTAPViz"))
-#' # Get Data by Variable Name
-#' sl4_data1 <- HARplus::get_data_by_var("qxs",sl4_data1)
-#'
-#' # Rename bilateral trade columns in a GTAP dataset
-#' gtap_data <- rename_GTAP_bilateral(sl4_data1)
-#'
-rename_GTAP_bilateral <- function(data) {
-  rename_bilateral_cols <- function(df) {
-    if (!is.data.frame(df)) return(df)
-
-    reg_cols <- grep("^REG", names(df), value = TRUE, ignore.case = TRUE)
-    region_cols <- grep("^REGION", names(df), value = TRUE, ignore.case = TRUE)
-
-    all_reg_cols <- c(reg_cols, region_cols)
-
-    first_col_pattern <- "^REG$|^REGION$"
-    first_col <- grep(first_col_pattern, all_reg_cols, value = TRUE, ignore.case = TRUE)
-
-    second_col_pattern <- "^REG\\.1$|^REG_1$|^REG1$|^REGION\\.1$|^REGION_1$|^REGION1$"
-    second_col <- grep(second_col_pattern, all_reg_cols, value = TRUE, ignore.case = TRUE)
-
-    if (length(first_col) >= 1 && length(second_col) >= 1) {
-      first_col <- first_col[1]
-      second_col <- second_col[1]
-
-      orig_names <- names(df)
-      new_names <- orig_names
-
-      new_names[new_names == first_col] <- "Source"
-      new_names[new_names == second_col] <- "Destination"
-
-      names(df) <- new_names
-    } else {
-      reg_dupes <- which(toupper(names(df)) == "REG")
-      if (length(reg_dupes) >= 2) {
-        names(df)[reg_dupes[1]] <- "Source"
-        names(df)[reg_dupes[2]] <- "Destination"
-      }
-    }
-
-    return(df)
-  }
-
-  if (is.data.frame(data)) {
-    return(rename_bilateral_cols(data))
-  }
-
-  return(.apply_to_dataframes(data, rename_bilateral_cols))
-}
-
 #' @title Sort GTAP Plot Data
 #'
 #' @description
 #' Sorts data for plotting using flexible options for column ordering and value-based sorting.
 #' Works with data frames, lists of data frames, or nested data structures.
-#'
+#' @md
 #' @param data A data frame or list structure containing data to be sorted.
 #' @param sort_columns Named list. Specifies columns to sort by and their ordering.
 #'        Each element should be a character vector of values in desired order.
@@ -544,10 +471,9 @@ rename_GTAP_bilateral <- function(data) {
 #' @author Pattawee Puangchit
 #' @export
 #'
-#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{rename_GTAP_bilateral}}
+#' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}}
 #'
 #' @examples
-#'
 #' # Load Sample Data:
 #' sl4_data1 <- HARplus::load_sl4x(system.file("extdata/in", "EXP1.sl4",
 #'                                 package = "GTAPViz"))
@@ -561,7 +487,9 @@ rename_GTAP_bilateral <- function(data) {
 #' sort_data <- sort_plot_data(sl4_data1, sort_columns = sorting_specs,
 #'                             sort_by_value_desc = FALSE)
 #'
-sort_plot_data <- function(data, sort_columns = NULL, sort_by_value_desc = NULL, convert_to_factor = TRUE) {
+sort_plot_data <- function(data, sort_columns = NULL,
+                           sort_by_value_desc = NULL,
+                           convert_to_factor = TRUE) {
   # If no sorting parameters provided, return the data as is
   if (is.null(sort_columns) && is.null(sort_by_value_desc)) {
     return(data)

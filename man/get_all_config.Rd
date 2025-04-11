@@ -12,37 +12,33 @@ get_all_config(
 )
 }
 \arguments{
-\item{plot_style}{Character. The plot style to retrieve: "comparison", "detail", "stack", or "all".
-Default is "all", which returns configurations for all styles.}
+\item{plot_style}{Character. Plot style to retrieve: `"all"` (default).}
 
-\item{config}{List. Optional custom style configuration to override defaults.}
+\item{config}{List. Optional plot style overrides.}
 
-\item{export_config}{List. Optional custom export configuration to override defaults.}
+\item{export_config}{List. Optional export setting overrides.}
 
-\item{printing}{Logical. If TRUE, prints a formatted code snippet that can be copied
-and pasted to recreate the configuration. Default is FALSE.}
+\item{printing}{Logical. If `TRUE`, prints a formatted R snippet to recreate the configuration. Default is `FALSE`.}
 }
 \value{
 A list with two components:
-\itemize{
-  \item \code{plot_style_config}: Plot style configuration(s). If \code{plot_style="all"}, contains
-        a nested list with configurations for all styles.
-  \item \code{export_config}: Export configuration as a data frame.
-}
+- `plot_style_config`: A list of style configurations. Returns all styles if `plot_style = "all"`.
+- `export_config`: A data frame with export settings.
 }
 \description{
-Returns a list containing plot style configuration and export configuration.
-The function supports retrieving a single plot style or all available styles.
+Returns a list of plot style and export configurations.
+Supports retrieving a single style or all styles at once.
 }
 \examples{
-# Get all plot configurations with default settings
-all_configs <- get_all_config()
+# Retrieve all plot configurations
+all_configs <- get_all_config(printing = TRUE)
 
-# Get only comparison plot configuration
-comp_config <- get_all_config("default")
 }
 \seealso{
-\code{\link{get_plot_style_config}}, \code{\link{get_export_config}}, \code{\link{comparison_plot}}, \code{\link{detail_plot}}, \code{\link{stack_plot}}
+\code{\link{get_color_palette}},
+  \code{\link{comparison_plot}},
+  \code{\link{detail_plot}},
+  \code{\link{stack_plot}}
 }
 \author{
 Pattawee Puangchit

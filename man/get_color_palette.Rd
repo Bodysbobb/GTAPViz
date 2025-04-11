@@ -62,7 +62,6 @@ where calling any element (e.g., `all_palettes$winter()`) generates the correspo
 If the requested `color_tone` does not exist or is empty, the function throws an error.
 }
 \examples{
-\dontrun{
 # Print & visualize a specific palette
 get_color_palette("winter")
 
@@ -77,7 +76,7 @@ all_palettes <- get_color_palette("all")
 all_palettes$winter()   # View the winter palette
 all_palettes$fall()     # View the fall palette
 all_palettes$gtap()     # View the GTAP palette
-}
+
 }
 \author{
 Pattawee Puangchit

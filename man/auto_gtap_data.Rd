@@ -6,17 +6,16 @@
 \usage{
 auto_gtap_data(
   experiment,
-  project_path = NULL,
   input_path = NULL,
   output_path = NULL,
   sl4_suffix = "",
-  har_suffix = "-WEL",
-  mapping_info = "GTAPv7",
+  har_suffix = "",
   process_sl4_vars = NULL,
   process_har_vars = NULL,
+  mapping_info = "GTAPv7",
   sl4_mapping_info = NULL,
   har_mapping_info = NULL,
-  sl4_extract_method = "group_data_by_dims",
+  sl4_extract_method = "get_data_by_dims",
   har_extract_method = "get_data_by_var",
   sl4_priority = NULL,
   har_priority = NULL,
@@ -27,7 +26,7 @@ auto_gtap_data(
   region_select = NULL,
   sector_select = NULL,
   subtotal_level = FALSE,
-  plot_data = FALSE,
+  plot_data = TRUE,
   output_formats = NULL,
   sl4_output_name = "sl4.plot.data",
   har_output_name = "har.plot.data",
@@ -39,90 +38,91 @@ auto_gtap_data(
 \arguments{
 \item{experiment}{Character vector. Case names to process.}
 
-\item{project_path}{Character. Path to project folder with "in" and "out" subfolders.}
+\item{input_path}{Character. Path to the input folder; overrides \verb{project_path/in} if specified.}
 
-\item{input_path}{Character. Input folder path. Overrides `project_path/in` if specified.}
+\item{output_path}{Character. Path to the output folder; overrides \code{project_path/out} if specified.}
 
-\item{output_path}{Character. Output folder path. Overrides `project_path/out` if specified.}
+\item{sl4_suffix}{Character. Custom suffix for SL4 files (e.g., \code{""}, \code{"-custom"}).}
 
-\item{sl4_suffix}{Character. Custom suffix for SL4 files (e.g., "", "-custom").}
+\item{har_suffix}{Character. Custom suffix for HAR files (e.g., \code{"-WEL"}).}
 
-\item{har_suffix}{Character. Custom suffix for HAR files (e.g., "-WEL").}
+\item{process_sl4_vars}{Character, \code{NULL}, or \code{FALSE}. Variables to extract from SL4 data:
+\itemize{
+\item Character vector: Specific variable names.
+\item \code{NULL}: Extract all.
+\item \code{FALSE}: Skip SL4 processing.
+}}
 
-\item{mapping_info}{Character. Metadata mode: "GTAPv7" (default), "Yes", "No", or "Mix".}
+\item{process_har_vars}{Character, \code{NULL}, or \code{FALSE}. Variables to extract from HAR data:
+\itemize{
+\item Character vector: Specific variable names.
+\item \code{NULL}: Extract all.
+\item \code{FALSE}: Skip HAR processing.
+}}
 
-\item{process_sl4_vars}{Data frame, NULL, or FALSE. Variables to extract from SL4:
-NULL = extract all; FALSE = skip SL4 processing.}
+\item{mapping_info}{Character. Metadata mode for variable descriptions and units.
+Options: \code{"GTAPv7"} (default), \code{"Yes"}, \code{"No"}, \code{"Mix"}.
+See \code{\link[=add_mapping_info]{add_mapping_info()}} for full details.}
 
-\item{process_har_vars}{Data frame, NULL, or FALSE. Variables to extract from HAR:
-NULL = extract all; FALSE = skip HAR processing.}
+\item{sl4_mapping_info}{Data frame or \code{NULL}. Mapping for SL4 variables. Must include columns \code{"Variable"}, \code{"Description"}, and \code{"Unit"}.}
 
-\item{sl4_mapping_info}{Data frame or NULL. Mapping info for SL4 (must include "Variable", "Description", and "Unit").}
+\item{har_mapping_info}{Data frame or \code{NULL}. Mapping for HAR variables, structured as above.}
 
-\item{har_mapping_info}{Data frame or NULL. Mapping info for HAR (same structure as SL4).}
+\item{sl4_extract_method}{Character. SL4 extraction method: \code{"get_data_by_dims"}, \code{"get_data_by_var"}, or \code{"group_data_by_dims"}.}
 
-\item{sl4_extract_method}{Character. Method for SL4 extraction: "get_data_by_dims", "get_data_by_var", or "group_data_by_dims".}
+\item{har_extract_method}{Character. HAR extraction method. Same options as above.}
 
-\item{har_extract_method}{Character. Method for HAR extraction: same options as above.}
+\item{sl4_priority}{Optional list. Required only when \code{sl4_extract_method} is \code{"group_data_by_dims"}. Specifies priority rules for SL4 data grouping.}
 
-\item{sl4_priority}{Optional list. Priority rules for SL4 data grouping.}
+\item{har_priority}{Optional list. Required only when \code{har_extract_method} is \code{"group_data_by_dims"}. Specifies priority rules for HAR data grouping.}
 
-\item{har_priority}{Optional list. Priority rules for HAR data grouping.}
+\item{sl4_convert_unit}{Character or \code{NULL}. Optional SL4 unit conversion.
+Valid options: \code{"mil2bil"}, \code{"bil2mil"}, \code{"pct2frac"}, \code{"frac2pct"}.
+See \code{\link{convert_units}} for details.}
 
-\item{sl4_convert_unit}{Character. Optional SL4 unit conversion: "mil2bil", "bil2mil", "pct2frac", or "frac2pct". Default is NULL.}
+\item{har_convert_unit}{Character or \code{NULL}. Optional HAR unit conversion. Same options as above.}
 
-\item{har_convert_unit}{Character. Optional HAR unit conversion: same options as above. Default is NULL.}
+\item{decimals}{Integer or \code{NULL}. Number of decimal places to round numeric values. Set to \code{NULL} to disable rounding.}
 
-\item{decimals}{Integer. Number of decimal places to round numeric values to. Default is 2. Set to NULL to disable rounding.}
+\item{rename_columns}{Logical. If \code{TRUE} (default), renames GTAP codes (e.g., \code{"REG"} → \code{"Region"}, \code{"COMM"} → \code{"Commodity"}).}
 
-\item{rename_columns}{Logical. If TRUE (default), renames GTAP column identifiers to more readable format}
+\item{region_select}{Optional character vector. Filters data to selected regions.
+Applies only to the \code{"REG"} column, which is fixed and cannot be modified.}
 
-\item{region_select}{Optional character vector. Regions to include.}
+\item{sector_select}{Optional character vector. Filters data to selected sectors.
+Applies only to the \code{"ACTS"} and \code{"COMM"} columns, which are fixed and cannot be modified.}
 
-\item{sector_select}{Optional character vector. Sectors to include.}
+\item{subtotal_level}{Logical. If \code{TRUE}, includes subtotal rows. Default is \code{FALSE}.}
 
-\item{subtotal_level}{Logical. Whether to include subtotal rows. Default is FALSE.}
+\item{plot_data}{Logical. If \code{TRUE}, generates plot-ready data and assigns to specified variable names.}
 
-\item{plot_data}{Logical. If TRUE, prepares and assigns plot-ready data.}
+\item{output_formats}{Character vector or list. Output formats for export. Valid values: \code{"csv"}, \code{"stata"}, \code{"rds"}, \code{"txt"}.}
 
-\item{output_formats}{Character vector or list. Output formats to export (valid: "csv", "stata", "rds", "txt").}
+\item{sl4_output_name}{Character. Variable name to assign SL4 output. Default: \code{"sl4.plot.data"}.}
 
-\item{sl4_output_name}{Character. Output variable name for SL4 results. Default is "sl4.plot.data".}
+\item{har_output_name}{Character. Variable name to assign HAR output. Default: \code{"har.plot.data"}.}
 
-\item{har_output_name}{Character. Output variable name for HAR results. Default is "har.plot.data".}
+\item{macro_output_name}{Character. Variable name to assign macro output. Default: \code{"GTAPMacro"}.}
 
-\item{macro_output_name}{Character. Output variable name for macro results. Default is "GTAPMacro".}
+\item{add_scenario_ranking}{Logical or \code{"merged"}. Adds a numeric index for each scenario:
+\itemize{
+\item \code{TRUE}: Adds a ranking column.
+\item \code{"merged"}: Also prefixes experiment names with the rank.
+}}
 
-\item{add_scenario_ranking}{Logical or "merged". If TRUE, adds ranking column; if "merged", also prefixes experiment names. Default is FALSE.}
-
-\item{rank_column}{Character. Name of the ranking column to add. Default is "ScenarioRank".}
+\item{rank_column}{Character. Name of the ranking column. Default is \code{"ScenarioRank"}.}
 }
 \value{
-A processed dataset, with options for exporting and visualization.
+A processed GTAP-formatted dataset with standardized structure and metadata, ready for analysis or visualization.
 }
 \description{
-Processes GTAP data from SL4 and HAR files with options for exporting and preparing plot-ready data.
+Processes GTAP data from \code{sl4} and \code{har} files with options for exporting and preparing plot-ready data.
 }
 \details{
-This function automates the workflow for processing GTAP model outputs,
-with flexible output options and optional filtering for region- and sector-specific data.
-
-The key parameters `process_sl4_vars` and `process_har_vars` accept three different input types:
 \itemize{
-  \item \strong{Data frame}: Contains variable mappings with required "Variable" column. When
-        provided, only specified variables will be extracted.
-  \item \strong{NULL}: Extracts all available variables from the respective file type.
-  \item \strong{FALSE}: Completely skips processing of that file type, allowing
-        the function to focus only on the other file type.
-}
-
-The `mapping_info` parameter controls how descriptions and units are assigned:
-\itemize{
-  \item \strong{GTAPv7}: Uses standard GTAPv7 definitions (default).
-  \item \strong{Yes}: Uses only the supplied descriptions and units from `sl4_mapping_info` / `har_mapping_info`.
-  \item \strong{No}: Does not add any descriptions or units.
-  \item \strong{Mix}: Prioritizes supplied descriptions and units, falling back to GTAPv7
-        for any missing values.
+\item To prepare data for plotting and generating tables within the GTAPViz package, the \code{"Unit"} column must be included in the output.
+\item When using the extraction method \code{"group_data_by_dims"}, the corresponding priority list must be defined via the \code{sl4_priority} or \code{har_priority} argument.
+See \code{\link[HARplus]{group_data_by_dims}} for more details.
 }
 }
 \examples{
@@ -139,7 +139,8 @@ gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
 
 }
 \seealso{
-\code{\link{add_mapping_info}}, \code{\link{gtap_macros_data}}
+\code{\link{add_mapping_info}}, \code{\link{convert_units}},
+\code{\link{rename_value}},
 }
 \author{
 Pattawee Puangchit
