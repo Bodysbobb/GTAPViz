@@ -462,10 +462,6 @@ unstack_plot = FALSE)</span>
 <p>To further analyze the decomposition at the component level, set
 <code>unstack_plot = TRUE</code> to display unstacked plots.</p>
 <figure class="package-figure"><div class="package-figure-box">
-<pre><code><span><span class="co">## &gt;&gt;&gt; Starting plot export process: 1 plot(s) with dimensions (widthxheight): 28.0 x 15.0 inches</span></span></code></pre>
-<pre><code><span><span class="co">## &gt;&gt;&gt; DPI: 300</span></span></code></pre>
-<pre><code><span><span class="co">## &gt;&gt;&gt; Completed plot export: 1 plot(s) exported with dimensions (widthxheight): 28.0 x 15.0 inches</span></span></code></pre>
-<pre><code><span><span class="co">## &gt;&gt;&gt; DPI: 300</span></span></code></pre>
 <p><img src="GTAPViz_Plot_files/figure-html/unnamed-chunk-14-1.png" width="1152" style="display: block; margin: auto;"></p>
 </div>
 <figcaption class="package-fig">
@@ -479,7 +475,7 @@ unstack_plot = TRUE)</span>
 <p>Another practical example is plotting the decomposition of terms of
 trade (header E1), which is also a good example of multi-dimensional
 plotting. You may try the following command:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plotE</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stack_plot.html">stack_plot</a></span><span class="op">(</span></span>
 <span>  <span class="co"># === Input Data ===</span></span>
 <span>  data              <span class="op">=</span> <span class="va">har.plot.data</span><span class="op">[[</span><span class="st">"E1"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -540,7 +536,7 @@ adjustments)</span>
 <ul>
 <li>Run the following chunks to view all available configurations.</li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_all_config.html">get_all_config</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li><p>Rename the list outputs <code>my_export_config</code> and
@@ -550,10 +546,10 @@ many styles as needed.</p></li>
 while other settings in <code>(...)</code> remain unchanged, as shown in
 the sample below:</p></li>
 </ul>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>comparison_plot <span class="ot">&lt;-</span> (...,</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>                    <span class="at">export_config =</span> my_export_config,</span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>                    <span class="at">plot_style_config =</span> my_style_config</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>                    )</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>comparison_plot <span class="ot">&lt;-</span> (...,</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>                    <span class="at">export_config =</span> my_export_config,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>                    <span class="at">plot_style_config =</span> my_style_config</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>                    )</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="sec:sorting-output">Sorting Output<a class="anchor" aria-label="anchor" href="#sec:sorting-output"></a>
@@ -581,7 +577,7 @@ order).</p></li>
 descending order (<code>TRUE/FALSE/NULL</code>).</p></li>
 </ul>
 <p>To apply sorting, use the following command:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Using the function</span></span>
 <span><span class="va">sort_sl4_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sort_plot_data.html">sort_plot_data</a></span><span class="op">(</span></span>
 <span>  <span class="va">sl4.plot.data</span>,</span>
@@ -600,7 +596,7 @@ descending order (<code>TRUE/FALSE/NULL</code>).</p></li>
 renaming country names in the <code>REG</code> column (e.g., changing
 <code>"USA"</code> to <code>"United States"</code> or <code>"CHN"</code>
 to <code>"China"</code>)—use the following command:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating Mapping File</span></span>
 <span><span class="va">rename.region</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  ColumnName <span class="op">=</span> <span class="st">"REG"</span>,</span>
@@ -612,7 +608,7 @@ to <code>"China"</code>)—use the following command:</p>
 <span><span class="va">sl4.plot.data_rename</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rename_value.html">rename_value</a></span><span class="op">(</span><span class="va">sl4.plot.data</span>, mapping.file <span class="op">=</span> <span class="va">rename.region</span><span class="op">)</span></span></code></pre></div>
 <p><br> Another useful example is renaming the components of welfare
 decomposition before plotting.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Rename Value if needed</span></span>
 <span><span class="va">wefare.decomp.rename</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  ColumnName <span class="op">=</span> <span class="st">"COLUMN"</span>,</span>

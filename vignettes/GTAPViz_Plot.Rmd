@@ -462,7 +462,7 @@ To further analyze the decomposition at the component level, set `unstack_plot =
 
 <figure class="package-figure">
   <div class="package-figure-box">
-```{r, echo=FALSE, fig.align='center', fig.width=12, fig.height=10}
+```{r, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.width=12, fig.height=10}
 plotD <- stack_plot(
   # === Input Data ===
   data              = har.plot.data[["A"]],
