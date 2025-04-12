@@ -14,7 +14,7 @@ home:
 
 navbar:
   structure:
-    left: [home, articles, reference]
+    left: [home, articles, reference, gpt]
     right: [github]
   components:
     home:
@@ -38,6 +38,10 @@ navbar:
     reference:
       text: "References"
       href: reference/index.html
+    gpt:
+      icon: fas fa-robot
+      text: "ChatGPT GTAPViz-R"
+      href: https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/
     github:
       icon: fab fa-github
       href: https://github.com/Bodysbobb/GTAPViz
