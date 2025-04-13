@@ -1,0 +1,29 @@
+Package: GTAPViz
+Title: Automating 'GTAP' Data Processing and Visualization
+Version: 1.1.1
+Authors@R: 
+    person("Pattawee", "Puangchit", email = "ppuangch@purdue.edu", role = c("aut", "cre"))
+Description: Tools to streamline the extraction, processing, and visualization of
+    Computable General Equilibrium (CGE) results from 'GTAP' models. Designed for
+    compatibility with both .har and .sl4 files, the package enables users to
+    automate data preparation, apply mapping metadata, and generate high-quality
+    plots and summary tables with minimal coding. 'GTAPViz' supports flexible export
+    options (e.g., Text, CSV, 'Stata', or 'Excel' formats).
+    This facilitates efficient post-simulation analysis for
+    economic research and policy reporting. Includes helper functions to filter,
+    format, and customize outputs with reproducible styling.
+License: MIT + file LICENSE
+Encoding: UTF-8
+RoxygenNote: 7.3.2
+BugReports: https://github.com/bodysbobb/GTAPViz/issues/
+URL: https://bodysbobb.github.io/GTAPViz/
+Imports: HARplus, ggplot2, dplyr, tidyr, openxlsx, colorspace,
+        grDevices, scales, utils, methods, stringdist, stats, glue,
+        openxlsx2
+VignetteBuilder: knitr
+Suggests: knitr, rmarkdown, devtools
+Depends: R (>= 3.5)
+NeedsCompilation: no
+Packaged: 2025-04-12 11:07:16 UTC; b_pat
+Author: Pattawee Puangchit [aut, cre]
+Maintainer: Pattawee Puangchit <ppuangch@purdue.edu>

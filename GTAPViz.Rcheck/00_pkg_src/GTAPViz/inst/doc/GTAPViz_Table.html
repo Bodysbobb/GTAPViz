@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Pattawee Puangchit" />
+
+<meta name="date" content="2025-04-12" />
+
+<title>Table: A Step-by-Step Guide</title>
+
+<script src="GTAPViz_Table_files/header-attrs-2.29/header-attrs.js"></script>
+<script src="GTAPViz_Table_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="GTAPViz_Table_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="GTAPViz_Table_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="GTAPViz_Table_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="GTAPViz_Table_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="GTAPViz_Table_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="GTAPViz_Table_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="GTAPViz_Table_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="GTAPViz_Table_files/navigation-1.1/tabsets.js"></script>
+<script src="GTAPViz_Table_files/navigation-1.1/codefolding.js"></script>
+<link href="GTAPViz_Table_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="GTAPViz_Table_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="mystyle.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Table: A Step-by-Step Guide</h1>
+<h4 class="author">Pattawee Puangchit</h4>
+<h4 class="date">2025-04-12</h4>
+
+</div>
+
+
+<p>This vignette illustrates how to set up table configurations and
+generate outputs.<br />
+For a complete list of available tables with sample images, see the <a
+href="https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/">table
+catalog</a>.</p>
+<div id="structured-table" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Structured Table</h1>
+<p>This is an example of how to create a structured pivot table suitable
+for inclusion in academic presentations.</p>
+<div class="info-box">
+<p><strong>Important:</strong> <br> The <code>report_table</code>
+function requires <strong>a data list</strong>—not a data frame.</p>
+<ul>
+<li><p>This list structure matches the format of
+<code>sl4.plot.data</code> or <code>har.plot.data</code>, without
+delisting individual elements.</p></li>
+<li><p>This differs from the plotting functions, which use a
+<strong>data frame</strong> as input.</p></li>
+<li><p>Multiple tables can be generated in a single setup using a data
+list.<br />
+For example, you can generate report tables for <strong>all data frames
+within <code>sl4.plot.data</code></strong> in one code block.</p></li>
+</ul>
+</div>
+<pre class="r"><code>report_table(
+  data_list = sl4.plot.data,
+  pivot_col = list(REG = &quot;Variable&quot;),
+  group_by =  list(
+    REG = list(&quot;Experiment&quot;, &quot;Region&quot;)),
+  rename_cols = list(&quot;Experiment&quot; = &quot;Scenario&quot;),
+
+  total_column = FALSE,
+  decimal = 4,
+  subtotal_level = FALSE,
+  repeat_label = FALSE,
+  include_units = TRUE,
+
+  var_name_by_description = TRUE,
+  add_var_info = TRUE,
+  add_group_line = FALSE,
+  
+  separate_sheet_by = &quot;Unit&quot;,
+  export_table = FALSE,
+  output_path = NULL,
+  separate_file = FALSE,
+  workbook_name = &quot;Comparison Table&quot;
+)</code></pre>
+<details>
+<summary class="toggle-summary">
+💡 Tip
+</summary>
+<div class="tip-box">
+<p><code>var_name_by_description</code> replaces variable names with
+their full descriptions to enhance clarity and give the output a more
+academic appearance.</p>
+</div>
+</details>
+</div>
+<div id="sec:decomp-table" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Decomposition
+Table</h1>
+<p>The same <code>report_table</code> function can be used to generate
+decomposition tables, including a total column, as shown in the example
+below:</p>
+<pre class="r"><code>report_table(
+  data_list = har.plot.data,
+  pivot_col = list(A = &quot;COLUMN&quot;, 
+                   E1 = &quot;PRICES&quot;),
+  group_by = list(
+    A = list(&quot;Experiment&quot;, &quot;Region&quot;), 
+    E1 = list(&quot;Experiment&quot;, &quot;Commodity&quot;, &quot;PRICES&quot;)
+  ),
+  rename_cols = list(&quot;Experiment&quot; = &quot;Scenario&quot;),
+  
+  total_column = TRUE,
+  decimal = 6,
+  subtotal_level = FALSE,
+  repeat_label = FALSE,
+  include_units = TRUE,
+
+  var_name_by_description = FALSE,
+  add_var_info = FALSE,
+  add_group_line = FALSE,
+
+  separate_sheet_by = &quot;Region&quot;,
+  export_table = FALSE,
+  output_path = NULL,
+  separate_file = FALSE,
+  workbook_name = &quot;Decomposition Table&quot;
+)</code></pre>
+</div>
+<div id="sec:pivot-table" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Interactive Pivot
+Tables</h1>
+<p>Unlike static tables generated by <code>report_table()</code>, pivot
+tables remain fully interactive in the Excel output. However, they work
+with <strong>a single data frame</strong> at a time (just like the
+plotting functions).</p>
+<p>This function offers:</p>
+<ul>
+<li><p><strong>Comprehensive Filtering</strong><br />
+Add multiple filtering dimensions to enhance flexibility and enable
+users to explore the data from different perspectives.</p></li>
+<li><p><strong>Retention of Raw Data</strong><br />
+The raw dataset is included in the Excel file, allowing downstream
+users—especially in Excel—to reconstruct or customize pivot tables as
+needed.</p></li>
+<li><p><strong>User-Oriented Design</strong><br />
+Ideal for sharing with non-R users, the output is organized for
+intuitive exploration and ease of use.</p></li>
+</ul>
+<pre class="r"><code>pivot_table_with_filter(
+  data = sl4.plot.data[[&quot;COMM*REG&quot;]],
+  filter = c(&quot;Variable&quot;, &quot;Unit&quot;),    # Allow filtering by variable type and unit
+  rows = c(&quot;Region&quot;, &quot;Commodity&quot;),      # Regions and sectors as row fields
+  cols = c(&quot;Experiment&quot;),            # Experiments as column fields
+  data_fields = &quot;Value&quot;,             # Values to be aggregated
+  raw_sheet_name = &quot;Raw_Data&quot;,       # Sheet name for raw data
+  pivot_sheet_name = &quot;Sector_Pivot&quot;, # Sheet name for pivot table
+  export_table = FALSE,
+  output_path = NULL,
+  workbook_name = &quot;Sectoral_Impact_Analysis.xlsx&quot;
+)</code></pre>
+</div>
+<div id="sample-data" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Sample Data</h1>
+<p>Sample data used in this vignette is obtained from the GTAPv7 model
+and utilizes data from the GTAP 11 database. For more details, refer to
+the <a
+href="https://www.gtap.agecon.purdue.edu/databases/archives.asp">GTAP
+Database Archive</a>.</p>
+<script>
+window.addEventListener("load", function () {
+  document.querySelectorAll("pre code").forEach(function (codeBlock) {
+    const button = document.createElement("button");
+    button.className = "copy-code-button";
+    button.type = "button";
+    button.innerText = "Copy";
+    button.style.position = "absolute";
+    button.style.top = "4px";
+    button.style.right = "4px";
+
+    button.addEventListener("click", () => {
+      navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+        button.innerText = "Copied!";
+        setTimeout(() => (button.innerText = "Copy"), 1500);
+      });
+    });
+
+    const pre = codeBlock.parentNode;
+    pre.style.position = "relative";
+    pre.insertBefore(button, codeBlock);
+  });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  let prevScrollPos = window.pageYOffset;
+  const navbar = document.querySelector(".navbar");
+
+  window.addEventListener("scroll", function () {
+    const currentScrollPos = window.pageYOffset;
+    if (prevScrollPos > currentScrollPos) {
+      // Scrolling up
+      navbar.style.top = "0";
+    } else {
+      // Scrolling down
+      navbar.style.top = "-70px";
+    }
+    prevScrollPos = currentScrollPos;
+  });
+});
+</script>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

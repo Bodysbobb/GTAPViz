@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Pattawee Puangchit" />
+
+<meta name="date" content="2025-04-12" />
+
+<title>Project Setup and Data Extraction</title>
+
+<script src="GTAPViz_Data_files/header-attrs-2.29/header-attrs.js"></script>
+<script src="GTAPViz_Data_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="GTAPViz_Data_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="GTAPViz_Data_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="GTAPViz_Data_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="GTAPViz_Data_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="GTAPViz_Data_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="GTAPViz_Data_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="GTAPViz_Data_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="GTAPViz_Data_files/navigation-1.1/tabsets.js"></script>
+<script src="GTAPViz_Data_files/navigation-1.1/codefolding.js"></script>
+<link href="GTAPViz_Data_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="GTAPViz_Data_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="mystyle.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Project Setup and Data Extraction</h1>
+<h4 class="author">Pattawee Puangchit</h4>
+<h4 class="date">2025-04-12</h4>
+
+</div>
+
+
+<p>This vignette outlines the complete project setup process and
+demonstrates the use of <code>auto_gtap_data</code>.</p>
+<div id="sec:package-overview" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Package Overview</h1>
+<p>This package streamlines the creation of figures and tables from
+<strong>.HAR</strong> and <strong>.sl4</strong> results, making academic
+presentations effortless. Some key features are:</p>
+<ul>
+<li><p><strong>Effortless Multi-Plot Generation</strong> – Automatically
+adjusts dimensions, facets, and layout with minimal input.</p></li>
+<li><p><strong>Smart Plot Adjustments</strong> – Fine-tune visuals
+easily without manual sizing or layout tweaks.</p></li>
+<li><p><strong>Dual Export Plot Formats</strong> – Instantly save
+high-resolution PNG and PDF outputs for slides, papers, and
+LaTeX.</p></li>
+<li><p><strong>Publication-Ready Pivot Tables</strong> – Generate clean
+tables alongside figures—ideal for academic papers.</p></li>
+<li><p><strong>Streamlined Styling</strong> – Customize colors, fonts,
+and legends through simple, flexible options.</p></li>
+<li><p><strong>Powerful Yet Simple</strong> – Built on
+<code>ggplot2</code>, with intuitive <code>TRUE/FALSE</code> switches—no
+advanced coding needed.</p></li>
+<li><p><strong>Self-Contained Help</strong> – Includes a detailed
+vignette and internal help—no need to search online.</p></li>
+</ul>
+<details>
+<summary class="toggle-summary">
+💡 Tip for Non-GTAP Users
+</summary>
+<div class="tip-box">
+<p>If you’re an advanced R user or not working directly with GTAP data,
+this package still works for <strong>you</strong>.</p>
+<p>However, data preparation may require custom manipulation before
+using <code>GTAPViz</code> plotting and table functions.</p>
+<p>For working with <code>.sl4</code> and <code>.har</code> files, refer
+to my companion package: <a
+href="https://github.com/Bodysbobb/HARplus"><strong>HARplus</strong></a>.</p>
+</div>
+</details>
+<p><br> Before proceeding, ensure that <code>GTAPViz</code> is installed
+and loaded:</p>
+<pre class="r"><code>if (!requireNamespace(&quot;GTAPViz&quot;, quietly = TRUE)) {
+  devtools::install_github(&quot;Bodysbobb/GTAPViz&quot;)
+}
+
+require(GTAPViz)</code></pre>
+<div id="sec:figure-type" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Plot Types</h2>
+<p><code>GTAPViz</code> provides four main plotting functions,
+generating over 10 plot types:</p>
+<ol style="list-style-type: decimal">
+<li><p><a href="#sec:comparisonplot"><code>comparison_plot</code></a>:
+Compares variables across multiple experiments for selected observations
+from a specific dimension (e.g., region, sector).<br />
+Examples: <code>qgdp</code>, <code>ppriv</code>, <code>EV</code>,
+<code>GTAP Macros</code>, and more.</p></li>
+<li><p><a href="#sec:detailplot"><code>detail_plot</code></a>: Shows a
+variable across one or two dimensions for each experiment.<br />
+Examples: <code>qo</code>, <code>qxw</code>, <code>qmw</code>,
+etc.</p></li>
+<li><p><a href="#sec:stackplot"><code>stack_plot</code></a>: Visualizes
+the composition of a variable for decomposition analysis—e.g.,
+<code>EV</code> decomposition.</p></li>
+</ol>
+<details>
+<summary class="toggle-summary">
+💡 Tip: Plot Catalog
+</summary>
+<div class="tip-box">
+<p>Not sure which plot to use or what it looks like?<br />
+Browse the full
+<a href="https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/" target="_blank" style="font-weight: bold; text-decoration: underline;">Plot
+Catalog</a> for examples and use cases.</p>
+</div>
+</details>
+<hr />
+</div>
+<div id="sec:report-table" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Tables</h2>
+<p><code>GTAPViz</code> includes powerful functions for generating
+structured pivot tables and Excel-ready tables with <strong>interactive
+filters</strong>, ideal for academic presentations and reports.</p>
+<p>Explore the full <a
+href="https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/">Table
+Catalog</a> for examples.</p>
+</div>
+</div>
+<div id="sec:project-setting" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Project Directory</h1>
+<p>To use <code>GTAPViz</code> efficiently—with little to no manual
+adjustment—I highly recommend setting up your project directory as
+follows:</p>
+<pre class="r"><code>project.folder &lt;- &quot;your/folder/path&quot;
+
+# Optional: You might not need to adjust this
+input.folder &lt;- paste0(project.folder, &quot;/in&quot;) 
+map.folder &lt;- paste0(project.folder, &quot;/map&quot;)      
+output.folder &lt;- paste0(project.folder, &quot;/out&quot;)   </code></pre>
+<figure class="center-figure">
+<div class="code-box">
+<pre class="monospace"><code>📂 project.folder/ 
+├── 📂 in/  # Stores all input files
+├── 📂 map/ # Stores the mapping file
+├── 📂 out/</code></pre>
+</div>
+<figcaption class="auto-fig">
+Example of Project Folder
+</figcaption>
+</figure>
+<div id="sec:input-folder" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Input Folder</h2>
+<p>All <code>.sl4</code> and <code>.har</code> input files must be
+stored in the same folder—by default, <code>&lt;input.folder&gt;</code>,
+which refers to the <code>/in</code> directory within your project
+folder.</p>
+<p>Below is an example of the expected input folder structure:</p>
+<figure class="center-figure">
+<div class="code-box">
+<pre class="monospace"><code>📂 in/ 
+├── 📄 TAR10.sl4 
+├── 📄 TAR10-WEL.har 
+├── 📄 SUBT10.sl4 
+├── 📄 SUBT10-WEL.har </code></pre>
+</div>
+<figcaption class="auto-fig">
+Example of Input Folder
+</figcaption>
+</figure>
+</div>
+<div id="sec:mapping-folder" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Mapping Folder</h2>
+<p>The mapping XLSX template is available here: <a
+href="https://github.com/Bodysbobb/GTAPViz/tree/main/inst/extdata/map">OutputMapping.xlsx</a>.
+It contains three main sheets:</p>
+<ul>
+<li><p><a href="#sec:main-sheets">SL4File</a></p></li>
+<li><p><a href="#sec:main-sheets">HARFile</a></p></li>
+<li><p><a href="#sec:filterdata-sheets">FilterData</a></p></li>
+</ul>
+<div id="sec:main-sheets" class="section level3" number="2.2.1">
+<h3><span class="header-section-number">2.2.1</span> SL4File and HARFile
+Sheets</h3>
+<p>• <strong>“Variable”</strong> specifies the required variable from
+each file.</p>
+<p>• <strong>“Description”</strong> is optional for defining variables
+and plot titles.</p>
+<p>• <strong>“Unit”</strong> is required for all figure commands.</p>
+<p>Below is an example of mapping file:</p>
+<figure class="center-figure">
+<div class="table-box">
+<table>
+<tr>
+<th>
+Variable
+</th>
+<th>
+Description
+</th>
+<th>
+Unit
+</th>
+</tr>
+<tr>
+<td>
+qgdp
+</td>
+<td>
+Real GDP Index
+</td>
+<td>
+percent
+</td>
+</tr>
+<tr>
+<td>
+EV
+</td>
+<td>
+Welfare Equivalents
+</td>
+<td>
+million USD
+</td>
+</tr>
+<tr>
+<td>
+ppriv
+</td>
+<td>
+Consumer Price Index
+</td>
+<td>
+percent
+</td>
+</tr>
+<tr>
+<td>
+qo
+</td>
+<td>
+Output
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+qxw
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+</table>
+</div>
+<figcaption class="auto-fig">
+Example of “SL4File” and “HARFile” Sheet
+</figcaption>
+<p class="figure-note">
+<strong>Note:</strong> The <strong>Description</strong> and
+<strong>Unit</strong> columns can be left empty if using
+<a href="#sec:mapping_info">GTAP defaults</a>.
+</p>
+</figure>
+<div class="info-box">
+<p><strong>Important:</strong> You must manually define both the
+description and unit for all <strong>additional variables — non-GTAPv7
+variables</strong>.</p>
+</div>
+</div>
+<div id="sec:filterdata-sheets" class="section level3" number="2.2.2">
+<h3><span class="header-section-number">2.2.2</span> FilterData
+Sheet</h3>
+<p>The <code>FilterData</code> sheet is <strong>optional</strong> and
+can alternatively be defined directly in R. It contains two columns used
+to filter data from all loaded data frames:</p>
+<ul>
+<li><p><strong>“Region”</strong> – Excludes specified regions by
+filtering the <code>"REG"</code> column.</p></li>
+<li><p><strong>“Sector”</strong> – Excludes specified sectors by
+filtering the <code>"COMM"</code> and <code>"ACTS"</code>
+columns.</p></li>
+</ul>
+<p><strong>Caveat:</strong> This option only works with the default
+column names <code>"REG"</code>, <code>"COMM"</code>, and
+<code>"ACTS"</code>.<br />
+For filtering by other columns, you must manually apply filters in R
+after importing the data.</p>
+<p>Below is an example of the filter data sheet:</p>
+<figure class="center-figure">
+<div class="table-box">
+<table>
+<tr>
+<th>
+Region
+</th>
+<th>
+Sector
+</th>
+</tr>
+<tr>
+<td>
+EastAsia
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+SEAsia
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+Oceania
+</td>
+<td>
+</td>
+</tr>
+</table>
+</div>
+<figcaption class="auto-fig">
+Example of “FilterData” Sheet
+</figcaption>
+<p class="figure-note">
+<strong>Note:</strong> You may leave it empty to include all entries or
+redefine the order for sorting the output format.
+</p>
+</figure>
+</div>
+</div>
+</div>
+<div id="sec:r-setup" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> R Environment
+Configuration</h1>
+<p>This section configures experiment names, description and unit
+handling, and output formats for processing GTAP model results.</p>
+<div id="sec:experiment-name" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Experiment Names</h2>
+<p>Define <code>&lt;experiment&gt;</code> to specify <strong>input file
+names</strong>. The experiment name:</p>
+<p>• Appears in plots and is added to the <strong>“Experiment”</strong>
+column.</p>
+<p>• Sorts figures and tables based on the order of
+<code>&lt;experiment&gt;</code>.</p>
+<p>The following command processes the files and sorts the output with
+EXP1 before EXP2:</p>
+<pre class="r"><code>experiment &lt;- c(&quot;TAR10&quot;, &quot;SUBT10&quot;)
+
+# Automatically Processing These Inputs in the Input Folder 
+# - TAR10.sl4 and TAR10-WEL.har  
+# - SUBT10.sl4 and SUBT10-WEL.har  </code></pre>
+<details>
+<summary class="toggle-summary">
+Note
+</summary>
+<div class="tip-box">
+<p>You can include as many experiments (inputs) as needed, but a higher
+number will increase processing time.</p>
+</div>
+</details>
+</div>
+<div id="sec:mapping_info" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Description and
+Unit</h2>
+<p><code>&lt;mapping_info&gt;</code> controls how the
+<strong>“Description”</strong> and <strong>“Unit”</strong> columns are
+included in the output:</p>
+<ul>
+<li><p><code>"Yes"</code> → Uses descriptions and units from the mapping
+file.</p></li>
+<li><p><code>"No"</code> → Excludes <code>"Description"</code> and
+<code>"Unit"</code>.</p></li>
+<li><p><code>"GTAPv7"</code>→ Applies default definitions and units from
+<em>GTAP Model Version 7</em>.</p></li>
+<li><p><code>"Mix"</code> → Uses manual values when available;
+otherwise, applies GTAP defaults.</p></li>
+</ul>
+<pre class="r"><code>mapping_info &lt;- &quot;Mix&quot;</code></pre>
+<p><strong>Note:</strong> GTAP defaults apply only to variables included
+in the GTAPv7 model. Any additional variables must be manually
+defined.</p>
+</div>
+<div id="sec:output-formats" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Output Formats</h2>
+<p>Select the required output formats (<code>"Yes"</code> = export,
+<code>"No"</code> = skip):</p>
+<ul>
+<li><p><strong>CSV (<code>csv.output</code>)</strong> →
+<code>"No"</code></p></li>
+<li><p><strong>STATA (<code>stata.output</code>)</strong> →
+<code>"No"</code></p></li>
+<li><p><strong>R (<code>r.output</code>)</strong> →
+<code>"Yes"</code></p></li>
+<li><p><strong>Text (<code>txt.output</code>)</strong> →
+<code>"Yes"</code></p></li>
+</ul>
+<p>You can also choose to export only the organized raw data, with or
+without visualization, by setting <code>plot_data</code> to
+<code>TRUE</code> or <code>FALSE</code>.</p>
+<p>The following command exports all formats and generates data for
+plotting:</p>
+<pre class="r"><code>csv.output &lt;- &quot;YES&quot;    
+stata.output &lt;- &quot;YES&quot;  
+r.output &lt;- &quot;YES&quot;
+txt.output &lt;- &quot;YES&quot;   
+
+plot_data = TRUE
+
+# Convert units (optional)
+# Options: &quot;mil2bil&quot;, &quot;bil2mil&quot;, &quot;pct2frac&quot;, &quot;frac2pct&quot; — see details in `?convert_units`
+sl4_convert_unit &lt;- c(&quot;mil2bil&quot;)
+har_convert_unit &lt;- c(&quot;mil2bil&quot;)</code></pre>
+<details>
+<summary class="toggle-summary">
+💡 Tip: Unit Conversion
+</summary>
+<div class="tip-box">
+<p>You can convert result units for ‘sl4’ and ‘har’ independently by
+using the following automatic options, see
+<code>?convert_units</code>:</p>
+<ul>
+<li><code>"mil2bil"</code>: converts million USD to billion USD.</li>
+<li><code>"bil2mil"</code>: converts billion USD to million USD.</li>
+<li><code>"pct2frac"</code>: converts percentages to fractions.</li>
+<li><code>"frac2pct"</code>: converts fractions to percentages.</li>
+<li><code>NULL</code>: No conversion</li>
+</ul>
+</div>
+</details>
+</div>
+</div>
+<div id="sec:r-config-summary" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> R Configuration
+Summary</h1>
+<p>In summary, the entire R setup is captured in the following
+chunk:</p>
+<pre class="r"><code># 1. Project Directory
+project.folder &lt;- &quot;your/project/folder&quot;
+
+# 2. Define the Input Names 
+experiment &lt;- c(&quot;TAR10&quot;, &quot;SUBT10&quot;)
+
+# 3. Adding Description / Unit (Yes/No/GTAPv7/Mix)
+mapping_info &lt;- &quot;Mix&quot;
+
+# 4. Choosing Output: (CSV, STATA, R, TEXT) 
+csv.output &lt;- &quot;No&quot;    
+stata.output &lt;- &quot;No&quot;  
+r.output &lt;- &quot;No&quot;
+txt.output &lt;- &quot;No&quot;   
+
+# 5. For Plotting: (TRUE/FALSE)
+plot_data = TRUE</code></pre>
+<details>
+<summary class="toggle-summary">
+💡 Tip
+</summary>
+<div class="tip-box">
+<p>Once this process is complete, you can use the same format for future
+documents—saving you time and ensuring consistency.</p>
+</div>
+</details>
+<p>You can simply run the following code to setup subdirectories without
+modification if you followed all the previous instructions:</p>
+<pre class="r"><code># Default Subdirectories:
+input.folder &lt;- paste0(project.folder, &quot;/in&quot;)
+map.folder &lt;- paste0(project.folder, &quot;/map&quot;)
+output.folder &lt;- paste0(project.folder, &quot;/out&quot;)
+
+# Default Mapping File:
+sl4map &lt;- readxl::read_xlsx(paste0(map.folder, &quot;/OutputMapping.xlsx&quot;), sheet = &quot;SL4File&quot;)
+harmap &lt;- readxl::read_xlsx(paste0(map.folder, &quot;/OutputMapping.xlsx&quot;), sheet = &quot;HARFile&quot;)
+filter.map &lt;- readxl::read_xlsx(paste0(map.folder, &quot;/OutputMapping.xlsx&quot;), sheet = &quot;FilterData&quot;)
+
+# Filtering Data:
+selected_regions &lt;- if(length(filter.map$Region) &gt; 0) filter.map$Region else NULL
+selected_sector  &lt;- if(length(filter.map$Sector) &gt; 0) filter.map$Sector else NULL</code></pre>
+<p><strong>Note:</strong> If you’re familiar with R and prefer a more
+flexible directory structure, you can customize any of these. However,
+you must also define them in the function.</p>
+</div>
+<div id="sec:automategtap" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Automated Data
+Extraction</h1>
+<p>To streamline figure generation from GTAP results, I developed an
+automated data extraction method using the following command:</p>
+<pre class="r"><code>auto_gtap_data(
+  experiment = experiment,
+  process_sl4_vars = sl4map, 
+  process_har_vars = harmap,
+  mapping_info = mapping_info,
+  sl4_mapping_info = sl4map,
+  har_mapping_info = harmap,
+  sl4_convert_unit =&quot;mil2bil&quot;,
+  har_convert_unit = &quot;mil2bil&quot;,
+  region_select = selected_regions,
+  sector_select = selected_sector,
+  subtotal_level = FALSE,
+  rename_columns = TRUE,
+  decimals = 4,
+  project_path = project.folder,
+  plot_data = plot_data,
+  output_formats = list(
+    &quot;csv&quot; = csv.output,
+    &quot;stata&quot; = stata.output,
+    &quot;rds&quot; = r.output,
+    &quot;txt&quot; = txt.output))</code></pre>
+<p>W # Tips</p>
+<div id="manual-mapping-files" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Manual Mapping
+Files</h2>
+<p>You can easily create a filter file (<code>Filter</code>) using the
+following code:</p>
+<pre class="r"><code>selected_regions &lt;- c(&quot;EastAsia&quot;, &quot;SEAsia&quot;, &quot;Oceania&quot;)
+selected_sector  &lt;- NULL</code></pre>
+<p>You can also manually create a mapping file that replicates the
+structure of the <code>SL4File</code> and <code>HARFile</code> sheets
+using the following code:</p>
+<pre class="r"><code>mapping_df &lt;- data.frame(
+  Variable = c(&quot;qgdp&quot;, &quot;EV&quot;, &quot;ppriv&quot;),
+  Description = c(&quot;Real GDP Index&quot;, &quot;Welfare Equivalents&quot;, &quot;Consumer Price Index&quot;),
+  Unit = c(&quot;Percent&quot;, &quot;million USD&quot;, &quot;percent&quot;),
+  stringsAsFactors = FALSE
+)</code></pre>
+</div>
+<div id="sec:sorting-output" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Sorting Rules</h2>
+<p>These predefined lists determine the display order of outputs, i.e.,
+figures and tables:</p>
+<ul>
+<li><p><code>&lt;experiment&gt;</code> sorts the column
+<code>"Experiment"</code>, i.e., your input files.</p></li>
+<li><p><code>&lt;selected_region&gt;</code> sorts the column for defined
+countries by GTAP; the default is <code>"REG"</code>.</p></li>
+<li><p><code>&lt;selected_sectors&gt;</code> sorts the column for
+defined sectors by GTAP; the default is <code>"COMM"</code> and
+<code>"ACTS"</code>.</p></li>
+</ul>
+<details>
+<summary class="toggle-summary">
+💡 Tip
+</summary>
+<div class="tip-box">
+<p>To customize sorting for additional columns, see
+<code>Sorting Data</code> in the <code>Utilities</code> manuscript.</p>
+</div>
+</details>
+<p>For example, this setup with will display the figure as shown
+below:</p>
+<ul>
+<li><p><code>experiment &lt;- c("TAR10", "SUBT10")</code></p></li>
+<li><p><code>selected_regions &lt;- c("EastAsia", "SEAsia", "Oceania")</code></p></li>
+</ul>
+</div>
+</div>
+<div id="sample-data" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Sample Data</h1>
+<p>Sample data used in this vignette is obtained from the GTAPv7 model
+and utilizes data from the GTAP 11 database. For more details, refer to
+the <a
+href="https://www.gtap.agecon.purdue.edu/databases/archives.asp">GTAP
+Database Archive</a>.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

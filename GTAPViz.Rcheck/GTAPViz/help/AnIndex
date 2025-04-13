@@ -1,0 +1,16 @@
+.coalesce	dot-coalesce
+add_mapping_info	add_mapping_info
+auto_gtap_data	auto_gtap_data
+comparison_plot	comparison_plot
+convert_units	convert_units
+create_export_config	create_export_config
+create_plot_style	create_plot_style
+create_title_format	create_title_format
+detail_plot	detail_plot
+get_all_config	get_all_config
+get_color_palette	get_color_palette
+pivot_table_with_filter	pivot_table_with_filter
+rename_value	rename_value
+report_table	report_table
+sort_plot_data	sort_plot_data
+stack_plot	stack_plot
