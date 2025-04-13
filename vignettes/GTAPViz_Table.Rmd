@@ -32,6 +32,7 @@ knitr::opts_chunk$set(
 ```{r Dev Period, include = FALSE, eval = TRUE}
 rm(list=ls())
 
+devtools::load_all()
 try(devtools::load_all(".."), silent = TRUE)  # go up one level from /vignettes/
 
 input_path <- system.file("extdata/in", package = "GTAPViz")
@@ -62,9 +63,11 @@ The `report_table` function requires **a data list**—not a data frame.
 ```{r Comparison Table, eval = FALSE}
 report_table(
   data_list = sl4.plot.data,
-  pivot_col = list(REG = "Variable"),
+  pivot_col = list(REG = "Variable",
+                   'COMM*REG' = "Commodity"),
   group_by =  list(
-    REG = list("Experiment", "Region")),
+    REG = c("Experiment", "Region"),
+    'COMM*REG' = c("Experiment", "Region")),
   rename_cols = list("Experiment" = "Scenario"),
 
   total_column = FALSE,
@@ -78,7 +81,7 @@ report_table(
   add_group_line = FALSE,
   
   separate_sheet_by = "Unit",
-  export_table = FALSE,
+  export_table = TRUE,
   output_path = NULL,
   separate_file = FALSE,
   workbook_name = "Comparison Table"

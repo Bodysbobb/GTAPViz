@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Pattawee
 Puangchit</h4>
             
-            <h4 data-toc-skip class="date">2025-04-12</h4>
+            <h4 data-toc-skip class="date">2025-04-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bodysbobb/GTAPViz/blob/HEAD/vignettes/GTAPViz_Table.Rmd" class="external-link"><code>vignettes/GTAPViz_Table.Rmd</code></a></small>
       <div class="d-none name"><code>GTAPViz_Table.Rmd</code></div>
@@ -100,9 +100,11 @@ within <code>sl4.plot.data</code></strong> in one code block.</p></li>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report_table.html">report_table</a></span><span class="op">(</span></span>
 <span>  data_list <span class="op">=</span> <span class="va">sl4.plot.data</span>,</span>
-<span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>REG <span class="op">=</span> <span class="st">"Variable"</span><span class="op">)</span>,</span>
+<span>  pivot_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>REG <span class="op">=</span> <span class="st">"Variable"</span>,</span>
+<span>                   <span class="st">'COMM*REG'</span> <span class="op">=</span> <span class="st">"Commodity"</span><span class="op">)</span>,</span>
 <span>  group_by <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    REG <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Region"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    REG <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Region"</span><span class="op">)</span>,</span>
+<span>    <span class="st">'COMM*REG'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Experiment"</span>, <span class="st">"Region"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  rename_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Experiment"</span> <span class="op">=</span> <span class="st">"Scenario"</span><span class="op">)</span>,</span>
 <span></span>
 <span>  total_column <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -116,7 +118,7 @@ within <code>sl4.plot.data</code></strong> in one code block.</p></li>
 <span>  add_group_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  </span>
 <span>  separate_sheet_by <span class="op">=</span> <span class="st">"Unit"</span>,</span>
-<span>  export_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  export_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  output_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  separate_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  workbook_name <span class="op">=</span> <span class="st">"Comparison Table"</span></span>
