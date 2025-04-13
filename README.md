@@ -36,7 +36,7 @@ devtools::install_github("Bodysbobb/GTAPViz")
 
 ## **Package Helps**
 
-The most interactive package help is available via [ChatGPT GTAPViz](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r), specifically designed to assist with the GTAPViz package!
+The most interactive package help is available via [ChatGPT GTAPViz](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/), specifically designed to assist with the GTAPViz package!
 
 For complete instructions on using this package and exploring practical examples:
 
@@ -46,7 +46,7 @@ For complete instructions on using this package and exploring practical examples
 
 ## **Useful Packages for CGE Fellows**
 
-- [HARplus](https://cran.r-project.org/web/packages/HARplus/index.html)
+- [HARplus](https://cran.r-project.org/web/packages/HARplus/index.html/)
 
 ## **License & Author** 
 

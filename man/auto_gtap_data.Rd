@@ -140,7 +140,7 @@ gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
 }
 \seealso{
 \code{\link{add_mapping_info}}, \code{\link{convert_units}},
-\code{\link{rename_value}},
+\code{\link{rename_value}}
 }
 \author{
 Pattawee Puangchit

@@ -72,7 +72,7 @@
 #' @author Pattawee Puangchit
 #' @export
 #' @seealso \code{\link{add_mapping_info}}, \code{\link{convert_units}},
-#' \code{\link{rename_value}},
+#' \code{\link{rename_value}}
 #'
 #' @examples
 #' # Input Path:

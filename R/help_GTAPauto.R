@@ -689,6 +689,7 @@
 #' @param experiment Character vector of experiment names in the desired order.
 #' @param rank_column Character. Name of the column to add with ranking information. Default is "ScenarioRank".
 #' @param experiment_column Character. Name of the column containing experiment names. Default is "Experiment".
+#' @param merged_display Logical. If TRUE, modifies experiment values to include rank. Default is FALSE.
 #'
 #' @return The input data structure with an added ranking column.
 #' @author Pattawee Puangchit
