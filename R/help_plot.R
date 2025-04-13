@@ -3838,7 +3838,7 @@
 
   # Create a file-safe export name
   # 1. Keep alphanumeric, spaces, dots, underscores, hyphens, parentheses, AND percent signs
-  export_name <- gsub("[^a-zA-Z0-9_\\-\\. ()%]", "_", plot_title)
+  export_name <- gsub("[^a-zA-Z0-9_\\-\\. ()%]", "-", plot_title)
 
   # 2. Replace multiple spaces with a single space
   export_name <- gsub("\\s+", " ", export_name)
