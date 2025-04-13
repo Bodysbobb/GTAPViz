@@ -33,12 +33,10 @@ GTAPViz can be installed from GitHub using the following command in R:
 devtools::install_github("Bodysbobb/GTAPViz")
 ```
 
-Then, you can access the package manual using:
-```r
-help(package = "GTAPViz")
-```
 
-## **Comprehensive Documentation**
+## **Package Helps**
+
+The most interactive package help is available via [ChatGPT GTAPViz](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r), specifically designed to assist with the GTAPViz package!
 
 For complete instructions on using this package and exploring practical examples:
 
