@@ -5,7 +5,7 @@
 \title{Create an Export Configuration}
 \usage{
 create_export_config(
-  file_name = "gtap_plots",
+  file_name = NULL,
   width = NULL,
   height = NULL,
   dpi = 300,

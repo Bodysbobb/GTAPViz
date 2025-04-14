@@ -174,7 +174,7 @@ comparison_plot <- function(data,
     export_picture = export_picture,
     export_as_pdf = export_as_pdf,
     export_config = export_config,
-    default_filename = "comparison_plots"
+    default_filename = "comparison"
   ))
 }
 
@@ -354,9 +354,9 @@ detail_plot <- function(data,
 
   # Define export base name
   export_name_base <- if (!is.null(top_impact)) {
-    paste0("detail_plots_top", top_impact)
+    paste0("detail_top", top_impact)
   } else {
-    "detail_plots"
+    "detail"
   }
 
   # Handle export with common function
@@ -559,7 +559,7 @@ stack_plot <- function(data,
   )
 
   # Define export base name
-  plot_type_name <- if (unstack_plot) "Unstacked_plots" else "Stacked_plots"
+  plot_type_name <- if (unstack_plot) "Unstacked" else "Stacked"
   data_source_info <- ""
 
   if (variable_col %in% names(data) && length(unique(data[[variable_col]])) == 1) {
@@ -979,7 +979,7 @@ create_plot_style <- function(
 #' @author Pattawee Puangchit
 #' @export
 create_export_config <- function(
-    file_name = "gtap_plots",
+    file_name = NULL,
     width = NULL,
     height = NULL,
     dpi = 300,

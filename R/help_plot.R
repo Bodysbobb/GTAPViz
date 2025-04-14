@@ -972,12 +972,6 @@
     export_config <- list()
   }
 
-  # Only set file_name if it's NULL AND export_as_pdf is "merged"
-  if (is.null(export_config$file_name) && is.character(export_as_pdf) &&
-      tolower(export_as_pdf) == "merged") {
-    export_config$file_name <- default_filename
-  }
-
   # Calculate dimensions if not already specified
   dimensions <- if (!is.null(export_config$width) && !is.null(export_config$height)) {
     list(width = export_config$width, height = export_config$height)
@@ -997,7 +991,8 @@
     export_as_pdf = export_as_pdf,
     export_config = export_config,
     data = data,
-    panel_layout = panel_layout
+    panel_layout = panel_layout,
+    default_filename = default_filename
   )
 
   # Return plots
@@ -1896,13 +1891,14 @@
 #' @param export_config List. Export settings such as `width`, `height`, `dpi`, `bg`, `limitsize`, `file_name`.
 #' @param data Data used for calculating fallback plot dimensions (optional).
 #' @param panel_layout A list with `rows` and `cols` used for auto-scaling plot size (optional).
+#' @param default_filename Character. Default base filename if none specified.
 #'
 #' @return Invisibly returns NULL. Exports plots to disk.
 #' @keywords internal
 #' @noRd
 .export_plot_output <- function(plots, output_path = NULL, export_picture = TRUE,
                                 export_as_pdf = FALSE, export_config = NULL,
-                                data = NULL, panel_layout = NULL) {
+                                data = NULL, panel_layout = NULL, default_filename = NULL) {
   # Prepare export configuration
   if (is.null(export_config)) {
     export_config <- list()
@@ -1998,31 +1994,21 @@
 
   if (export_as_pdf) {
     if (is_merge_pdf && n_plots >= 1) {
-      # For merged PDFs, use the file_name from export_config, or create a default
-      if (is.null(export_config$file_name)) {
-        # Determine plot type based on the calling function for default name
-        calling_func <- sys.call(-1)[[1]]
-        if (is.name(calling_func)) {
-          calling_func <- as.character(calling_func)
+      # For merged PDFs, determine the filename
+      pdf_file_name <- NULL
 
-          if (grepl("comparison_plot", calling_func)) {
-            pdf_base_name <- "Comparison_plot"
-          } else if (grepl("detail_plot", calling_func)) {
-            pdf_base_name <- "Detail_plot"
-          } else if (grepl("stack_plot", calling_func)) {
-            pdf_base_name <- "Stack_plot"
-          } else {
-            pdf_base_name <- "Plots"
-          }
-        } else {
-          pdf_base_name <- "Plots"
-        }
-
-        # Create base filename with plot type and number of plots
-        pdf_file_name <- paste0(pdf_base_name, "_", n_plots)
-      } else {
-        # Use the configured file_name for merged PDFs
+      # Use user-provided file name if specified
+      if (!is.null(export_config$file_name) && nzchar(export_config$file_name)) {
         pdf_file_name <- export_config$file_name
+      } else {
+        # Use default_filename passed from the calling function
+        # This should be the plot type (comparison, detail, stack)
+        pdf_file_name <- default_filename
+      }
+
+      # Add number of plots suffix if more than 1 plot
+      if (n_plots > 1) {
+        pdf_file_name <- paste0(pdf_file_name, "_", n_plots, "plots")
       }
 
       # Make sure the filename is safe
@@ -2032,13 +2018,6 @@
 
       # Create the full path
       pdf_path <- file.path(output_path, paste0(pdf_file_name, ".pdf"))
-
-      # Find an available filename by adding suffix numbers if needed
-      suffix_counter <- 1
-      while (file.exists(pdf_path)) {
-        pdf_path <- file.path(output_path, paste0(pdf_file_name, "_", suffix_counter, ".pdf"))
-        suffix_counter <- suffix_counter + 1
-      }
 
       # Use tryCatch to handle PDF creation errors
       tryCatch({
