@@ -46,7 +46,7 @@ For complete instructions on using this package and exploring practical examples
 
 ## **Useful Packages for CGE Fellows**
 
-- [HARplus](https://cran.r-project.org/web/packages/HARplus/index.html/)
+- [HARplus](https://bodysbobb.github.io/HARplus/)
 
 ## **License & Author** 
 
