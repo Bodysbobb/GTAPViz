@@ -508,7 +508,6 @@ auto_gtap_data <- function(experiment,
   }
 
   # Process Bilateral Trade -------------------------------------------------
-  # Process Bilateral Trade -------------------------------------------------
   if (process_qxs && length(valid_sl4_cases) > 0) {
     message("Processing QXS Bilateral Trade Data")
 
@@ -550,65 +549,49 @@ auto_gtap_data <- function(experiment,
   }
 
   # Process HAR Data------------------------------------------------------------
-  if (process_sl4 && length(valid_sl4_cases) > 0) {
-    message("Processing SL4 Data")
-    process_regular_sl4 <- TRUE
-    if (process_macro && !is.null(sl4var_vars) && is.character(sl4var_vars)) {
-      if (length(sl4var_vars) == 1 && tolower(sl4var_vars) == "macros") {
-        process_regular_sl4 <- FALSE
+  if (process_har && length(valid_har_cases) > 0) {
+    message("Processing HAR Data")
+    har_data <- tryCatch({
+      process_data(valid_har_cases, har_file_suffix, harvar_vars, har_extract_method,
+                   HARplus::load_harx, har_output_name, har_priority, "HAR")
+    }, error = function(e) {
+      process_log$har <- sprintf("Error processing HAR Data: %s", e$message)
+      return(NULL)
+    })
+
+    if (!is.null(har_data)) {
+      process_log$har <- "HAR Data processed successfully"
+      har_data <- transform_data(har_data, har_mapping_info)
+
+      if (is.data.frame(har_data)) {
+        name <- switch(
+          har_extract_method,
+          "get_data_by_var" = if ("Variable" %in% names(har_data)) as.character(har_data$Variable[1]) else "data",
+          "get_data_by_dims" = if ("Dimension" %in% names(har_data)) as.character(har_data$Dimension[1]) else "data",
+          "group_data_by_dims" = "data"
+        )
+        har_data <- setNames(list(har_data), name)
       }
-    }
 
-    if (process_regular_sl4) {
-      # Exclude QXS variables from SL4 processing if we're handling them separately
-      sl4_vars_to_use <- sl4var_vars
-      if (process_qxs && !is.null(sl4_vars_to_use) && is.character(sl4_vars_to_use)) {
-        sl4_vars_to_use <- sl4_vars_to_use[!grepl("qxs", sl4_vars_to_use, ignore.case = TRUE)]
-        if (length(sl4_vars_to_use) == 0) sl4_vars_to_use <- NULL
+      if (plot_data && !is.null(har_output_name)) {
+        assign(har_output_name, har_data, envir = parent.frame())
+      }
+      all_data$decomposition_data <- har_data
+
+      # Apply unit conversion to HAR data if specified
+      if (!is.null(har_convert_unit) && !is.null(har_data)) {
+        message("Applying unit conversion to HAR data: ", har_convert_unit)
+        all_data$decomposition_data <- convert_units(har_data, scale_auto = har_convert_unit)
+        all_data$decomposition_data <- .format_decimal_places(all_data$decomposition_data, decimals)
+
+        # Update the plot data variable if it's being generated
+        if (plot_data && !is.null(har_output_name)) {
+          assign(har_output_name, all_data$decomposition_data, envir = parent.frame())
+        }
       }
 
-      grouped_sl4 <- tryCatch({
-        process_data(valid_sl4_cases, sl4_file_suffix, sl4_vars_to_use, sl4_extract_method,
-                     HARplus::load_sl4x, sl4_output_name, sl4_priority, "SL4")
-      }, error = function(e) {
-        process_log$sl4 <- sprintf("Error processing SL4 Data: %s", e$message)
-        return(NULL)
-      })
-
-      if (!is.null(grouped_sl4)) {
-        process_log$sl4 <- "SL4 Data processed successfully"
-        grouped_sl4 <- transform_data(grouped_sl4, sl4_mapping_info)
-
-        if (is.data.frame(grouped_sl4)) {
-          name <- switch(
-            sl4_extract_method,
-            "get_data_by_var" = if ("Variable" %in% names(grouped_sl4)) as.character(grouped_sl4$Variable[1]) else "data",
-            "get_data_by_dims" = if ("Dimension" %in% names(grouped_sl4)) as.character(grouped_sl4$Dimension[1]) else "data",
-            "group_data_by_dims" = "data"
-          )
-          grouped_sl4 <- setNames(list(grouped_sl4), name)
-        }
-
-        if (plot_data && !is.null(sl4_output_name)) {
-          assign(sl4_output_name, grouped_sl4, envir = parent.frame())
-        }
-        all_data$sl4_data <- grouped_sl4
-
-        # Apply unit conversion to SL4 data if specified
-        if (!is.null(sl4_convert_unit) && !is.null(grouped_sl4)) {
-          message("Applying unit conversion to SL4 data: ", sl4_convert_unit)
-          all_data$sl4_data <- convert_units(grouped_sl4, scale_auto = sl4_convert_unit)
-          all_data$sl4_data <- .format_decimal_places(all_data$sl4_data, decimals)
-
-          # Update the plot data variable if it's being generated
-          if (plot_data && !is.null(sl4_output_name)) {
-            assign(sl4_output_name, all_data$sl4_data, envir = parent.frame())
-          }
-        }
-
-        # Export processed SL4 data
-        export_processed_data(grouped_sl4, "SL4", output_path)
-      }
+      # Export processed HAR data
+      export_processed_data(har_data, "Decomposition", output_path)
     }
   }
 
