@@ -455,8 +455,15 @@ auto_gtap_data <- function(experiment,
     }
 
     if (process_regular_sl4) {
+      # Exclude QXS variables from SL4 processing if we're handling them separately
+      sl4_vars_to_use <- sl4var_vars
+      if (process_qxs && !is.null(sl4_vars_to_use) && is.character(sl4_vars_to_use)) {
+        sl4_vars_to_use <- sl4_vars_to_use[!grepl("qxs", sl4_vars_to_use, ignore.case = TRUE)]
+        if (length(sl4_vars_to_use) == 0) sl4_vars_to_use <- NULL
+      }
+
       grouped_sl4 <- tryCatch({
-        process_data(valid_sl4_cases, sl4_file_suffix, sl4var_vars, sl4_extract_method,
+        process_data(valid_sl4_cases, sl4_file_suffix, sl4_vars_to_use, sl4_extract_method,
                      HARplus::load_sl4x, sl4_output_name, sl4_priority, "SL4")
       }, error = function(e) {
         process_log$sl4 <- sprintf("Error processing SL4 Data: %s", e$message)
@@ -505,8 +512,67 @@ auto_gtap_data <- function(experiment,
     message("Processing QXS Bilateral Trade Data")
 
     bilateral_data <- tryCatch({
-      process_data(valid_sl4_cases, sl4_file_suffix, "qxs", "get_data_by_var",
-                   HARplus::load_sl4x, "bilateral_data", NULL, "QXS")
+      # Always use get_data_by_var for bilateral trade data, regardless of sl4_extract_method
+      qxs_raw <- setNames(
+        lapply(valid_sl4_cases, function(scenario) {
+          file_path <- file.path(input_path, paste0(scenario, sl4_file_suffix))
+          if (file.exists(file_path)) {
+            tryCatch({
+              HARplus::load_sl4x(file_path, select_header = "qxs")
+            }, error = function(e) {
+              message(sprintf("Error processing %s: %s", file_path, e$message))
+              return(NULL)
+            })
+          } else {
+            message(sprintf("Skipping %s (file not found)", file_path))
+            return(NULL)
+          }
+        }),
+        valid_sl4_cases
+      )
+
+      qxs_raw <- qxs_raw[!sapply(qxs_raw, is.null)]
+
+      if (length(qxs_raw) == 0) return(NULL)
+
+      # Always extract bilateral data using get_data_by_var
+      qxs_data <- do.call(
+        HARplus::get_data_by_var,
+        c(
+          list(
+            experiment_names = names(qxs_raw),
+            subtotal_level = subtotal_level,
+            merge_data = length(qxs_raw) > 1
+          ),
+          qxs_raw
+        )
+      )
+
+      # Apply standard transformations
+      qxs_data <- transform_data(qxs_data, sl4_mapping_info)
+
+      # Ensure consistent structure: bilateral_data > qxs > DATAFRAME
+      # If it's already a data frame, wrap it in a named list
+      if (is.data.frame(qxs_data)) {
+        qxs_data <- list(qxs = qxs_data)
+      } else if (is.list(qxs_data) && !is.null(names(qxs_data))) {
+        # Check if we have a nested structure that needs flattening
+        if (any(sapply(qxs_data, function(x) is.list(x) && !is.data.frame(x) && "qxs" %in% names(x)))) {
+          # Flatten the structure if we have double nesting
+          flattened_data <- list()
+          for (name in names(qxs_data)) {
+            item <- qxs_data[[name]]
+            if (is.list(item) && !is.data.frame(item) && "qxs" %in% names(item)) {
+              flattened_data[[name]] <- item[["qxs"]]
+            } else {
+              flattened_data[[name]] <- item
+            }
+          }
+          qxs_data <- flattened_data
+        }
+      }
+
+      return(qxs_data)
     }, error = function(e) {
       process_log$qxs <- sprintf("Error processing QXS Data: %s", e$message)
       return(NULL)
@@ -514,32 +580,20 @@ auto_gtap_data <- function(experiment,
 
     if (!is.null(bilateral_data)) {
       process_log$qxs <- "QXS Bilateral Data processed successfully"
-      bilateral_data <- transform_data(bilateral_data, sl4_mapping_info)
-
-      if (is.data.frame(bilateral_data)) {
-        name <- switch(
-          "get_data_by_var",
-          "get_data_by_var" = if ("Variable" %in% names(bilateral_data)) as.character(bilateral_data$Variable[1]) else "qxs",
-          "qxs"
-        )
-        bilateral_data <- setNames(list(bilateral_data), name)
-      }
-
-      if (plot_data && !is.null("bilateral_data")) {
-        assign("bilateral_data", list(qxs = bilateral_data), envir = parent.frame())
-      }
-      all_data$bilateral_data <- bilateral_data
 
       # Apply unit conversion to bilateral data if specified
-      if (!is.null(sl4_convert_unit) && !is.null(bilateral_data)) {
+      if (!is.null(sl4_convert_unit)) {
         message("Applying unit conversion to bilateral data: ", sl4_convert_unit)
-        all_data$bilateral_data <- convert_units(bilateral_data, scale_auto = sl4_convert_unit)
-        all_data$bilateral_data <- .format_decimal_places(all_data$bilateral_data, decimals)
+        bilateral_data <- convert_units(bilateral_data, scale_auto = sl4_convert_unit)
+        bilateral_data <- .format_decimal_places(bilateral_data, decimals)
+      }
 
-        # Update the plot data variable if it's being generated
-        if (plot_data && !is.null("bilateral_data")) {
-          assign("bilateral_data", list(qxs = all_data$bilateral_data), envir = parent.frame())
-        }
+      # Store in all_data
+      all_data$bilateral_data <- bilateral_data
+
+      # Update the plot data variable if it's being generated
+      if (plot_data) {
+        assign("bilateral_data", bilateral_data, envir = parent.frame())
       }
 
       # Export using the same export_processed_data helper as SL4
