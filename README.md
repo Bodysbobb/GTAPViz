@@ -1,5 +1,4 @@
 # GTAPViz: R Package for Automating GTAP Data Processing and Visualization
-[![R-CMD-check](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml)
 
 
 ## **Overview** 
