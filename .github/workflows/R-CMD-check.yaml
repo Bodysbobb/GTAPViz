@@ -24,6 +24,10 @@ jobs:
         with:
           use-public-rspm: true
 
+      # ✅ Install Quarto (for vignette rendering)
+      - name: Install Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
       # ✅ Install system libraries your GTAPViz might need
       - name: Install System Dependencies
         run: |
@@ -37,7 +41,7 @@ jobs:
           Rscript -e "remotes::install_deps(dependencies = TRUE)"
           Rscript -e "install.packages('curl')"
 
-      # ✅ Run R CMD check with flags
+      # ✅ Run R CMD check with vignette compression
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
