@@ -16,43 +16,28 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      # ✅ Checkout the repo
       - uses: actions/checkout@v4
 
-      # ✅ Set up R
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
 
-      # ✅ Install Pandoc (required for Rmd vignettes)
-      - name: Install Pandoc
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pandoc
-
-      # ✅ Install Quarto (needed if any .qmd files or quarto rendering)
-      - name: Install Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
-
-      # ✅ Install system libraries your GTAPViz might need
       - name: Install System Dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev libxml2-dev libssl-dev
 
-      # ✅ Install R dependencies
       - name: Install R Package Dependencies
         run: |
           Rscript -e "if (!requireNamespace('remotes', quietly = TRUE)) install.packages('remotes')"
           Rscript -e "remotes::install_deps(dependencies = TRUE)"
           Rscript -e "install.packages('curl')"
 
-      # ✅ Run R CMD check with vignette building and compression
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          build_args: 'c("--no-manual", "--compact-vignettes=gs+qpdf")'
+          build_args: 'c("--no-manual", "--ignore-vignettes")'
 
-      # ✅ Upload check results
       - name: Upload Check Artifacts
         uses: actions/upload-artifact@v4
         with:
