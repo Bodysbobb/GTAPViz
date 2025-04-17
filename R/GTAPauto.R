@@ -426,20 +426,15 @@ auto_gtap_data <- function(experiment,
         message("Applying unit conversion to macro data: ", sl4_convert_unit)
         all_data$GTAPMacros <- convert_units(macro_data, scale_auto = sl4_convert_unit)
         all_data$GTAPMacros <- .format_decimal_places(all_data$GTAPMacros, decimals)
-
-        # Update the plot data variable if it's being generated
-        if (plot_data) {
-          assign(macro_output_name, list(macros = all_data$GTAPMacros), envir = parent.frame())
-        }
       }
 
       # Fixed issue: Assign to parent environment if plot_data is TRUE
       if (plot_data) {
-        assign(macro_output_name, list(macros = macro_data), envir = parent.frame())
+        assign(macro_output_name, list(macros = all_data$GTAPMacros), envir = parent.frame())
       }
 
       # Export the macro data
-      export_processed_data(macro_data, "GTAPMacros", output_path)
+      export_processed_data(all_data$GTAPMacros, "GTAPMacros", output_path)
     }
   }
 
