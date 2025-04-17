@@ -7,8 +7,9 @@
 ![License](https://img.shields.io/github/license/Bodysbobb/GTAPViz?color=3CB371)
 
 **Package Help:**  
-[![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/)
-[![R Manuscript](https://img.shields.io/badge/r-%23276DC3.svg?style=for-the-badge&logo=r&logoColor=white)](https://bodysbobb.github.io/GTAPViz/)
+[![GTAPViz GPT](https://img.shields.io/badge/GTAPViz-74aa9c?style=for-the-badge&logo=openai&logoColor=white)](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/)
+[![GTAPViz R](https://img.shields.io/badge/GTAPViz-276DC3?style=for-the-badge&logo=r&logoColor=white)](https://bodysbobb.github.io/GTAPViz/)
+
 
 ## **Overview** 
 
