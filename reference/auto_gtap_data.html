@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GTAPViz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,11 +88,11 @@
 
 
 <dt id="arg-input-path">input_path<a class="anchor" aria-label="anchor" href="#arg-input-path"></a></dt>
-<dd><p>Character. Path to the input folder; overrides <code>project_path/in</code> if specified.</p></dd>
+<dd><p>Character. Path to the input folder.</p></dd>
 
 
 <dt id="arg-output-path">output_path<a class="anchor" aria-label="anchor" href="#arg-output-path"></a></dt>
-<dd><p>Character. Path to the output folder; overrides <code>project_path/out</code> if specified.</p></dd>
+<dd><p>Character. Path to the output folder.</p></dd>
 
 
 <dt id="arg-sl-suffix">sl4_suffix<a class="anchor" aria-label="anchor" href="#arg-sl-suffix"></a></dt>
@@ -211,7 +211,8 @@ Applies only to the <code>"ACTS"</code> and <code>"COMM"</code> columns, which a
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A processed GTAP-formatted dataset with standardized structure and metadata, ready for analysis or visualization.</p>
+    <p>A processed GTAP-formatted dataset with standardized structure and metadata,
+ready for analysis or visualization.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -242,8 +243,8 @@ See <code><a href="https://bodysbobb.github.io/HARplus/reference/group_data_by_d
 <span class="r-in"><span>                            input_path <span class="op">=</span> <span class="va">input_path</span>, subtotal_level <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                            process_sl4_vars <span class="op">=</span> <span class="cn">NULL</span>, process_har_vars <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>                            mapping_info <span class="op">=</span> <span class="st">"GTAPv7"</span>, plot_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> All 2 requested experiment files are found with both SL4 and HAR data.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Mapping method used: GTAPv7 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> All 2 requested experiment files are found with both SL4 and HAR data.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mapping method used: GTAPv7</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing GTAP Macro Data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing SL4 Data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing QXS Bilateral Trade Data</span>
@@ -255,8 +256,7 @@ See <code><a href="https://bodysbobb.github.io/HARplus/reference/group_data_by_d
 <span class="r-msg co"><span class="r-pr">#&gt;</span> HAR Data processed successfully</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> QXS Bilateral Data processed successfully</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> GTAP data processing completed successfully!</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
