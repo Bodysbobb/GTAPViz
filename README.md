@@ -1,4 +1,5 @@
 # GTAPViz: R Package for Automating GTAP Data Processing and Visualization
+[![Version](https://img.shields.io/github/v/tag/Bodysbobb/GTAPViz?label=version&color=blue&sort=semver)](https://github.com/Bodysbobb/GTAPViz/releases/latest)
 [![R-CMD-check](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml)
 [![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/)
 [![R Manuscript](https://img.shields.io/badge/r-%23276DC3.svg?style=for-the-badge&logo=r&logoColor=white)](https://bodysbobb.github.io/GTAPViz/)
