@@ -1,10 +1,11 @@
 # GitHub Actions CI for GTAPViz
-name: R-CMD-check.yaml
+name: R-CMD-check
 
 on:
   push:
     branches: [main, master]
   pull_request:
+    branches: [main, master]
 
 permissions: read-all
 
@@ -16,32 +17,42 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
+      # Checkout the repo
       - uses: actions/checkout@v4
 
+      # Set up R
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
 
+      # Set up Pandoc (this was missing in your original workflow)
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      # Install system dependencies
       - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev libxml2-dev libssl-dev
 
+      # Install R dependencies including packages needed for vignettes
       - name: Install R Package Dependencies
         run: |
-          Rscript -e "if (!requireNamespace('remotes', quietly = TRUE)) install.packages('remotes')"
-          Rscript -e "remotes::install_deps(dependencies = TRUE)"
-          Rscript -e "install.packages('curl')"
+          install.packages(c("remotes", "rcmdcheck", "rmarkdown", "knitr"))
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
 
+      # Run R CMD check
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          build_args: 'c("--no-manual", "--ignore-vignettes")'
+          build_args: 'c("--no-manual", "--compact-vignettes=gs+qpdf")'
+          error-on: '"error"'
+          check-dir: '"check"'
 
-      - name: Upload Check Artifacts
+      # Upload check results
+      - name: Upload Check Results
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: R-CMD-check-results
-          path: |
-            **/check/*.Rcheck/
-            **/check/**/tests*/testthat/_snaps
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          path: check
