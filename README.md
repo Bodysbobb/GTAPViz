@@ -54,6 +54,8 @@ For complete instructions on using this package and exploring practical examples
 - [GTAPViz: Plot Catalogs](https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/)  
 - [GTAPViz: Table Catalogs](https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/)
 
+For GTAP users seeking minimal or no code modifications, please visit [GTAPViz for GTAP Users](https://bodysbobb.github.io/GTAPViz-R-GTAPuser/).
+
 ## **Useful Packages for CGE Fellows**
 
 - [HARplus](https://bodysbobb.github.io/HARplus/)
