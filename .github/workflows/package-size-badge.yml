@@ -1,0 +1,36 @@
+name: GTAP Package Size Badge
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  calc-size:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y libcurl4-openssl-dev libxml2-dev libssl-dev
+
+      - name: Build R Package
+        run: R CMD build .
+
+      - name: Calculate Total Size (R/, vignettes/, man/, tar.gz)
+        run: |
+          size=$(du -ch R vignettes man GTAPViz_*.tar.gz 2>/dev/null | grep total | awk '{print $1}')
+          echo "{\"schemaVersion\": 1, \"label\": \"Total Package Size\", \"message\": \"$size\", \"color\": \"blue\"}" > size-badge.json
+
+      - name: Commit size-badge.json
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add size-badge.json
+          git commit -m "Update GTAPViz size badge" || echo "No changes to commit"
+          git push
