@@ -1,5 +1,15 @@
 # GTAPViz: R Package for Automating GTAP Data Processing and Visualization
 
+[![Author](https://img.shields.io/badge/Pattawee.P-blue?label=Author)](https://bodysbobb.github.io/) ![Last Updated](https://img.shields.io/github/last-commit/Bodysbobb/GTAPViz?label=Last%20Updated&color=blue)
+
+[![Version](https://img.shields.io/github/v/tag/Bodysbobb/GTAPViz?label=version&color=3CB371&sort=semver)](https://github.com/Bodysbobb/GTAPViz/releases/latest)
+[![R-CMD-check](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main&color=3CB371)](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml)
+![License](https://img.shields.io/github/license/Bodysbobb/GTAPViz?color=3CB371)
+
+**Package Help:**  
+[![GPT-GTAPViz](https://img.shields.io/badge/GPT--GTAPViz-74aa9c?style=flat-square&logo=openai&logoColor=white)](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/)
+[![GTAPViz](https://img.shields.io/badge/GTAPViz-276DC3?style=flat-square&logo=r&logoColor=white)](https://bodysbobb.github.io/GTAPViz/)
+
 ## **Overview** 
 
 **GTAPViz** is an R package designed to streamline the processing and visualization of GTAP-CGE results. While primarily built for **GTAP simulations, it also supports other `.har` and `.sl4` datasets**. 
@@ -52,7 +62,11 @@ For GTAP users seeking minimal or no code modifications, please visit [GTAPViz f
 
 - [HARplus](https://bodysbobb.github.io/HARplus/)
 
-## **Author:**  
+## **License & Author** 
+
+GTAPViz is released under the **MIT License**. See the full **[license](LICENSE)**.  
+
+**Author:**  
 **Pattawee Puangchit**  
 Ph.D. Candidate, Agricultural Economics  
 Purdue University  
