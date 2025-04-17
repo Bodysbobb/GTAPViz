@@ -154,8 +154,28 @@
 .export_detail_tables <- function(result_list, output_path, separate_file, sheet_names,
                                   repeat_label, workbook_name,
                                   add_group_line = FALSE) {
-  if (is.null(output_path)) stop("Output directory must be specified for exporting.")
-  if (!dir.exists(output_path)) dir.create(output_path, recursive = TRUE)
+  if (is.null(output_path)) {
+    output_path <- tempdir()
+    message("No output path specified. Using temporary directory: ", output_path)
+  }
+
+  # Check if output_path exists, if not create it with error handling
+  if (!dir.exists(output_path)) {
+    tryCatch({
+      dir.create(output_path, recursive = TRUE)
+    }, error = function(e) {
+      warning("Could not create output directory: ", conditionMessage(e))
+      output_path <- tempdir()
+      message("Using temporary directory instead: ", output_path)
+    })
+  }
+
+  # Check if directory is writable
+  if (file.access(output_path, 2) != 0) {
+    warning("Output directory is not writable: ", output_path)
+    output_path <- tempdir()
+    message("Using temporary directory instead: ", output_path)
+  }
 
   # Define styles
   header_style_left <- openxlsx::createStyle(

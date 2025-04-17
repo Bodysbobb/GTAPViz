@@ -12,6 +12,11 @@ get_color_palette(color_tone = NULL, palette_type = "qualitative")
 
 \item{palette_type}{Character. Palette type: `"qualitative"` (default), `"sequential"`, or `"diverging"`.}
 }
+\value{
+A character vector of hex color codes representing the selected color palette.
+If `color_tone = "all"`, returns a list of functions, each generating a specific palette.
+If `color_tone = "list"`, returns a character vector of available palette names.
+}
 \description{
 Prints and visualizes predefined color palettes used in GTAPViz.
 Use `color_tone = "all"` to return a list of callable palette functions.
@@ -25,7 +30,6 @@ all_palettes$gtap()
 # Visualize specific palettes
 get_color_palette("fall", "sequential")
 get_color_palette("academic", "diverging")
-
 }
 \author{
 Pattawee Puangchit

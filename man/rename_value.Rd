@@ -34,7 +34,6 @@ mapping_welfare <- data.frame(
 )
 
 har.plot.data <- rename_value(har.plot.data, mapping.file = mapping_welfare)
-
 }
 \seealso{
 \code{\link{add_mapping_info}}, \code{\link{convert_units}}, \code{\link{sort_plot_data}}

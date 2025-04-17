@@ -30,8 +30,6 @@ knitr::opts_chunk$set(
 
 
 ```{r Dev Period, include = FALSE, eval = TRUE}
-rm(list=ls())
-
 try(devtools::load_all(".."), silent = TRUE)  # go up one level from /vignettes/
 
 input_path <- system.file("extdata/in", package = "GTAPViz")

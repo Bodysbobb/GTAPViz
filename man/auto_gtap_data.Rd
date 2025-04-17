@@ -38,9 +38,9 @@ auto_gtap_data(
 \arguments{
 \item{experiment}{Character vector. Case names to process.}
 
-\item{input_path}{Character. Path to the input folder; overrides \verb{project_path/in} if specified.}
+\item{input_path}{Character. Path to the input folder.}
 
-\item{output_path}{Character. Path to the output folder; overrides \code{project_path/out} if specified.}
+\item{output_path}{Character. Path to the output folder.}
 
 \item{sl4_suffix}{Character. Custom suffix for SL4 files (e.g., \code{""}, \code{"-custom"}).}
 
@@ -113,7 +113,8 @@ Applies only to the \code{"ACTS"} and \code{"COMM"} columns, which are fixed and
 \item{rank_column}{Character. Name of the ranking column. Default is \code{"ScenarioRank"}.}
 }
 \value{
-A processed GTAP-formatted dataset with standardized structure and metadata, ready for analysis or visualization.
+A processed GTAP-formatted dataset with standardized structure and metadata,
+ready for analysis or visualization.
 }
 \description{
 Processes GTAP data from \code{sl4} and \code{har} files with options for exporting and preparing plot-ready data.
@@ -136,7 +137,6 @@ gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
                             input_path = input_path, subtotal_level = FALSE,
                             process_sl4_vars = NULL, process_har_vars = NULL,
                             mapping_info = "GTAPv7", plot_data = TRUE)
-
 }
 \seealso{
 \code{\link{add_mapping_info}}, \code{\link{convert_units}},

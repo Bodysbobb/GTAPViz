@@ -7,8 +7,8 @@
 #' @md
 #'
 #' @param experiment Character vector. Case names to process.
-#' @param input_path Character. Path to the input folder; overrides `project_path/in` if specified.
-#' @param output_path Character. Path to the output folder; overrides `project_path/out` if specified.
+#' @param input_path Character. Path to the input folder.
+#' @param output_path Character. Path to the output folder.
 #' @param sl4_suffix Character. Custom suffix for SL4 files (e.g., `""`, `"-custom"`).
 #' @param har_suffix Character. Custom suffix for HAR files (e.g., `"-WEL"`).
 #' @param process_sl4_vars Character, `NULL`, or `FALSE`. Variables to extract from SL4 data:
@@ -66,8 +66,8 @@
 #' - When using the extraction method `"group_data_by_dims"`, the corresponding priority list must be defined via the `sl4_priority` or `har_priority` argument.
 #'   See \code{\link[HARplus]{group_data_by_dims}} for more details.
 #'
-#' @return
-#' A processed GTAP-formatted dataset with standardized structure and metadata, ready for analysis or visualization.
+#' @return A processed GTAP-formatted dataset with standardized structure and metadata,
+#' ready for analysis or visualization.
 #'
 #' @author Pattawee Puangchit
 #' @export
@@ -85,7 +85,6 @@
 #'                             input_path = input_path, subtotal_level = FALSE,
 #'                             process_sl4_vars = NULL, process_har_vars = NULL,
 #'                             mapping_info = "GTAPv7", plot_data = TRUE)
-#'
 auto_gtap_data <- function(experiment,
                            input_path = NULL, output_path = NULL,
                            sl4_suffix = "", har_suffix = "",
@@ -162,7 +161,7 @@ auto_gtap_data <- function(experiment,
     har_convert_unit = har_convert_unit
   )
 
-  cat(paste(validation_result$messages, collapse = "\n"), "\n")
+  message(paste(validation_result$messages, collapse = "\n"))
 
   if (!validation_result$proceed) {
     stop("Process stopped due to validation errors.")
@@ -617,7 +616,7 @@ auto_gtap_data <- function(experiment,
 
   # Reset console output
   on.exit({
-    cat("\r")  # Carriage return without newline
+    message("\r", appendLF = FALSE)
     flush.console()
   }, add = TRUE)
 

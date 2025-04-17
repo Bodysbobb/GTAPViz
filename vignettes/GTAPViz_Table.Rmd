@@ -30,8 +30,6 @@ knitr::opts_chunk$set(
 
 
 ```{r Dev Period, include = FALSE, eval = TRUE}
-rm(list=ls())
-
 devtools::load_all()
 try(devtools::load_all(".."), silent = TRUE)  # go up one level from /vignettes/
 
@@ -81,7 +79,7 @@ report_table(
   add_group_line = FALSE,
   
   separate_sheet_by = "Unit",
-  export_table = TRUE,
+  export_table = FALSE,
   output_path = NULL,
   separate_file = FALSE,
   workbook_name = "Comparison Table"

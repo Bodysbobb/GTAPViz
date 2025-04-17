@@ -983,17 +983,25 @@
   export_config$width <- dimensions$width
   export_config$height <- dimensions$height
 
+  # Handle NULL output_path - use tempdir() if needed
+  if (is.null(output_path) && (export_picture || export_as_pdf)) {
+    output_path <- tempdir()
+    message("No output path specified. Using temporary directory: ", output_path)
+  }
+
   # Export plots
-  .export_plot_output(
-    plots = plot_list,
-    output_path = output_path,
-    export_picture = export_picture,
-    export_as_pdf = export_as_pdf,
-    export_config = export_config,
-    data = data,
-    panel_layout = panel_layout,
-    default_filename = default_filename
-  )
+  if (export_picture || export_as_pdf) {
+    .export_plot_output(
+      plots = plot_list,
+      output_path = output_path,
+      export_picture = export_picture,
+      export_as_pdf = export_as_pdf,
+      export_config = export_config,
+      data = data,
+      panel_layout = panel_layout,
+      default_filename = default_filename
+    )
+  }
 
   # Return plots
   return(invisible(plot_list))
@@ -1878,7 +1886,6 @@
   return(filtered_data)
 }
 
-
 #' @title Export and Save GTAP Plots
 #' @description
 #' Handles exporting plots to PNG or PDF format using specified export settings.
@@ -1923,7 +1930,8 @@
 
   # Process output_path
   if (is.null(output_path)) {
-    output_path <- getwd()
+    output_path <- tempdir()
+    message("No output path specified. Using temporary directory: ", output_path)
   }
 
   # Normalize the path to handle spaces and special characters
@@ -1934,22 +1942,23 @@
     tryCatch({
       dir.create(output_path, recursive = TRUE)
       if (!dir.exists(output_path)) {
-        warning(paste0("Failed to create output directory: ", output_path,
-                       ". Using current working directory instead."))
-        output_path <- getwd()
+        warning("Failed to create output directory: ", output_path)
+        output_path <- tempdir()
+        message("Using temporary directory instead: ", output_path)
       }
     }, error = function(e) {
-      warning(paste0("Error creating output directory: ", conditionMessage(e),
-                     ". Using current working directory instead."))
-      output_path <- getwd()
+      warning("Error creating output directory: ", conditionMessage(e))
+      output_path <- tempdir()
+      message("Using temporary directory instead: ", output_path)
     })
   }
 
   # Check if directory is writable
   if (file.access(output_path, 2) != 0) {
-    warning(paste0("Output directory is not writable: ", output_path,
-                   ". Using temporary directory instead."))
+    warning("Output directory is not writable: ", output_path)
     output_path <- tempdir()
+    message("Using temporary directory instead: ", output_path)
+
     # Ensure this directory exists
     if (!dir.exists(output_path)) {
       dir.create(output_path, recursive = TRUE)
@@ -2031,7 +2040,11 @@
         )
 
         for (i in seq_along(plots)) {
-          print(plots[[i]])
+          tryCatch({
+            grid::grid.draw(plots[[i]])
+          }, error = function(e) {
+            warning("Error drawing plot: ", conditionMessage(e))
+          })
         }
 
         # Always make sure to close the device
@@ -2047,7 +2060,7 @@
         if (grDevices::dev.cur() > 1) {
           try(grDevices::dev.off(), silent = TRUE)
         }
-        warning(paste0("Error exporting merged PDF: ", conditionMessage(e)))
+        warning("Error exporting merged PDF: ", conditionMessage(e))
       })
     } else {
       # Individual PDF export - use the cleaned plot names
@@ -2081,7 +2094,7 @@
             warning("PDF creation failed for plot name: ", plot_name)
           }
         }, error = function(e) {
-          warning(paste0("Error exporting PDF for plot '", plot_name, "': ", conditionMessage(e)))
+          warning("Error exporting PDF for plot '", plot_name, "': ", conditionMessage(e))
         })
       }
     }
@@ -2123,7 +2136,7 @@
           warning("PNG creation failed for plot name: ", plot_name)
         }
       }, error = function(e) {
-        warning(paste0("Error exporting PNG for plot '", plot_name, "': ", conditionMessage(e)))
+        warning("Error exporting PNG for plot '", plot_name, "': ", conditionMessage(e))
       })
     }
   }
@@ -3913,29 +3926,33 @@
     limitsize = FALSE
   )
 
-  cat("my_export_config <- list(\n")
+  # Build message string
+  msg <- "my_export_config <- list(\n"
 
   # Print file_name
-  cat("  file_name = \"", export_config_params$file_name, "\",\n", sep="")
+  msg <- paste0(msg, "  file_name = \"", export_config_params$file_name, "\",\n")
 
   # Print width
-  cat("  width = ", if(is.null(export_config_params$width)) "NULL" else export_config_params$width, ",\n", sep="")
+  msg <- paste0(msg, "  width = ", if(is.null(export_config_params$width)) "NULL" else export_config_params$width, ",\n")
 
   # Print height
-  cat("  height = ", if(is.null(export_config_params$height)) "NULL" else export_config_params$height, ",\n", sep="")
+  msg <- paste0(msg, "  height = ", if(is.null(export_config_params$height)) "NULL" else export_config_params$height, ",\n")
 
   # Print dpi
-  cat("  dpi = ", export_config_params$dpi, ",\n", sep="")
+  msg <- paste0(msg, "  dpi = ", export_config_params$dpi, ",\n")
 
   # Print bg
-  cat("  bg = \"", export_config_params$bg, "\",\n", sep="")
+  msg <- paste0(msg, "  bg = \"", export_config_params$bg, "\",\n")
 
   # Print limitsize (last item, no comma)
-  cat("  limitsize = ", ifelse(export_config_params$limitsize, "TRUE", "FALSE"), "\n", sep="")
+  msg <- paste0(msg, "  limitsize = ", ifelse(export_config_params$limitsize, "TRUE", "FALSE"), "\n")
 
-  cat(")\n\n")
-  cat("# Example usage:\n")
-  cat("# comparison_plot(data, x_axis_from = \"REG\", export_config = my_export_config)\n")
+  msg <- paste0(msg, ")\n\n")
+  msg <- paste0(msg, "# Example usage:\n")
+  msg <- paste0(msg, "# comparison_plot(data, x_axis_from = \"REG\", export_config = my_export_config)\n")
+
+  # Output the message
+  message(msg)
 
   return(invisible(export_config_params))
 }
@@ -3955,155 +3972,159 @@
                                    validate_custom = NULL) {
   config <- .calculate_plot_style_config(NULL, plot_type)
 
-  cat("my_style_config <- list(\n")
+  # Start building the message string
+  msg <- "my_style_config <- list(\n"
 
   # Title settings
-  cat("\n  # Title settings\n")
-  cat("  show_title = ", ifelse(config$show_title, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  title_face = \"", config$title_face, "\",\n", sep="")
-  cat("  title_size = ", config$title_size, ",\n", sep="")
-  cat("  title_hjust = ", config$title_hjust, ",\n", sep="")
-  cat("  add_unit_to_title = ", ifelse(config$add_unit_to_title, "TRUE", "FALSE"), ",\n", sep="")
+  msg <- paste0(msg, "\n  # Title settings\n")
+  msg <- paste0(msg, "  show_title = ", ifelse(config$show_title, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  title_face = \"", config$title_face, "\",\n")
+  msg <- paste0(msg, "  title_size = ", config$title_size, ",\n")
+  msg <- paste0(msg, "  title_hjust = ", config$title_hjust, ",\n")
+  msg <- paste0(msg, "  add_unit_to_title = ", ifelse(config$add_unit_to_title, "TRUE", "FALSE"), ",\n")
 
   # Format margin objects as simple vectors with description
   margin_values <- as.numeric(config$title_margin)
-  cat("  title_margin = c(", margin_values[1], ", ", margin_values[2],
-      ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
+  msg <- paste0(msg, "  title_margin = c(", margin_values[1], ", ", margin_values[2],
+                ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n")
 
   # Format title_format as a properly structured list
   tf <- config$title_format
-  cat("  title_format = create_title_format(\n")
-  cat("    type = \"", .coalesce(tf$type, "standard"), "\", #option: prefix, suffix, full, dynamic\n", sep="")
-  cat("    text = \"", .coalesce(tf$text, ""), "\",\n", sep="")
-  cat("    sep = \"", .coalesce(tf$sep, ""), "\"\n", sep="")
-  cat("  ),\n")
+  msg <- paste0(msg, "  title_format = create_title_format(\n")
+  msg <- paste0(msg, "    type = \"", .coalesce(tf$type, "standard"), "\", #option: prefix, suffix, full, dynamic\n")
+  msg <- paste0(msg, "    text = \"", .coalesce(tf$text, ""), "\",\n")
+  msg <- paste0(msg, "    sep = \"", .coalesce(tf$sep, ""), "\"\n")
+  msg <- paste0(msg, "  ),\n")
 
   # X-Axis settings
-  cat("\n  # X-Axis settings\n")
-  cat("  show_x_axis_title = ", ifelse(config$show_x_axis_title, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  x_axis_title_face = \"", config$x_axis_title_face, "\",\n", sep="")
-  cat("  x_axis_title_size = ", config$x_axis_title_size, ",\n", sep="")
+  msg <- paste0(msg, "\n  # X-Axis settings\n")
+  msg <- paste0(msg, "  show_x_axis_title = ", ifelse(config$show_x_axis_title, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  x_axis_title_face = \"", config$x_axis_title_face, "\",\n")
+  msg <- paste0(msg, "  x_axis_title_size = ", config$x_axis_title_size, ",\n")
 
   margin_values <- as.numeric(config$x_axis_title_margin)
-  cat("  x_axis_title_margin = c(", margin_values[1], ", ", margin_values[2],
-      ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
+  msg <- paste0(msg, "  x_axis_title_margin = c(", margin_values[1], ", ", margin_values[2],
+                ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n")
 
-  cat("  show_x_axis_labels = ", ifelse(config$show_x_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  x_axis_text_face = \"", config$x_axis_text_face, "\",\n", sep="")
-  cat("  x_axis_text_size = ", config$x_axis_text_size, ",\n", sep="")
-  cat("  x_axis_text_angle = ", config$x_axis_text_angle, ",\n", sep="")
-  cat("  x_axis_text_hjust = ", config$x_axis_text_hjust, ",\n", sep="")
-  cat("  x_axis_description = \"", config$x_axis_description, "\",\n", sep="")
+  msg <- paste0(msg, "  show_x_axis_labels = ", ifelse(config$show_x_axis_labels, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  x_axis_text_face = \"", config$x_axis_text_face, "\",\n")
+  msg <- paste0(msg, "  x_axis_text_size = ", config$x_axis_text_size, ",\n")
+  msg <- paste0(msg, "  x_axis_text_angle = ", config$x_axis_text_angle, ",\n")
+  msg <- paste0(msg, "  x_axis_text_hjust = ", config$x_axis_text_hjust, ",\n")
+  msg <- paste0(msg, "  x_axis_description = \"", config$x_axis_description, "\",\n")
 
   # Y-Axis settings
-  cat("\n  # Y-Axis settings\n")
-  cat("  show_y_axis_title = ", ifelse(config$show_y_axis_title, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  y_axis_title_face = \"", config$y_axis_title_face, "\",\n", sep="")
-  cat("  y_axis_title_size = ", config$y_axis_title_size, ",\n", sep="")
+  msg <- paste0(msg, "\n  # Y-Axis settings\n")
+  msg <- paste0(msg, "  show_y_axis_title = ", ifelse(config$show_y_axis_title, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  y_axis_title_face = \"", config$y_axis_title_face, "\",\n")
+  msg <- paste0(msg, "  y_axis_title_size = ", config$y_axis_title_size, ",\n")
 
   margin_values <- as.numeric(config$y_axis_title_margin)
-  cat("  y_axis_title_margin = c(", margin_values[1], ", ", margin_values[2],
-      ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
+  msg <- paste0(msg, "  y_axis_title_margin = c(", margin_values[1], ", ", margin_values[2],
+                ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n")
 
-  cat("  show_y_axis_labels = ", ifelse(config$show_y_axis_labels, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  y_axis_text_face = \"", config$y_axis_text_face, "\",\n", sep="")
-  cat("  y_axis_text_size = ", config$y_axis_text_size, ",\n", sep="")
-  cat("  y_axis_text_angle = ", config$y_axis_text_angle, ",\n", sep="")
-  cat("  y_axis_text_hjust = ", config$y_axis_text_hjust, ",\n", sep="")
-  cat("  y_axis_description = \"", config$y_axis_description, "\",\n", sep="")
-  cat("  show_axis_titles_on_all_facets = ", ifelse(config$show_axis_titles_on_all_facets, "TRUE", "FALSE"), ",\n", sep="")
+  msg <- paste0(msg, "  show_y_axis_labels = ", ifelse(config$show_y_axis_labels, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  y_axis_text_face = \"", config$y_axis_text_face, "\",\n")
+  msg <- paste0(msg, "  y_axis_text_size = ", config$y_axis_text_size, ",\n")
+  msg <- paste0(msg, "  y_axis_text_angle = ", config$y_axis_text_angle, ",\n")
+  msg <- paste0(msg, "  y_axis_text_hjust = ", config$y_axis_text_hjust, ",\n")
+  msg <- paste0(msg, "  y_axis_description = \"", config$y_axis_description, "\",\n")
+  msg <- paste0(msg, "  show_axis_titles_on_all_facets = ", ifelse(config$show_axis_titles_on_all_facets, "TRUE", "FALSE"), ",\n")
 
   # Value Labels
-  cat("\n  # Value Labels\n")
-  cat("  show_value_labels = ", ifelse(config$show_value_labels, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  value_label_face = \"", config$value_label_face, "\",\n", sep="")
-  cat("  value_label_size = ", config$value_label_size, ",\n", sep="")
-  cat("  value_label_position = \"", config$value_label_position, "\",\n", sep="")
-  cat("  value_label_decimal_places = ", config$value_label_decimal_places, ",\n", sep="")
+  msg <- paste0(msg, "\n  # Value Labels\n")
+  msg <- paste0(msg, "  show_value_labels = ", ifelse(config$show_value_labels, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  value_label_face = \"", config$value_label_face, "\",\n")
+  msg <- paste0(msg, "  value_label_size = ", config$value_label_size, ",\n")
+  msg <- paste0(msg, "  value_label_position = \"", config$value_label_position, "\",\n")
+  msg <- paste0(msg, "  value_label_decimal_places = ", config$value_label_decimal_places, ",\n")
 
   # Legend
-  cat("\n  # Legend\n")
-  cat("  show_legend = ", ifelse(config$show_legend, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  show_legend_title = ", ifelse(config$show_legend_title, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  legend_position = \"", config$legend_position, "\",\n", sep="")
-  cat("  legend_title_face = \"", config$legend_title_face, "\",\n", sep="")
-  cat("  legend_text_face = \"", config$legend_text_face, "\",\n", sep="")
-  cat("  legend_text_size = ", config$legend_text_size, ",\n", sep="")
+  msg <- paste0(msg, "\n  # Legend\n")
+  msg <- paste0(msg, "  show_legend = ", ifelse(config$show_legend, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  show_legend_title = ", ifelse(config$show_legend_title, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  legend_position = \"", config$legend_position, "\",\n")
+  msg <- paste0(msg, "  legend_title_face = \"", config$legend_title_face, "\",\n")
+  msg <- paste0(msg, "  legend_text_face = \"", config$legend_text_face, "\",\n")
+  msg <- paste0(msg, "  legend_text_size = ", config$legend_text_size, ",\n")
 
   # Panel Strip
-  cat("\n  # Panel Strip\n")
-  cat("  strip_face = \"", config$strip_face, "\",\n", sep="")
-  cat("  strip_text_size = ", config$strip_text_size, ",\n", sep="")
-  cat("  strip_background = \"", config$strip_background, "\",\n", sep="")
+  msg <- paste0(msg, "\n  # Panel Strip\n")
+  msg <- paste0(msg, "  strip_face = \"", config$strip_face, "\",\n")
+  msg <- paste0(msg, "  strip_text_size = ", config$strip_text_size, ",\n")
+  msg <- paste0(msg, "  strip_background = \"", config$strip_background, "\",\n")
 
   margin_values <- as.numeric(config$strip_text_margin)
-  cat("  strip_text_margin = c(", margin_values[1], ", ", margin_values[2],
-      ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n", sep="")
+  msg <- paste0(msg, "  strip_text_margin = c(", margin_values[1], ", ", margin_values[2],
+                ", ", margin_values[3], ", ", margin_values[4], "), #c(top, right, bottom, left)\n")
 
   # Panel Layout
-  cat("\n  # Panel Layout\n")
-  cat("  panel_spacing = ", config$panel_spacing, ",\n", sep="")
-  cat("  panel_rows = ", if(is.null(config$panel_rows)) "NULL" else config$panel_rows, ",\n", sep="")
-  cat("  panel_cols = ", if(is.null(config$panel_cols)) "NULL" else config$panel_cols, ",\n", sep="")
-  cat("  theme = ", if(is.null(config$theme)) "NULL" else "custom_theme", ",\n", sep="")
+  msg <- paste0(msg, "\n  # Panel Layout\n")
+  msg <- paste0(msg, "  panel_spacing = ", config$panel_spacing, ",\n")
+  msg <- paste0(msg, "  panel_rows = ", if(is.null(config$panel_rows)) "NULL" else config$panel_rows, ",\n")
+  msg <- paste0(msg, "  panel_cols = ", if(is.null(config$panel_cols)) "NULL" else config$panel_cols, ",\n")
+  msg <- paste0(msg, "  theme = ", if(is.null(config$theme)) "NULL" else "custom_theme", ",\n")
 
   # Color
-  cat("\n  # Colors and Grid \n")
-  cat("  color_tone = ", if(is.null(config$color_tone)) "NULL" else paste0("\"", config$color_tone, "\""), ",\n", sep="")
-  cat("  color_palette_type = \"", config$color_palette_type, "\", #option: qualitative, sequential, diverging\n", sep="")
-  cat("  positive_color = \"", config$positive_color, "\",\n", sep="")
-  cat("  negative_color = \"", config$negative_color, "\",\n", sep="")
-  cat("  background_color = \"", config$background_color, "\",\n", sep="")
-  cat("  grid_color = \"", config$grid_color, "\",\n", sep="")
-  cat("  show_grid_major_x = ", ifelse(config$show_grid_major_x, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  show_grid_major_y = ", ifelse(config$show_grid_major_y, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  show_grid_minor_x = ", ifelse(config$show_grid_minor_x, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  show_grid_minor_y = ", ifelse(config$show_grid_minor_y, "TRUE", "FALSE"), ",\n", sep="")
+  msg <- paste0(msg, "\n  # Colors and Grid \n")
+  msg <- paste0(msg, "  color_tone = ", if(is.null(config$color_tone)) "NULL" else paste0("\"", config$color_tone, "\""), ",\n")
+  msg <- paste0(msg, "  color_palette_type = \"", config$color_palette_type, "\", #option: qualitative, sequential, diverging\n")
+  msg <- paste0(msg, "  positive_color = \"", config$positive_color, "\",\n")
+  msg <- paste0(msg, "  negative_color = \"", config$negative_color, "\",\n")
+  msg <- paste0(msg, "  background_color = \"", config$background_color, "\",\n")
+  msg <- paste0(msg, "  grid_color = \"", config$grid_color, "\",\n")
+  msg <- paste0(msg, "  show_grid_major_x = ", ifelse(config$show_grid_major_x, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  show_grid_major_y = ", ifelse(config$show_grid_major_y, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  show_grid_minor_x = ", ifelse(config$show_grid_minor_x, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  show_grid_minor_y = ", ifelse(config$show_grid_minor_y, "TRUE", "FALSE"), ",\n")
 
   # Zero Line
-  cat("\n  # Zero Line\n")
-  cat("  show_zero_line = ", ifelse(config$show_zero_line, "TRUE", "FALSE"), ",\n", sep="")
-  cat("  zero_line_type = \"", config$zero_line_type, "\",\n", sep="")
-  cat("  zero_line_color = \"", config$zero_line_color, "\",\n", sep="")
-  cat("  zero_line_size = ", config$zero_line_size, ",\n", sep="")
-  cat("  zero_line_position = ", config$zero_line_position, ",\n", sep="")
+  msg <- paste0(msg, "\n  # Zero Line\n")
+  msg <- paste0(msg, "  show_zero_line = ", ifelse(config$show_zero_line, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  zero_line_type = \"", config$zero_line_type, "\",\n")
+  msg <- paste0(msg, "  zero_line_color = \"", config$zero_line_color, "\",\n")
+  msg <- paste0(msg, "  zero_line_size = ", config$zero_line_size, ",\n")
+  msg <- paste0(msg, "  zero_line_position = ", config$zero_line_position, ",\n")
 
   # Bar Chart
-  cat("\n  # Bar Chart\n")
-  cat("  bar_width = ", config$bar_width, ",\n", sep="")
-  cat("  bar_spacing = ", config$bar_spacing, ",\n", sep="")
+  msg <- paste0(msg, "\n  # Bar Chart\n")
+  msg <- paste0(msg, "  bar_width = ", config$bar_width, ",\n")
+  msg <- paste0(msg, "  bar_spacing = ", config$bar_spacing, ",\n")
 
   # Scale Settings
-  cat("\n  # Scale Settings\n")
+  msg <- paste0(msg, "\n  # Scale Settings\n")
   if (is.null(config$scale_limit)) {
-    cat("  scale_limit = NULL,\n", sep="")
+    msg <- paste0(msg, "  scale_limit = NULL,\n")
   } else {
-    cat("  scale_limit = c(", paste(config$scale_limit, collapse=", "), "),\n", sep="")
+    msg <- paste0(msg, "  scale_limit = c(", paste(config$scale_limit, collapse=", "), "),\n")
   }
-  cat("  scale_increment = ", if(is.null(config$scale_increment)) "NULL" else config$scale_increment, ",\n", sep="")
+  msg <- paste0(msg, "  scale_increment = ", if(is.null(config$scale_increment)) "NULL" else config$scale_increment, ",\n")
 
   # Scale Expansion
-  cat("\n  # Scale Expansion\n")
-  cat("  expansion_y_mult = c(", paste(config$expansion_y_mult, collapse=", "), "),\n", sep="")
-  cat("  expansion_x_mult = c(", paste(config$expansion_x_mult, collapse=", "), "),\n", sep="")
+  msg <- paste0(msg, "\n  # Scale Expansion\n")
+  msg <- paste0(msg, "  expansion_y_mult = c(", paste(config$expansion_y_mult, collapse=", "), "),\n")
+  msg <- paste0(msg, "  expansion_x_mult = c(", paste(config$expansion_x_mult, collapse=", "), "),\n")
 
   # Font Size Control
-  cat("\n  # Font Size Control\n")
-  cat("  all_font_size = ", config$all_font_size, ",\n", sep="")
+  msg <- paste0(msg, "\n  # Font Size Control\n")
+  msg <- paste0(msg, "  all_font_size = ", config$all_font_size, ",\n")
 
   # Data Sorting
-  cat("\n  # Data Sorting\n")
-  cat("  sort_data_by_value = ", ifelse(config$sort_data_by_value, "TRUE", "FALSE"), ",\n", sep="")
+  msg <- paste0(msg, "\n  # Data Sorting\n")
+  msg <- paste0(msg, "  sort_data_by_value = ", ifelse(config$sort_data_by_value, "TRUE", "FALSE"), ",\n")
 
   # Plot Margin Settings
-  cat("\n  # Plot Margin\n")
+  msg <- paste0(msg, "\n  # Plot Margin\n")
   margin_values <- as.numeric(config$plot.margin)
-  cat("  plot.margin = c(", margin_values[1], ", ", margin_values[2],
-      ", ", margin_values[3], ", ", margin_values[4], ") #c(top, right, bottom, left)\n", sep="")
+  msg <- paste0(msg, "  plot.margin = c(", margin_values[1], ", ", margin_values[2],
+                ", ", margin_values[3], ", ", margin_values[4], ") #c(top, right, bottom, left)\n")
 
-  cat(")\n\n")
-  cat("# Example usage:\n")
-  cat("# comparison_plot(data, x_axis_from = \"REG\", plot_style_config = my_style_config)\n")
+  msg <- paste0(msg, ")\n\n")
+  msg <- paste0(msg, "# Example usage:\n")
+  msg <- paste0(msg, "# comparison_plot(data, x_axis_from = \"REG\", plot_style_config = my_style_config)\n")
+
+  # Output the message
+  message(msg)
 
   return(invisible(config))
 }

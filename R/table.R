@@ -116,6 +116,33 @@ report_table <- function(data_list,
   miss <- setdiff(hnames, names(data_list))
   if (length(miss) > 0) stop("Data list is missing: ", paste(miss, collapse=", "))
 
+  # Handle output_path when export_table is TRUE
+  if (export_table && is.null(output_path)) {
+    output_path <- tempdir()
+    message("No output path specified for export. Using temporary directory: ", output_path)
+  }
+
+  # Check output directory is writable if export_table is TRUE
+  if (export_table && !is.null(output_path)) {
+    # Check if directory exists, try to create it if it doesn't
+    if (!dir.exists(output_path)) {
+      tryCatch({
+        dir.create(output_path, recursive = TRUE)
+      }, error = function(e) {
+        warning("Could not create output directory: ", conditionMessage(e))
+        output_path <- tempdir()
+        message("Using temporary directory instead: ", output_path)
+      })
+    }
+
+    # Check if directory is writable
+    if (file.access(output_path, 2) != 0) {
+      warning("Output directory is not writable: ", output_path)
+      output_path <- tempdir()
+      message("Using temporary directory instead: ", output_path)
+    }
+  }
+
   rename_mapping <- list()
   if (!is.null(rename_cols)) {
     if (!is.list(rename_cols)) {
@@ -315,8 +342,6 @@ report_table <- function(data_list,
 #' @param output_path Character. Directory where the file should be saved (default: current working directory).
 #' @param workbook_name Character. Name of the output Excel file (default: `"GTAP_PivotTable.xlsx"`).
 #'
-#' @return An excel workbook object containing both raw data and the pivot table.
-#'
 #' @details
 #' This function creates an Excel workbook with:
 #' - A raw data sheet (`raw_sheet_name`) containing the provided dataset.
@@ -325,6 +350,7 @@ report_table <- function(data_list,
 #' If `export = TRUE`, the function saves the workbook to the specified `output_path`.
 #'
 #' @author Pattawee Puangchit
+#' @return An excel workbook object containing both raw data and the pivot table.
 #' @export
 #'
 #' @examples

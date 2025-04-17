@@ -124,7 +124,7 @@
                                      "Please select at least one output option:",
                                      "  - Specify at least one output format (csv, stata, rds, txt)",
                                      "  - Set plot_data = TRUE to prepare data for plotting")
-    cat(paste(validation_results$messages, collapse = "\n"), "\n")
+    message(paste(validation_results$messages, collapse = "\n"))
     proceed_without_output <- .ask_confirmation("Do you want to proceed without any output? (Y/N): ")
 
     if (!proceed_without_output) {
@@ -168,7 +168,7 @@
     validation_results$status <- "warning"
 
     # Display specific warnings about missing files
-    cat(paste(missing_file_warnings, collapse = "\n"), "\n")
+    message(paste(missing_file_warnings, collapse = "\n"))
 
     # Ask if user wants to proceed despite missing files
     proceed_without_files <- .ask_confirmation("Do you want to proceed with missing files? (Y/N): ")
@@ -214,7 +214,7 @@
       validation_results$messages <- c(validation_results$messages,
                                        sprintf("Invalid sl4_convert_unit: '%s'. Valid options are: %s.",
                                                sl4_convert_unit, paste(valid_convert_units, collapse = ", ")))
-      cat("Invalid sl4_convert_unit parameter. Will use default (no conversion).\n")
+      message("Invalid sl4_convert_unit parameter. Will use default (no conversion).")
       sl4_convert_unit <- NULL
     }
 
@@ -223,7 +223,7 @@
       validation_results$messages <- c(validation_results$messages,
                                        sprintf("Invalid har_convert_unit: '%s'. Valid options are: %s.",
                                                har_convert_unit, paste(valid_convert_units, collapse = ", ")))
-      cat("Invalid har_convert_unit parameter. Will use default (no conversion).\n")
+      message("Invalid har_convert_unit parameter. Will use default (no conversion).")
       har_convert_unit <- NULL
     }
 
@@ -254,8 +254,8 @@
       validation_results$status <- "warning"
 
       # Display specific mapping warnings
-      cat(paste(mapping_warnings, collapse = "\n"), "\n")
-      cat("These columns are required for mapping_info = 'Yes' or 'Mix'.\n")
+      message(paste(mapping_warnings, collapse = "\n"))
+      message("These columns are required for mapping_info = 'Yes' or 'Mix'.")
 
       use_gtapv7 <- .ask_confirmation("Do you want to proceed using GTAPv7 definitions for missing values? (Y/N): ")
 
@@ -380,7 +380,6 @@
   return(validation_results)
 }
 
-
 #' @title Ask for User Confirmation (Internal)
 #' @description Prompts the user for confirmation by displaying a message and reading input from the console. Returns TRUE if the user confirms with 'y', otherwise FALSE.
 #' @param prompt A character string specifying the message to display to the user.
@@ -391,12 +390,12 @@
 #' @seealso \code{\link{auto_gtap_data}}
 #'
 .ask_confirmation <- function(prompt) {
-  cat("\n", prompt)
+  message(prompt)
   while (TRUE) {
     user_input <- tolower(readline())
     if (user_input == "y") return(TRUE)
     if (user_input == "n") return(FALSE)
-    cat("Please enter 'Y' for yes or 'N' for no: ")
+    message("Please enter 'Y' for yes or 'N' for no: ")
   }
 }
 

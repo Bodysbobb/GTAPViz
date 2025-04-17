@@ -223,7 +223,7 @@ create_plot_style(
 \item{plot.margin}{Numeric vector c(top, right, bottom, left). Margins around the entire plot. Default: c(10, 25, 10, 10)}
 }
 \value{
-A list containing all style configuration parameters
+A list containing all plot style configuration parameters
 }
 \description{
 Creates a configuration list for plot styling that can be used with GTAPViz plotting functions.
@@ -243,7 +243,6 @@ custom_style <- create_plot_style(
   bar_width = 0.5,
   x_axis_text_angle = 45
 )
-
 }
 \author{
 Pattawee Puangchit

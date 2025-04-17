@@ -599,7 +599,9 @@ stack_plot <- function(data,
 #' @details Onece printing into the console, users can simply copy and paste
 #' the entire list of configurations, rename it (if needed), and use it in your plot functions directly.
 #'
-#' @return List of configuration snippets to the console.
+#' @return
+#' A named list containing the current default values for all GTAPViz configuration options,
+#' including plot styles, table formats, and export parameters.
 #' @author Pattawee Puangchit
 #' @export
 #'
@@ -624,7 +626,7 @@ get_all_config <- function(plot_style = "default", plot_config = TRUE,
     .get_plot_style_config(plot_type = plot_style)
 
     # Add some separation between the two sections
-    cat("\n\n")
+    message("\n\n")
   }
 
   if (isTRUE(export_config)) {
@@ -646,6 +648,11 @@ get_all_config <- function(plot_style = "default", plot_config = TRUE,
 #' (e.g., `"gtap"`, `"winter"`, `"fall"`, or `"all"`).
 #' @param palette_type Character. Palette type: `"qualitative"` (default), `"sequential"`, or `"diverging"`.
 #'
+#' @return
+#' A character vector of hex color codes representing the selected color palette.
+#' If `color_tone = "all"`, returns a list of functions, each generating a specific palette.
+#' If `color_tone = "list"`, returns a character vector of available palette names.
+#'
 #' @author Pattawee Puangchit
 #' @export
 #' @examples
@@ -657,9 +664,12 @@ get_all_config <- function(plot_style = "default", plot_config = TRUE,
 #' # Visualize specific palettes
 #' get_color_palette("fall", "sequential")
 #' get_color_palette("academic", "diverging")
-#'
 get_color_palette <- function(color_tone = NULL,
                               palette_type = "qualitative") {
+  # Save the current graphical parameters
+  old_par <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(old_par))
+
   # Define available themes
   available_palettes <- c(
     "academic", "purdue", "colorblind", "economic", "trade", "gtap", "gtap2",
@@ -669,14 +679,14 @@ get_color_palette <- function(color_tone = NULL,
 
   # When color_tone is NULL, print all available themes first
   if (is.null(color_tone)) {
-    cat("\nAvailable color themes:\n")
-    cat(paste(" -", available_palettes), sep = "\n")
-    cat("\nUse color_tone = \"all\" to get a list of all palette visualizations.\n")
-    cat("Example: get_color_palette(\"winter\") or get_color_palette(\"gtap\", \"sequential\")\n\n")
+    message("\nAvailable color themes:")
+    message(paste(" -", available_palettes, collapse = "\n"))
+    message("\nUse color_tone = \"all\" to get a list of all palette visualizations.")
+    message("Example: get_color_palette(\"winter\") or get_color_palette(\"gtap\", \"sequential\")\n")
 
     # Continue with default ("academic") to demonstrate a color palette
     color_tone <- "academic"
-    cat("Showing default palette (academic) as an example:\n")
+    message("Showing default palette (academic) as an example:")
   }
 
   # If color_tone is "all", return a list of functions (lazy evaluation)
@@ -693,8 +703,8 @@ get_color_palette <- function(color_tone = NULL,
 
   # Option to show all theme names only without visualization
   if (!is.null(color_tone) && color_tone == "list") {
-    cat("\nAvailable color themes:\n")
-    cat(paste(" -", available_palettes), sep = "\n")
+    message("\nAvailable color themes:")
+    message(paste(" -", available_palettes, collapse = "\n"))
     return(invisible(available_palettes))
   }
 
@@ -707,8 +717,8 @@ get_color_palette <- function(color_tone = NULL,
   }
 
   # Print colors in console
-  cat("\nPalette:", color_tone, "-", palette_type, "\n")
-  cat(" Colors: ", paste(colors, collapse = ", "), "\n")
+  message("\nPalette: ", color_tone, " - ", palette_type)
+  message(" Colors: ", paste(colors, collapse = ", "))
 
   # Base R visualization
   n_colors <- length(colors)
@@ -721,6 +731,9 @@ get_color_palette <- function(color_tone = NULL,
 
   # Add labels
   graphics::text(bar_x, rep(-0.2, n_colors), labels = seq_along(colors), cex = 0.8, col = "black")
+
+  # Return the colors invisibly (the function already provides visualization)
+  invisible(colors)
 }
 
 
@@ -818,7 +831,7 @@ get_color_palette <- function(color_tone = NULL,
 #'
 #' @param plot.margin Numeric vector c(top, right, bottom, left). Margins around the entire plot. Default: c(10, 25, 10, 10)
 #'
-#' @return A list containing all style configuration parameters
+#' @return A list containing all plot style configuration parameters
 #' @author Pattawee Puangchit
 #' @export
 #'
@@ -835,9 +848,8 @@ get_color_palette <- function(color_tone = NULL,
 #'   bar_width = 0.5,
 #'   x_axis_text_angle = 45
 #' )
-#'
 create_plot_style <- function(
-    # Title settings
+  # Title settings
   show_title = TRUE,
   title_face = "bold",
   title_size = 20,
@@ -963,6 +975,7 @@ create_plot_style <- function(
 #' @param bg Character. Background color. Default: "white".
 #' @param limitsize Logical. Whether to limit size. Default: FALSE.
 #'
+#' @author Pattawee Puangchit
 #' @return A list with export configuration parameters.
 #'
 #' @examples
@@ -976,16 +989,9 @@ create_plot_style <- function(
 #'   height = 8,
 #'   dpi = 600
 #' )
-#' @author Pattawee Puangchit
 #' @export
-create_export_config <- function(
-    file_name = NULL,
-    width = NULL,
-    height = NULL,
-    dpi = 300,
-    bg = "white",
-    limitsize = FALSE
-) {
+create_export_config <- function(file_name = NULL, width = NULL, height = NULL,
+                                 dpi = 300, bg = "white", limitsize = FALSE) {
   # Return the export configuration
   list(
     file_name = file_name,
@@ -1033,12 +1039,7 @@ create_export_config <- function(
 #'   type = "dynamic",
 #'   text = "Impact on {Variable} in {Region}"
 #' )
-#'
-create_title_format <- function(
-    type = "standard",
-    text = "",
-    sep = NULL
-) {
+create_title_format <- function(type = "standard", text = "", sep = NULL) {
   # Validate type parameter
   valid_types <- c("standard", "prefix", "suffix", "full", "dynamic")
   if (!type %in% valid_types) {

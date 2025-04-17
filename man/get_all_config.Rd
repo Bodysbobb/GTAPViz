@@ -18,7 +18,8 @@ get_all_config(
 \item{export_config}{Logical. If `TRUE`, prints the export configuration.}
 }
 \value{
-List of configuration snippets to the console.
+A named list containing the current default values for all GTAPViz configuration options,
+including plot styles, table formats, and export parameters.
 }
 \description{
 Retrieve full configuration code as a list for applying in the plot styling and export settings.

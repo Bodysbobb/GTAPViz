@@ -30,8 +30,6 @@ knitr::opts_chunk$set(
 
 
 ```{r Dev Period, include = FALSE, eval = TRUE}
-rm(list=ls())
-
 try(devtools::load_all(".."), silent = TRUE)  # go up one level from /vignettes/
 
 input_path <- system.file("extdata/in", package = "GTAPViz")
@@ -442,7 +440,7 @@ plotC <- stack_plot(
   # === Styling ===
   plot_style_config = create_plot_style(
     color_tone                   = "gtap",
-    panel_rows                   = 2,
+    panel_rows                   = 1,
     panel_cols                   = NULL,
     show_legend                  = TRUE,
     show_axis_titles_on_all_facets = FALSE

@@ -43,7 +43,6 @@ dynamic_title <- create_title_format(
   type = "dynamic",
   text = "Impact on {Variable} in {Region}"
 )
-
 }
 \author{
 Pattawee Puangchit
