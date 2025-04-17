@@ -429,7 +429,7 @@ auto_gtap_data <- function(experiment,
 
         # Update the plot data variable if it's being generated
         if (plot_data) {
-          assign(macro_output_name, list(macros = macro_data), envir = parent.frame())
+          assign(macro_output_name, list(macros = all_data$GTAPMacros), envir = parent.frame())
         }
       }
 
