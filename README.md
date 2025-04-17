@@ -1,10 +1,10 @@
 # GTAPViz: R Package for Automating GTAP Data Processing and Visualization
 
-[![Author](https://img.shields.io/badge/Pattawee.P-blue?label=Author)](https://bodysbobb.github.io/) ![Last Updated](https://img.shields.io/github/last-commit/Bodysbobb/GTAPViz?label=Last%20Updated&color=orange)
+[![Author](https://img.shields.io/badge/Pattawee.P-blue?label=Author)](https://bodysbobb.github.io/) ![Last Updated](https://img.shields.io/github/last-commit/Bodysbobb/GTAPViz?label=Last%20Updated&color=blue)
 
-[![Version](https://img.shields.io/github/v/tag/Bodysbobb/GTAPViz?label=version&color=green&sort=semver)](https://github.com/Bodysbobb/GTAPViz/releases/latest)
-[![R-CMD-check](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml)
-![License](https://img.shields.io/github/license/Bodysbobb/GTAPViz)
+[![Version](https://img.shields.io/github/v/tag/Bodysbobb/GTAPViz?label=version&color=3CB371&sort=semver)](https://github.com/Bodysbobb/GTAPViz/releases/latest)
+[![R-CMD-check](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main&color=3CB371)](https://github.com/Bodysbobb/GTAPViz/actions/workflows/R-CMD-check.yaml)
+![License](https://img.shields.io/github/license/Bodysbobb/GTAPViz?color=3CB371)
 
 **Package Help:**  
 [![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/)
