@@ -1974,8 +1974,9 @@
   plots_with_clean_names <- list()
   for (i in seq_along(plots)) {
     original_name <- names(plots)[i]
-    # Make a filename-safe version of the plot name
-    clean_name <- gsub("[^a-zA-Z0-9_\\-\\. ]", "_", original_name)
+    # Keep the original name but ensure no invalid characters
+    # LEAVE % signs intact here
+    clean_name <- gsub("[^a-zA-Z0-9_\\-\\. ()%]", "_", original_name)
     clean_name <- gsub("\\s+", " ", clean_name)
     clean_name <- trimws(clean_name)
 
@@ -2054,13 +2055,17 @@
         p <- plots[[i]]
         plot_name <- names(plots)[[i]]
 
+        # CRITICAL FIX: Escape % with %% for ggsave
+        safe_name <- gsub("%", "%%", plot_name)
+
         # Create the full path
         pdf_path <- file.path(output_path, paste0(plot_name, ".pdf"))
 
         # Use tryCatch to handle ggsave errors
         tryCatch({
+          # Use the escaped name for ggsave
           ggplot2::ggsave(
-            filename = pdf_path,
+            filename = pdf_path,  # Use original path with %
             plot = p,
             device = "pdf",
             width = export_config$width,
@@ -2088,13 +2093,20 @@
       p <- plots[[i]]
       plot_name <- names(plots)[[i]]
 
-      # Create the full path
+      # CRITICAL FIX: Escape % with %% for ggsave
+      safe_name <- gsub("%", "%%", plot_name)
+
+      # Create the full path for final filepath
       png_path <- file.path(output_path, paste0(plot_name, ".png"))
+
+      # Create the full path with escaped % for ggsave
+      png_path_safe <- file.path(output_path, paste0(safe_name, ".png"))
 
       # Use tryCatch to handle ggsave errors
       tryCatch({
+        # The key fix - use the path with escaped % signs
         ggplot2::ggsave(
-          filename = png_path,
+          filename = png_path_safe,  # Use safe path with %% for ggsave
           plot = p,
           device = "png",
           width = export_config$width,
@@ -2104,6 +2116,7 @@
           limitsize = export_config$limitsize
         )
 
+        # Check if file exists and report success
         if (file.exists(png_path)) {
           message("PNG figure exported to: ", png_path)
         } else {
@@ -3713,7 +3726,7 @@
                                           plot_type = NULL, is_macro_mode = FALSE, split_by = NULL,
                                           x_axis_from = NULL, variable_col = NULL, unit_name = NULL,
                                           style_config = NULL, data = NULL, separate_figure = FALSE,
-                                          panel_val = NULL) {
+                                          panel_val = NULL, panel_var = "Experiment") {  # Added panel_var parameter
 
   # Generate basic title without panel value
   if (is_macro_mode) {
@@ -3810,19 +3823,54 @@
   # Store the base title before adding panel value
   base_title <- plot_title
 
-  # Add panel value to plot title if needed
+  # For plot display title - check if panel_val is unique in dataset
+  panel_is_unique <- FALSE
+  if (!separate_figure && !is.null(data) && !is.null(panel_val)) {
+    if (!is.null(data) && panel_var %in% names(data)) {
+      unique_panel_vals <- unique(data[[panel_var]])
+      panel_is_unique <- length(unique_panel_vals) == 1
+    }
+  }
+
+  # For the display title, only add panel value if it's not a unique value
+  # or if separate_figure is TRUE
   if (separate_figure && !is.null(panel_val)) {
+    plot_title <- paste0(base_title, " - ", panel_val)
+  } else if (!panel_is_unique && !is.null(panel_val)) {
     plot_title <- paste0(base_title, " - ", panel_val)
   }
 
-  # Create a file-safe export name
-  # 1. Keep alphanumeric, spaces, dots, underscores, hyphens, parentheses, AND percent signs
-  export_name <- gsub("[^a-zA-Z0-9_\\-\\. ()%]", "-", plot_title)
+  # Create filename - this will be different from the plot title
+  # For filename, always include the panel value even if it's unique
+  if (!is.null(panel_val)) {
+    export_name <- paste0(base_title, " - ", panel_val)
+  } else {
+    export_name <- base_title
+  }
 
-  # 2. Replace multiple spaces with a single space
+  # Format the unit in the filename differently from the plot title
+  if (!is.null(unit_name)) {
+    # For percent/percentage units, use (%) in the filename just like in the title
+    if (grepl("percent", tolower(unit_name))) {
+      export_name <- gsub("\\s*\\([^)]*\\)", " (%)", export_name)
+    }
+    # For other units, remove spaces in the unit name for the filename
+    else if (grepl(" ", unit_name)) {
+      # First, extract the unit part
+      unit_pattern <- paste0("\\(", unit_name, "\\)")
+      compact_unit <- gsub(" ", "", unit_name)
+      export_name <- gsub(unit_pattern, paste0("(", compact_unit, ")"), export_name)
+    }
+  }
+
+  # Make export name file-safe but preserve special characters (like %)
+  # Clean but keep % signs
+  export_name <- gsub("[^a-zA-Z0-9_\\-\\. ()%]", "-", export_name)
+
+  # Replace multiple spaces with a single space
   export_name <- gsub("\\s+", " ", export_name)
 
-  # 3. Trim any leading/trailing whitespace
+  # Trim any leading/trailing whitespace
   export_name <- trimws(export_name)
 
   # Add plot type suffix if needed
@@ -3840,11 +3888,10 @@
   }
 
   return(list(
-    title = plot_title,
-    export_name = export_name
+    title = plot_title,     # For plot display
+    export_name = export_name  # For file export
   ))
 }
-
 
 # Ge Plot Styles Help -----------------------------------------------------
 #' @title Get Export Configuration Options
