@@ -3,7 +3,7 @@
 [![Author](https://img.shields.io/badge/Pattawee.P-blue?label=Author)](https://bodysbobb.github.io/) ![Last Updated](https://img.shields.io/github/last-commit/Bodysbobb/GTAPViz?label=Last%20Updated&color=blue)
 
 [![CRAN](https://www.r-pkg.org/badges/version/GTAPViz)](https://CRAN.R-project.org/package=GTAPViz/)
-[![GitHub Version](https://img.shields.io/github/v/tag/Bodysbobb/GTAPViz?label=version&color=3CB371&sort=semver)](https://github.com/Bodysbobb/GTAPViz/releases/latest)
+[![GitHub Version](https://img.shields.io/github/v/tag/Bodysbobb/GTAPViz?label=GitHub Version&color=3CB371&sort=semver)](https://github.com/Bodysbobb/GTAPViz/releases/latest)
 
 ![License](https://img.shields.io/github/license/Bodysbobb/GTAPViz?color=3CB371)
 
@@ -38,12 +38,16 @@ This package streamlines the creation of figures and tables from `.har` and `.sl
 
 ## **Installation**
 
-GTAPViz can be installed from GitHub using the following command in R:
+`GTAPViz` package can be installed directly from CRAN (recommended) using:
 
+```r
+install.packages("GTAPViz")
+```
+
+To install a development or older version, you can use the GitHub repository via the following command in R:
 ```r
 devtools::install_github("Bodysbobb/GTAPViz")
 ```
-
 
 ## **Package Helps**
 
