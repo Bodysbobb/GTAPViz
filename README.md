@@ -4,7 +4,6 @@
 
 [![CRAN](https://www.r-pkg.org/badges/version/GTAPViz)](https://CRAN.R-project.org/package=GTAPViz/)
 [![GitHub Version](https://img.shields.io/github/v/tag/Bodysbobb/GTAPViz?label=GitHub%20Version&color=3CB371&sort=semver)](https://github.com/Bodysbobb/GTAPViz/releases/latest)
-
 ![License](https://img.shields.io/github/license/Bodysbobb/GTAPViz?color=3CB371)
 
 **Package Help:**  
