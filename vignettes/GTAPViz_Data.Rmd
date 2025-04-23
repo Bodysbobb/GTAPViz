@@ -78,10 +78,10 @@ Before proceeding, ensure that `GTAPViz` is installed and loaded:
 
 ```{r package, eval = FALSE}
 if (!requireNamespace("GTAPViz", quietly = TRUE)) {
-  devtools::install_github("Bodysbobb/GTAPViz")
+  install.packages("GTAPViz")
 }
 
-require(GTAPViz)
+library(GTAPViz)
 ```
 
 

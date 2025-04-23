@@ -47,7 +47,7 @@ install.packages("GTAPViz")
 
 To install a development or older version, you can use the GitHub repository via the following command in R:
 ```r
-devtools::install_github("Bodysbobb/GTAPViz")
+install.packages("GTAPViz")
 ```
 
 ## **Package Helps**
