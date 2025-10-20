@@ -12,6 +12,8 @@
 [![GPT-GTAPViz](https://img.shields.io/badge/GPT--GTAPViz-74aa9c?style=flat-square&logo=openai&logoColor=white)](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/)
 [![GTAPViz](https://img.shields.io/badge/GTAPViz-276DC3?style=flat-square&logo=r&logoColor=white)](https://bodysbobb.github.io/GTAPViz/)
 
+---
+
 ## **Overview** 
 
 **GTAPViz** is an R package designed to streamline the processing and visualization of GTAP-CGE results. While primarily built for **GTAP simulations, it also supports other `.har` and `.sl4` datasets**. 
@@ -36,6 +38,7 @@ This package streamlines the creation of figures and tables from `.har` and `.sl
 
 - **Self-Contained Help** – Includes a detailed vignette and internal help—no need to search online.
 
+---
 
 ## **Installation**
 
@@ -45,10 +48,7 @@ This package streamlines the creation of figures and tables from `.har` and `.sl
 install.packages("GTAPViz")
 ```
 
-To install a development or older version, you can use the GitHub repository via the following command in R:
-```r
-install.packages("GTAPViz")
-```
+---
 
 ## **Package Helps**
 
@@ -59,6 +59,8 @@ For complete instructions on using this package and exploring practical examples
 - [GTAPViz Step-by-Step Guide](https://bodysbobb.github.io/GTAPViz/)  
 - [GTAPViz: Plot Catalogs](https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/)  
 - [GTAPViz: Table Catalogs](https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/)
+
+---
 
 ## **GTAP Users** 
 
