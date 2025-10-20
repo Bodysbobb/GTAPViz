@@ -47,6 +47,7 @@
 <li class="nav-item"><a class="external-link nav-link" href="https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/"><span class="fa fas fa-robot"></span> ChatGPT GTAPViz-R</a></li>
       </ul>
 <ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://www.pattawee-pp.com/GTAPViz-R-GTAPuser/">GTAP Users</a></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/Bodysbobb/GTAPViz" aria-label="GitHub Repository"><span class="fa fab fa-github"></span></a></li>
       </ul>
 </div>
@@ -65,7 +66,7 @@
                         <h4 data-toc-skip class="author">Pattawee
 Puangchit</h4>
             
-            <h4 data-toc-skip class="date">2025-04-22</h4>
+            <h4 data-toc-skip class="date">2025-10-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bodysbobb/GTAPViz/blob/HEAD/vignettes/GTAPViz_Data.Rmd" class="external-link"><code>vignettes/GTAPViz_Data.Rmd</code></a></small>
       <div class="d-none name"><code>GTAPViz_Data.Rmd</code></div>
@@ -116,7 +117,7 @@ and loaded:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"GTAPViz"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bodysbobb.github.io/GTAPViz/">GTAPViz</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bodysbobb.github.io/GTAPViz/" class="external-link">GTAPViz</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="sec:figure-type">Plot Types<a class="anchor" aria-label="anchor" href="#sec:figure-type"></a>
 </h3>
@@ -501,9 +502,9 @@ modification if you followed all the previous instructions:</p>
 <span><span class="va">output.folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">project.folder</span>, <span class="st">"/out"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Default Mapping File:</span></span>
-<span><span class="va">sl4map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"SL4File"</span><span class="op">)</span></span>
-<span><span class="va">harmap</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"HARFile"</span><span class="op">)</span></span>
-<span><span class="va">filter.map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"FilterData"</span><span class="op">)</span></span>
+<span><span class="va">sl4map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/readxl/man/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"SL4File"</span><span class="op">)</span></span>
+<span><span class="va">harmap</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/readxl/man/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"HARFile"</span><span class="op">)</span></span>
+<span><span class="va">filter.map</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/readxl/man/read_excel.html" class="external-link">read_xlsx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">map.folder</span>, <span class="st">"/OutputMapping.xlsx"</span><span class="op">)</span>, sheet <span class="op">=</span> <span class="st">"FilterData"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Filtering Data:</span></span>
 <span><span class="va">selected_regions</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="va">filter.map</span><span class="op">$</span><span class="va">Region</span> <span class="kw">else</span> <span class="cn">NULL</span></span>
@@ -606,7 +607,7 @@ Database Archive</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
