@@ -1,7 +1,7 @@
 url: https://pattawee-pp.com/GTAPViz/
 
 template:
-  bootstrap: 5
+  bootstrap: 6
   bootswatch: flatly
   includes:
     in_header: |
