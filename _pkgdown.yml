@@ -43,9 +43,8 @@ navbar:
       text: "ChatGPT GTAPViz-R"
       href: https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/
     gtap:
-      icon: fas fa-university
+      text: "GTAP Users"
       href: https://www.pattawee-pp.com/GTAPViz-R-GTAPuser/
-      aria-label: "GTAP Users"
     github:
       icon: fab fa-github
       href: https://github.com/Bodysbobb/GTAPViz
