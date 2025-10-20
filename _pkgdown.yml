@@ -1,4 +1,4 @@
-url: https://bodysbobb.github.io/GTAPViz/
+url: https://pattawee-pp.com/GTAPViz/
 
 template:
   bootstrap: 5
@@ -15,7 +15,7 @@ home:
 navbar:
   structure:
     left: [home, articles, reference, gpt]
-    right: [github]
+    right: [gtap, github]
   components:
     home:
       text: "Home"
@@ -42,6 +42,10 @@ navbar:
       icon: fas fa-robot
       text: "ChatGPT GTAPViz-R"
       href: https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/
+    gtap:
+      icon: fas fa-university
+      href: https://www.pattawee-pp.com/GTAPViz-R-GTAPuser/
+      aria-label: "GTAP Users"
     github:
       icon: fab fa-github
       href: https://github.com/Bodysbobb/GTAPViz
