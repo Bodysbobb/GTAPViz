@@ -2,103 +2,123 @@
 % Please edit documentation in R/GTAPRDauto.R
 \name{dynamic_input_name}
 \alias{dynamic_input_name}
-\title{Generate Dynamic Input Mapping for GTAP Simulations}
+\title{Generate Dynamic Input Mapping for GTAP Experiments}
 \usage{
 dynamic_input_name(
+  case_name = NULL,
   type = "prefix",
-  base = NULL,
-  pol = NULL,
-  base_rerun = NULL,
-  other = NULL,
+  input_format = NULL,
   pattern = NULL,
   increment = 1,
   separator = "-",
   period_pattern = FALSE,
   period_prefix = "yr_",
+  add_scenario_ranking = FALSE,
+  rank_column = "ScenarioRank",
   output = "Input_map"
 )
 }
 \arguments{
-\item{type}{Character. Naming pattern: "prefix" (default) or "suffix".
-- "prefix": Pattern comes after base/policy identifier (e.g., base2020)
-- "suffix": Pattern comes before base/policy identifier (e.g., 2020-base)}
+\item{case_name}{Character vector or list. Case names to process. Can be:
+\itemize{
+  \item Single character: \code{"US_All"}
+  \item Character vector: \code{c("US_All", "US_Retail")}
+  \item Named list: Each element defines a separate case with its own input format
+}}
 
-\item{base}{Character vector or NULL. Identifiers for baseline cases.}
+\item{type}{Character. Position of identifier: \code{"prefix"} or \code{"suffix"}.}
 
-\item{pol}{Character vector or NULL. Identifiers for policy cases.}
+\item{input_format}{Named list or list of named lists. Simulation type definitions:
+\itemize{
+  \item Single format (applies to all cases): \cr
+    \code{list(base = "base-", base_rerun = "rerun-", policy = "pol-")}
+  \item Multiple formats (one per case): \cr
+    \code{list(
+      US_All = list(base = "bwrb-rwrr-", policy = "brtb-rrtr-"),
+      US_Retail = list(base = "base-", policy = "pol-")
+    )}
+}
+When using multiple formats, names must match \code{case_name} values.}
 
-\item{base_rerun}{Character vector or NULL. Identifiers for baseline rerun cases.}
+\item{pattern}{Character or numeric vector. Sequence pattern for periods:
+\itemize{
+  \item Range format: \code{"2020:2030"}
+  \item Numeric vector: \code{c(2020, 2025, 2030)}
+}}
 
-\item{other}{Character vector or NULL. Identifiers for other case types.}
+\item{increment}{Numeric. Step size for sequence generation. Default: \code{1}.}
 
-\item{pattern}{Character or numeric. Pattern to be combined with case identifiers:
-- "start:end" string: Creates sequence from start to end (e.g., "2020:2030")
-- c(start, end) numeric: Creates sequence from start to end (e.g., c(2020, 2030))
-- Character vector: Used directly as patterns}
+\item{separator}{Character. Separator between elements. Default: \code{"-"}.}
 
-\item{increment}{Numeric. Step size for numeric sequences. Default is 1.}
+\item{period_pattern}{Logical. If \code{TRUE}, creates period ranges (e.g., \code{"2020-2025"}).
+Default: \code{FALSE}.}
 
-\item{separator}{Character. Separator used between pattern and case identifier in suffix mode.
-Default is "-".}
+\item{period_prefix}{Character. Prefix for period labels. Default: \code{"yr_"}.}
 
-\item{period_pattern}{Logical. If TRUE, creates period ranges between consecutive patterns
-(e.g., 2020-2025 from 2020, 2025, 2030). Default is FALSE.}
+\item{add_scenario_ranking}{Logical. If \code{TRUE}, adds \code{ScenarioRank} column based on
+case order in \code{input_format}. Default: \code{FALSE}.}
 
-\item{period_prefix}{Character. Prefix for period names. Default is "yr_".}
+\item{rank_column}{Character. Name of the ranking column. Default: \code{"ScenarioRank"}.}
 
-\item{output}{Character. Name of the variable to assign the result to in the caller's environment.
-Default is "mapping_name".}
+\item{output}{Character. Name of output variable to assign in parent environment.
+Default: \code{"Input_map"}.}
 }
 \value{
-A data frame with the following columns:
-  - \strong{Input}: Experiment identifier used in file names
-  - \strong{Case}: Type of simulation (base, pol, base_rerun, other)
-  - \strong{Period}: Time period identifier
-Also invisibly returns the same data frame.
+A data frame with columns:
+  \describe{
+    \item{Input}{Generated input file names}
+    \item{Case}{Case identifier}
+    \item{Period}{Period label with prefix}
+    \item{PeriodRange}{Numeric period range}
+    \item{SimType}{Simulation type (base, base_rerun, policy, etc.)}
+    \item{ScenarioRank}{Numeric rank (only if \code{add_scenario_ranking = TRUE})}
+  }
+  Invisibly returns the data frame while assigning it to the specified output variable.
 }
 \description{
-Creates a mapping data frame of simulation experiments to cases and periods
-for dynamic GE model analysis. Supports multiple naming conventions and
-period patterns.
+Creates a structured mapping between experiment names, simulation types, and time periods
+for dynamic GTAP analysis. Supports flexible naming with base, base_rerun, and policy scenarios
+for single or multiple cases simultaneously.
+}
+\details{
+The function validates that all required simulation types are defined for each case.
+Missing simulation types trigger informative error messages specifying which types
+are missing for which cases.
+
+When \code{input_format} is a list of lists, each case can have unique simulation
+type definitions, allowing flexible configuration across multiple scenarios.
+
+When \code{add_scenario_ranking = TRUE}, the \code{ScenarioRank} column is added
+based on the order of cases in \code{input_format}. This ranking propagates through
+\code{\link{auto_gtap_rd}} processing.
 }
 \examples{
-\donttest{
-# Example 1: Generate mapping for years 2020, 2025, 2030 with base/policy cases
+# Single case with uniform format
 dynamic_input_name(
+  case_name = "US_All",
   type = "prefix",
-  base = "base",
-  pol = "pol",
-  pattern = "2020:2030:5"
+  input_format = list(
+    base = "bwrb-rwrr-",
+    base_rerun = "brtb-rwrr-",
+    policy = "brtb-rrtr-"
+  ),
+  pattern = "2018:2035",
+  output = "Input_map"
 )
-# Creates mapping_name data frame with 6 rows:
-# base2020, base2025, base2030, pol2020, pol2025, pol2030
 
-# Example 2: Generate period patterns (e.g., for comparing between periods)
+# Multiple cases with scenario ranking
 dynamic_input_name(
+  case_name = c("US_All", "US_Retail", "US_ReduceTar"),
   type = "prefix",
-  base = "base",
-  pol = "pol",
-  pattern = "2020:2030:5",
-  period_pattern = TRUE,
-  output = "period_map"
+  input_format = list(
+    US_All = list(base_rerun = "bwrb-rwrr-", policy = "bwrb-rwrr-pwrp-"),
+    US_Retail = list(base_rerun = "brtb-rtrr-", policy = "brtb-rtrr-prtp-"),
+    US_ReduceTar = list(base_rerun = "bfrb-rfrr-", policy = "bfrb-rfrr-pfrp-")
+  ),
+  pattern = "2020:2030",
+  add_scenario_ranking = TRUE,
+  output = "Input_map"
 )
-# Creates period_map with periods like: yr_2020-2025, yr_2025-2030
-
-# Example 3: Use suffix mode with multiple identifiers
-dynamic_input_name(
-  type = "suffix",
-  base = c("bau", "baseline"),
-  pol = c("carbon", "tariff"),
-  pattern = c("v1", "v2", "v3"),
-  separator = "_",
-  output = "scenario_map"
-)
-# Creates scenario_map with entries like: v1_bau, v2_bau, v1_carbon, etc.
-}
-
-}
-\seealso{
-\code{\link{auto_gtap_dynamic}}, \code{\link{.auto_GTAPRd_info}}
 }
 \author{
 Pattawee Puangchit

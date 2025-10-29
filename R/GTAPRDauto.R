@@ -659,7 +659,16 @@ auto_gtap_rd <- function(input_detail,
         file_path <- file.path(input_path, paste0(scenario, file_suffix))
         if (file.exists(file_path)) {
           tryCatch({
-            load_func(file_path, select_header = select_vars)
+            # HAR: Load all then filter (like SL4 does)
+            if (input_format == ".har" && !is.null(select_vars)) {
+              all_data <- load_func(file_path, select_header = NULL)
+              valid_headers <- select_vars[select_vars %in% names(all_data$data)]
+              all_data$data <- all_data$data[valid_headers]
+              all_data$dimension_info <- all_data$dimension_info[valid_headers]
+              return(all_data)
+            } else {
+              load_func(file_path, select_header = select_vars)
+            }
           }, error = function(e) {
             message(sprintf("Error processing %s: %s", file_path, e$message))
             return(NULL)
