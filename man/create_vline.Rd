@@ -38,9 +38,6 @@ vlines <- list(
   create_vline(2023, "Shock 2", "blue", "dotted"),
   create_vline(2025, "Shock 3", "darkgreen", "dashed")
 )
-
-trend_plot(data,
-           trend_style_config = create_trend_style(vertical_lines = vlines))
 }
 \author{
 Pattawee Puangchit

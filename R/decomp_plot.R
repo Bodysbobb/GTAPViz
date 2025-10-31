@@ -185,89 +185,86 @@ decomp_area_plot <- function(data,
 
 
 #' @title Create Decomposition Area Plot Style Configuration
-#' @md
 #' @description
 #' Creates a configuration list for controlling decomposition area plot appearance and behavior.
-#' Extends the base plot style with area-specific options including stacking behavior,
-#' transparency, and total line overlays.
 #'
-#' @param area_alpha Numeric. Transparency of area fills (0-1). Default: 0.7
-#' @param area_position Character. Stacking method: "stack" (default) or "fill" (normalized to 100\%).
-#' @param show_area_lines Logical. Whether to show lines at area boundaries. Default: FALSE
-#' @param area_line_color Character. Color of area boundary lines. Default: "white"
-#' @param area_line_size Numeric. Thickness of area boundary lines. Default: 0.3
-#' @param color_palette Character or vector. Color palette for areas. Default: NULL (uses economic palette)
-#' @param reverse_stack_order Logical. Reverse the stacking order of components. Default: FALSE
-#' @param show_total_line Logical. Overlay a line showing total across components. Default: TRUE
-#' @param total_line_color Character. Color of the total line. Default: "black"
-#' @param total_line_size Numeric. Thickness of the total line. Default: 1.2
-#' @param total_line_type Character. Line type ("solid", "dashed", etc.). Default: "solid"
-#' @param show_points Logical. Show points on the total line. Default: FALSE
-#' @param point_size Numeric. Size of points. Default: 2
-#' @param legend_title Character or NULL. Custom legend title. Default: NULL
-#' @param vertical_lines List or NULL. List of vertical line specs created with \code{\link{create_vline}}. Default: NULL
-#' @param vline_label_size Numeric. Font size for vertical line labels. Default: 3.5
-#' @param vline_label_angle Numeric. Angle for vertical line labels. Default: 90
-#' @param vline_label_vjust Numeric. Vertical adjustment for labels. Default: -0.2
-#' @param period_breaks Character or numeric. Period axis breaks: "auto", "all", or numeric vector. Default: "auto"
-#' @param show_title Logical. Show plot title. Default: TRUE
-#' @param title_face Character. Title font face. Default: "bold"
-#' @param title_size Numeric. Title font size. Default: 20
-#' @param title_hjust Numeric. Title horizontal alignment. Default: 0.5
-#' @param add_unit_to_title Logical. Append unit to title. Default: TRUE
-#' @param title_margin Numeric vector c(top, right, bottom, left). Default: c(10, 0, 10, 0)
-#' @param title_format List. Title format configuration. Default: list(type = "standard", text = "", sep = "")
-#' @param show_x_axis_title Logical. Show x-axis title. Default: TRUE
-#' @param x_axis_title_face Character. X-axis title font face. Default: "bold"
-#' @param x_axis_title_size Numeric. X-axis title size. Default: 16
-#' @param x_axis_title_margin Numeric vector. Default: c(25, 25, 0, 0)
-#' @param show_x_axis_labels Logical. Show x-axis labels. Default: TRUE
-#' @param x_axis_text_face Character. X-axis text face. Default: "plain"
-#' @param x_axis_text_size Numeric. X-axis text size. Default: 14
-#' @param x_axis_text_angle Numeric. X-axis text rotation. Default: 0
-#' @param x_axis_text_hjust Numeric. X-axis text horizontal alignment. Default: 0
-#' @param x_axis_description Character. Custom x-axis label. Default: ""
-#' @param show_y_axis_title Logical. Show y-axis title. Default: TRUE
-#' @param y_axis_title_face Character. Y-axis title font face. Default: "bold"
-#' @param y_axis_title_size Numeric. Y-axis title size. Default: 16
-#' @param y_axis_title_margin Numeric vector. Default: c(25, 25, 0, 0)
-#' @param show_y_axis_labels Logical. Show y-axis labels. Default: TRUE
-#' @param y_axis_text_face Character. Y-axis text face. Default: "plain"
-#' @param y_axis_text_size Numeric. Y-axis text size. Default: 14
-#' @param y_axis_text_angle Numeric. Y-axis text rotation. Default: 0
-#' @param y_axis_text_hjust Numeric. Y-axis text horizontal alignment. Default: 0
-#' @param y_axis_description Character. Custom y-axis label. Default: ""
-#' @param show_legend Logical. Show legend. Default: TRUE
-#' @param show_legend_title Logical. Show legend title. Default: FALSE
-#' @param legend_position Character. Legend position. Default: "right"
-#' @param legend_title_face Character. Legend title font face. Default: "bold"
-#' @param legend_text_face Character. Legend text face. Default: "plain"
-#' @param legend_text_size Numeric. Legend text size. Default: 14
-#' @param strip_face Character. Facet strip text face. Default: "bold"
-#' @param strip_text_size Numeric. Facet strip text size. Default: 16
-#' @param strip_background Character. Facet strip background color. Default: "lightgrey"
-#' @param strip_text_margin Numeric vector. Default: c(10, 0, 10, 0)
-#' @param panel_spacing Numeric. Spacing between facet panels. Default: 2
-#' @param panel_rows Integer or NULL. Number of facet rows. Default: NULL
-#' @param panel_cols Integer or NULL. Number of facet columns. Default: NULL
-#' @param show_axis_titles_on_all_facets Logical. Show axis titles on all facet panels. Default: FALSE
-#' @param background_color Character. Plot background color. Default: "white"
-#' @param grid_color Character. Grid line color. Default: "grey90"
-#' @param show_grid_major_x Logical. Show major x-grid lines. Default: TRUE
-#' @param show_grid_major_y Logical. Show major y-grid lines. Default: TRUE
-#' @param show_grid_minor_x Logical. Show minor x-grid lines. Default: FALSE
-#' @param show_grid_minor_y Logical. Show minor y-grid lines. Default: FALSE
-#' @param show_zero_line Logical. Show horizontal zero line. Default: FALSE
-#' @param zero_line_type Character. Zero line type. Default: "dashed"
-#' @param zero_line_color Character. Zero line color. Default: "black"
-#' @param zero_line_size Numeric. Zero line thickness. Default: 0.5
-#' @param zero_line_position Numeric. Y-position of zero line. Default: 0
-#' @param scale_limit Numeric vector or NULL. Y-axis limits c(min, max). Default: NULL
-#' @param scale_increment Numeric or NULL. Y-axis tick increment. Default: NULL
-#' @param expansion_y_mult Numeric vector. Y-axis expansion c(bottom, top). Default: c(0, 0.1)
-#' @param expansion_x_mult Numeric vector. X-axis expansion c(left, right). Default: c(0.05, 0.05)
-#' @param plot.margin Numeric vector c(top, right, bottom, left). Margins in mm. Default: c(10, 25, 10, 10)
-#' @param all_font_size Numeric. Master font size multiplier. Default: 1
+#' @param area_alpha Numeric. Transparency of area fills
+#' @param area_position Character. Stacking method
+#' @param show_area_lines Logical. Whether to show lines at area boundaries
+#' @param area_line_color Character. Color of area boundary lines
+#' @param area_line_size Numeric. Thickness of area boundary lines
+#' @param color_palette Character or vector. Color palette for areas
+#' @param reverse_stack_order Logical. Reverse the stacking order
+#' @param show_total_line Logical. Overlay a line showing total
+#' @param total_line_color Character. Color of the total line
+#' @param total_line_size Numeric. Thickness of the total line
+#' @param total_line_type Character. Line type
+#' @param show_points Logical. Show points on the total line
+#' @param point_size Numeric. Size of points
+#' @param legend_title Character or NULL. Custom legend title
+#' @param vertical_lines List or NULL. List of vertical line specs
+#' @param vline_label_size Numeric. Font size for vertical line labels
+#' @param vline_label_angle Numeric. Angle for vertical line labels
+#' @param vline_label_vjust Numeric. Vertical adjustment for labels
+#' @param period_breaks Character or numeric. Period axis breaks
+#' @param show_title Logical. Show plot title
+#' @param title_face Character. Title font face
+#' @param title_size Numeric. Title font size
+#' @param title_hjust Numeric. Title horizontal alignment
+#' @param add_unit_to_title Logical. Append unit to title
+#' @param title_margin Numeric vector
+#' @param title_format List. Title format configuration
+#' @param show_x_axis_title Logical. Show x-axis title
+#' @param x_axis_title_face Character. X-axis title font face
+#' @param x_axis_title_size Numeric. X-axis title size
+#' @param x_axis_title_margin Numeric vector
+#' @param show_x_axis_labels Logical. Show x-axis labels
+#' @param x_axis_text_face Character. X-axis text face
+#' @param x_axis_text_size Numeric. X-axis text size
+#' @param x_axis_text_angle Numeric. X-axis text rotation
+#' @param x_axis_text_hjust Numeric. X-axis text horizontal alignment
+#' @param x_axis_description Character. Custom x-axis label
+#' @param show_y_axis_title Logical. Show y-axis title
+#' @param y_axis_title_face Character. Y-axis title font face
+#' @param y_axis_title_size Numeric. Y-axis title size
+#' @param y_axis_title_margin Numeric vector
+#' @param show_y_axis_labels Logical. Show y-axis labels
+#' @param y_axis_text_face Character. Y-axis text face
+#' @param y_axis_text_size Numeric. Y-axis text size
+#' @param y_axis_text_angle Numeric. Y-axis text rotation
+#' @param y_axis_text_hjust Numeric. Y-axis text horizontal alignment
+#' @param y_axis_description Character. Custom y-axis label
+#' @param show_legend Logical. Show legend
+#' @param show_legend_title Logical. Show legend title
+#' @param legend_position Character. Legend position
+#' @param legend_title_face Character. Legend title font face
+#' @param legend_text_face Character. Legend text face
+#' @param legend_text_size Numeric. Legend text size
+#' @param strip_face Character. Facet strip text face
+#' @param strip_text_size Numeric. Facet strip text size
+#' @param strip_background Character. Facet strip background color
+#' @param strip_text_margin Numeric vector
+#' @param panel_spacing Numeric. Spacing between facet panels
+#' @param panel_rows Integer or NULL. Number of facet rows
+#' @param panel_cols Integer or NULL. Number of facet columns
+#' @param show_axis_titles_on_all_facets Logical. Show axis titles on all panels
+#' @param background_color Character. Plot background color
+#' @param grid_color Character. Grid line color
+#' @param show_grid_major_x Logical. Show major x-grid lines
+#' @param show_grid_major_y Logical. Show major y-grid lines
+#' @param show_grid_minor_x Logical. Show minor x-grid lines
+#' @param show_grid_minor_y Logical. Show minor y-grid lines
+#' @param show_zero_line Logical. Show horizontal zero line
+#' @param zero_line_type Character. Zero line type
+#' @param zero_line_color Character. Zero line color
+#' @param zero_line_size Numeric. Zero line thickness
+#' @param zero_line_position Numeric. Y-position of zero line
+#' @param scale_limit Numeric vector or NULL. Y-axis limits
+#' @param scale_increment Numeric or NULL. Y-axis tick increment
+#' @param expansion_y_mult Numeric vector. Y-axis expansion
+#' @param expansion_x_mult Numeric vector. X-axis expansion
+#' @param plot.margin Numeric vector. Margins in mm
+#' @param all_font_size Numeric. Master font size multiplier
 #'
 #' @return List with decomposition area plot style configuration
 #' @author Pattawee Puangchit
@@ -275,18 +272,6 @@ decomp_area_plot <- function(data,
 #'
 #' @examples
 #' basic_decomp_style <- create_decomp_style()
-#'
-#' custom_decomp_style <- create_decomp_style(
-#'   area_alpha = 0.8,
-#'   color_palette = "economic",
-#'   show_total_line = TRUE,
-#'   total_line_size = 1.5,
-#'   vertical_lines = list(
-#'     create_vline(2019, "Policy Change", "red", "dashed"),
-#'     create_vline(2023, "Recovery", "blue", "dotted")
-#'   ),
-#'   normalize = TRUE
-#' )
 create_decomp_style <- function(
     area_alpha = 0.7,
     area_position = "stack",
@@ -376,7 +361,8 @@ create_decomp_style <- function(
   return(style_config)
 }
 
-
+#' @keywords internal
+#' @noRd
 .calculate_decomp_style_config <- function(config = NULL) {
   default_config <- create_decomp_style()
 
@@ -402,7 +388,8 @@ create_decomp_style <- function(
   return(default_config)
 }
 
-
+#' @keywords internal
+#' @noRd
 .create_decomp_area_plots <- function(data, filter_var, period_col, component_col, split_by,
                                       panel_var, variable_col, unit_col, desc_col,
                                       separate_figure, show_total_line, normalize,
@@ -528,7 +515,8 @@ create_decomp_style <- function(
   return(plot_list)
 }
 
-
+#' @keywords internal
+#' @noRd
 .create_single_decomp_area_plot <- function(data, period_col, component_col, plot_title,
                                             unit, panel_var = NULL, show_total_line = TRUE,
                                             normalize = FALSE, style_config) {
@@ -721,7 +709,8 @@ create_decomp_style <- function(
   return(p)
 }
 
-
+#' @keywords internal
+#' @noRd
 .handle_decomp_title_and_export <- function(sep_value, split_by, variable_col, unit_name,
                                             style_config, data, var_name_by_description,
                                             add_var_info, desc_col, normalize = FALSE) {
@@ -842,7 +831,8 @@ create_decomp_style <- function(
   ))
 }
 
-
+#' @keywords internal
+#' @noRd
 .generate_area_colors <- function(n_colors, palette_name = "economic") {
   .create_color_palette(color_tone = palette_name, n_colors = n_colors, palette_type = "qualitative")
 }

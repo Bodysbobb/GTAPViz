@@ -52,37 +52,39 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Basic trend plot with line grouping by Case
-#' trend_plot(data, period_col = "Period", line_group_by = "Case", split_by = c("Variable", "AREG"))
+#' # Create simple example dataset
+#' data <- data.frame(
+#'   Period = rep(2017:2025, each = 3),
+#'   Case = rep(c("Uniform Country", "Uniform Sector", "Heterogeneous"), times = 9),
+#'   Variable = "GDP",
+#'   AREG = "ASEAN",
+#'   Value = cumsum(rnorm(27, 0, 0.2))
+#' )
 #'
-#' # Create separate figures for each Case (panel_var defaults to separate_figure = TRUE)
-#' trend_plot(data, period_col = "Period", split_by = "Variable", panel_var = "Case")
+#' # Define vertical lines for key shock years
+#' vlines <- list(
+#'   create_vline(2019, "Shock 1", "black", "dashed"),
+#'   create_vline(2023, "Shock 2", "blue", "dotted"),
+#'   create_vline(2025, "Shock 3", "darkgreen", "dashed")
+#' )
 #'
-#' # Use facet panels instead of separate figures
-#' trend_plot(data, period_col = "Period", split_by = "Variable",
-#'            panel_var = "Case", separate_figure = FALSE)
-#'
-#' my_trend_style <- create_trend_style(
+#' # Define trend style configuration
+#' trend_style <- create_trend_style(
 #'   show_points = TRUE,
-#'   line_size = 1.5,
 #'   smooth_line = FALSE,
+#'   line_size = 1,
+#'   vertical_lines = vlines,
 #'   title_format = create_title_format(type = "prefix", text = "Impact on")
 #' )
-#' trend_plot(data, trend_style_config = my_trend_style)
 #'
+#' # Generate example trend plot
 #' trend_plot(
-#'   data = sl4.data[["AREG"]],
+#'   data = data,
 #'   period_col = "Period",
-#'   split_by = c("Variable", "AREG"),
 #'   line_group_by = "Case",
-#'   title_format = create_title_format(
-#'     type = "dynamic",
-#'     text = "Impacts on {Description}",
-#'     sep = ""
-#'   )
+#'   split_by = "Variable",
+#'   trend_style_config = trend_style
 #' )
-#' }
 trend_plot <- function(data,
                        filter_var = NULL,
                        period_col = "Period",
@@ -365,6 +367,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .calculate_trend_style_config <- function(config = NULL) {
   default_config <- create_trend_style()
 
@@ -391,6 +395,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .create_trend_plots <- function(data, filter_var, period_col, split_by, line_group_by,
                                 panel_var, variable_col, unit_col, desc_col,
                                 separate_figure, var_name_by_description,
@@ -400,7 +406,7 @@ create_trend_style <- function(
 
   for (df in data) {
     if (!is.null(filter_var)) {
-      df <- .apply_filters(df, filter_var)
+      df <- .apply_filters_trend_plot(df, filter_var)
       if (nrow(df) == 0) next
     }
 
@@ -539,6 +545,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .smart_x_axis_angle <- function(data, period_col, style_config, panel_var = NULL) {
   # If user explicitly set an angle (not the default 0), respect it
   if (!is.null(style_config$x_axis_text_angle) && style_config$x_axis_text_angle != 0) {
@@ -576,6 +584,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .create_single_trend_plot <- function(data, period_col, plot_title, unit,
                                       panel_var = NULL, style_config, legend_name = NULL) {
 
@@ -839,6 +849,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .handle_trend_title_and_export <- function(sep_value, split_by, variable_col,
                                            unit_name, style_config, data,
                                            var_name_by_description, add_var_info,
@@ -952,6 +964,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .calculate_value_axis_limits <- function(data, unit, style_config) {
   # Use scale_limit if provided
   if (!is.null(style_config$scale_limit) && length(style_config$scale_limit) == 2) {
@@ -982,6 +996,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .format_y_axis_label <- function(unit, style_config) {
   if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
     return(style_config$y_axis_description)
@@ -993,6 +1009,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .convert_unit_for_display <- function(unit) {
   if (is.null(unit) || is.na(unit) || unit == "") return("")
 
@@ -1020,6 +1038,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .apply_axis_scale <- function(limits, style_config, axis = "y") {
   scale_args <- list(
     limits = limits,
@@ -1041,7 +1061,9 @@ create_trend_style <- function(
 }
 
 
-.apply_filters <- function(data, filter_var) {
+#' @keywords internal
+#' @noRd
+.apply_filters_trend_plot <- function(data, filter_var) {
   if (is.null(filter_var)) return(data)
 
   if (is.data.frame(filter_var)) {
@@ -1060,6 +1082,8 @@ create_trend_style <- function(
 }
 
 
+#' @keywords internal
+#' @noRd
 .generate_line_colors <- function(n, palette_name = "default") {
   if (palette_name == "gtap") {
     colors_result <- .create_color_palette(color_tone = "gtap", n_colors = n, palette_type = "qualitative")
@@ -1205,9 +1229,6 @@ get_trend_style_config <- function() {
 #'   create_vline(2023, "Shock 2", "blue", "dotted"),
 #'   create_vline(2025, "Shock 3", "darkgreen", "dashed")
 #' )
-#'
-#' trend_plot(data,
-#'            trend_style_config = create_trend_style(vertical_lines = vlines))
 create_vline <- function(period, label = "", color = "black",
                          linetype = "dashed", size = 0.5) {
   list(

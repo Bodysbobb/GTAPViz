@@ -96,37 +96,39 @@ Supports panel facets, grouping by multiple variables, and customizable line sty
 \strong{Input Data}
 }
 \examples{
-\dontrun{
-# Basic trend plot with line grouping by Case
-trend_plot(data, period_col = "Period", line_group_by = "Case", split_by = c("Variable", "AREG"))
+# Create simple example dataset
+data <- data.frame(
+  Period = rep(2017:2025, each = 3),
+  Case = rep(c("Uniform Country", "Uniform Sector", "Heterogeneous"), times = 9),
+  Variable = "GDP",
+  AREG = "ASEAN",
+  Value = cumsum(rnorm(27, 0, 0.2))
+)
 
-# Create separate figures for each Case (panel_var defaults to separate_figure = TRUE)
-trend_plot(data, period_col = "Period", split_by = "Variable", panel_var = "Case")
+# Define vertical lines for key shock years
+vlines <- list(
+  create_vline(2019, "Shock 1", "black", "dashed"),
+  create_vline(2023, "Shock 2", "blue", "dotted"),
+  create_vline(2025, "Shock 3", "darkgreen", "dashed")
+)
 
-# Use facet panels instead of separate figures
-trend_plot(data, period_col = "Period", split_by = "Variable",
-           panel_var = "Case", separate_figure = FALSE)
-
-my_trend_style <- create_trend_style(
+# Define trend style configuration
+trend_style <- create_trend_style(
   show_points = TRUE,
-  line_size = 1.5,
   smooth_line = FALSE,
+  line_size = 1,
+  vertical_lines = vlines,
   title_format = create_title_format(type = "prefix", text = "Impact on")
 )
-trend_plot(data, trend_style_config = my_trend_style)
 
+# Generate example trend plot
 trend_plot(
-  data = sl4.data[["AREG"]],
+  data = data,
   period_col = "Period",
-  split_by = c("Variable", "AREG"),
   line_group_by = "Case",
-  title_format = create_title_format(
-    type = "dynamic",
-    text = "Impacts on {Description}",
-    sep = ""
-  )
+  split_by = "Variable",
+  trend_style_config = trend_style
 )
-}
 }
 \author{
 Pattawee Puangchit

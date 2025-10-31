@@ -85,182 +85,168 @@ create_decomp_style(
 )
 }
 \arguments{
-\item{area_alpha}{Numeric. Transparency of area fills (0-1). Default: 0.7}
+\item{area_alpha}{Numeric. Transparency of area fills}
 
-\item{area_position}{Character. Stacking method: "stack" (default) or "fill" (normalized to 100\\%).}
+\item{area_position}{Character. Stacking method}
 
-\item{show_area_lines}{Logical. Whether to show lines at area boundaries. Default: FALSE}
+\item{show_area_lines}{Logical. Whether to show lines at area boundaries}
 
-\item{area_line_color}{Character. Color of area boundary lines. Default: "white"}
+\item{area_line_color}{Character. Color of area boundary lines}
 
-\item{area_line_size}{Numeric. Thickness of area boundary lines. Default: 0.3}
+\item{area_line_size}{Numeric. Thickness of area boundary lines}
 
-\item{color_palette}{Character or vector. Color palette for areas. Default: NULL (uses economic palette)}
+\item{color_palette}{Character or vector. Color palette for areas}
 
-\item{reverse_stack_order}{Logical. Reverse the stacking order of components. Default: FALSE}
+\item{reverse_stack_order}{Logical. Reverse the stacking order}
 
-\item{show_total_line}{Logical. Overlay a line showing total across components. Default: TRUE}
+\item{show_total_line}{Logical. Overlay a line showing total}
 
-\item{total_line_color}{Character. Color of the total line. Default: "black"}
+\item{total_line_color}{Character. Color of the total line}
 
-\item{total_line_size}{Numeric. Thickness of the total line. Default: 1.2}
+\item{total_line_size}{Numeric. Thickness of the total line}
 
-\item{total_line_type}{Character. Line type ("solid", "dashed", etc.). Default: "solid"}
+\item{total_line_type}{Character. Line type}
 
-\item{show_points}{Logical. Show points on the total line. Default: FALSE}
+\item{show_points}{Logical. Show points on the total line}
 
-\item{point_size}{Numeric. Size of points. Default: 2}
+\item{point_size}{Numeric. Size of points}
 
-\item{legend_title}{Character or NULL. Custom legend title. Default: NULL}
+\item{legend_title}{Character or NULL. Custom legend title}
 
-\item{vertical_lines}{List or NULL. List of vertical line specs created with \code{\link{create_vline}}. Default: NULL}
+\item{vertical_lines}{List or NULL. List of vertical line specs}
 
-\item{vline_label_size}{Numeric. Font size for vertical line labels. Default: 3.5}
+\item{vline_label_size}{Numeric. Font size for vertical line labels}
 
-\item{vline_label_angle}{Numeric. Angle for vertical line labels. Default: 90}
+\item{vline_label_angle}{Numeric. Angle for vertical line labels}
 
-\item{vline_label_vjust}{Numeric. Vertical adjustment for labels. Default: -0.2}
+\item{vline_label_vjust}{Numeric. Vertical adjustment for labels}
 
-\item{period_breaks}{Character or numeric. Period axis breaks: "auto", "all", or numeric vector. Default: "auto"}
+\item{period_breaks}{Character or numeric. Period axis breaks}
 
-\item{show_title}{Logical. Show plot title. Default: TRUE}
+\item{show_title}{Logical. Show plot title}
 
-\item{title_face}{Character. Title font face. Default: "bold"}
+\item{title_face}{Character. Title font face}
 
-\item{title_size}{Numeric. Title font size. Default: 20}
+\item{title_size}{Numeric. Title font size}
 
-\item{title_hjust}{Numeric. Title horizontal alignment. Default: 0.5}
+\item{title_hjust}{Numeric. Title horizontal alignment}
 
-\item{add_unit_to_title}{Logical. Append unit to title. Default: TRUE}
+\item{add_unit_to_title}{Logical. Append unit to title}
 
-\item{title_margin}{Numeric vector c(top, right, bottom, left). Default: c(10, 0, 10, 0)}
+\item{title_margin}{Numeric vector}
 
-\item{title_format}{List. Title format configuration. Default: list(type = "standard", text = "", sep = "")}
+\item{title_format}{List. Title format configuration}
 
-\item{show_x_axis_title}{Logical. Show x-axis title. Default: TRUE}
+\item{show_x_axis_title}{Logical. Show x-axis title}
 
-\item{x_axis_title_face}{Character. X-axis title font face. Default: "bold"}
+\item{x_axis_title_face}{Character. X-axis title font face}
 
-\item{x_axis_title_size}{Numeric. X-axis title size. Default: 16}
+\item{x_axis_title_size}{Numeric. X-axis title size}
 
-\item{x_axis_title_margin}{Numeric vector. Default: c(25, 25, 0, 0)}
+\item{x_axis_title_margin}{Numeric vector}
 
-\item{show_x_axis_labels}{Logical. Show x-axis labels. Default: TRUE}
+\item{show_x_axis_labels}{Logical. Show x-axis labels}
 
-\item{x_axis_text_face}{Character. X-axis text face. Default: "plain"}
+\item{x_axis_text_face}{Character. X-axis text face}
 
-\item{x_axis_text_size}{Numeric. X-axis text size. Default: 14}
+\item{x_axis_text_size}{Numeric. X-axis text size}
 
-\item{x_axis_text_angle}{Numeric. X-axis text rotation. Default: 0}
+\item{x_axis_text_angle}{Numeric. X-axis text rotation}
 
-\item{x_axis_text_hjust}{Numeric. X-axis text horizontal alignment. Default: 0}
+\item{x_axis_text_hjust}{Numeric. X-axis text horizontal alignment}
 
-\item{x_axis_description}{Character. Custom x-axis label. Default: ""}
+\item{x_axis_description}{Character. Custom x-axis label}
 
-\item{show_y_axis_title}{Logical. Show y-axis title. Default: TRUE}
+\item{show_y_axis_title}{Logical. Show y-axis title}
 
-\item{y_axis_title_face}{Character. Y-axis title font face. Default: "bold"}
+\item{y_axis_title_face}{Character. Y-axis title font face}
 
-\item{y_axis_title_size}{Numeric. Y-axis title size. Default: 16}
+\item{y_axis_title_size}{Numeric. Y-axis title size}
 
-\item{y_axis_title_margin}{Numeric vector. Default: c(25, 25, 0, 0)}
+\item{y_axis_title_margin}{Numeric vector}
 
-\item{show_y_axis_labels}{Logical. Show y-axis labels. Default: TRUE}
+\item{show_y_axis_labels}{Logical. Show y-axis labels}
 
-\item{y_axis_text_face}{Character. Y-axis text face. Default: "plain"}
+\item{y_axis_text_face}{Character. Y-axis text face}
 
-\item{y_axis_text_size}{Numeric. Y-axis text size. Default: 14}
+\item{y_axis_text_size}{Numeric. Y-axis text size}
 
-\item{y_axis_text_angle}{Numeric. Y-axis text rotation. Default: 0}
+\item{y_axis_text_angle}{Numeric. Y-axis text rotation}
 
-\item{y_axis_text_hjust}{Numeric. Y-axis text horizontal alignment. Default: 0}
+\item{y_axis_text_hjust}{Numeric. Y-axis text horizontal alignment}
 
-\item{y_axis_description}{Character. Custom y-axis label. Default: ""}
+\item{y_axis_description}{Character. Custom y-axis label}
 
-\item{show_legend}{Logical. Show legend. Default: TRUE}
+\item{show_legend}{Logical. Show legend}
 
-\item{show_legend_title}{Logical. Show legend title. Default: FALSE}
+\item{show_legend_title}{Logical. Show legend title}
 
-\item{legend_position}{Character. Legend position. Default: "right"}
+\item{legend_position}{Character. Legend position}
 
-\item{legend_title_face}{Character. Legend title font face. Default: "bold"}
+\item{legend_title_face}{Character. Legend title font face}
 
-\item{legend_text_face}{Character. Legend text face. Default: "plain"}
+\item{legend_text_face}{Character. Legend text face}
 
-\item{legend_text_size}{Numeric. Legend text size. Default: 14}
+\item{legend_text_size}{Numeric. Legend text size}
 
-\item{strip_face}{Character. Facet strip text face. Default: "bold"}
+\item{strip_face}{Character. Facet strip text face}
 
-\item{strip_text_size}{Numeric. Facet strip text size. Default: 16}
+\item{strip_text_size}{Numeric. Facet strip text size}
 
-\item{strip_background}{Character. Facet strip background color. Default: "lightgrey"}
+\item{strip_background}{Character. Facet strip background color}
 
-\item{strip_text_margin}{Numeric vector. Default: c(10, 0, 10, 0)}
+\item{strip_text_margin}{Numeric vector}
 
-\item{panel_spacing}{Numeric. Spacing between facet panels. Default: 2}
+\item{panel_spacing}{Numeric. Spacing between facet panels}
 
-\item{panel_rows}{Integer or NULL. Number of facet rows. Default: NULL}
+\item{panel_rows}{Integer or NULL. Number of facet rows}
 
-\item{panel_cols}{Integer or NULL. Number of facet columns. Default: NULL}
+\item{panel_cols}{Integer or NULL. Number of facet columns}
 
-\item{show_axis_titles_on_all_facets}{Logical. Show axis titles on all facet panels. Default: FALSE}
+\item{show_axis_titles_on_all_facets}{Logical. Show axis titles on all panels}
 
-\item{background_color}{Character. Plot background color. Default: "white"}
+\item{background_color}{Character. Plot background color}
 
-\item{grid_color}{Character. Grid line color. Default: "grey90"}
+\item{grid_color}{Character. Grid line color}
 
-\item{show_grid_major_x}{Logical. Show major x-grid lines. Default: TRUE}
+\item{show_grid_major_x}{Logical. Show major x-grid lines}
 
-\item{show_grid_major_y}{Logical. Show major y-grid lines. Default: TRUE}
+\item{show_grid_major_y}{Logical. Show major y-grid lines}
 
-\item{show_grid_minor_x}{Logical. Show minor x-grid lines. Default: FALSE}
+\item{show_grid_minor_x}{Logical. Show minor x-grid lines}
 
-\item{show_grid_minor_y}{Logical. Show minor y-grid lines. Default: FALSE}
+\item{show_grid_minor_y}{Logical. Show minor y-grid lines}
 
-\item{show_zero_line}{Logical. Show horizontal zero line. Default: FALSE}
+\item{show_zero_line}{Logical. Show horizontal zero line}
 
-\item{zero_line_type}{Character. Zero line type. Default: "dashed"}
+\item{zero_line_type}{Character. Zero line type}
 
-\item{zero_line_color}{Character. Zero line color. Default: "black"}
+\item{zero_line_color}{Character. Zero line color}
 
-\item{zero_line_size}{Numeric. Zero line thickness. Default: 0.5}
+\item{zero_line_size}{Numeric. Zero line thickness}
 
-\item{zero_line_position}{Numeric. Y-position of zero line. Default: 0}
+\item{zero_line_position}{Numeric. Y-position of zero line}
 
-\item{scale_limit}{Numeric vector or NULL. Y-axis limits c(min, max). Default: NULL}
+\item{scale_limit}{Numeric vector or NULL. Y-axis limits}
 
-\item{scale_increment}{Numeric or NULL. Y-axis tick increment. Default: NULL}
+\item{scale_increment}{Numeric or NULL. Y-axis tick increment}
 
-\item{expansion_y_mult}{Numeric vector. Y-axis expansion c(bottom, top). Default: c(0, 0.1)}
+\item{expansion_y_mult}{Numeric vector. Y-axis expansion}
 
-\item{expansion_x_mult}{Numeric vector. X-axis expansion c(left, right). Default: c(0.05, 0.05)}
+\item{expansion_x_mult}{Numeric vector. X-axis expansion}
 
-\item{plot.margin}{Numeric vector c(top, right, bottom, left). Margins in mm. Default: c(10, 25, 10, 10)}
+\item{plot.margin}{Numeric vector. Margins in mm}
 
-\item{all_font_size}{Numeric. Master font size multiplier. Default: 1}
+\item{all_font_size}{Numeric. Master font size multiplier}
 }
 \value{
 List with decomposition area plot style configuration
 }
 \description{
 Creates a configuration list for controlling decomposition area plot appearance and behavior.
-Extends the base plot style with area-specific options including stacking behavior,
-transparency, and total line overlays.
 }
 \examples{
 basic_decomp_style <- create_decomp_style()
-
-custom_decomp_style <- create_decomp_style(
-  area_alpha = 0.8,
-  color_palette = "economic",
-  show_total_line = TRUE,
-  total_line_size = 1.5,
-  vertical_lines = list(
-    create_vline(2019, "Policy Change", "red", "dashed"),
-    create_vline(2023, "Recovery", "blue", "dotted")
-  ),
-  normalize = TRUE
-)
 }
 \author{
 Pattawee Puangchit

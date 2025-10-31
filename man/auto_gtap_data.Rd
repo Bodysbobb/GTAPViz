@@ -84,7 +84,7 @@ See \code{\link{convert_units}} for details.}
 
 \item{decimals}{Integer or \code{NULL}. Number of decimal places to round numeric values. Set to \code{NULL} to disable rounding.}
 
-\item{rename_columns}{Logical. If \code{TRUE} (default), renames GTAP codes (e.g., \code{"REG"} → \code{"Region"}, \code{"COMM"} → \code{"Commodity"}).}
+\item{rename_columns}{Logical. If \code{TRUE} (default), renames GTAP codes (e.g., \code{"REG"} â†’ \code{"Region"}, \code{"COMM"} â†’ \code{"Commodity"}).}
 
 \item{region_select}{Optional character vector. Filters data to selected regions.
 Applies only to the \code{"REG"} column, which is fixed and cannot be modified.}

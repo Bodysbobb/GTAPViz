@@ -501,7 +501,7 @@ map_heatmap <- function(data,
       }
       # Get values for the map_value_var if specified
       if (!is.null(map_value_var)) {
-        df <- df %>% dplyr::filter(!!rlang::sym(variable_col) == map_value_var)
+        df <- df |> dplyr::filter(!!rlang::sym(variable_col) == map_value_var)
       }
       all_values <- c(all_values, df[[value_col]])
     }
@@ -555,8 +555,8 @@ map_heatmap <- function(data,
       )
       plot_list[["map_1"]] <- plot_obj
     } else {
-      split_groups <- df %>%
-        dplyr::group_by(dplyr::across(dplyr::all_of(split_by))) %>%
+      split_groups <- df |>
+        dplyr::group_by(dplyr::across(dplyr::all_of(split_by))) |>
         dplyr::group_split()
 
       for (group in split_groups) {
@@ -603,12 +603,12 @@ map_heatmap <- function(data,
                                style_config, map_region, global_scale_limits = NULL) {
 
   if (!is.null(map_value_var)) {
-    map_color_data <- data %>% dplyr::filter(!!rlang::sym(variable_col) == map_value_var)
+    map_color_data <- data |> dplyr::filter(!!rlang::sym(variable_col) == map_value_var)
   } else {
     map_color_data <- data
   }
 
-  plot_data <- map_data %>%
+  plot_data <- map_data |>
     dplyr::left_join(map_color_data, by = c("iso_a3" = iso_col))
 
   p <- ggplot2::ggplot(plot_data) +
@@ -788,7 +788,7 @@ map_heatmap <- function(data,
   label_data <- country_positions
 
   countries <- unique(data[[iso_col]])
-  label_data <- label_data %>% dplyr::filter(iso_a3 %in% countries)
+  label_data <- label_data |> dplyr::filter(iso_a3 %in% countries)
 
   label_data$iso_a2 <- countrycode::countrycode(label_data$iso_a3, "iso3c", "iso2c")
   label_data$flag <- paste0("https://flagcdn.com/w80/", tolower(label_data$iso_a2), ".png")
@@ -805,7 +805,7 @@ map_heatmap <- function(data,
 
   if (!is.null(label_box_vars)) {
     label_data$text_label <- sapply(label_data$iso_a3, function(country_iso) {
-      country_data <- data %>% dplyr::filter(!!rlang::sym(iso_col) == country_iso)
+      country_data <- data |> dplyr::filter(!!rlang::sym(iso_col) == country_iso)
 
       label_lines <- character()
       for (i in 1:nrow(label_box_vars)) {
@@ -814,7 +814,7 @@ map_heatmap <- function(data,
         var_symbol <- label_box_vars$symbol[i]
         var_decimals <- label_box_vars$decimal_places[i]
 
-        var_data <- country_data %>%
+        var_data <- country_data |>
           dplyr::filter(!!rlang::sym(variable_col) == var_code)
 
         if (nrow(var_data) > 0) {
@@ -910,68 +910,68 @@ map_heatmap <- function(data,
 
     # ASEAN
     if (map_region %in% c("asean", "southeast_asia", "seasia")) {
-      return(world %>% dplyr::filter(iso_a3 %in% c("BRN", "KHM", "IDN", "LAO", "MYS", "MMR", "PHL", "SGP", "THA", "VNM")))
+      return(world |> dplyr::filter(iso_a3 %in% c("BRN", "KHM", "IDN", "LAO", "MYS", "MMR", "PHL", "SGP", "THA", "VNM")))
     }
 
     # Continents
-    if (map_region == "asia") return(world %>% dplyr::filter(continent == "Asia"))
-    if (map_region == "europe") return(world %>% dplyr::filter(continent == "Europe"))
-    if (map_region == "africa") return(world %>% dplyr::filter(continent == "Africa"))
-    if (map_region == "oceania") return(world %>% dplyr::filter(continent == "Oceania"))
-    if (map_region == "americas") return(world %>% dplyr::filter(continent %in% c("North America", "South America")))
-    if (map_region == "north_america") return(world %>% dplyr::filter(continent == "North America"))
-    if (map_region == "south_america") return(world %>% dplyr::filter(continent == "South America"))
+    if (map_region == "asia") return(world |> dplyr::filter(continent == "Asia"))
+    if (map_region == "europe") return(world |> dplyr::filter(continent == "Europe"))
+    if (map_region == "africa") return(world |> dplyr::filter(continent == "Africa"))
+    if (map_region == "oceania") return(world |> dplyr::filter(continent == "Oceania"))
+    if (map_region == "americas") return(world |> dplyr::filter(continent %in% c("North America", "South America")))
+    if (map_region == "north_america") return(world |> dplyr::filter(continent == "North America"))
+    if (map_region == "south_america") return(world |> dplyr::filter(continent == "South America"))
 
     # Sub-regions
     if (map_region == "east_asia") {
-      return(world %>% dplyr::filter(iso_a3 %in% c("CHN", "JPN", "KOR", "PRK", "MNG", "TWN", "HKG", "MAC")))
+      return(world |> dplyr::filter(iso_a3 %in% c("CHN", "JPN", "KOR", "PRK", "MNG", "TWN", "HKG", "MAC")))
     }
     if (map_region == "south_asia") {
-      return(world %>% dplyr::filter(iso_a3 %in% c("IND", "PAK", "BGD", "LKA", "NPL", "BTN", "MDV", "AFG")))
+      return(world |> dplyr::filter(iso_a3 %in% c("IND", "PAK", "BGD", "LKA", "NPL", "BTN", "MDV", "AFG")))
     }
     if (map_region %in% c("mena", "middle_east")) {
-      return(world %>% dplyr::filter(iso_a3 %in% c("SAU", "ARE", "QAT", "KWT", "BHR", "OMN", "YEM", "IRQ", "IRN", "JOR", "LBN", "SYR", "ISR", "PSE", "TUR", "EGY", "LBY", "TUN", "DZA", "MAR", "SDN", "SSD")))
+      return(world |> dplyr::filter(iso_a3 %in% c("SAU", "ARE", "QAT", "KWT", "BHR", "OMN", "YEM", "IRQ", "IRN", "JOR", "LBN", "SYR", "ISR", "PSE", "TUR", "EGY", "LBY", "TUN", "DZA", "MAR", "SDN", "SSD")))
     }
     if (map_region == "central_asia") {
-      return(world %>% dplyr::filter(iso_a3 %in% c("KAZ", "UZB", "TKM", "TJK", "KGZ")))
+      return(world |> dplyr::filter(iso_a3 %in% c("KAZ", "UZB", "TKM", "TJK", "KGZ")))
     }
     if (map_region %in% c("eu", "european_union")) {
-      return(world %>% dplyr::filter(iso_a3 %in% c("AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "IRL", "ITA", "LVA", "LTU", "LUX", "MLT", "NLD", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE")))
+      return(world |> dplyr::filter(iso_a3 %in% c("AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "IRL", "ITA", "LVA", "LTU", "LUX", "MLT", "NLD", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE")))
     }
     if (map_region == "western_europe") {
-      return(world %>% dplyr::filter(iso_a3 %in% c("GBR", "FRA", "DEU", "ITA", "ESP", "PRT", "BEL", "NLD", "LUX", "CHE", "AUT", "IRL")))
+      return(world |> dplyr::filter(iso_a3 %in% c("GBR", "FRA", "DEU", "ITA", "ESP", "PRT", "BEL", "NLD", "LUX", "CHE", "AUT", "IRL")))
     }
     if (map_region == "eastern_europe") {
-      return(world %>% dplyr::filter(iso_a3 %in% c("POL", "CZE", "SVK", "HUN", "ROU", "BGR", "UKR", "BLR", "MDA", "RUS")))
+      return(world |> dplyr::filter(iso_a3 %in% c("POL", "CZE", "SVK", "HUN", "ROU", "BGR", "UKR", "BLR", "MDA", "RUS")))
     }
     if (map_region == "sub_saharan_africa") {
-      return(world %>% dplyr::filter(continent == "Africa", !iso_a3 %in% c("EGY", "LBY", "TUN", "DZA", "MAR", "SDN")))
+      return(world |> dplyr::filter(continent == "Africa", !iso_a3 %in% c("EGY", "LBY", "TUN", "DZA", "MAR", "SDN")))
     }
     if (map_region == "north_africa") {
-      return(world %>% dplyr::filter(iso_a3 %in% c("EGY", "LBY", "TUN", "DZA", "MAR", "SDN", "ESH")))
+      return(world |> dplyr::filter(iso_a3 %in% c("EGY", "LBY", "TUN", "DZA", "MAR", "SDN", "ESH")))
     }
     if (map_region == "latin_america") {
-      return(world %>% dplyr::filter(continent == "South America" | iso_a3 %in% c("MEX", "GTM", "BLZ", "SLV", "HND", "NIC", "CRI", "PAN")))
+      return(world |> dplyr::filter(continent == "South America" | iso_a3 %in% c("MEX", "GTM", "BLZ", "SLV", "HND", "NIC", "CRI", "PAN")))
     }
     if (map_region == "caribbean") {
-      return(world %>% dplyr::filter(iso_a3 %in% c("CUB", "JAM", "HTI", "DOM", "PRI", "TTO", "BHS", "BRB", "GRD", "LCA", "VCT", "ATG", "DMA", "KNA")))
+      return(world |> dplyr::filter(iso_a3 %in% c("CUB", "JAM", "HTI", "DOM", "PRI", "TTO", "BHS", "BRB", "GRD", "LCA", "VCT", "ATG", "DMA", "KNA")))
     }
     if (map_region == "pacific") {
-      return(world %>% dplyr::filter(iso_a3 %in% c("AUS", "NZL", "PNG", "FJI", "SLB", "VUT", "NCL", "WSM", "TON", "KIR", "FSM", "MHL", "PLW")))
+      return(world |> dplyr::filter(iso_a3 %in% c("AUS", "NZL", "PNG", "FJI", "SLB", "VUT", "NCL", "WSM", "TON", "KIR", "FSM", "MHL", "PLW")))
     }
     if (map_region %in% c("gcc", "gulf_cooperation_council")) {
-      return(world %>% dplyr::filter(iso_a3 %in% c("SAU", "ARE", "QAT", "KWT", "BHR", "OMN")))
+      return(world |> dplyr::filter(iso_a3 %in% c("SAU", "ARE", "QAT", "KWT", "BHR", "OMN")))
     }
     if (map_region %in% c("nafta", "usmca")) {
-      return(world %>% dplyr::filter(iso_a3 %in% c("USA", "CAN", "MEX")))
+      return(world |> dplyr::filter(iso_a3 %in% c("USA", "CAN", "MEX")))
     }
     if (map_region == "mercosur") {
-      return(world %>% dplyr::filter(iso_a3 %in% c("BRA", "ARG", "URY", "PRY")))
+      return(world |> dplyr::filter(iso_a3 %in% c("BRA", "ARG", "URY", "PRY")))
     }
   }
 
   # If map_region is a vector of ISO codes
-  return(world %>% dplyr::filter(iso_a3 %in% map_region))
+  return(world |> dplyr::filter(iso_a3 %in% map_region))
 }
 
 
@@ -979,8 +979,8 @@ map_heatmap <- function(data,
 #' @noRd
 .aggregate_map_data <- function(df, aggregate_by, value_col, aggregate_fun) {
   agg_function <- switch(aggregate_fun, "mean" = mean, "sum" = sum, "median" = median, mean)
-  df %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(aggregate_by))) %>%
+  df |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(aggregate_by))) |>
     dplyr::summarise(dplyr::across(dplyr::all_of(value_col), ~ agg_function(., na.rm = TRUE)), .groups = "drop")
 }
 

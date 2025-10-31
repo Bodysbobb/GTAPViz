@@ -45,7 +45,7 @@
 #'   Applies only to the `"ACTS"` and `"COMM"` columns, which are fixed and cannot be modified.
 #'
 #' @param subtotal_level Logical. If `TRUE`, includes subtotal rows. Default is `FALSE`.
-#' @param rename_columns Logical. If `TRUE` (default), renames GTAP codes (e.g., `"REG"` → `"Region"`, `"COMM"` → `"Commodity"`).
+#' @param rename_columns Logical. If `TRUE` (default), renames GTAP codes (e.g., `"REG"` â†’ `"Region"`, `"COMM"` â†’ `"Commodity"`).
 #'
 #' @param plot_data Logical. If `TRUE`, generates plot-ready data and assigns to specified variable names.
 #' @param output_formats Character vector or list. Output formats for export. Valid values: `"csv"`, `"stata"`, `"rds"`, `"txt"`.
@@ -209,14 +209,6 @@ auto_gtap_data <- function(experiment,
       data <- .format_decimal_places(data, decimals)
     }
 
-    if (apply_filters && (!is.null(region_select) || !is.null(sector_select))) {
-      data <- .apply_filters(
-        data,
-        region_select = region_select,
-        experiment_select = experiment,
-        sector_select = sector_select
-      )
-    }
 
     # Add scenario ranking if requested
     if (isTRUE(add_scenario_ranking) ||
