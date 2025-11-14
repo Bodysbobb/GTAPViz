@@ -1,4 +1,582 @@
 # Auto Process GTAP Data --------------------------------------------------
+#' Process Static GTAP Data with Simplified Parameter Structure
+#'
+#' Processes static GTAP data from \code{.sl4} or \code{.har} files with a simplified
+#' parameter structure similar to \code{\link{auto_gtap_rd}}. Supports automatic processing
+#' of macro variables, bilateral trade data, and regular variables with flexible filtering
+#' and output options.
+#'
+#' @param experiment Character vector. Case names to process (without file extension).
+#'   Example: \code{c("EXP1", "EXP2", "EXP3")}.
+#' @param input_path Character. Path to the input folder containing GTAP data files.
+#' @param input_format Character. File format to process. Options:
+#'   \itemize{
+#'     \item \code{".sl4"}: Solution files (default)
+#'     \item \code{".har"}: Header array files
+#'   }
+#' @param input_suffix Character. Custom suffix for input files (e.g., \code{""}, \code{"-custom"},
+#'   \code{"-WEL"}). Default: \code{""}.
+#' @param process_vars Character vector, data frame, \code{NULL}, or \code{FALSE}. Variables to extract:
+#'   \itemize{
+#'     \item Character vector: Specific variable names to extract
+#'     \item Data frame: Must contain a \code{"Variable"} column with variable names
+#'     \item \code{NULL}: Extract all available variables (default)
+#'     \item \code{FALSE}: Skip variable processing
+#'   }
+#'   Special keywords: \code{"macro"}, \code{"macros"}, \code{"gtapmacro"} trigger macro processing.
+#' @param mapping_info Character. Metadata mode for variable descriptions and units.
+#'   Options:
+#'   \itemize{
+#'     \item \code{"GTAPv7"}: Use default GTAPv7 definitions (default)
+#'     \item \code{"Yes"}: Use external mapping only
+#'     \item \code{"No"}: No mapping information
+#'     \item \code{"Mix"}: Combine GTAPv7 defaults with external mapping (external takes precedence)
+#'   }
+#'   See \code{\link{add_mapping_info}} for details.
+#' @param external_mapping_info Data frame or \code{NULL}. Custom mapping table with columns:
+#'   \code{"Variable"}, \code{"Description"}, \code{"Unit"}. Overrides default mappings
+#'   when \code{mapping_info = "Yes"} or \code{"Mix"}. Default: \code{NULL}.
+#' @param extract_method Character. Method for extracting data from files:
+#'   \itemize{
+#'     \item \code{"get_data_by_var"}: Extract by variable name (default)
+#'     \item \code{"get_data_by_dims"}: Extract by dimension structure
+#'     \item \code{"group_data_by_dims"}: Group and extract by dimension with priority rules
+#'   }
+#' @param priority_list Optional list. Priority rules required when \code{extract_method = "group_data_by_dims"}.
+#'   Specifies dimension hierarchy for grouping.
+#'   Example: \code{list("Sector" = c("COMM", "ACTS"), "Region" = c("REG"))}.
+#'   Default: \code{NULL}.
+#' @param convert_unit Character or \code{NULL}. Unit conversion to apply:
+#'   \itemize{
+#'     \item \code{"mil2bil"}: Convert millions to billions
+#'     \item \code{"bil2mil"}: Convert billions to millions
+#'     \item \code{"pct2frac"}: Convert percentage to fraction
+#'     \item \code{"frac2pct"}: Convert fraction to percentage
+#'   }
+#'   Default: \code{NULL} (no conversion). See \code{\link{convert_units}} for details.
+#' @param decimals Integer or \code{NULL}. Number of decimal places for rounding numeric values.
+#'   Set to \code{NULL} to disable rounding. Default: \code{4}.
+#' @param rename_columns Logical. If \code{TRUE}, renames GTAP dimension codes to readable names:
+#'   \itemize{
+#'     \item \code{"REG"} → \code{"Region"}
+#'     \item \code{"COMM"} → \code{"Commodity"}
+#'     \item \code{"ACTS"} → \code{"Activity"}
+#'     \item \code{"Experiment"} → \code{"Scenario"}
+#'   }
+#'   Default: \code{TRUE}.
+#' @param region_select Character vector or \code{NULL}. Filter data to selected regions.
+#'   Applies only to the \code{"REG"} (or \code{"Region"} if renamed) column.
+#'   Default: \code{NULL} (all regions).
+#' @param sector_select Character vector or \code{NULL}. Filter data to selected sectors.
+#'   Applies to \code{"ACTS"} and \code{"COMM"} (or \code{"Activity"} and \code{"Commodity"} if renamed) columns.
+#'   Default: \code{NULL} (all sectors).
+#' @param subtotal_level Logical. If \code{TRUE}, includes subtotal rows in the output for
+#'   aggregated dimensions. Default: \code{FALSE}.
+#' @param main_output_name Character. Variable name to assign main/primary data output in parent
+#'   environment. Default: \code{"plot.data"}.
+#' @param macro_output_name Character. Variable name to assign macro economic data output in parent
+#'   environment. Default: \code{"GTAPMacro"}.
+#' @param keep_raw_data Logical. Reserved parameter for future compatibility with comparison features.
+#'   Currently not used. Default: \code{TRUE}.
+#'
+#' @return Invisibly returns a list containing processed data:
+#'   \describe{
+#'     \item{GTAPMacros}{Macro economic indicators data frame (if processed)}
+#'     \item{main_data}{Primary variable data frame or list (if processed)}
+#'     \item{bilateral_data}{QXS bilateral trade data (if processed)}
+#'   }
+#'   All processed data is also assigned to specified variable names in the parent environment.
+#'
+#' @details
+#' \strong{Automatic Processing:}
+#'
+#' The function automatically processes different data types based on file format and parameters:
+#' \itemize{
+#'   \item \strong{Macro variables}: Automatically processed from \code{.sl4} files when
+#'     \code{process_vars = NULL} or includes \code{"macro"}, \code{"macros"}, or \code{"gtapmacro"}
+#'   \item \strong{QXS (bilateral trade)}: Automatically processed from \code{.sl4} files when
+#'     \code{process_vars = NULL} or includes variables with \code{"qxs"} in the name
+#'   \item \strong{Regular variables}: Processed based on \code{extract_method} and \code{process_vars}
+#' }
+#'
+#' \strong{File Discovery:}
+#'
+#' The function automatically discovers available input files and reports missing files.
+#' Files must match the pattern: \code{experiment_name + input_suffix + input_format}
+#'
+#' \strong{Output Structure:}
+#'
+#' All outputs include standardized columns:
+#' \itemize{
+#'   \item \code{Variable}: Variable identifier
+#'   \item \code{Value}: Numeric data values
+#'   \item \code{Experiment} or \code{Scenario}: Case identifier (depends on \code{rename_columns})
+#'   \item \code{Unit}: Variable units (required for GTAPViz plotting functions)
+#'   \item \code{Description}: Variable description (if mapping is enabled)
+#'   \item Additional dimension columns (REG, COMM, ACTS, etc.)
+#' }
+#'
+#' \strong{Unit Conversion:}
+#'
+#' When \code{convert_unit} is specified, the conversion is applied to all processed data
+#' (main data, macro data, and bilateral trade data). The \code{Unit} column is automatically
+#' updated to reflect the conversion.
+#'
+#' \strong{Differences from auto_gtap_data:}
+#' \itemize{
+#'   \item Processes single format per call (not simultaneous SL4 + HAR)
+#'   \item Simplified parameter structure matching \code{auto_gtap_rd}
+#'   \item Uses \code{experiment} vector instead of complex experiment lists
+#'   \item Automatic output assignment to parent environment
+#' }
+#'
+#' @author Pattawee Puangchit
+#' @export
+#' @seealso
+#' \code{\link{auto_gtap_data}} for multi-format processing,
+#' \code{\link{auto_gtap_rd}} for recursive dynamic data processing,
+#' \code{\link{add_mapping_info}} for variable metadata,
+#' \code{\link{convert_units}} for unit conversions
+#'
+#' @examples
+#' # Input Path:
+#' input_path <- system.file("extdata/in", package = "GTAPViz")
+#'
+#' # Example 1: Process all variables from SL4 files (macros + regular + QXS)
+#' # Files: EXP1.sl4, EXP2.sl4
+#' gtap_data <- auto_gtap(
+#'   experiment = c("EXP1", "EXP2"),
+#'   input_path = input_path,
+#'   input_format = ".sl4",
+#'   process_vars = NULL,
+#'   mapping_info = "GTAPv7",
+#'   subtotal_level = FALSE,
+#'   main_output_name = "plot.data"
+#' )
+auto_gtap <- function(experiment,
+                      input_path = NULL,
+                      input_format = ".sl4",
+                      input_suffix = "",
+                      process_vars = NULL,
+                      mapping_info = "GTAPv7",
+                      external_mapping_info = NULL,
+                      extract_method = "get_data_by_var",
+                      priority_list = NULL,
+                      convert_unit = NULL,
+                      decimals = 4,
+                      rename_columns = TRUE,
+                      region_select = NULL,
+                      sector_select = NULL,
+                      subtotal_level = FALSE,
+                      main_output_name = "plot.data",
+                      macro_output_name = "GTAPMacro",
+                      keep_raw_data = TRUE) {
+
+  if (is.null(input_path) || !dir.exists(input_path)) {
+    stop("Input path is NULL or does not exist. Please provide a valid directory.")
+  }
+
+  if (!input_format %in% c(".sl4", ".har")) {
+    stop("input_format must be either '.sl4' or '.har'")
+  }
+
+  file_suffix <- paste0(input_suffix, input_format)
+
+  process_macro <- FALSE
+  process_qxs <- FALSE
+  process_data_flag <- TRUE
+  var_list <- process_vars
+
+  if (is.null(process_vars)) {
+    var_list <- NULL
+    process_macro <- (input_format == ".sl4")
+    process_qxs <- (input_format == ".sl4")
+  } else if (is.character(process_vars)) {
+    lower_vars <- tolower(process_vars)
+    if (any(grepl("macro|gtapmacro", lower_vars))) {
+      process_macro <- (input_format == ".sl4")
+      var_list <- var_list[!grepl("macro|gtapmacro", var_list, ignore.case = TRUE)]
+    }
+    if (any(grepl("qxs", lower_vars))) {
+      process_qxs <- (input_format == ".sl4")
+    }
+    if (length(var_list) == 0) var_list <- NULL
+  } else if (is.data.frame(process_vars)) {
+    if (!"Variable" %in% names(process_vars)) {
+      stop("When process_vars is a data frame, it must contain a 'Variable' column")
+    }
+    var_list <- process_vars$Variable
+    lower_vars <- tolower(var_list)
+    if (any(grepl("macro|gtapmacro", lower_vars))) {
+      process_macro <- (input_format == ".sl4")
+      var_list <- var_list[!grepl("macro|gtapmacro", var_list, ignore.case = TRUE)]
+    }
+    if (any(grepl("qxs", lower_vars))) {
+      process_qxs <- (input_format == ".sl4")
+    }
+  } else if (isFALSE(process_vars)) {
+    process_data_flag <- FALSE
+    process_macro <- FALSE
+    process_qxs <- FALSE
+    var_list <- NULL
+  }
+
+  find_valid_cases <- function(file_suffix, input_names) {
+    bases <- character(0)
+    files_matching <- list.files(input_path, pattern = paste0(file_suffix, "$"),
+                                 full.names = FALSE, ignore.case = TRUE)
+    for (file in files_matching) {
+      base <- substr(file, 1, nchar(file) - nchar(file_suffix))
+      bases <- c(bases, tolower(trimws(base)))
+    }
+    valid_cases <- input_names[tolower(input_names) %in% bases]
+    return(valid_cases)
+  }
+
+  valid_inputs <- find_valid_cases(file_suffix, experiment)
+  missing_inputs <- setdiff(experiment, valid_inputs)
+
+  if (length(missing_inputs) > 0) {
+    message("Warning: The following experiments were not found in the directory:")
+    message("  ", paste(missing_inputs, collapse = ", "))
+  }
+
+  if (length(valid_inputs) == 0) {
+    stop("No valid input files found in ", input_path)
+  }
+
+  load_func <- if (input_format == ".sl4") HARplus::load_sl4x else HARplus::load_harx
+
+  all_data <- list()
+  process_log <- list()
+
+  if (process_macro && input_format == ".sl4") {
+    message("Processing GTAP Macro Data")
+
+    macro_info <- GTAPViz:::get_gtap_macro_info()
+
+    macro_raw <- setNames(
+      lapply(valid_inputs, function(scenario) {
+        file_path <- file.path(input_path, paste0(scenario, file_suffix))
+        if (file.exists(file_path)) {
+          tryCatch({
+            HARplus::load_sl4x(file_path, select_header = macro_info$Variable)
+          }, error = function(e) {
+            message(sprintf("Error processing %s: %s", file_path, e$message))
+            return(NULL)
+          })
+        } else {
+          message(sprintf("Skipping %s (file not found)", file_path))
+          return(NULL)
+        }
+      }),
+      valid_inputs
+    )
+
+    macro_raw <- macro_raw[!sapply(macro_raw, is.null)]
+
+    if (length(macro_raw) > 0) {
+      GTAPMacros <- do.call(
+        HARplus::get_data_by_var,
+        c(
+          list(
+            experiment_names = names(macro_raw),
+            subtotal_level = subtotal_level,
+            merge_data = length(macro_raw) > 1
+          ),
+          macro_raw
+        )
+      )
+
+      GTAPMacros <- GTAPViz:::add_mapping_info(GTAPMacros, mapping = "GTAPv7")
+
+      GTAPMacros_filtered <- GTAPViz:::.apply_to_dataframes(GTAPMacros, function(df) {
+        df[, c("Variable", "Value", "Subtotal", "Experiment", "Description", "Unit"), drop = FALSE]
+      })
+
+      if (length(valid_inputs) == 1) {
+        if (is.list(GTAPMacros_filtered) && length(GTAPMacros_filtered) == 1 && !is.data.frame(GTAPMacros_filtered)) {
+          GTAPMacros_final <- do.call(rbind, unlist(GTAPMacros_filtered, recursive = FALSE))
+        } else {
+          GTAPMacros_final <- do.call(rbind, GTAPMacros_filtered)
+        }
+      } else {
+        GTAPMacros_final <- do.call(rbind, GTAPMacros_filtered)
+      }
+      rownames(GTAPMacros_final) <- NULL
+
+      GTAPMacros_final <- GTAPMacros_final[order(GTAPMacros_final$Experiment,
+                                                 GTAPMacros_final$Variable,
+                                                 GTAPMacros_final$Unit), ]
+
+      if (rename_columns) {
+        GTAPMacros_final <- GTAPViz:::rename_value(GTAPMacros_final, target_column = "Experiment", rename_type = "Scenario")
+      }
+
+      if (!is.null(convert_unit)) {
+        message("Applying unit conversion to macro data: ", convert_unit)
+        GTAPMacros_final <- GTAPViz:::convert_units(GTAPMacros_final, scale_auto = convert_unit)
+      }
+
+      if (!is.null(decimals)) {
+        GTAPMacros_final <- GTAPViz:::.format_decimal_places(GTAPMacros_final, decimals)
+      }
+
+      all_data$GTAPMacros <- GTAPMacros_final
+      assign(macro_output_name, list(macros = GTAPMacros_final), envir = parent.frame())
+      process_log$macro <- "GTAP Macro Data processed successfully"
+    }
+  }
+
+  if (process_data_flag && length(valid_inputs) > 0) {
+    message(paste("Processing", toupper(gsub("\\.", "", input_format)), "Data"))
+
+    process_regular <- TRUE
+    if (process_macro && !is.null(var_list) && is.character(var_list)) {
+      if (length(var_list) == 1 && tolower(var_list) == "macros") {
+        process_regular <- FALSE
+      }
+    }
+
+    if (process_regular) {
+      vars_to_use <- var_list
+      if (process_qxs && !is.null(vars_to_use) && is.character(vars_to_use)) {
+        vars_to_use <- vars_to_use[!grepl("qxs", vars_to_use, ignore.case = TRUE)]
+        if (length(vars_to_use) == 0) vars_to_use <- NULL
+      }
+
+      process_data <- function(valid_cases, var_select, method, priority) {
+        loaded_data <- setNames(
+          lapply(valid_cases, function(case) {
+            file_path <- file.path(input_path, paste0(case, file_suffix))
+            if (file.exists(file_path)) {
+              tryCatch({
+                data <- load_func(file_path)
+                if (!is.null(var_select) && is.character(var_select)) {
+                  if (input_format == ".sl4") {
+                    data$data <- data$data[var_select]
+                    data$dimension_info <- data$dimension_info[var_select]
+                  } else {
+                    data <- data[var_select]
+                  }
+                }
+                return(data)
+              }, error = function(e) {
+                message(sprintf("Error loading %s: %s", file_path, e$message))
+                return(NULL)
+              })
+            } else {
+              return(NULL)
+            }
+          }),
+          valid_cases
+        )
+
+        loaded_data <- loaded_data[!sapply(loaded_data, is.null)]
+
+        if (length(loaded_data) == 0) {
+          return(NULL)
+        }
+
+        if (method == "get_data_by_var") {
+          result <- do.call(
+            HARplus::get_data_by_var,
+            c(
+              list(
+                experiment_names = names(loaded_data),
+                subtotal_level = subtotal_level,
+                merge_data = length(loaded_data) > 1
+              ),
+              loaded_data
+            )
+          )
+        } else if (method == "get_data_by_dims") {
+          result <- do.call(
+            HARplus::get_data_by_dims,
+            c(
+              list(
+                experiment_names = names(loaded_data),
+                subtotal_level = subtotal_level,
+                merge_data = length(loaded_data) > 1
+              ),
+              loaded_data
+            )
+          )
+        } else if (method == "group_data_by_dims") {
+          if (is.null(priority)) {
+            stop("priority_list must be provided when extract_method is 'group_data_by_dims'")
+          }
+          result <- do.call(
+            HARplus::group_data_by_dims,
+            c(
+              list(
+                experiment_names = names(loaded_data),
+                priority = priority,
+                subtotal_level = subtotal_level,
+                merge_data = length(loaded_data) > 1
+              ),
+              loaded_data
+            )
+          )
+        } else {
+          stop("Invalid extract_method. Choose 'get_data_by_var', 'get_data_by_dims', or 'group_data_by_dims'")
+        }
+
+        return(result)
+      }
+
+      grouped_data <- tryCatch({
+        process_data(valid_inputs, vars_to_use, extract_method, priority_list)
+      }, error = function(e) {
+        process_log$main <- sprintf("Error processing data: %s", e$message)
+        return(NULL)
+      })
+
+      if (!is.null(grouped_data)) {
+        process_log$main <- paste(toupper(gsub("\\.", "", input_format)), "Data processed successfully")
+
+        transform_data <- function(data, apply_filters = TRUE) {
+          if (is.null(data)) return(NULL)
+
+          data <- GTAPViz:::.apply_to_dataframes(data, GTAPViz:::rename_GTAP_bilateral)
+          data <- GTAPViz:::add_mapping_info(data, mapping = mapping_info, external_map = external_mapping_info)
+
+          if (apply_filters && (!is.null(region_select) || !is.null(sector_select))) {
+            data <- GTAPViz:::.apply_filters(
+              data,
+              region_select = region_select,
+              experiment_select = valid_inputs,
+              sector_select = sector_select
+            )
+          }
+
+          if (!is.null(decimals)) {
+            data <- GTAPViz:::.format_decimal_places(data, decimals)
+          }
+
+          if (length(data) == 1 && is.list(data) && !is.data.frame(data)) {
+            data <- data[[1]]
+          }
+
+          return(data)
+        }
+
+        main_data <- transform_data(grouped_data, apply_filters = TRUE)
+
+        if (rename_columns && !is.null(main_data)) {
+          main_data <- GTAPViz:::.apply_to_dataframes(main_data, function(df) {
+            GTAPViz:::rename_value(df, target_column = "Experiment", rename_type = "Scenario")
+          })
+        }
+
+        if (!is.null(convert_unit) && !is.null(main_data)) {
+          message("Applying unit conversion: ", convert_unit)
+          main_data <- GTAPViz:::.apply_to_dataframes(main_data, function(df) {
+            GTAPViz:::convert_units(df, scale_auto = convert_unit)
+          })
+
+          if (!is.null(decimals)) {
+            main_data <- GTAPViz:::.apply_to_dataframes(main_data, function(df) {
+              GTAPViz:::.format_decimal_places(df, decimals)
+            })
+          }
+        }
+
+        all_data$main_data <- main_data
+        assign(main_output_name, main_data, envir = parent.frame())
+      }
+    }
+  }
+
+  if (process_qxs && input_format == ".sl4") {
+    message("Processing QXS Bilateral Data")
+
+    qxs_raw <- setNames(
+      lapply(valid_inputs, function(scenario) {
+        file_path <- file.path(input_path, paste0(scenario, file_suffix))
+        if (file.exists(file_path)) {
+          tryCatch({
+            HARplus::load_sl4x(file_path, select_header = "qxs")
+          }, error = function(e) {
+            message(sprintf("Error processing QXS from %s: %s", file_path, e$message))
+            return(NULL)
+          })
+        } else {
+          return(NULL)
+        }
+      }),
+      valid_inputs
+    )
+
+    qxs_raw <- qxs_raw[!sapply(qxs_raw, is.null)]
+
+    if (length(qxs_raw) > 0) {
+      qxs_data <- do.call(
+        HARplus::get_data_by_var,
+        c(
+          list(
+            experiment_names = names(qxs_raw),
+            subtotal_level = subtotal_level,
+            merge_data = length(qxs_raw) > 1
+          ),
+          qxs_raw
+        )
+      )
+
+      qxs_data <- GTAPViz:::.apply_to_dataframes(qxs_data, GTAPViz:::rename_GTAP_bilateral)
+      qxs_data <- GTAPViz:::add_mapping_info(qxs_data, mapping = mapping_info, external_map = external_mapping_info)
+
+      if (!is.null(region_select) || !is.null(sector_select)) {
+        qxs_data <- GTAPViz:::.apply_filters(
+          qxs_data,
+          region_select = region_select,
+          experiment_select = valid_inputs,
+          sector_select = sector_select
+        )
+      }
+
+      if (!is.null(decimals)) {
+        qxs_data <- GTAPViz:::.format_decimal_places(qxs_data, decimals)
+      }
+
+      if (length(qxs_data) == 1 && is.list(qxs_data) && !is.data.frame(qxs_data)) {
+        qxs_data <- qxs_data[[1]]
+      }
+
+      if (rename_columns && !is.null(qxs_data)) {
+        qxs_data <- GTAPViz:::.apply_to_dataframes(qxs_data, function(df) {
+          GTAPViz:::rename_value(df, target_column = "Experiment", rename_type = "Scenario")
+        })
+      }
+
+      if (!is.null(convert_unit) && !is.null(qxs_data)) {
+        message("Applying unit conversion to QXS data: ", convert_unit)
+        qxs_data <- GTAPViz:::.apply_to_dataframes(qxs_data, function(df) {
+          GTAPViz:::convert_units(df, scale_auto = convert_unit)
+        })
+
+        if (!is.null(decimals)) {
+          qxs_data <- GTAPViz:::.apply_to_dataframes(qxs_data, function(df) {
+            GTAPViz:::.format_decimal_places(df, decimals)
+          })
+        }
+      }
+
+      all_data$bilateral_data <- qxs_data
+      assign("qxs.data", qxs_data, envir = parent.frame())
+      process_log$qxs <- "QXS Bilateral Data processed successfully"
+    }
+  }
+
+  for (component in names(process_log)) {
+    message(process_log[[component]])
+  }
+
+  message("GTAP static data processing completed successfully!")
+
+  invisible(all_data)
+}
+
 
 #' @title Process GTAP Data Automation with Flexible Output Options
 #'
