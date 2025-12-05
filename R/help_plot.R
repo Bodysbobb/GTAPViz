@@ -3909,7 +3909,6 @@
     }
   }
 
-  # Add unit to title if appropriate
   if (!is.null(style_config) &&
       (!is.null(style_config$title_format) &&
        (style_config$title_format$type != "dynamic" ||
@@ -3960,18 +3959,23 @@
   }
 
   if (!is.null(unit_name)) {
-    if (grepl("percent", tolower(unit_name))) {
-      export_name <- paste0(export_name, " (%)")
-    } else {
-      export_name <- paste0(export_name, " (", unit_name, ")")
+    safe_unit <- tolower(unit_name)
+    safe_unit <- gsub("percent|percentage|%", "pct", safe_unit)
+    safe_unit <- gsub("\\$|usd|dollar", "usd", safe_unit)
+    safe_unit <- gsub("million", "mil", safe_unit)
+    safe_unit <- gsub("billion", "bil", safe_unit)
+    safe_unit <- gsub("[^a-zA-Z0-9_\\-]", "_", safe_unit)
+    safe_unit <- gsub("_{2,}", "_", safe_unit)
+    safe_unit <- gsub("^_|_$", "", safe_unit)
+
+    if (nchar(safe_unit) > 0) {
+      export_name <- paste0(export_name, "_", safe_unit)
     }
   }
 
-  export_name <- gsub("[^a-zA-Z0-9_\\-\\. ()%]", "_", export_name)
+  export_name <- gsub("[^a-zA-Z0-9_\\-]", "_", export_name)
   export_name <- gsub("_{2,}", "_", export_name)
-  export_name <- gsub("_+\\s+", " ", export_name)
-  export_name <- gsub("\\s+_+", " ", export_name)
-  export_name <- gsub("\\s+", "_", export_name)
+  export_name <- gsub("^_|_$", "", export_name)
   export_name <- trimws(export_name)
 
   if (!is.null(plot_type)) {
@@ -3987,8 +3991,8 @@
   }
 
   return(list(
-    title = plot_title,     # For plot display
-    export_name = export_name  # For file export
+    title = plot_title,
+    export_name = export_name
   ))
 }
 
