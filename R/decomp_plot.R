@@ -715,7 +715,6 @@ create_decomp_style <- function(
                                             style_config, data, var_name_by_description,
                                             add_var_info, desc_col, normalize = FALSE) {
 
-  # Build base title
   base_title <- if (var_name_by_description && desc_col %in% colnames(data)) {
     var_desc <- unique(data[[desc_col]])[1]
     if (add_var_info && variable_col %in% colnames(data)) {
@@ -736,7 +735,6 @@ create_decomp_style <- function(
 
   plot_title <- base_title
 
-  # Apply title format transformations from style config (like other plots)
   dynamic_title_has_unit <- FALSE
   if (!is.null(style_config) && !is.null(style_config$title_format)) {
     title_format <- style_config$title_format
@@ -746,7 +744,6 @@ create_decomp_style <- function(
         if (!requireNamespace("glue", quietly = TRUE)) {
           warning("The 'glue' package is required for dynamic titles but is not installed. Using standard title format.")
         } else {
-          # Check if Unit is referenced in the dynamic template
           referenced_cols <- regmatches(
             title_format$text,
             gregexpr("\\{([^}]+)\\}", title_format$text)
@@ -784,7 +781,6 @@ create_decomp_style <- function(
     }
   }
 
-  # Add unit to title if appropriate (following standard pattern)
   if (!is.null(style_config) &&
       (!is.null(style_config$title_format) &&
        (style_config$title_format$type != "dynamic" ||
@@ -799,27 +795,33 @@ create_decomp_style <- function(
     }
   }
 
-  # Create export name (file-safe)
-  export_name <- plot_title
+  export_name <- base_title
 
-  # Format the unit in the filename differently from the plot title
+  safe_unit <- NULL
   if (!is.null(unit_name)) {
-    # For percent/percentage units, use (%) in the filename just like in the title
-    if (grepl("percent", tolower(unit_name))) {
-      export_name <- gsub("\\s*\\([^)]*\\)", " (%)", export_name)
-    }
-    # For other units, remove spaces in the unit name for the filename
-    else if (grepl(" ", unit_name)) {
-      # First, extract the unit part
-      unit_pattern <- paste0("\\(", unit_name, "\\)")
-      compact_unit <- gsub(" ", "", unit_name)
-      export_name <- gsub(unit_pattern, paste0("(", compact_unit, ")"), export_name)
-    }
+    safe_unit <- tolower(unit_name)
+    safe_unit <- gsub("percent|percentage|%", "pct", safe_unit)
+    safe_unit <- gsub("\\$|usd|dollar", "usd", safe_unit)
+    safe_unit <- gsub("million", "mil", safe_unit)
+    safe_unit <- gsub("billion", "bil", safe_unit)
+    safe_unit <- gsub("[^a-zA-Z0-9_\\-]", "_", safe_unit)
+    safe_unit <- gsub("_{2,}", "_", safe_unit)
+    safe_unit <- gsub("^_|_$", "", safe_unit)
   }
 
-  # Make export name file-safe but preserve special characters (like %)
-  export_name <- gsub("[^a-zA-Z0-9_\\-\\. ()%]", "-", export_name)
-  export_name <- gsub("\\s+", " ", trimws(export_name))
+  export_name <- gsub("[^a-zA-Z0-9_\\-\\.]", "_", export_name)
+  export_name <- gsub("_{2,}", "_", export_name)
+  export_name <- gsub("^_|_$", "", export_name)
+  export_name <- trimws(export_name)
+
+  if (!is.null(safe_unit) && nchar(safe_unit) > 0) {
+    export_name <- paste0(export_name, "_", safe_unit)
+  }
+
+  export_name <- gsub("[^a-zA-Z0-9_\\-]", "_", export_name)
+  export_name <- gsub("_{2,}", "_", export_name)
+  export_name <- gsub("^_|_$", "", export_name)
+  export_name <- trimws(export_name)
 
   if (nchar(export_name) > 200) {
     export_name <- paste0(substr(export_name, 1, 197), "...")
