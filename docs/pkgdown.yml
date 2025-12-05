@@ -1,4 +1,4 @@
-pandoc: '3.4'
+pandoc: 3.6.4
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
@@ -6,7 +6,7 @@ articles:
   GTAPViz_Plot: GTAPViz_Plot.html
   GTAPViz_Table: GTAPViz_Table.html
   GTAPViz_Utilities: GTAPViz_Utilities.html
-last_built: 2025-10-20T04:58Z
+last_built: 2025-12-05T06:13Z
 urls:
   reference: https://pattawee-pp.com/GTAPViz/reference
   article: https://pattawee-pp.com/GTAPViz/articles

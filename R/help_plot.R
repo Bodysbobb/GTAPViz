@@ -618,20 +618,17 @@
             }
           }
         } else if (plot_type == "detail") {
-          # Handle detail plots
-          var_combinations <- unique(filtered_data[[variable_col]])
+          variable_already_in_split <- variable_col %in% split_by
 
-          for (var_name in var_combinations) {
-            var_data <- filtered_data[filtered_data[[variable_col]] == var_name, ]
-
+          if (variable_already_in_split) {
             if (separate_figure) {
-              panel_values <- unique(var_data[[panel_var]])
+              panel_values <- unique(filtered_data[[panel_var]])
 
               for (panel_val in panel_values) {
-                panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
+                panel_data <- filtered_data[filtered_data[[panel_var]] == panel_val, ]
 
                 title_info <- .handle_plot_title_and_export(
-                  var_name = var_name,
+                  var_name = NULL,
                   sep_value = sep_value,
                   plot_type = "detail",
                   is_macro_mode = FALSE,
@@ -662,7 +659,7 @@
               }
             } else {
               title_info <- .handle_plot_title_and_export(
-                var_name = var_name,
+                var_name = NULL,
                 sep_value = sep_value,
                 plot_type = "detail",
                 is_macro_mode = FALSE,
@@ -671,11 +668,11 @@
                 variable_col = variable_col,
                 unit_name = unit_name,
                 style_config = style_config,
-                data = var_data
+                data = filtered_data
               )
 
               p <- .create_single_detail_plot(
-                data = var_data,
+                data = filtered_data,
                 x_axis_from = x_axis_from,
                 plot_title = title_info$title,
                 unit = unit_name,
@@ -688,6 +685,78 @@
               )
 
               plot_list[[title_info$export_name]] <- p
+            }
+          } else {
+            var_combinations <- unique(filtered_data[[variable_col]])
+
+            for (var_name in var_combinations) {
+              var_data <- filtered_data[filtered_data[[variable_col]] == var_name, ]
+
+              if (separate_figure) {
+                panel_values <- unique(var_data[[panel_var]])
+
+                for (panel_val in panel_values) {
+                  panel_data <- var_data[var_data[[panel_var]] == panel_val, ]
+
+                  title_info <- .handle_plot_title_and_export(
+                    var_name = var_name,
+                    sep_value = sep_value,
+                    plot_type = "detail",
+                    is_macro_mode = FALSE,
+                    split_by = split_by,
+                    x_axis_from = x_axis_from,
+                    variable_col = variable_col,
+                    unit_name = unit_name,
+                    style_config = style_config,
+                    data = panel_data,
+                    separate_figure = TRUE,
+                    panel_val = panel_val
+                  )
+
+                  p <- .create_single_detail_plot(
+                    data = panel_data,
+                    x_axis_from = x_axis_from,
+                    plot_title = title_info$title,
+                    unit = unit_name,
+                    panel_rows = style_config$panel_rows,
+                    panel_cols = style_config$panel_cols,
+                    panel_var = panel_var,
+                    invert_axis = invert_axis,
+                    top_impact = top_impact,
+                    plot_style_config = style_config
+                  )
+
+                  plot_list[[title_info$export_name]] <- p
+                }
+              } else {
+                title_info <- .handle_plot_title_and_export(
+                  var_name = var_name,
+                  sep_value = sep_value,
+                  plot_type = "detail",
+                  is_macro_mode = FALSE,
+                  split_by = split_by,
+                  x_axis_from = x_axis_from,
+                  variable_col = variable_col,
+                  unit_name = unit_name,
+                  style_config = style_config,
+                  data = var_data
+                )
+
+                p <- .create_single_detail_plot(
+                  data = var_data,
+                  x_axis_from = x_axis_from,
+                  plot_title = title_info$title,
+                  unit = unit_name,
+                  panel_rows = style_config$panel_rows,
+                  panel_cols = style_config$panel_cols,
+                  panel_var = panel_var,
+                  invert_axis = invert_axis,
+                  top_impact = top_impact,
+                  plot_style_config = style_config
+                )
+
+                plot_list[[title_info$export_name]] <- p
+              }
             }
           }
         } else {
@@ -3766,19 +3835,17 @@
       )
     )
   } else {
-    plot_title <- if (!is.null(sep_value) && !is.null(var_name)) {
-      # Check if sep_value and var_name are identical to avoid duplication
-      if (identical(as.character(sep_value), as.character(var_name))) {
-        var_name  # Use just one value to avoid duplication
-      } else {
-        paste0(sep_value, " - ", var_name)
+    if (!is.null(sep_value)) {
+      plot_title <- sep_value
+      if (!is.null(var_name) && !identical(as.character(sep_value), as.character(var_name))) {
+        if (!grepl(var_name, sep_value, fixed = TRUE)) {
+          plot_title <- paste0(sep_value, " - ", var_name)
+        }
       }
-    } else if (!is.null(sep_value)) {
-      sep_value
     } else if (!is.null(var_name)) {
-      var_name
+      plot_title <- var_name
     } else {
-      "GTAP Analysis"
+      plot_title <- "GTAP Analysis"
     }
 
     if (!is.null(x_value) && plot_type %in% c("unstack", "stack")) {
@@ -3788,19 +3855,22 @@
 
   plot_title <- safe_collapse(plot_title)
 
-  # Apply title format transformations from style config
   dynamic_title_has_unit <- FALSE
   if (!is.null(style_config) && !is.null(style_config$title_format)) {
     title_format <- style_config$title_format
 
     if (title_format$type == "dynamic") {
       if (!is.null(data) && !is.null(title_format$text) && nrow(data) > 0) {
-        if (!requireNamespace("glue", quietly = TRUE)) {
+        if (is.vector(title_format$text) && length(title_format$text) > 1) {
+          warning("title_format$text should be a single string with {placeholders}, not a vector. Ignoring malformed dynamic title.")
+        } else if (!requireNamespace("glue", quietly = TRUE)) {
           warning("The 'glue' package is required for dynamic titles but is not installed. Using standard title format.")
         } else {
+          title_text <- if (is.vector(title_format$text)) title_format$text[1] else title_format$text
+
           referenced_cols <- regmatches(
-            title_format$text,
-            gregexpr("\\{([^}]+)\\}", title_format$text)
+            title_text,
+            gregexpr("\\{([^}]+)\\}", title_text)
           )
 
           if (length(referenced_cols) > 0 && length(referenced_cols[[1]]) > 0) {
@@ -3814,24 +3884,28 @@
               warning(paste("Columns referenced in dynamic title template but not found in data:",
                             paste(missing_cols, collapse=", ")))
             } else {
-              plot_title <- glue::glue_data(data[1, ], title_format$text)
+              plot_title <- as.character(glue::glue_data(data[1, ], title_text))
             }
-          } else {
-            plot_title <- title_format$text
           }
         }
       }
     }
     else if (title_format$type == "full") {
-      plot_title <- title_format$text
+      if (is.vector(title_format$text)) {
+        plot_title <- title_format$text[1]
+      } else {
+        plot_title <- title_format$text
+      }
     }
     else if (title_format$type == "prefix") {
       separator <- if (!is.null(title_format$sep)) title_format$sep else " "
-      plot_title <- paste0(title_format$text, separator, plot_title)
+      prefix_text <- if (is.vector(title_format$text)) title_format$text[1] else title_format$text
+      plot_title <- paste0(prefix_text, separator, plot_title)
     }
     else if (title_format$type == "suffix") {
       separator <- if (!is.null(title_format$sep)) title_format$sep else " "
-      plot_title <- paste0(plot_title, separator, title_format$text)
+      suffix_text <- if (is.vector(title_format$text)) title_format$text[1] else title_format$text
+      plot_title <- paste0(plot_title, separator, suffix_text)
     }
   }
 
@@ -3848,9 +3922,6 @@
     }
   }
 
-  base_title <- safe_collapse(plot_title)
-
-  # For plot display title - check if panel_val is unique in dataset
   panel_is_unique <- FALSE
   if (!separate_figure && !is.null(data) && !is.null(panel_val)) {
     if (!is.null(data) && panel_var %in% names(data)) {
@@ -3859,57 +3930,57 @@
     }
   }
 
-  # For the display title, only add panel value if it's not a unique value
-  # or if separate_figure is TRUE
   if (separate_figure && !is.null(panel_val)) {
-    plot_title <- paste0(base_title, " - ", panel_val)
+    plot_title <- paste0(plot_title, " - ", panel_val)
   } else if (!panel_is_unique && !is.null(panel_val)) {
-    plot_title <- paste0(base_title, " - ", panel_val)
+    plot_title <- paste0(plot_title, " - ", panel_val)
   }
 
-  # Create filename - this will be different from the plot title
-  # For filename, always include the panel value even if it's unique
+  export_name_parts <- c()
+  if (!is.null(sep_value)) {
+    export_name_parts <- c(export_name_parts, safe_collapse(sep_value))
+  }
+  if (!is.null(var_name)) {
+    var_str <- safe_collapse(var_name)
+    if (is.null(sep_value) || !grepl(var_str, safe_collapse(sep_value), fixed = TRUE)) {
+      export_name_parts <- c(export_name_parts, var_str)
+    }
+  }
+  if (!is.null(x_value)) {
+    export_name_parts <- c(export_name_parts, safe_collapse(x_value))
+  }
   if (!is.null(panel_val)) {
-    export_name <- paste0(base_title, " - ", panel_val)
+    export_name_parts <- c(export_name_parts, safe_collapse(panel_val))
+  }
+
+  if (length(export_name_parts) > 0) {
+    export_name <- paste(export_name_parts, collapse = "-")
   } else {
-    export_name <- base_title
+    export_name <- "plot"
   }
 
-  # Format the unit in the filename differently from the plot title
   if (!is.null(unit_name)) {
-    # For percent/percentage units, use (%) in the filename just like in the title
     if (grepl("percent", tolower(unit_name))) {
-      export_name <- gsub("\\s*\\([^)]*\\)", " (%)", export_name)
-    }
-    # For other units, remove spaces in the unit name for the filename
-    else if (grepl(" ", unit_name)) {
-      # First, extract the unit part
-      unit_pattern <- paste0("\\(", unit_name, "\\)")
-      compact_unit <- gsub(" ", "", unit_name)
-      export_name <- gsub(unit_pattern, paste0("(", compact_unit, ")"), export_name)
+      export_name <- paste0(export_name, " (%)")
+    } else {
+      export_name <- paste0(export_name, " (", unit_name, ")")
     }
   }
 
-  # Make export name file-safe but preserve special characters (like %)
-  # Clean but keep % signs
-  export_name <- gsub("[^a-zA-Z0-9_\\-\\. ()%]", "-", export_name)
-
-  # Replace multiple spaces with a single space
-  export_name <- gsub("\\s+", " ", export_name)
-
-  # Trim any leading/trailing whitespace
+  export_name <- gsub("[^a-zA-Z0-9_\\-\\. ()%]", "_", export_name)
+  export_name <- gsub("_{2,}", "_", export_name)
+  export_name <- gsub("_+\\s+", " ", export_name)
+  export_name <- gsub("\\s+_+", " ", export_name)
+  export_name <- gsub("\\s+", "_", export_name)
   export_name <- trimws(export_name)
 
-  # Add plot type suffix if needed
   if (!is.null(plot_type)) {
     if (plot_type == "stack") {
-      export_name <- paste(export_name, "stack")
+      export_name <- paste0(export_name, "_stack")
     } else if (plot_type == "unstack") {
-      export_name <- paste(export_name, "unstack")
+      export_name <- paste0(export_name, "_unstack")
     }
   }
-
-  export_name <- safe_collapse(export_name)
 
   if (!is.null(export_name) && length(export_name) == 1 && nchar(export_name) > 200) {
     export_name <- paste0(substr(export_name, 1, 197), "...")
