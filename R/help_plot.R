@@ -3739,9 +3739,23 @@
                                           plot_type = NULL, is_macro_mode = FALSE, split_by = NULL,
                                           x_axis_from = NULL, variable_col = NULL, unit_name = NULL,
                                           style_config = NULL, data = NULL, separate_figure = FALSE,
-                                          panel_val = NULL, panel_var = "Experiment") {  # Added panel_var parameter
+                                          panel_val = NULL, panel_var = "Experiment") {
 
-  # Generate basic title without panel value
+  safe_collapse <- function(x) {
+    if (is.null(x)) return(NULL)
+    x <- as.character(x)
+    if (length(x) > 1) {
+      return(paste(x, collapse = "-"))
+    }
+    return(x)
+  }
+
+  var_name <- safe_collapse(var_name)
+  sep_value <- safe_collapse(sep_value)
+  x_value <- safe_collapse(x_value)
+  panel_val <- safe_collapse(panel_val)
+  unit_name <- safe_collapse(unit_name)
+
   if (is_macro_mode) {
     plot_title <- .coalesce(
       var_name,
@@ -3767,11 +3781,12 @@
       "GTAP Analysis"
     }
 
-    # Add x_value for unstack plots
     if (!is.null(x_value) && plot_type %in% c("unstack", "stack")) {
       plot_title <- paste0(plot_title, " - ", x_value)
     }
   }
+
+  plot_title <- safe_collapse(plot_title)
 
   # Apply title format transformations from style config
   dynamic_title_has_unit <- FALSE
@@ -3833,8 +3848,7 @@
     }
   }
 
-  # Store the base title before adding panel value
-  base_title <- plot_title
+  base_title <- safe_collapse(plot_title)
 
   # For plot display title - check if panel_val is unique in dataset
   panel_is_unique <- FALSE
@@ -3895,8 +3909,9 @@
     }
   }
 
-  # Make sure the name isn't too long for a filename
-  if (nchar(export_name) > 200) {
+  export_name <- safe_collapse(export_name)
+
+  if (!is.null(export_name) && length(export_name) == 1 && nchar(export_name) > 200) {
     export_name <- paste0(substr(export_name, 1, 197), "...")
   }
 
@@ -4128,4 +4143,3 @@
 
   return(invisible(config))
 }
-

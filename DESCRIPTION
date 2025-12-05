@@ -14,7 +14,7 @@ Description: Tools to streamline the extraction, processing, and visualization o
     format, and customize outputs with reproducible styling.
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 BugReports: https://github.com/bodysbobb/GTAPViz/issues/
 URL: https://bodysbobb.github.io/GTAPViz/
 Imports:
