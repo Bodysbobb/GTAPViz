@@ -1186,7 +1186,7 @@
   # y-axis label shows the unit
   y_label <- if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
     style_config$y_axis_description
-  } else if (tolower(unit) == "percent") {
+  } else if (!is.null(unit) && !is.na(unit) && tolower(unit) == "percent") {
     "Percentage (%)"
   } else {
     unit
@@ -1295,8 +1295,7 @@
   max_abs_value <- max(abs(value_range), na.rm = TRUE)
 
   # Different limit calculations based on data and unit
-  if (tolower(unit) == "percent") {
-    # For percentage values, use symmetric limits
+  if (!is.null(unit) && !is.na(unit) && tolower(unit) == "percent") {
     return(c(-max_abs_value * 1.35, max_abs_value * 1.35))
   } else {
     # For other units, base on value range
@@ -1984,6 +1983,7 @@
   if (is.null(export_config$dpi)) export_config$dpi <- 300
   if (is.null(export_config$bg)) export_config$bg <- "white"
   if (is.null(export_config$limitsize)) export_config$limitsize <- FALSE
+  if (is.null(export_config$device)) export_config$device <- "pdf"
 
   # Handle custom dimensions if provided
   if (is.null(export_config$width) || is.null(export_config$height)) {
@@ -2098,15 +2098,30 @@
       # Create the full path
       pdf_path <- file.path(output_path, paste0(pdf_file_name, ".pdf"))
 
-      # Use tryCatch to handle PDF creation errors
       tryCatch({
-        grDevices::pdf(
-          file = pdf_path,
-          width = export_config$width,
-          height = export_config$height,
-          useDingbats = FALSE,
-          title = pdf_file_name
-        )
+        if (is.character(export_config$device) && export_config$device == "cairo_pdf") {
+          grDevices::cairo_pdf(
+            filename = pdf_path,
+            width = export_config$width,
+            height = export_config$height,
+            onefile = TRUE
+          )
+        } else if (is.function(export_config$device)) {
+          export_config$device(
+            filename = pdf_path,
+            width = export_config$width,
+            height = export_config$height,
+            onefile = TRUE
+          )
+        } else {
+          grDevices::pdf(
+            file = pdf_path,
+            width = export_config$width,
+            height = export_config$height,
+            useDingbats = FALSE,
+            title = pdf_file_name
+          )
+        }
 
         for (i in seq_along(plots)) {
           tryCatch({
@@ -2116,7 +2131,6 @@
           })
         }
 
-        # Always make sure to close the device
         grDevices::dev.off()
 
         if (file.exists(pdf_path)) {
@@ -2125,7 +2139,6 @@
           warning("PDF creation failed. The output file was not created.")
         }
       }, error = function(e) {
-        # Make sure to close any open devices on error
         if (grDevices::dev.cur() > 1) {
           try(grDevices::dev.off(), silent = TRUE)
         }
@@ -2143,13 +2156,11 @@
         # Create the full path
         pdf_path <- file.path(output_path, paste0(plot_name, ".pdf"))
 
-        # Use tryCatch to handle ggsave errors
         tryCatch({
-          # Use the escaped name for ggsave
           ggplot2::ggsave(
-            filename = pdf_path,  # Use original path with %
+            filename = pdf_path,
             plot = p,
-            device = "pdf",
+            device = export_config$device,
             width = export_config$width,
             height = export_config$height,
             dpi = export_config$dpi,
@@ -4013,7 +4024,8 @@
     height = NULL,
     dpi = 300,
     bg = "white",
-    limitsize = FALSE
+    limitsize = FALSE,
+    device = "pdf"
   )
 
   # Build message string
@@ -4034,8 +4046,9 @@
   # Print bg
   msg <- paste0(msg, "  bg = \"", export_config_params$bg, "\",\n")
 
-  # Print limitsize (last item, no comma)
-  msg <- paste0(msg, "  limitsize = ", ifelse(export_config_params$limitsize, "TRUE", "FALSE"), "\n")
+  msg <- paste0(msg, "  limitsize = ", ifelse(export_config_params$limitsize, "TRUE", "FALSE"), ",\n")
+
+  msg <- paste0(msg, "  device = \"", export_config_params$device, "\"\n")
 
   msg <- paste0(msg, ")\n\n")
   msg <- paste0(msg, "# Example usage:\n")

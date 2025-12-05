@@ -446,7 +446,9 @@ create_trend_style <- function(
         if (nrow(filtered_data) == 0) next
 
         unit_name <- if (unit_col %in% colnames(filtered_data)) {
-          unique(filtered_data[[unit_col]])[1]
+          units <- unique(filtered_data[[unit_col]])
+          units <- units[!is.na(units)]
+          if (length(units) > 0) units[1] else "Value"
         } else {
           "Value"
         }
@@ -510,7 +512,9 @@ create_trend_style <- function(
       }
     } else {
       unit_name <- if (unit_col %in% colnames(df)) {
-        unique(df[[unit_col]])[1]
+        units <- unique(df[[unit_col]])
+        units <- units[!is.na(units)]
+        if (length(units) > 0) units[1] else "Value"
       } else {
         "Value"
       }
@@ -977,7 +981,7 @@ create_trend_style <- function(
   max_abs_value <- max(abs(value_range), na.rm = TRUE)
 
   # Different limit calculations based on data and unit
-  if (tolower(unit) == "percent") {
+  if (!is.na(unit) && !is.null(unit) && tolower(unit) == "percent") {
     # For percentage values, use symmetric limits
     return(c(-max_abs_value * 1.35, max_abs_value * 1.35))
   } else {
@@ -1001,7 +1005,7 @@ create_trend_style <- function(
 .format_y_axis_label <- function(unit, style_config) {
   if (!is.null(style_config$y_axis_description) && nzchar(style_config$y_axis_description)) {
     return(style_config$y_axis_description)
-  } else if (tolower(unit) == "percent") {
+  } else if (!is.na(unit) && !is.null(unit) && tolower(unit) == "percent") {
     return("Percentage (%)")
   } else {
     return(unit)

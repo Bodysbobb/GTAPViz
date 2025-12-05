@@ -849,7 +849,7 @@ get_color_palette <- function(color_tone = NULL,
 #'   x_axis_text_angle = 45
 #' )
 create_plot_style <- function(
-  # Title settings
+    # Title settings
   show_title = TRUE,
   title_face = "bold",
   title_size = 20,
@@ -974,6 +974,7 @@ create_plot_style <- function(
 #' @param dpi Numeric. Resolution for PNG export. Default: 300.
 #' @param bg Character. Background color. Default: "white".
 #' @param limitsize Logical. Whether to limit size. Default: FALSE.
+#' @param device Character or function. PDF device to use. Default: "pdf". Can be "pdf", "cairo_pdf", grDevices::cairo_pdf, or other device functions.
 #'
 #' @author Pattawee Puangchit
 #' @return A list with export configuration parameters.
@@ -991,15 +992,16 @@ create_plot_style <- function(
 #' )
 #' @export
 create_export_config <- function(file_name = NULL, width = NULL, height = NULL,
-                                 dpi = 300, bg = "white", limitsize = FALSE) {
-  # Return the export configuration
+                                 dpi = 300, bg = "white", limitsize = FALSE,
+                                 device = "pdf") {
   list(
     file_name = file_name,
     width = width,
     height = height,
     dpi = dpi,
     bg = bg,
-    limitsize = limitsize
+    limitsize = limitsize,
+    device = device
   )
 }
 
