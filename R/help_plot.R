@@ -23,35 +23,28 @@
 .preprocess_data <- function(data, x_axis_from, split_by, panel_var, variable_col,
                              unit_col, desc_col, filter_var, var_name_by_description,
                              add_var_info, stack_value_from = NULL) {
-  # Validate columns with better error handling
   if (!is.null(stack_value_from)) {
     data <- .prepare_data_source(data, x_axis_from, stack_value_from, variable_col)
   } else {
     data <- .prepare_data_source(data, x_axis_from, variable_col = variable_col)
   }
 
-  # Handle unit column
   unit_result <- .check_unit_column(data, unit_col)
   data <- unit_result$data
   unit_col <- unit_result$unit_col
 
-  # Process split_by
   is_macro_mode <- is.null(split_by) || (is.logical(split_by) && !split_by)
 
   if (!is_macro_mode) {
-    # Validate split_by columns
     if (length(split_by) > 1) {
-      # Check if all split_by columns exist
       missing_cols <- setdiff(split_by, names(data))
       if (length(missing_cols) > 0) {
         stop(paste0("Split-by column(s) not found in data: ", paste(missing_cols, collapse=", "),
                     ". Available columns are: ", paste(names(data), collapse=", ")))
       }
 
-      # Create a split_display for multiple columns
       data$split_display <- apply(data[, split_by, drop = FALSE], 1, paste, collapse = "-")
     } else {
-      # Check if split_by column exists
       if (!split_by %in% names(data)) {
         stop(paste0("Split-by column '", split_by, "' not found in data. ",
                     "Available columns are: ", paste(names(data), collapse=", ")))
@@ -59,26 +52,24 @@
     }
   }
 
-  # Filter data using enhanced filter function
   filtered_data <- .process_filter_var(data, filter_var, variable_col)
 
-  # Early return if filtering resulted in empty data
   if (nrow(filtered_data) == 0) {
     warning("No data remains after filtering. Please check your filter criteria.")
     return(NULL)
   }
 
-  # Format variable names
   if (variable_col %in% names(filtered_data) && desc_col %in% names(filtered_data)) {
     filtered_data <- .format_variable_names(
       filtered_data, variable_col, desc_col, var_name_by_description, add_var_info
     )
   }
 
-  # Ensure panel_var is a factor with original order
   if (panel_var %in% names(filtered_data)) {
-    panel_levels <- unique(filtered_data[[panel_var]])
-    filtered_data[[panel_var]] <- factor(filtered_data[[panel_var]], levels = panel_levels)
+    if (!is.factor(filtered_data[[panel_var]])) {
+      panel_levels <- unique(filtered_data[[panel_var]])
+      filtered_data[[panel_var]] <- factor(filtered_data[[panel_var]], levels = panel_levels)
+    }
   } else {
     warning(paste0("Panel variable '", panel_var, "' not found in data. ",
                    "This might affect facet layouts. Available columns are: ",
