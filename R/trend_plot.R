@@ -239,6 +239,11 @@ trend_plot <- function(data,
 #' @param legend_position Character. Legend position ("right", "left", "top", "bottom"). Default: "right"
 #' @param legend_text_face Character. Legend text font face. Default: "plain"
 #' @param legend_text_size Numeric. Legend text size. Default: 14
+#' @param show_legend_title Logical. Show legend title (group name). Default: TRUE
+#' @param legend_key_width Numeric. Width of legend key symbols (lines/points). Default: 3
+#' @param legend_key_height Numeric. Height of legend key symbols (lines/points). Default: 1
+#' @param legend_line_size Numeric. Line thickness in legend. Default: 2
+#' @param legend_point_size Numeric. Point size in legend. Default: 3
 #' @param strip_face Character. Facet strip font face. Default: "bold"
 #' @param strip_text_size Numeric. Facet strip text size. Default: 16
 #' @param strip_background Character. Facet strip background color. Default: "lightgrey"
@@ -328,9 +333,14 @@ create_trend_style <- function(
     y_axis_text_hjust = 0,
     y_axis_description = "",
     show_legend = TRUE,
+    show_legend_title = TRUE,
     legend_position = "right",
     legend_text_face = "plain",
     legend_text_size = 14,
+    legend_key_width = 3,
+    legend_key_height = 1,
+    legend_line_size = 2,
+    legend_point_size = 3,
     strip_face = "bold",
     strip_text_size = 16,
     strip_background = "lightgrey",
@@ -650,15 +660,28 @@ create_trend_style <- function(
     )
   }
 
-  legend_label <- if (!is.null(style_config$legend_title)) {
-    style_config$legend_title
-  } else if (!is.null(legend_name)) {
-    legend_name
+  if (style_config$show_legend_title) {
+    legend_label <- if (!is.null(style_config$legend_title)) {
+      style_config$legend_title
+    } else if (!is.null(legend_name)) {
+      legend_name
+    } else {
+      "LineGroup"
+    }
   } else {
-    "LineGroup"
+    legend_label <- NULL
   }
 
   p <- p + ggplot2::scale_color_manual(values = colors, name = legend_label)
+
+  p <- p + ggplot2::guides(
+    color = ggplot2::guide_legend(
+      override.aes = list(
+        linewidth = style_config$legend_line_size,
+        size = style_config$legend_point_size
+      )
+    )
+  )
 
   has_vline_labels <- FALSE
   if (!is.null(style_config$vertical_lines) && is.list(style_config$vertical_lines)) {
@@ -799,6 +822,8 @@ create_trend_style <- function(
         size = style_config$legend_text_size,
         face = style_config$legend_text_face
       ),
+      legend.key.width = ggplot2::unit(style_config$legend_key_width, "lines"),
+      legend.key.height = ggplot2::unit(style_config$legend_key_height, "lines"),
       strip.text = ggplot2::element_text(
         size = style_config$strip_text_size,
         face = style_config$strip_face,
@@ -1184,6 +1209,11 @@ get_trend_style_config <- function() {
   msg <- paste0(msg, "  # Legend settings\n")
   msg <- paste0(msg, "  show_legend = ", ifelse(config$show_legend, "TRUE", "FALSE"), ",\n")
   msg <- paste0(msg, "  legend_position = \"", config$legend_position, "\", # 'right', 'left', 'top', 'bottom'\n")
+  msg <- paste0(msg, "  show_legend_title = ", ifelse(config$show_legend_title, "TRUE", "FALSE"), ",\n")
+  msg <- paste0(msg, "  legend_key_width = ", config$legend_key_width, ", # Width of legend symbols\n")
+  msg <- paste0(msg, "  legend_key_height = ", config$legend_key_height, ", # Height of legend symbols\n")
+  msg <- paste0(msg, "  legend_line_size = ", config$legend_line_size, ", # Line thickness in legend\n")
+  msg <- paste0(msg, "  legend_point_size = ", config$legend_point_size, ", # Point size in legend\n")
   msg <- paste0(msg, "  legend_text_size = ", config$legend_text_size, ",\n\n")
 
   msg <- paste0(msg, "  # Grid settings\n")
