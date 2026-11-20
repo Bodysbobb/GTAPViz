@@ -28,18 +28,12 @@ jobs:
       # Set up Pandoc (this was missing in your original workflow)
       - uses: r-lib/actions/setup-pandoc@v2
 
-      # Install system dependencies
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libxml2-dev libssl-dev
-
-      # Install R dependencies including packages needed for vignettes
-      - name: Install R Package Dependencies
-        run: |
-          install.packages(c("remotes", "rcmdcheck", "rmarkdown", "knitr"))
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
+      # Install R dependencies and the system libraries they need (e.g. ImageMagick
+      # for magick), worked out automatically for the runner's Ubuntu version
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
 
       # Run R CMD check
       - uses: r-lib/actions/check-r-package@v2
