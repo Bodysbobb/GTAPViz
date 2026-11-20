@@ -83,9 +83,9 @@ prompts the user to choose between manual and automatic conversion.
 
 ## See also
 
-[`add_mapping_info`](https://pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
-[`rename_value`](https://pattawee-pp.com/GTAPViz/reference/rename_value.md),
-[`sort_plot_data`](https://pattawee-pp.com/GTAPViz/reference/sort_plot_data.md)
+[`add_mapping_info`](https://www.pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
+[`rename_value`](https://www.pattawee-pp.com/GTAPViz/reference/rename_value.md),
+[`sort_plot_data`](https://www.pattawee-pp.com/GTAPViz/reference/sort_plot_data.md)
 
 ## Author
 

@@ -12,7 +12,8 @@ create_export_config(
   height = NULL,
   dpi = 300,
   bg = "white",
-  limitsize = FALSE
+  limitsize = FALSE,
+  device = "pdf"
 )
 ```
 
@@ -41,6 +42,11 @@ create_export_config(
 - limitsize:
 
   Logical. Whether to limit size. Default: FALSE.
+
+- device:
+
+  Character or function. PDF device to use. Default: "pdf". Can be
+  "pdf", "cairo_pdf", grDevices::cairo_pdf, or other device functions.
 
 ## Value
 

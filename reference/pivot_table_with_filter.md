@@ -133,6 +133,6 @@ pivot_table_with_filter(
 #>  
 #> Worksheets:
 #>  Sheets: Raw_Data, Sector_Pivot 
-#>  Write order: 1, 2
+#>  Write order: 1, 2 
 # }
 ```

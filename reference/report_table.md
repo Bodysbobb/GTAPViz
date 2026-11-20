@@ -141,10 +141,10 @@ obtained via `auto_gtap_data(plot_data = TRUE)`.
 
 ## See also
 
-[`add_mapping_info`](https://pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
-[`convert_units`](https://pattawee-pp.com/GTAPViz/reference/convert_units.md),
-[`rename_value`](https://pattawee-pp.com/GTAPViz/reference/rename_value.md),
-[`pivot_table_with_filter`](https://pattawee-pp.com/GTAPViz/reference/pivot_table_with_filter.md)
+[`add_mapping_info`](https://www.pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
+[`convert_units`](https://www.pattawee-pp.com/GTAPViz/reference/convert_units.md),
+[`rename_value`](https://www.pattawee-pp.com/GTAPViz/reference/rename_value.md),
+[`pivot_table_with_filter`](https://www.pattawee-pp.com/GTAPViz/reference/pivot_table_with_filter.md)
 
 ## Author
 

@@ -8,6 +8,7 @@ If you manually import data or need to adjust the `"Description"` and
 `"Unit"` columns, you can use the following command:
 
 ``` r
+
 # Create mapping file
 mapping_df <- data.frame(
   Variable = c("qgdp", "EV", "ppriv"),
@@ -27,6 +28,7 @@ You can convert all units across all data frames within the data list by
 using the following code:
 
 ``` r
+
 your_data <- sl4.plot.data   # Change this to your data list name
 
 your_data <- convert_units(change_unit_from = c("BAHT", "million USD"),
@@ -64,6 +66,7 @@ automatically—such as changing `REG` to `Region` or `COMM` to
 `Commodity`—use the following command:
 
 ``` r
+
 # Creating Mapping File
 rename_col <- data.frame(
   old = c("REG", "COMM", "ACTS"),
@@ -94,7 +97,7 @@ It supports:
 - Applying consistent sorting across all data frames within a data list
 
 See
-[`?sort_plot_data`](https://pattawee-pp.com/GTAPViz/reference/sort_plot_data.md)
+[`?sort_plot_data`](https://www.pattawee-pp.com/GTAPViz/reference/sort_plot_data.md)
 for full details.
 
 Key arguments:
@@ -109,6 +112,7 @@ Key arguments:
 To apply sorting, use the following command:
 
 ``` r
+
 # Using the function
 sort_sl4_plot <- sort_plot_data(
   sl4.plot.data,
@@ -127,6 +131,7 @@ renaming country names in the `REG` column (e.g., changing `"USA"` to
 `"United States"` or `"CHN"` to `"China"`)—use the following command:
 
 ``` r
+
 # Creating Mapping File
 rename.region <- data.frame(
   ColumnName = "REG",
@@ -143,6 +148,7 @@ Another useful example is renaming the components of welfare
 decomposition before plotting.
 
 ``` r
+
 # Rename Value if needed
 wefare.decomp.rename <- data.frame(
   ColumnName = "COLUMN",
@@ -169,6 +175,7 @@ plotting. Follow these steps:
     (the *“Unit”* column is required for plotting).
 
 ``` r
+
 # Step 1: Filtering Data using Dataframe and lapply
 manual.data <- lapply(sl4data, function(x) {
   if (is.data.frame(x)) {

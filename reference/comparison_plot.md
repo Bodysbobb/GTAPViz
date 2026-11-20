@@ -119,18 +119,18 @@ comparison_plot(
 - export_config:
 
   List. Export options including dimensions, DPI, and background. See
-  [`create_export_config`](https://pattawee-pp.com/GTAPViz/reference/create_export_config.md)
+  [`create_export_config`](https://www.pattawee-pp.com/GTAPViz/reference/create_export_config.md)
   or
-  [`get_all_config`](https://pattawee-pp.com/GTAPViz/reference/get_all_config.md).
+  [`get_all_config`](https://www.pattawee-pp.com/GTAPViz/reference/get_all_config.md).
 
   **Styling**
 
 - plot_style_config:
 
   List. Custom plot appearance settings. See
-  [`create_plot_style`](https://pattawee-pp.com/GTAPViz/reference/create_plot_style.md)
+  [`create_plot_style`](https://www.pattawee-pp.com/GTAPViz/reference/create_plot_style.md)
   or
-  [`get_all_config`](https://pattawee-pp.com/GTAPViz/reference/get_all_config.md).
+  [`get_all_config`](https://www.pattawee-pp.com/GTAPViz/reference/get_all_config.md).
 
 ## Value
 
@@ -144,10 +144,10 @@ Please refer to the full plot
 
 ## See also
 
-[`get_all_config`](https://pattawee-pp.com/GTAPViz/reference/get_all_config.md),
-[`detail_plot`](https://pattawee-pp.com/GTAPViz/reference/detail_plot.md),
-[`stack_plot`](https://pattawee-pp.com/GTAPViz/reference/stack_plot.md),
-[`create_title_format`](https://pattawee-pp.com/GTAPViz/reference/create_title_format.md)
+[`get_all_config`](https://www.pattawee-pp.com/GTAPViz/reference/get_all_config.md),
+[`detail_plot`](https://www.pattawee-pp.com/GTAPViz/reference/detail_plot.md),
+[`stack_plot`](https://www.pattawee-pp.com/GTAPViz/reference/stack_plot.md),
+[`create_title_format`](https://www.pattawee-pp.com/GTAPViz/reference/create_title_format.md)
 
 ## Author
 

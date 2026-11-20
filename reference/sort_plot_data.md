@@ -30,10 +30,13 @@ sort_plot_data(
 
 - sort_by_value_desc:
 
-  Logical or NULL. Controls sorting by the "Value" column: - NULL
-  (default): Don't sort by value, only use column-based sorting. - TRUE:
-  After column-based sorting, sort by value in descending order. -
-  FALSE: After column-based sorting, sort by value in ascending order.
+  Logical or NULL. Controls sorting by the "Value" column:
+
+  - NULL (default): Don't sort by value, only use column-based sorting.
+
+  - TRUE: After column-based sorting, sort by value in descending order.
+
+  - FALSE: After column-based sorting, sort by value in ascending order.
 
 - convert_to_factor:
 
@@ -48,9 +51,9 @@ data frames sorted.
 
 ## See also
 
-[`add_mapping_info`](https://pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
-[`convert_units`](https://pattawee-pp.com/GTAPViz/reference/convert_units.md),
-[`rename_value`](https://pattawee-pp.com/GTAPViz/reference/rename_value.md)
+[`add_mapping_info`](https://www.pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
+[`convert_units`](https://www.pattawee-pp.com/GTAPViz/reference/convert_units.md),
+[`rename_value`](https://www.pattawee-pp.com/GTAPViz/reference/rename_value.md)
 
 ## Author
 

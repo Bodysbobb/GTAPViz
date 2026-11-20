@@ -1,6 +1,6 @@
 # GTAPViz: R Package for Automating GTAP Data Processing and Visualization
 
-[![Author](https://img.shields.io/badge/Pattawee.P-blue?label=Author)](https://bodysbobb.github.io/)
+[![Author](https://img.shields.io/badge/Pattawee.P-blue?label=Author)](https://www.pattawee-pp.com/)
 ![Last
 Updated](https://img.shields.io/github/last-commit/Bodysbobb/GTAPViz?label=Last%20Updated&color=blue)[![Star](https://img.shields.io/github/stars/Bodysbobb/GTAPViz?style=social)](https://github.com/Bodysbobb/GTAPViz)
 
@@ -11,7 +11,7 @@ Version](https://img.shields.io/github/v/tag/Bodysbobb/GTAPViz?label=GitHub%20Ve
 
 **Package Help:**  
 [![GPT-GTAPViz](https://img.shields.io/badge/GPT--GTAPViz-74aa9c?style=flat-square&logo=openai&logoColor=white)](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/)
-[![GTAPViz](https://img.shields.io/badge/GTAPViz-276DC3?style=flat-square&logo=r&logoColor=white)](https://bodysbobb.github.io/GTAPViz/)
+[![GTAPViz](https://img.shields.io/badge/GTAPViz-276DC3?style=flat-square&logo=r&logoColor=white)](https://www.pattawee-pp.com/GTAPViz/)
 
 ------------------------------------------------------------------------
 
@@ -61,8 +61,69 @@ features are:
 using:
 
 ``` r
+
 install.packages("GTAPViz")
 ```
+
+------------------------------------------------------------------------
+
+## **Use GTAPViz with AI (MCP)**
+
+Let an AI app (Claude Desktop, Claude Code, Cursor, …) run GTAPViz for
+you. You ask in plain words, it makes the figures and tables on your
+computer, and it saves the R code it used so you can rerun everything
+yourself.
+
+### 1. Install (once)
+
+Run in R:
+
+``` r
+
+remotes::install_github("Bodysbobb/GTAPViz")
+GTAPViz::mcp_install()                  # Claude Desktop
+# GTAPViz::mcp_install("claude_code")   # or "cursor"
+```
+
+Then restart the AI app.
+
+### 2. How to use
+
+Try the example data that comes with the package:
+
+> Use GTAPViz to load the example data and plot welfare by region
+
+For your own results, give it the folder with your `.sl4` and `.har`
+files:
+
+> Load my GTAP results in D:/TradeWar/in
+
+Then just ask, for example:
+
+- *“What experiments and regions are there?”*
+- *“Plot EV, qgdp and tot by region, with the regions on the vertical
+  axis.”*
+- *“Show the welfare decomposition, and rename alloc_A1 to ‘Allocative
+  efficiency’.”*
+- *“Which sectors in SEAsia gain the most output? Top 10 only.”*
+- *“Use the purdue colors, bigger fonts, and also save as PDF.”*
+- *“Make an Excel table of regional results with experiments as
+  columns.”*
+- *“Give me the R script.”*
+
+The AI tells you where the figures and tables were saved.
+
+### 3. Back in R
+
+Everything the AI does is saved as plain GTAPViz code in
+`gtapviz_session.R`, in the same output folder. Open it in RStudio and
+run it to recreate every figure, no AI needed.
+
+You can also chat from inside RStudio: open the **Terminal** tab and run
+`claude` (Claude Code).
+
+More in the [AI
+guide](https://www.pattawee-pp.com/GTAPViz/articles/GTAPViz_AI.html).
 
 ------------------------------------------------------------------------
 
@@ -75,7 +136,7 @@ specifically designed to assist with the GTAPViz package!
 For complete instructions on using this package and exploring practical
 examples:
 
-- [GTAPViz Step-by-Step Guide](https://bodysbobb.github.io/GTAPViz/)  
+- [GTAPViz Step-by-Step Guide](https://www.pattawee-pp.com/GTAPViz/)  
 - [GTAPViz: Plot
   Catalogs](https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/)  
 - [GTAPViz: Table
@@ -87,16 +148,16 @@ examples:
 
 For GTAP users seeking minimal or no code modifications, please visit
 [GTAPViz for GTAP
-Users](https://bodysbobb.github.io/GTAPViz-R-GTAPuser/).
+Users](https://www.pattawee-pp.com/GTAPViz-R-GTAPuser/).
 
 ## **Useful Packages for CGE Fellows**
 
-- [HARplus](https://bodysbobb.github.io/HARplus/)
+- [HARplus](https://www.pattawee-pp.com/HARplus/)
 
 ## **License & Author**
 
 GTAPViz is released under the **MIT License**. See the full
-**[license](https://pattawee-pp.com/GTAPViz/LICENSE)**.
+**[license](https://www.pattawee-pp.com/GTAPViz/LICENSE)**.
 
 **Author:**  
 **Pattawee Puangchit**  

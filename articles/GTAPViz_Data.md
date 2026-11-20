@@ -45,6 +45,7 @@ For working with `.sl4` and `.har` files, refer to my companion package:
 Before proceeding, ensure that `GTAPViz` is installed and loaded:
 
 ``` r
+
 if (!requireNamespace("GTAPViz", quietly = TRUE)) {
   install.packages("GTAPViz")
 }
@@ -94,6 +95,7 @@ To use `GTAPViz` efficiently—with little to no manual adjustment—I
 highly recommend setting up your project directory as follows:
 
 ``` r
+
 project.folder <- "your/folder/path"
 
 # Optional: You might not need to adjust this
@@ -215,6 +217,7 @@ The following command processes the files and sorts the output with EXP1
 before EXP2:
 
 ``` r
+
 experiment <- c("TAR10", "SUBT10")
 
 # Automatically Processing These Inputs in the Input Folder 
@@ -243,6 +246,7 @@ columns are included in the output:
   defaults.
 
 ``` r
+
 mapping_info <- "Mix"
 ```
 
@@ -268,6 +272,7 @@ The following command exports all formats and generates data for
 plotting:
 
 ``` r
+
 csv.output <- "YES"    
 stata.output <- "YES"  
 r.output <- "YES"
@@ -285,7 +290,7 @@ har_convert_unit <- c("mil2bil")
 
 You can convert result units for ‘sl4’ and ‘har’ independently by using
 the following automatic options, see
-[`?convert_units`](https://pattawee-pp.com/GTAPViz/reference/convert_units.md):
+[`?convert_units`](https://www.pattawee-pp.com/GTAPViz/reference/convert_units.md):
 
 - `"mil2bil"`: converts million USD to billion USD.
 - `"bil2mil"`: converts billion USD to million USD.
@@ -298,6 +303,7 @@ the following automatic options, see
 In summary, the entire R setup is captured in the following chunk:
 
 ``` r
+
 # 1. Project Directory
 project.folder <- "your/project/folder"
 
@@ -326,6 +332,7 @@ You can simply run the following code to setup subdirectories without
 modification if you followed all the previous instructions:
 
 ``` r
+
 # Default Subdirectories:
 input.folder <- paste0(project.folder, "/in")
 map.folder <- paste0(project.folder, "/map")
@@ -351,6 +358,7 @@ To streamline figure generation from GTAP results, I developed an
 automated data extraction method using the following command:
 
 ``` r
+
 auto_gtap_data(
   experiment = experiment,
   process_sl4_vars = sl4map, 
@@ -381,6 +389,7 @@ W \# Tips
 You can easily create a filter file (`Filter`) using the following code:
 
 ``` r
+
 selected_regions <- c("EastAsia", "SEAsia", "Oceania")
 selected_sector  <- NULL
 ```
@@ -390,6 +399,7 @@ structure of the `SL4File` and `HARFile` sheets using the following
 code:
 
 ``` r
+
 mapping_df <- data.frame(
   Variable = c("qgdp", "EV", "ppriv"),
   Description = c("Real GDP Index", "Welfare Equivalents", "Consumer Price Index"),

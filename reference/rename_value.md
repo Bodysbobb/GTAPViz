@@ -31,9 +31,9 @@ The same data structure with specified values replaced.
 
 ## See also
 
-[`add_mapping_info`](https://pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
-[`convert_units`](https://pattawee-pp.com/GTAPViz/reference/convert_units.md),
-[`sort_plot_data`](https://pattawee-pp.com/GTAPViz/reference/sort_plot_data.md)
+[`add_mapping_info`](https://www.pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
+[`convert_units`](https://www.pattawee-pp.com/GTAPViz/reference/convert_units.md),
+[`sort_plot_data`](https://www.pattawee-pp.com/GTAPViz/reference/sort_plot_data.md)
 
 ## Author
 

@@ -84,7 +84,7 @@ auto_gtap_data(
 
   Character. Metadata mode for variable descriptions and units. Options:
   `"GTAPv7"` (default), `"Yes"`, `"No"`, `"Mix"`. See
-  [`add_mapping_info()`](https://pattawee-pp.com/GTAPViz/reference/add_mapping_info.md)
+  [`add_mapping_info()`](https://www.pattawee-pp.com/GTAPViz/reference/add_mapping_info.md)
   for full details.
 
 - sl4_mapping_info:
@@ -121,7 +121,7 @@ auto_gtap_data(
 
   Character or `NULL`. Optional SL4 unit conversion. Valid options:
   `"mil2bil"`, `"bil2mil"`, `"pct2frac"`, `"frac2pct"`. See
-  [`convert_units`](https://pattawee-pp.com/GTAPViz/reference/convert_units.md)
+  [`convert_units`](https://www.pattawee-pp.com/GTAPViz/reference/convert_units.md)
   for details.
 
 - har_convert_unit:
@@ -136,8 +136,8 @@ auto_gtap_data(
 
 - rename_columns:
 
-  Logical. If `TRUE` (default), renames GTAP codes (e.g., `"REG"` →
-  `"Region"`, `"COMM"` → `"Commodity"`).
+  Logical. If `TRUE` (default), renames GTAP codes (e.g., `"REG"` â†’
+  `"Region"`, `"COMM"` â†’ `"Commodity"`).
 
 - region_select:
 
@@ -209,9 +209,9 @@ metadata, ready for analysis or visualization.
 
 ## See also
 
-[`add_mapping_info`](https://pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
-[`convert_units`](https://pattawee-pp.com/GTAPViz/reference/convert_units.md),
-[`rename_value`](https://pattawee-pp.com/GTAPViz/reference/rename_value.md)
+[`add_mapping_info`](https://www.pattawee-pp.com/GTAPViz/reference/add_mapping_info.md),
+[`convert_units`](https://www.pattawee-pp.com/GTAPViz/reference/convert_units.md),
+[`rename_value`](https://www.pattawee-pp.com/GTAPViz/reference/rename_value.md)
 
 ## Author
 
@@ -233,18 +233,15 @@ gtap_data <- auto_gtap_data(experiment = c("EXP1", "EXP2"),
 #> All 2 requested experiment files are found with both SL4 and HAR data.
 #> Mapping method used: GTAPv7
 #> Processing GTAP Macro Data
-#> Error processing /home/runner/work/_temp/Library/GTAPViz/extdata/in/EXP1.sl4: subscript out of bounds
-#> Error processing /home/runner/work/_temp/Library/GTAPViz/extdata/in/EXP2.sl4: subscript out of bounds
 #> Processing SL4 Data
-#> Error processing /home/runner/work/_temp/Library/GTAPViz/extdata/in/EXP1.sl4: subscript out of bounds
-#> Error processing /home/runner/work/_temp/Library/GTAPViz/extdata/in/EXP2.sl4: subscript out of bounds
 #> Processing QXS Bilateral Trade Data
-#> Error processing /home/runner/work/_temp/Library/GTAPViz/extdata/in/EXP1.sl4: subscript out of bounds
-#> Error processing /home/runner/work/_temp/Library/GTAPViz/extdata/in/EXP2.sl4: subscript out of bounds
 #> Processing HAR Data
 #> 
 #> Summary of Processing:
+#> GTAP Macro Data processed successfully
+#> SL4 Data processed successfully
 #> HAR Data processed successfully
+#> QXS Bilateral Data processed successfully
 #> GTAP data processing completed successfully!
 #> 
 ```

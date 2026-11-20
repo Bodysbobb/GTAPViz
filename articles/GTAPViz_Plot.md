@@ -25,6 +25,7 @@ Plotting `qgdp`, `ppriv`, `EV`, `tot`, and `u` generates six separate
 figures using the following command:
 
 ``` r
+
 reg_data = sl4.plot.data[["REG"]]
 
 plotA <- comparison_plot(
@@ -93,6 +94,7 @@ To plot this figure—the only difference from previous figures is
 changing `split_by = FALSE`—you can use the following command:
 
 ``` r
+
 macro.plot <- comparison_plot(
   # === Input Data ===
   data         = macro.data[["macros"]],
@@ -148,6 +150,7 @@ The following command plots all variables with sectors on the x-axis for
 each region:
 
 ``` r
+
 sector_data <- sl4.plot.data[["COMM*REG"]]
 
 plotB <- detail_plot(
@@ -247,6 +250,7 @@ Each plot shows detailed impacts at the sector (`COMM`) level for that
 country pair.
 
 ``` r
+
 bilateral_data <- bilateral_data[["qxs"]]
 
 plotB3 <- detail_plot(
@@ -317,6 +321,7 @@ and restructuring** may be necessary before plotting. You can try the
 following code:
 
 ``` r
+
 # Rename Value if needed
 wefare.decomp.rename <- data.frame(
   ColumnName = "COLUMN",
@@ -333,6 +338,7 @@ har.plot.data <- rename_value(har.plot.data, mapping.file = wefare.decomp.rename
 You can use the following command to plot the decomposition figure:
 
 ``` r
+
 plotC <- stack_plot(
   # === Input Data ===
   data              = har.plot.data[["A"]],
@@ -398,6 +404,7 @@ trade (header E1), which is also a good example of multi-dimensional
 plotting. You may try the following command:
 
 ``` r
+
 plotE <- stack_plot(
   # === Input Data ===
   data              = har.plot.data[["E1"]],
@@ -454,6 +461,7 @@ Stack Plot Visualization (Multi-Dimension)
 - Run the following chunks to view all available configurations.
 
 ``` r
+
 get_all_config()
 ```
 
@@ -485,7 +493,7 @@ It supports:
 - Applying consistent sorting across all data frames within a data list
 
 See
-[`?sort_plot_data`](https://pattawee-pp.com/GTAPViz/reference/sort_plot_data.md)
+[`?sort_plot_data`](https://www.pattawee-pp.com/GTAPViz/reference/sort_plot_data.md)
 for full details.
 
 Key arguments:
@@ -500,6 +508,7 @@ Key arguments:
 To apply sorting, use the following command:
 
 ``` r
+
 # Using the function
 sort_sl4_plot <- sort_plot_data(
   sl4.plot.data,
@@ -520,6 +529,7 @@ renaming country names in the `REG` column (e.g., changing `"USA"` to
 `"United States"` or `"CHN"` to `"China"`)—use the following command:
 
 ``` r
+
 # Creating Mapping File
 rename.region <- data.frame(
   ColumnName = "REG",
@@ -536,6 +546,7 @@ Another useful example is renaming the components of welfare
 decomposition before plotting.
 
 ``` r
+
 # Rename Value if needed
 wefare.decomp.rename <- data.frame(
   ColumnName = "COLUMN",

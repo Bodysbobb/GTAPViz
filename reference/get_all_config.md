@@ -171,7 +171,8 @@ get_all_config()
 #>   height = NULL,
 #>   dpi = 300,
 #>   bg = "white",
-#>   limitsize = FALSE
+#>   limitsize = FALSE,
+#>   device = "pdf"
 #> )
 #> 
 #> # Example usage:

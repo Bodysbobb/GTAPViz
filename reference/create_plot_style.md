@@ -112,7 +112,7 @@ create_plot_style(
 - title_format:
 
   List or function output. Title formatting options. Can be created with
-  [`create_title_format()`](https://pattawee-pp.com/GTAPViz/reference/create_title_format.md).
+  [`create_title_format()`](https://www.pattawee-pp.com/GTAPViz/reference/create_title_format.md).
   Default: list(type = "standard", text = "", sep = "")
 
 - show_x_axis_title:

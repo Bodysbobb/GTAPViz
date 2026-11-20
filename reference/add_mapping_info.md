@@ -64,8 +64,8 @@ The `mapping` argument supports:
 
 ## See also
 
-[`convert_units`](https://pattawee-pp.com/GTAPViz/reference/convert_units.md),
-[`rename_value`](https://pattawee-pp.com/GTAPViz/reference/rename_value.md)
+[`convert_units`](https://www.pattawee-pp.com/GTAPViz/reference/convert_units.md),
+[`rename_value`](https://www.pattawee-pp.com/GTAPViz/reference/rename_value.md)
 
 ## Author
 
