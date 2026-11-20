@@ -253,7 +253,7 @@ auto_gtap <- function(experiment,
   if (process_macro && input_format == ".sl4") {
     message("Processing GTAP Macro Data")
 
-    macro_info <- GTAPViz:::get_gtap_macro_info()
+    # macro_info: internal table of GTAP macro variables (R/sysdata.rda)
 
     macro_raw <- setNames(
       lapply(valid_inputs, function(scenario) {
@@ -288,9 +288,9 @@ auto_gtap <- function(experiment,
         )
       )
 
-      GTAPMacros <- GTAPViz:::add_mapping_info(GTAPMacros, mapping = "GTAPv7")
+      GTAPMacros <- add_mapping_info(GTAPMacros, mapping = "GTAPv7")
 
-      GTAPMacros_filtered <- GTAPViz:::.apply_to_dataframes(GTAPMacros, function(df) {
+      GTAPMacros_filtered <- .apply_to_dataframes(GTAPMacros, function(df) {
         df[, c("Variable", "Value", "Subtotal", "Experiment", "Description", "Unit"), drop = FALSE]
       })
 
@@ -310,16 +310,16 @@ auto_gtap <- function(experiment,
                                                  GTAPMacros_final$Unit), ]
 
       if (rename_columns) {
-        GTAPMacros_final <- GTAPViz:::rename_value(GTAPMacros_final, target_column = "Experiment", rename_type = "Scenario")
+        GTAPMacros_final <- .rename_gtap_columns(GTAPMacros_final)
       }
 
       if (!is.null(convert_unit)) {
         message("Applying unit conversion to macro data: ", convert_unit)
-        GTAPMacros_final <- GTAPViz:::convert_units(GTAPMacros_final, scale_auto = convert_unit)
+        GTAPMacros_final <- convert_units(GTAPMacros_final, scale_auto = convert_unit)
       }
 
       if (!is.null(decimals)) {
-        GTAPMacros_final <- GTAPViz:::.format_decimal_places(GTAPMacros_final, decimals)
+        GTAPMacros_final <- .format_decimal_places(GTAPMacros_final, decimals)
       }
 
       all_data$GTAPMacros <- GTAPMacros_final
@@ -438,11 +438,11 @@ auto_gtap <- function(experiment,
         transform_data <- function(data, apply_filters = TRUE) {
           if (is.null(data)) return(NULL)
 
-          data <- GTAPViz:::.apply_to_dataframes(data, GTAPViz:::rename_GTAP_bilateral)
-          data <- GTAPViz:::add_mapping_info(data, mapping = mapping_info, external_map = external_mapping_info)
+          data <- .apply_to_dataframes(data, rename_GTAP_bilateral)
+          data <- add_mapping_info(data, mapping = mapping_info, external_map = external_mapping_info)
 
           if (apply_filters && (!is.null(region_select) || !is.null(sector_select))) {
-            data <- GTAPViz:::.apply_filters(
+            data <- .apply_filters(
               data,
               region_select = region_select,
               experiment_select = valid_inputs,
@@ -451,7 +451,7 @@ auto_gtap <- function(experiment,
           }
 
           if (!is.null(decimals)) {
-            data <- GTAPViz:::.format_decimal_places(data, decimals)
+            data <- .format_decimal_places(data, decimals)
           }
 
           if (length(data) == 1 && is.list(data) && !is.data.frame(data)) {
@@ -464,20 +464,20 @@ auto_gtap <- function(experiment,
         main_data <- transform_data(grouped_data, apply_filters = TRUE)
 
         if (rename_columns && !is.null(main_data)) {
-          main_data <- GTAPViz:::.apply_to_dataframes(main_data, function(df) {
-            GTAPViz:::rename_value(df, target_column = "Experiment", rename_type = "Scenario")
+          main_data <- .apply_to_dataframes(main_data, function(df) {
+            .rename_gtap_columns(df)
           })
         }
 
         if (!is.null(convert_unit) && !is.null(main_data)) {
           message("Applying unit conversion: ", convert_unit)
-          main_data <- GTAPViz:::.apply_to_dataframes(main_data, function(df) {
-            GTAPViz:::convert_units(df, scale_auto = convert_unit)
+          main_data <- .apply_to_dataframes(main_data, function(df) {
+            convert_units(df, scale_auto = convert_unit)
           })
 
           if (!is.null(decimals)) {
-            main_data <- GTAPViz:::.apply_to_dataframes(main_data, function(df) {
-              GTAPViz:::.format_decimal_places(df, decimals)
+            main_data <- .apply_to_dataframes(main_data, function(df) {
+              .format_decimal_places(df, decimals)
             })
           }
         }
@@ -523,11 +523,11 @@ auto_gtap <- function(experiment,
         )
       )
 
-      qxs_data <- GTAPViz:::.apply_to_dataframes(qxs_data, GTAPViz:::rename_GTAP_bilateral)
-      qxs_data <- GTAPViz:::add_mapping_info(qxs_data, mapping = mapping_info, external_map = external_mapping_info)
+      qxs_data <- .apply_to_dataframes(qxs_data, rename_GTAP_bilateral)
+      qxs_data <- add_mapping_info(qxs_data, mapping = mapping_info, external_map = external_mapping_info)
 
       if (!is.null(region_select) || !is.null(sector_select)) {
-        qxs_data <- GTAPViz:::.apply_filters(
+        qxs_data <- .apply_filters(
           qxs_data,
           region_select = region_select,
           experiment_select = valid_inputs,
@@ -536,7 +536,7 @@ auto_gtap <- function(experiment,
       }
 
       if (!is.null(decimals)) {
-        qxs_data <- GTAPViz:::.format_decimal_places(qxs_data, decimals)
+        qxs_data <- .format_decimal_places(qxs_data, decimals)
       }
 
       if (length(qxs_data) == 1 && is.list(qxs_data) && !is.data.frame(qxs_data)) {
@@ -544,20 +544,20 @@ auto_gtap <- function(experiment,
       }
 
       if (rename_columns && !is.null(qxs_data)) {
-        qxs_data <- GTAPViz:::.apply_to_dataframes(qxs_data, function(df) {
-          GTAPViz:::rename_value(df, target_column = "Experiment", rename_type = "Scenario")
+        qxs_data <- .apply_to_dataframes(qxs_data, function(df) {
+          .rename_gtap_columns(df)
         })
       }
 
       if (!is.null(convert_unit) && !is.null(qxs_data)) {
         message("Applying unit conversion to QXS data: ", convert_unit)
-        qxs_data <- GTAPViz:::.apply_to_dataframes(qxs_data, function(df) {
-          GTAPViz:::convert_units(df, scale_auto = convert_unit)
+        qxs_data <- .apply_to_dataframes(qxs_data, function(df) {
+          convert_units(df, scale_auto = convert_unit)
         })
 
         if (!is.null(decimals)) {
-          qxs_data <- GTAPViz:::.apply_to_dataframes(qxs_data, function(df) {
-            GTAPViz:::.format_decimal_places(df, decimals)
+          qxs_data <- .apply_to_dataframes(qxs_data, function(df) {
+            .format_decimal_places(df, decimals)
           })
         }
       }

@@ -50,6 +50,20 @@ install.packages("GTAPViz")
 
 ---
 
+## **Use GTAPViz with AI (MCP)**
+
+GTAPViz includes an MCP server, so AI assistants (Claude Desktop, Claude Code, Cursor, VS Code, Gemini CLI, ...) can load your `.sl4`/`.har` results and create figures and tables from plain-language requests. Everything runs on your computer, and every step is saved as a reproducible R script (`gtapviz_session.R`).
+
+```r
+remotes::install_github("Bodysbobb/GTAPViz")   # AI feature needs v1.3.0+ (GitHub for now)
+GTAPViz::mcp_install()                 # Claude Desktop; then restart the app
+GTAPViz::mcp_install("claude_code")    # or "cursor", or "other" for any MCP app
+```
+
+Then ask, for example: *"Use GTAPViz to load the example data and plot welfare (EV) by region."* See the [AI vignette](https://pattawee-pp.com/GTAPViz/articles/GTAPViz_AI.html) for details.
+
+---
+
 ## **Package Helps**
 
 The most interactive package help is available via [ChatGPT GTAPViz](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/), specifically designed to assist with the GTAPViz package!

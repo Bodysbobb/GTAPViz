@@ -10,7 +10,8 @@ create_export_config(
   height = NULL,
   dpi = 300,
   bg = "white",
-  limitsize = FALSE
+  limitsize = FALSE,
+  device = "pdf"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ create_export_config(
 \item{bg}{Character. Background color. Default: "white".}
 
 \item{limitsize}{Logical. Whether to limit size. Default: FALSE.}
+
+\item{device}{Character or function. PDF device to use. Default: "pdf". Can be "pdf", "cairo_pdf", grDevices::cairo_pdf, or other device functions.}
 }
 \value{
 A list with export configuration parameters.

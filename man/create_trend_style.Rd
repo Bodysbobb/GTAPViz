@@ -50,9 +50,14 @@ create_trend_style(
   y_axis_text_hjust = 0,
   y_axis_description = "",
   show_legend = TRUE,
+  show_legend_title = TRUE,
   legend_position = "right",
   legend_text_face = "plain",
   legend_text_size = 14,
+  legend_key_width = 3,
+  legend_key_height = 1,
+  legend_line_size = 2,
+  legend_point_size = 3,
   strip_face = "bold",
   strip_text_size = 16,
   strip_background = "lightgrey",
@@ -170,11 +175,21 @@ create_trend_style(
 
 \item{show_legend}{Logical. Show legend. Default: TRUE}
 
+\item{show_legend_title}{Logical. Show legend title (group name). Default: TRUE}
+
 \item{legend_position}{Character. Legend position ("right", "left", "top", "bottom"). Default: "right"}
 
 \item{legend_text_face}{Character. Legend text font face. Default: "plain"}
 
 \item{legend_text_size}{Numeric. Legend text size. Default: 14}
+
+\item{legend_key_width}{Numeric. Width of legend key symbols (lines/points). Default: 3}
+
+\item{legend_key_height}{Numeric. Height of legend key symbols (lines/points). Default: 1}
+
+\item{legend_line_size}{Numeric. Line thickness in legend. Default: 2}
+
+\item{legend_point_size}{Numeric. Point size in legend. Default: 3}
 
 \item{strip_face}{Character. Facet strip font face. Default: "bold"}
 

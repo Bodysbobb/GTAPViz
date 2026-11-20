@@ -34,7 +34,9 @@ navbar:
         - text: "Advanced Table Catalogs"
           href: https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/
         - text: "Utilities"
-          href: articles/GTAPViz_Utilities.html  
+          href: articles/GTAPViz_Utilities.html
+        - text: "Use with AI (MCP)"
+          href: articles/GTAPViz_AI.html
     reference:
       text: "References"
       href: reference/index.html
@@ -63,3 +65,4 @@ articles:
       - GTAPViz_Plot
       - GTAPViz_Table
       - GTAPViz_Utilities
+      - GTAPViz_AI

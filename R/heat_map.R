@@ -314,9 +314,7 @@ create_map_style <- function(
 #' @author Pattawee Puangchit
 #'
 #' @importFrom sf st_as_sf
-#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_gradient scale_fill_gradient2
-#' scale_fill_gradientn coord_sf labs theme_void theme element_text element_rect
-#' margin guides guide_colorbar geom_segment geom_text
+#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_gradient scale_fill_gradient2 scale_fill_gradientn coord_sf labs theme_void theme element_text element_rect margin guides guide_colorbar geom_segment geom_text
 #' @importFrom dplyr filter group_by summarise across all_of left_join group_split mutate
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggimage geom_image

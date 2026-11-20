@@ -987,3 +987,23 @@ gtap_macros_data <- function(select_var = NULL,
 
   return(GTAPMacros_final)
 }
+
+#' @title Rename GTAP Columns to Readable Names
+#' @description
+#' Used by \code{auto_gtap()} when \code{rename_columns = TRUE}: renames
+#' \code{REG}, \code{COMM}, \code{ACTS} and \code{Experiment} to \code{Region},
+#' \code{Commodity}, \code{Activity} and \code{Scenario}. A column is left
+#' unchanged when its new name already exists.
+#'
+#' @param df A data frame (other objects are returned unchanged).
+#' @return The data frame with renamed columns.
+#' @keywords internal
+#' @noRd
+.rename_gtap_columns <- function(df) {
+  if (!is.data.frame(df)) return(df)
+  new_names <- c(REG = "Region", COMM = "Commodity", ACTS = "Activity", Experiment = "Scenario")
+  hit <- names(df) %in% names(new_names)
+  hit[hit] <- !new_names[names(df)[hit]] %in% names(df)
+  names(df)[hit] <- new_names[names(df)[hit]]
+  df
+}

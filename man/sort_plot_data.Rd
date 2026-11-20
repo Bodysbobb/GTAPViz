@@ -20,9 +20,11 @@ For example, \verb{list(Region = c("USA", "EU", "CHN")},
 \verb{Experiment = c("Base", "Shock1", "Shock2"))}.}
 
 \item{sort_by_value_desc}{Logical or NULL. Controls sorting by the "Value" column:
-- NULL (default): Don't sort by value, only use column-based sorting.
-- TRUE: After column-based sorting, sort by value in descending order.
-- FALSE: After column-based sorting, sort by value in ascending order.}
+\itemize{
+\item NULL (default): Don't sort by value, only use column-based sorting.
+\item TRUE: After column-based sorting, sort by value in descending order.
+\item FALSE: After column-based sorting, sort by value in ascending order.
+}}
 
 \item{convert_to_factor}{Logical. Whether to convert sorted columns to factors with custom ordering.
 Default is TRUE, which preserves ordering in GTAP plotting functions.}
