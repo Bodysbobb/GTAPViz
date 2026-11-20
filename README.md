@@ -52,9 +52,11 @@ install.packages("GTAPViz")
 
 ## **Use GTAPViz with AI (MCP)**
 
-Let an AI app (Claude Desktop, Claude Code, Cursor, ...) run GTAPViz for you. Give it your results folder and ask, e.g. *"plot EV and qgdp by region"*. It makes the figures and tables on your computer and saves the R code it used in `gtapviz_session.R`, so you can rerun everything yourself.
+Let an AI app (Claude Desktop, Claude Code, Cursor, ...) run GTAPViz for you. You ask in plain words, it makes the figures and tables on your computer, and it saves the R code it used so you can rerun everything yourself.
 
-Setup (once):
+### 1. Install (once)
+
+Run in R:
 
 ```r
 remotes::install_github("Bodysbobb/GTAPViz")
@@ -62,7 +64,37 @@ GTAPViz::mcp_install()                  # Claude Desktop
 # GTAPViz::mcp_install("claude_code")   # or "cursor"
 ```
 
-Restart the app and try: *"Use GTAPViz to load the example data and plot welfare by region."* More in the [AI guide](https://pattawee-pp.com/GTAPViz/articles/GTAPViz_AI.html).
+Then restart the AI app.
+
+### 2. Use it
+
+Try the example data that comes with the package:
+
+> Use GTAPViz to load the example data and plot welfare by region
+
+For your own results, give it the folder with your `.sl4` and `.har` files:
+
+> Load my GTAP results in D:/TradeWar/in
+
+Then just ask, for example:
+
+- *"What experiments and regions are there?"*
+- *"Plot EV, qgdp and tot by region, with the regions on the vertical axis."*
+- *"Show the welfare decomposition, and rename alloc_A1 to 'Allocative efficiency'."*
+- *"Which sectors in SEAsia gain the most output? Top 10 only."*
+- *"Use the purdue colors, bigger fonts, and also save as PDF."*
+- *"Make an Excel table of regional results with experiments as columns."*
+- *"Give me the R script."*
+
+The AI tells you where the figures and tables were saved.
+
+### 3. Back in R
+
+Everything the AI does is saved as plain GTAPViz code in `gtapviz_session.R`, in the same output folder. Open it in RStudio and run it to recreate every figure, no AI needed.
+
+You can also chat from inside RStudio: open the **Terminal** tab and run `claude` (Claude Code).
+
+More in the [AI guide](https://pattawee-pp.com/GTAPViz/articles/GTAPViz_AI.html).
 
 ---
 
