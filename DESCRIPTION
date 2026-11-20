@@ -11,11 +11,13 @@ Description: Tools to streamline the extraction, processing, and visualization o
     options (e.g., Text, CSV, 'Stata', or 'Excel' formats).
     This facilitates efficient post-simulation analysis for
     economic research and policy reporting. Includes helper functions to filter,
-    format, and customize outputs with reproducible styling.
+    format, and customize outputs with reproducible styling. Also includes a
+    Model Context Protocol ('MCP') server, so AI assistants can run these tools on
+    the user's computer and record every step as a reproducible R script.
 License: MIT + file LICENSE
 Encoding: UTF-8
 BugReports: https://github.com/bodysbobb/GTAPViz/issues/
-URL: https://pattawee-pp.com/GTAPViz/
+URL: https://www.pattawee-pp.com/GTAPViz/
 Imports:
     HARplus,
     ggplot2,

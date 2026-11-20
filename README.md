@@ -1,6 +1,6 @@
 # GTAPViz: R Package for Automating GTAP Data Processing and Visualization
 
-[![Author](https://img.shields.io/badge/Pattawee.P-blue?label=Author)](https://bodysbobb.github.io/) 
+[![Author](https://img.shields.io/badge/Pattawee.P-blue?label=Author)](https://www.pattawee-pp.com/) 
 ![Last Updated](https://img.shields.io/github/last-commit/Bodysbobb/GTAPViz?label=Last%20Updated&color=blue) 
 [![Star](https://img.shields.io/github/stars/Bodysbobb/GTAPViz?style=social)](https://github.com/Bodysbobb/GTAPViz)
 
@@ -10,7 +10,7 @@
 
 **Package Help:**  
 [![GPT-GTAPViz](https://img.shields.io/badge/GPT--GTAPViz-74aa9c?style=flat-square&logo=openai&logoColor=white)](https://chatgpt.com/g/g-67f87a78396c81919aa2a0676c40e8b3-gtapviz-r/)
-[![GTAPViz](https://img.shields.io/badge/GTAPViz-276DC3?style=flat-square&logo=r&logoColor=white)](https://bodysbobb.github.io/GTAPViz/)
+[![GTAPViz](https://img.shields.io/badge/GTAPViz-276DC3?style=flat-square&logo=r&logoColor=white)](https://www.pattawee-pp.com/GTAPViz/)
 
 ---
 
@@ -66,7 +66,7 @@ GTAPViz::mcp_install()                  # Claude Desktop
 
 Then restart the AI app.
 
-### 2. Use it
+### 2. How to use
 
 Try the example data that comes with the package:
 
@@ -94,7 +94,7 @@ Everything the AI does is saved as plain GTAPViz code in `gtapviz_session.R`, in
 
 You can also chat from inside RStudio: open the **Terminal** tab and run `claude` (Claude Code).
 
-More in the [AI guide](https://pattawee-pp.com/GTAPViz/articles/GTAPViz_AI.html).
+More in the [AI guide](https://www.pattawee-pp.com/GTAPViz/articles/GTAPViz_AI.html).
 
 ---
 
@@ -104,7 +104,7 @@ The most interactive package help is available via [ChatGPT GTAPViz](https://cha
 
 For complete instructions on using this package and exploring practical examples:
 
-- [GTAPViz Step-by-Step Guide](https://bodysbobb.github.io/GTAPViz/)  
+- [GTAPViz Step-by-Step Guide](https://www.pattawee-pp.com/GTAPViz/)  
 - [GTAPViz: Plot Catalogs](https://pattawee.shinyapps.io/gtapviz-advanced-plot-configs/)  
 - [GTAPViz: Table Catalogs](https://pattawee.shinyapps.io/gtapviz-advanced-table-configs/)
 
@@ -112,11 +112,11 @@ For complete instructions on using this package and exploring practical examples
 
 ## **GTAP Users** 
 
-For GTAP users seeking minimal or no code modifications, please visit [GTAPViz for GTAP Users](https://bodysbobb.github.io/GTAPViz-R-GTAPuser/).
+For GTAP users seeking minimal or no code modifications, please visit [GTAPViz for GTAP Users](https://www.pattawee-pp.com/GTAPViz-R-GTAPuser/).
 
 ## **Useful Packages for CGE Fellows**
 
-- [HARplus](https://bodysbobb.github.io/HARplus/)
+- [HARplus](https://www.pattawee-pp.com/HARplus/)
 
 ## **License & Author** 
 
